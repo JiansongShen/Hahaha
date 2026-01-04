@@ -17,9 +17,22 @@
 // jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 
+#include <filesystem>
 #include <gtest/gtest.h>
+
+#include "utils/log/Logger.h"
 
 int main() {
     ::testing::InitGoogleTest();
-    return RUN_ALL_TESTS();
+    int result = RUN_ALL_TESTS();
+
+    // Ensure logger is shut down and file is closed before attempting cleanup
+    hahaha::utils::Logger::shutdown();
+
+    // Clean up default log file if it exists after all tests
+    if (std::filesystem::exists("log.txt")) {
+        std::filesystem::remove("log.txt");
+    }
+
+    return result;
 }
