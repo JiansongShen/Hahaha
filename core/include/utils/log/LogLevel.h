@@ -58,6 +58,7 @@ inline std::string_view toString(LogLevel level) {
     case LogLevel::FATAL:
         return "FATAL";
     }
+    return "UNKNOWN";
 }
 
 /** ANSI escape codes for colored log levels in console. */
@@ -89,6 +90,7 @@ inline std::string_view toColoredString(LogLevel level) {
     case LogLevel::FATAL:
         return DefaultColoredFatal;
     }
+    return "UNKNOWN";
 }
 
 } // namespace hahaha::utils
