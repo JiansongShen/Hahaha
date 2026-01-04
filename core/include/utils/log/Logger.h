@@ -27,6 +27,8 @@
 #include <iostream>
 #include <mutex>
 #include <queue>
+#include <sstream>
+#include <stacktrace>
 #include <string>
 #include <thread>
 
@@ -87,6 +89,32 @@ class Logger {
     }
 
     /**
+     * @brief Shutdown the logger: flushes the queue and joins the worker
+     * thread.
+     */
+    static void shutdown() {
+        Logger& logger = instance();
+        if (logger.running_) {
+            logger.running_ = false;
+            logger.condition_.notify_all();
+            if (logger.workerThread_.joinable()) {
+                logger.workerThread_.join();
+            }
+        }
+        if (logger.stream_.is_open()) {
+            logger.stream_.close();
+        }
+    }
+
+    /**
+     * @brief Log a message with current stacktrace.
+     * @param msg The message string.
+     * @param level Severity level.
+     */
+    static void logWithStacktrace(const std::string& msg,
+                                  LogLevel level = LogLevel::ERROR);
+
+    /**
      * @brief Log a message with a specific level.
      * @param msg The message string.
      * @param level Severity level.
@@ -95,6 +123,15 @@ class Logger {
 
     /** @overload log(const char* msg, LogLevel level) */
     static void log(const char* msg, LogLevel level);
+
+    /**
+     * @brief Log a message with specified stacktrace.
+     * @param msg The message string.
+     * @param level Severity level.
+     * @param trace Stacktrace to include in the log.
+     */
+    static void
+    log(const std::string& msg, LogLevel level, const std::stacktrace& trace);
 
     /** @brief Log a FATAL level message. */
     static void fatal(const std::string& msg);
@@ -135,7 +172,7 @@ class Logger {
             // get log entry
             LogMessageEntry entry;
             {
-                std::unique_lock<std::mutex> lock(mutex_);
+                std::unique_lock lock(mutex_);
                 condition_.wait(
                     lock, [this] { return !queue_.empty() || !running_; });
 
@@ -206,13 +243,13 @@ class Logger {
 inline void Logger::log(const std::string& msg, LogLevel level) {
     Logger& logger = instance();
     {
-        std::lock_guard<std::mutex> lock(logger.mutex_);
+        std::scoped_lock const lock(logger.mutex_);
         logger.queue_.emplace(level, msg);
     }
     logger.condition_.notify_one();
 }
 
-inline void Logger::log(const char* msg, LogLevel level) {
+inline void Logger::log(const char* msg, const LogLevel level) {
     log(std::string(msg), level);
 }
 
@@ -264,6 +301,19 @@ inline void Logger::trace(const char* msg) {
     log(std::string(msg), LogLevel::TRACE);
 }
 
+inline void Logger::logWithStacktrace(const std::string& msg, LogLevel level) {
+    log(msg, level, std::stacktrace::current());
+}
+
+inline void Logger::log(const std::string& msg,
+                        LogLevel level,
+                        const std::stacktrace& trace) {
+    std::ostringstream oss;
+    oss << trace;
+    std::string const fullMessage = msg + "\nStacktrace:\n" + oss.str();
+    log(fullMessage, level);
+}
+
 } // namespace hahaha::utils
 
 inline void info(const std::string& msg) {
@@ -302,10 +352,10 @@ inline void trace(const std::string& msg) {
 inline void trace(const char* msg) {
     hahaha::utils::Logger::trace(msg);
 }
-inline void log(const std::string& msg, hahaha::utils::LogLevel level) {
+inline void log(const std::string& msg, const hahaha::utils::LogLevel level) {
     hahaha::utils::Logger::log(msg, level);
 }
-inline void log(const char* msg, hahaha::utils::LogLevel level) {
+inline void log(const char* msg, const hahaha::utils::LogLevel level) {
     hahaha::utils::Logger::log(msg, level);
 }
 
