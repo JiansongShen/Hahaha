@@ -18,6 +18,19 @@ fs = import('fs')
 glfw_dep = dependency('glfw3', required : false)
 gl_dep = dependency('gl', required : false)
 dl_dep = meson.get_compiler('cpp').find_library('dl', required : false)
+cpp_compiler = meson.get_compiler('cpp')
+dl_dep = cpp_compiler.find_library('dl', required : false)
+
+stacktrace_dep = []
+if cpp_compiler.get_id() == 'gcc'
+    # Try common libraries that might be needed for std::stacktrace
+    foreach lib : ['stdc++_libbacktrace', 'stdc++exp', 'backtrace']
+        l = cpp_compiler.find_library(lib, required : false)
+        if l.found()
+            stacktrace_dep += l
+        endif
+    endforeach
+endif
 
 # These arguments are only used to build the shared library
 lib_args = ['-DBUILDING_MESON_LIBRARY']
@@ -68,7 +81,8 @@ hahaha_lib = static_library('hahaha', sources + extern_sources + imgui_backend_s
                             dependencies : [
                                 glfw_dep,
                                 gl_dep,
-                                dl_dep
+                                dl_dep,
+                                stacktrace_dep
                             ]
 )
 

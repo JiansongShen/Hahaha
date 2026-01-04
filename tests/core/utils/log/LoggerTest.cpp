@@ -32,22 +32,16 @@ using hahaha::utils::LogMessageEntry;
 class LoggerTest : public ::testing::Test {
   protected:
     void SetUp() override {
-        // Clean up log files before each test
+        // Clean up custom log files before each test
         if (std::filesystem::exists("test_log.txt")) {
             std::filesystem::remove("test_log.txt");
-        }
-        if (std::filesystem::exists("log.txt")) {
-            std::filesystem::remove("log.txt");
         }
     }
 
     void TearDown() override {
-        // Clean up log files after each test
+        // Clean up custom log files after each test
         if (std::filesystem::exists("test_log.txt")) {
             std::filesystem::remove("test_log.txt");
-        }
-        if (std::filesystem::exists("log.txt")) {
-            std::filesystem::remove("log.txt");
         }
     }
 };
@@ -108,4 +102,47 @@ TEST_F(LoggerTest, LogMessageEntryTest) {
     std::string str = entry.toString();
     EXPECT_NE(str.find("INFO"), std::string::npos);
     EXPECT_NE(str.find("Test message"), std::string::npos);
+}
+
+TEST_F(LoggerTest, LoggerWithStacktrace) {
+    // Test logging with current stacktrace using logWithStacktrace
+    hahaha::utils::Logger::logWithStacktrace(
+        "Test message with logWithStacktrace", LogLevel::INFO);
+
+    // Test logging with specific stacktrace using the new log overload
+    auto trace = std::stacktrace::current();
+    hahaha::utils::Logger::log("Test message with log overload and stacktrace",
+                               LogLevel::ERROR,
+                               trace);
+
+    // Give some time for the background thread to process
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+    // Check if default log file exists
+    ASSERT_TRUE(std::filesystem::exists("log.txt"));
+
+    // Read the log file and verify its content
+    std::ifstream logFile("log.txt");
+    std::string line;
+    bool foundStacktrace = false;
+    bool foundMessage1 = false;
+    bool foundMessage2 = false;
+
+    while (std::getline(logFile, line)) {
+        if (line.find("Stacktrace:") != std::string::npos) {
+            foundStacktrace = true;
+        }
+        if (line.find("Test message with logWithStacktrace")
+            != std::string::npos) {
+            foundMessage1 = true;
+        }
+        if (line.find("Test message with log overload and stacktrace")
+            != std::string::npos) {
+            foundMessage2 = true;
+        }
+    }
+
+    EXPECT_TRUE(foundStacktrace);
+    EXPECT_TRUE(foundMessage1);
+    EXPECT_TRUE(foundMessage2);
 }
