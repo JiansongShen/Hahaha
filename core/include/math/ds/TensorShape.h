@@ -93,6 +93,13 @@ class TensorShape {
     }
 
     /**
+     * @brief Get the dimensions vector.
+     * @return std::vector<size_t>& dimensions.
+     */
+    [[nodiscard]] std::vector<size_t>& getDims() {
+        return dims_;
+    }
+    /**
      * @brief Compute the total number of elements for this shape.
      *
      * Total size is the product of all dimension sizes.
