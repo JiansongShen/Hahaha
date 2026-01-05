@@ -81,7 +81,8 @@ broadcast(const std::shared_ptr<ComputeNode<T>>& sourceNode,
                 return;
             }
             auto srcGrad = grad->sum(sumAxes, keepDims);
-            src->accumulateGrad(std::make_shared<math::TensorWrapper<T>>(std::move(srcGrad)));
+            src->accumulateGrad(
+                std::make_shared<math::TensorWrapper<T>>(std::move(srcGrad)));
         }
     });
 
@@ -100,14 +101,46 @@ void checkTensorCanBroadcastTo(
     if (!broadcastShape.has_value()
         || broadcastShape.value() != targetTensorShape) {
         std::string broadcastShapeStr = broadcastShape.has_value()
-                                            ? TensorShape(broadcastShape.value()).toString()
-                                            : "None";
+            ? TensorShape(broadcastShape.value()).toString()
+            : "None";
         throw std::runtime_error(
             "broadcast shape mismatch: source tensor shape is "
             + srcShape.toString() + ", \n\tbut target tensor shape is "
-            + targetShape.toString() + "\tdo you want to broadcast to :"
-            + broadcastShapeStr);
+            + targetShape.toString()
+            + "\tdo you want to broadcast to :" + broadcastShapeStr);
     }
+}
+
+template <typename T>
+std::pair<std::shared_ptr<ComputeNode<T>>, std::shared_ptr<ComputeNode<T>>>
+broadcastNodes(const std::shared_ptr<ComputeNode<T>>& lhs,
+               const std::shared_ptr<ComputeNode<T>>& rhs) {
+    const auto lhsShape = TensorShape(lhs->getData()->getShape());
+    const auto rhsShape = TensorShape(rhs->getData()->getShape());
+
+    if (lhsShape == rhsShape) {
+        return {lhs, rhs};
+    }
+
+    const auto commonShape = TensorShape::broadcastShape(lhsShape, rhsShape);
+    if (!commonShape.has_value()) {
+        throw std::invalid_argument("Shapes are not broadcast-compatible: "
+                                    + lhsShape.toString() + " and "
+                                    + rhsShape.toString());
+    }
+
+    auto targetShape = commonShape.value();
+    auto newLhs = lhs;
+    auto newRhs = rhs;
+
+    if (lhsShape.getDims() != targetShape) {
+        newLhs = broadcast(lhs, targetShape);
+    }
+    if (rhsShape.getDims() != targetShape) {
+        newRhs = broadcast(rhs, targetShape);
+    }
+
+    return {newLhs, newRhs};
 }
 
 template <typename T>
@@ -116,6 +149,19 @@ broadcast(const T& lhsScalar, const std::shared_ptr<ComputeNode<T>>& rhs) {
     return broadcast(rhs, lhsScalar); // Commutative
 }
 
+template <typename T>
+void broadcastNodeStrideRebuild(
+    std::shared_ptr<ComputeNode<T>> bLhs,
+    std::shared_ptr<math::TensorWrapper<T>> resData) {
+    if (bLhs->getOperatorType() == common::Operator::Broadcast) {
+        resData->setStride(math::TensorStride(resData->getShape()));
+    }
+}
+
+template <typename T>
+void broadcastNodeStrideRebuild(math::TensorWrapper<T>& resData) {
+    resData.setStride(math::TensorStride(resData.getShape()));
+}
 } // namespace hahaha::compute
 
 #endif // HAHAHA_COMPUTEFUNBROADCAST_H_CA2A2F550C26484097AE9BAB15204C65
