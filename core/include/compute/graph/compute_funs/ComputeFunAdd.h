@@ -1,4 +1,5 @@
-// Copyright (c) ${original.year} - 2026 Contributors of Hahaha("https://github.com/Napbad/Hahaha")
+// Copyright (c) ${original.year} - 2026 Contributors of
+// Hahaha("https://github.com/Napbad/Hahaha")
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +20,7 @@
 #ifndef HAHAHA_COMPUTE_COMPUTE_FUN_ADD_H
 #define HAHAHA_COMPUTE_COMPUTE_FUN_ADD_H
 
+#include "ComputeFunBroadcast.h"
 #include "ComputeFunCommon.h"
 
 namespace hahaha::compute {
@@ -29,15 +31,18 @@ template <typename T>
 std::shared_ptr<ComputeNode<T>>
 add(const std::shared_ptr<ComputeNode<T>>& lhs,
     const std::shared_ptr<ComputeNode<T>>& rhs) {
+    auto [bLhs, bRhs] = broadcastNodes(lhs, rhs);
+
     auto resData = std::make_shared<math::TensorWrapper<T>>(
-        lhs->getData()->add(*rhs->getData()));
+        bLhs->getData()->add(*bRhs->getData()));
+    broadcastNodeStrideRebuild(bLhs, resData);
 
     std::shared_ptr<ComputeNode<T>> resNode = std::make_shared<ComputeNode<T>>(
-        lhs, rhs, resData, common::Operator::Add, nullptr);
+        bLhs, bRhs, resData, common::Operator::Add, nullptr);
 
     std::weak_ptr<ComputeNode<T>> weakRes = resNode;
-    std::weak_ptr<ComputeNode<T>> weakLhs = lhs;
-    std::weak_ptr<ComputeNode<T>> weakRhs = rhs;
+    std::weak_ptr<ComputeNode<T>> weakLhs = bLhs;
+    std::weak_ptr<ComputeNode<T>> weakRhs = bRhs;
 
     resNode->setGradFun([weakLhs, weakRhs, weakRes]() {
         auto res = weakRes.lock();
@@ -46,30 +51,10 @@ add(const std::shared_ptr<ComputeNode<T>>& lhs,
         if (res && lhs && rhs) {
             auto gradPtr = res->getGrad();
             if (lhs->getRequiresGrad()) {
-                if (lhs->getData()->getTotalSize() == 1
-                    && res->getData()->getTotalSize() > 1) {
-                    auto scalarGrad = std::make_shared<math::TensorWrapper<T>>(
-                        math::TensorShape({}),
-                        gradPtr->sum(),
-                        lhs->getData()->getDevice());
-                    lhs->accumulateGrad(scalarGrad);
-                } else {
-                    lhs->accumulateGrad(gradPtr);
-                }
-                // lhs->backward();
+                lhs->accumulateGrad(gradPtr);
             }
             if (rhs->getRequiresGrad()) {
-                if (rhs->getData()->getTotalSize() == 1
-                    && res->getData()->getTotalSize() > 1) {
-                    auto scalarGrad = std::make_shared<math::TensorWrapper<T>>(
-                        math::TensorShape({}),
-                        gradPtr->sum(),
-                        rhs->getData()->getDevice());
-                    rhs->accumulateGrad(scalarGrad);
-                } else {
-                    rhs->accumulateGrad(gradPtr);
-                }
-                // rhs->backward();
+                rhs->accumulateGrad(gradPtr);
             }
         }
     });
@@ -80,38 +65,7 @@ add(const std::shared_ptr<ComputeNode<T>>& lhs,
 template <typename T>
 std::shared_ptr<ComputeNode<T>> add(const std::shared_ptr<ComputeNode<T>>& lhs,
                                     const T& rhsScalar) {
-    auto rhs = createScalarNode(rhsScalar, lhs);
-    auto resData = std::make_shared<math::TensorWrapper<T>>(
-        lhs->getData()->add(rhsScalar));
-
-    auto resNode = std::make_shared<ComputeNode<T>>(
-        lhs, rhs, resData, common::Operator::Add, nullptr);
-
-    std::weak_ptr<ComputeNode<T>> weakRes = resNode;
-    std::weak_ptr<ComputeNode<T>> weakLhs = lhs;
-    std::weak_ptr<ComputeNode<T>> weakRhs = rhs;
-
-    resNode->setGradFun([weakLhs, weakRhs, weakRes]() {
-        auto res = weakRes.lock();
-        auto lhs = weakLhs.lock();
-        auto rhs = weakRhs.lock();
-        if (res && lhs && rhs) {
-            auto gradPtr = res->getGrad();
-            if (lhs->getRequiresGrad()) {
-                lhs->accumulateGrad(gradPtr);
-                //lhs->backward();
-            }
-            if (rhs->getRequiresGrad()) {
-                auto scalarGrad = std::make_shared<math::TensorWrapper<T>>(
-                    math::TensorShape({}),
-                    gradPtr->sum(),
-                    rhs->getData()->getDevice());
-                rhs->accumulateGrad(scalarGrad);
-                //rhs->backward();
-            }
-        }
-    });
-    return resNode;
+    return add(lhs, createScalarNode(rhsScalar, lhs));
 }
 
 template <typename T>
@@ -123,4 +77,3 @@ add(const T& lhsScalar, const std::shared_ptr<ComputeNode<T>>& rhs) {
 } // namespace hahaha::compute
 
 #endif // HAHAHA_COMPUTE_COMPUTE_FUN_ADD_H
-

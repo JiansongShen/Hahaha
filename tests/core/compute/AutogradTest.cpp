@@ -329,9 +329,9 @@ TEST_F(AutogradTest, TwoDim_DivideScalar) {
 }
 
 TEST_F(AutogradTest, TwoDim_ScalarSubtractTensor) {
-    Tensor<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    Tensor a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    constexpr float scalar = 10.0f;
     a.setRequiresGrad(true);
-    float scalar = 10.0f;
 
     auto c = scalar - a;
     EXPECT_FLOAT_EQ(c.at({0, 0}), 9.0f);
@@ -347,7 +347,7 @@ TEST_F(AutogradTest, TwoDim_ScalarSubtractTensor) {
 TEST_F(AutogradTest, TwoDim_ScalarDivideTensor) {
     Tensor<float> a(NestedData<float>{{2.0f, 4.0f}, {5.0f, 10.0f}});
     a.setRequiresGrad(true);
-    float scalar = 20.0f;
+    constexpr float scalar = 20.0f;
 
     auto c = scalar / a;
     EXPECT_FLOAT_EQ(c.at({0, 0}), 10.0f);
@@ -675,7 +675,8 @@ TEST_F(AutogradTest, Reshape_Backward_PropagatesNonUniformGrad) {
     a.setRequiresGrad(true);
 
     auto b = a.reshape({3, 2});
-    Tensor<float> w(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}, {50.0f, 60.0f}});
+    Tensor<float> w(
+        NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}, {50.0f, 60.0f}});
     auto c = b * w;
     c.backward();
 
@@ -685,7 +686,8 @@ TEST_F(AutogradTest, Reshape_Backward_PropagatesNonUniformGrad) {
     EXPECT_EQ(a.grad()->getShape()[1], 3);
 
     // b.grad should be w (since d(b*w)/db = w), then reshaped back to (2,3)
-    // flatten(w) = [10,20,30,40,50,60] -> reshape(2,3) = [[10,20,30],[40,50,60]]
+    // flatten(w) = [10,20,30,40,50,60] -> reshape(2,3) =
+    // [[10,20,30],[40,50,60]]
     EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 10.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({0, 1}), 20.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({0, 2}), 30.0f);
@@ -701,7 +703,8 @@ TEST_F(AutogradTest, Transpose_Backward_PropagatesNonUniformGrad) {
     a.setRequiresGrad(true);
 
     auto b = a.transpose(); // (3,2)
-    Tensor<float> w(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}});
+    Tensor<float> w(
+        NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}});
     auto c = b * w;
     c.backward();
 
