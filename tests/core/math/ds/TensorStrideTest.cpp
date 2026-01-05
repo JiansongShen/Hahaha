@@ -30,14 +30,14 @@ class TensorStrideTest : public ::testing::Test {};
 TEST_F(TensorStrideTest, StrideFromVector1D) {
     std::vector<size_t> dims = {5};
     TensorStride stride(dims);
-    ASSERT_EQ(stride.getSize(), 1);
+    ASSERT_EQ(stride.getStrideSize(), 1);
     ASSERT_EQ(stride[0], 1);
 }
 
 TEST_F(TensorStrideTest, StrideFromVector2D) {
     std::vector<size_t> dims = {3, 4};
     TensorStride stride(dims);
-    ASSERT_EQ(stride.getSize(), 2);
+    ASSERT_EQ(stride.getStrideSize(), 2);
     ASSERT_EQ(stride[0], 4);
     ASSERT_EQ(stride[1], 1);
 }
@@ -45,7 +45,7 @@ TEST_F(TensorStrideTest, StrideFromVector2D) {
 TEST_F(TensorStrideTest, StrideFromVector3D) {
     std::vector<size_t> dims = {2, 3, 4};
     TensorStride stride(dims);
-    ASSERT_EQ(stride.getSize(), 3);
+    ASSERT_EQ(stride.getStrideSize(), 3);
     ASSERT_EQ(stride[0], 12);
     ASSERT_EQ(stride[1], 4);
     ASSERT_EQ(stride[2], 1);
@@ -54,7 +54,7 @@ TEST_F(TensorStrideTest, StrideFromVector3D) {
 TEST_F(TensorStrideTest, StrideFromShape) {
     TensorShape shape({2, 3, 4});
     TensorStride stride(shape);
-    ASSERT_EQ(stride.getSize(), 3);
+    ASSERT_EQ(stride.getStrideSize(), 3);
     ASSERT_EQ(stride[0], 12);
     ASSERT_EQ(stride[1], 4);
     ASSERT_EQ(stride[2], 1);
@@ -63,12 +63,23 @@ TEST_F(TensorStrideTest, StrideFromShape) {
 TEST_F(TensorStrideTest, EmptyStride) {
     TensorShape shape({});
     TensorStride stride(shape);
-    ASSERT_EQ(stride.getSize(), 0);
+    ASSERT_EQ(stride.getStrideSize(), 0);
+}
+
+TEST_F(TensorStrideTest, ToString_EmptyStride) {
+    TensorStride stride(TensorShape({}));
+    ASSERT_EQ(stride.toString(), "[]");
 }
 
 TEST_F(TensorStrideTest, ToString) {
     TensorStride stride(TensorShape({2, 3}));
     ASSERT_EQ(stride.toString(), "[3, 1]");
+}
+
+TEST_F(TensorStrideTest, Reverse_EmptyStride_NoThrow) {
+    TensorStride stride(TensorShape({}));
+    EXPECT_NO_THROW(stride.reverse());
+    EXPECT_EQ(stride.getStrideSize(), 0);
 }
 
 TEST_F(TensorStrideTest, Reverse) {
@@ -99,4 +110,12 @@ TEST_F(TensorStrideTest, atConst) {
     const TensorStride stride(TensorShape({2, 3}));
     ASSERT_EQ(stride.at(0), 3);
     ASSERT_EQ(stride.at(1), 1);
+}
+
+TEST_F(TensorStrideTest, getStrides_MutableAccess_AllowsEdit) {
+    TensorStride stride(TensorShape({2, 3}));
+    auto& strides = stride.getStrides();
+    ASSERT_EQ(strides.size(), 2);
+    strides[0] = 999;
+    EXPECT_EQ(stride[0], 999);
 }
