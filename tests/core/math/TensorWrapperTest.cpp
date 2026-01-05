@@ -371,6 +371,20 @@ TEST_F(TensorWrapperTest, InPlaceAdd_Scalar_CorrectResult) {
     EXPECT_EQ(tensor.at({0, 1}), 4.0f);
 }
 
+TEST_F(TensorWrapperTest, InPlaceSubtract_TwoTensors_CorrectResult) {
+    TensorWrapper<int> t1(NestedData<int>{{10, 20}, {30, 40}});
+    TensorWrapper<int> t2(NestedData<int>{{1, 2}, {3, 4}});
+    t1 -= t2;
+    EXPECT_EQ(t1.at({0, 0}), 9);
+    EXPECT_EQ(t1.at({1, 1}), 36);
+}
+
+TEST_F(TensorWrapperTest, InPlaceSubtract_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
+    TensorWrapper<int> t1(NestedData<int>{{1, 2}});
+    TensorWrapper<int> t2(NestedData<int>{1, 2, 3});
+    EXPECT_THROW(t1 -= t2, std::invalid_argument);
+}
+
 TEST_F(TensorWrapperTest, InPlaceSubtract_Scalar_CorrectResult) {
     TensorWrapper<float> tensor(NestedData<float>{{5.0f, 6.0f}});
     tensor -= 1.0f;
@@ -378,11 +392,45 @@ TEST_F(TensorWrapperTest, InPlaceSubtract_Scalar_CorrectResult) {
     EXPECT_EQ(tensor.at({0, 1}), 5.0f);
 }
 
+TEST_F(TensorWrapperTest, InPlaceMultiply_TwoTensors_CorrectResult) {
+    TensorWrapper<int> t1(NestedData<int>{{1, 2}, {3, 4}});
+    TensorWrapper<int> t2(NestedData<int>{{5, 6}, {7, 8}});
+    t1 *= t2;
+    EXPECT_EQ(t1.at({0, 0}), 5);
+    EXPECT_EQ(t1.at({1, 1}), 32);
+}
+
+TEST_F(TensorWrapperTest, InPlaceMultiply_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
+    TensorWrapper<int> t1(NestedData<int>{{1, 2}});
+    TensorWrapper<int> t2(NestedData<int>{1, 2, 3});
+    EXPECT_THROW(t1 *= t2, std::invalid_argument);
+}
+
 TEST_F(TensorWrapperTest, InPlaceMultiply_Scalar_CorrectResult) {
     TensorWrapper<float> tensor(NestedData<float>{{1.0f, 2.0f}});
     tensor *= 3.0f;
     EXPECT_EQ(tensor.at({0, 0}), 3.0f);
     EXPECT_EQ(tensor.at({0, 1}), 6.0f);
+}
+
+TEST_F(TensorWrapperTest, InPlaceDivide_TwoTensors_CorrectResult) {
+    TensorWrapper<float> t1(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}});
+    TensorWrapper<float> t2(NestedData<float>{{2.0f, 4.0f}, {5.0f, 10.0f}});
+    t1 /= t2;
+    EXPECT_FLOAT_EQ(t1.at({0, 0}), 5.0f);
+    EXPECT_FLOAT_EQ(t1.at({1, 1}), 4.0f);
+}
+
+TEST_F(TensorWrapperTest, InPlaceDivide_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
+    TensorWrapper<float> t1(NestedData<float>{{1.0f, 2.0f}});
+    TensorWrapper<float> t2(NestedData<float>{1.0f, 2.0f, 3.0f});
+    EXPECT_THROW(t1 /= t2, std::invalid_argument);
+}
+
+TEST_F(TensorWrapperTest, InPlaceDivide_TwoTensors_DivisionByZero_ThrowsRuntimeError) {
+    TensorWrapper<float> t1(NestedData<float>{{1.0f, 2.0f}});
+    TensorWrapper<float> t2(NestedData<float>{{0.0f, 1.0f}});
+    EXPECT_THROW(t1 /= t2, std::runtime_error);
 }
 
 TEST_F(TensorWrapperTest, InPlaceDivide_Scalar_CorrectResult) {
@@ -414,6 +462,20 @@ TEST_F(TensorWrapperTest, Sum_CorrectResultForFloatTensor) {
 TEST_F(TensorWrapperTest, Sum_CorrectResultForIntTensor) {
     TensorWrapper<int> tensor(NestedData<int>{1, 2, 3, 4, 5});
     EXPECT_EQ(tensor.sum(), 15);
+}
+
+TEST_F(TensorWrapperTest, Sum_WithAxes_EmptyAxes_ReturnsClone) {
+    TensorWrapper<int> tensor(NestedData<int>{{1, 2}, {3, 4}});
+    auto res = tensor.sum({});
+    EXPECT_EQ(res.getShape(), tensor.getShape());
+    EXPECT_EQ(res.at({0, 0}), 1);
+    tensor.at({0, 0}) = 100;
+    EXPECT_EQ(res.at({0, 0}), 1); // clone, not view
+}
+
+TEST_F(TensorWrapperTest, Sum_WithAxes_InvalidAxis_ThrowsInvalidArgument) {
+    TensorWrapper<int> tensor(NestedData<int>{{1, 2}, {3, 4}}); // rank 2
+    EXPECT_THROW(tensor.sum({2}), std::invalid_argument);
 }
 
 // --- Transformation Operations ---
@@ -491,6 +553,15 @@ TEST_F(TensorWrapperTest, To_DifferentDevice_NotImplemented_ThrowsRuntimeError) 
     EXPECT_THROW(tensor.to(Device(DeviceType::GPU, 0)), std::runtime_error);
 }
 
+TEST_F(TensorWrapperTest, DeviceMismatch_ThrowsInvalidArgument) {
+    TensorWrapper<float> a(TensorShape({2, 2}), 1.0f, Device(DeviceType::CPU, 0));
+    TensorWrapper<float> b(TensorShape({2, 2}), 1.0f, Device(DeviceType::SIMD, 0));
+    EXPECT_THROW(a + b, std::invalid_argument);
+    EXPECT_THROW(a - b, std::invalid_argument);
+    EXPECT_THROW(a * b, std::invalid_argument);
+    EXPECT_THROW(a / b, std::invalid_argument);
+}
+
 TEST_F(TensorWrapperTest, Clear_OnEmptyTensor_NoThrow) {
     TensorWrapper<int> tensor;
     EXPECT_NO_THROW(tensor.clear());
@@ -556,4 +627,66 @@ TEST_F(TensorWrapperTest, ScalarTensorTensorOps_TwoScalars_Work) {
     EXPECT_FLOAT_EQ(diff.at({}), -1.0f);
     EXPECT_FLOAT_EQ(prod.at({}), 6.0f);
     EXPECT_FLOAT_EQ(quot.at({}), 1.5f);
+}
+
+TEST_F(TensorWrapperTest, Clone_CreatesDeepCopy) {
+    TensorWrapper<int> original(NestedData<int>{{1, 2}, {3, 4}});
+    auto copy = original.clone();
+    EXPECT_EQ(copy.at({0, 0}), 1);
+    original.at({0, 0}) = 100;
+    EXPECT_EQ(copy.at({0, 0}), 1); // Copy should not change
+}
+
+TEST_F(TensorWrapperTest, Sum_WithAxes_ReducesCorrectly) {
+    TensorWrapper<int> tensor(NestedData<int>{{1, 2, 3}, {4, 5, 6}}); // 2x3
+    // Sum over axis 0: {1+4, 2+5, 3+6} = {5, 7, 9}
+    auto sum0 = tensor.sum({0});
+    EXPECT_EQ(sum0.getShape().size(), 1);
+    EXPECT_EQ(sum0.getShape()[0], 3);
+    EXPECT_EQ(sum0.at({0}), 5);
+    EXPECT_EQ(sum0.at({2}), 9);
+
+    // Sum over axis 1: {1+2+3, 4+5+6} = {6, 15}
+    auto sum1 = tensor.sum({1});
+    EXPECT_EQ(sum1.getShape().size(), 1);
+    EXPECT_EQ(sum1.getShape()[0], 2);
+    EXPECT_EQ(sum1.at({0}), 6);
+    EXPECT_EQ(sum1.at({1}), 15);
+}
+
+TEST_F(TensorWrapperTest, Sum_WithAxes_KeepDims) {
+    TensorWrapper<int> tensor(NestedData<int>{{1, 2, 3}, {4, 5, 6}}); // 2x3
+    // Sum over axis 0, keep dims: shape {1, 3}
+    auto sum0 = tensor.sum({0}, true);
+    EXPECT_EQ(sum0.getShape().size(), 2);
+    EXPECT_EQ(sum0.getShape()[0], 1);
+    EXPECT_EQ(sum0.getShape()[1], 3);
+    EXPECT_EQ(sum0.at({0, 0}), 5);
+}
+
+TEST_F(TensorWrapperTest, Sum_WithAxes_KeepDimsFalse_ReducesRank) {
+    // This specifically tests the bug I fixed: keepDims=false should remove the dimension
+    TensorWrapper<int> tensor(NestedData<int>{{1, 2}, {3, 4}}); // 2x2
+    auto sum0 = tensor.sum({0}, false); // Should be {2}
+    EXPECT_EQ(sum0.getShape().size(), 1);
+    EXPECT_EQ(sum0.getShape()[0], 2);
+}
+
+TEST_F(TensorWrapperTest, Axpy_UpdatesInPlace) {
+    // y = a * x + y
+    TensorWrapper<float> x(NestedData<float>{1.0f, 2.0f});
+    TensorWrapper<float> y(NestedData<float>{3.0f, 4.0f});
+    float a = 2.0f;
+    
+    y.axpy(a, x); // y = 2*x + y = {2+3, 4+4} = {5, 8}
+    
+    EXPECT_EQ(y.at({0}), 5.0f);
+    EXPECT_EQ(y.at({1}), 8.0f);
+    EXPECT_EQ(x.at({0}), 1.0f); // x unchanged
+}
+
+TEST_F(TensorWrapperTest, Axpy_ShapeMismatch_Throws) {
+    TensorWrapper<float> x(NestedData<float>{1.0f});
+    TensorWrapper<float> y(NestedData<float>{3.0f, 4.0f});
+    EXPECT_THROW(y.axpy(1.0f, x), std::invalid_argument);
 }
