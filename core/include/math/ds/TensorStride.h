@@ -94,7 +94,7 @@ class TensorStride {
      * @brief Return the number of dimensions.
      * @return size_t dimension count.
      */
-    [[nodiscard]] size_t getSize() const {
+    [[nodiscard]] size_t getStrideSize() const {
         return strides_.size();
     }
 

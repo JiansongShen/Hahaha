@@ -33,6 +33,7 @@ enum class Operator {
     Mul,       /**< Element-wise multiplication. */
     MatMul,    /**< Matrix multiplication (dot product). */
     Div,       /**< Element-wise division. */
+    Broadcast, /**< Broadcast operator. */
     Pow,       /**< Power operation (x^y). */
     Sqrt,      /**< Square root. */
     Exp,       /**< Exponential (e^x). */
