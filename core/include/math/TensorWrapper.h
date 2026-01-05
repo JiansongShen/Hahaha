@@ -1,22 +1,3 @@
-// Copyright (c) 2025 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// Contributors:
-// Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
-// jiansongshen (jason.shen111@outlook.com ) (https://github.com/jiansongshen )
-//
-
 #ifndef HAHAHA_MATH_TENSOR_WRAPPER_H
 #define HAHAHA_MATH_TENSOR_WRAPPER_H
 
@@ -143,6 +124,14 @@ template <typename T> class TensorWrapper {
      * @return Reference to the shared_ptr holding the data array.
      */
     std::shared_ptr<T[]>& getRawData() {
+        return data_.getData();
+    }
+
+    /**
+     * @brief Get a const reference to the raw data pointer.
+     * @return Const Reference to the shared_ptr holding the data array.
+     */
+    const std::shared_ptr<T[]>& getRawData() const {
         return data_.getData();
     }
 
@@ -673,12 +662,110 @@ template <typename T> class TensorWrapper {
         return result;
     }
 
-    // TensorWrapper sum(size_t axis) {
-    //     auto newShape = data_.getShape();
-    //     TensorWrapper result;
+    TensorWrapper clone() const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setDevice(data_.getDevice());
+        result.data_.setData(std::make_shared<T[]>(getTotalSize()));
+        for (size_t i = 0; i < getTotalSize(); ++i) {
+            result.data_.getData()[i] = data_[i];
+        }
+        return result;
+    }
 
-    //     return result;
-    // }
+    TensorWrapper sum(std::vector<size_t> axes,
+                      const bool keepDims = false) const {
+        if (axes.empty()) {
+            return this->clone();
+        }
+
+        std::ranges::sort(axes);
+        axes.erase(std::ranges::unique(axes).begin(), axes.end());
+        if (axes.size() == this->getShape().size()) {
+            TensorWrapper result;
+            result.data_.setShape(TensorShape({}));
+            result.data_.setStride(TensorStride(result.data_.getShape()));
+            result.data_.setData(std::make_shared<T[]>(1));
+            result.getRawData().get()[0] = this->sum();
+            return result;
+        }
+
+        // 1. get target shape
+        std::vector<bool> isReduced;
+        const std::vector<size_t>& srcShape = getShape();
+        std::vector<size_t> resShape;
+
+        isReduced.resize(srcShape.size(), false);
+        for (const unsigned long axe : axes) {
+            if (axe > isReduced.size() - 1) {
+                throw std::invalid_argument("axis is too big!");
+            }
+            isReduced[axe] = true;
+        }
+
+        for (size_t i = 0; i < srcShape.size(); ++i) {
+            // if sum for this dim, then remove it or set 1 in resShape
+            if (isReduced[i]) {
+                if (keepDims) {
+                    resShape.push_back(1);
+                }
+                continue;
+            }
+            // if not then just add dim
+            resShape.push_back(srcShape[i]);
+        }
+
+        // 2. calculate necessary datas
+        // need to calculate
+        // a. how many should dstIdx reduce when it needs to reduce
+        //      when coord carries at a position(current value on position is a)
+        //          if this pos is not reduced, then dstIdx should minus
+        //              a * correspondStride
+        //          if this pos is reduced, then do nothing,
+        // b. how many value should dstIdx add when it needs to add
+        //      when coord increases at a position,
+        //          if this pos is not reduced, then dstIdx should add a value
+        //              equals to the stride
+        //          if this pos is reduced, then dstIdx will add nothing
+        std::vector<size_t> resStride(srcShape.size(), 0);
+        TensorWrapper result((TensorShape(resShape)));
+        auto resultStride = result.getStride().getStrides();
+        size_t resultStrideIdx = 0;
+        for (size_t i = 0; i < srcShape.size(); ++i) {
+            if (isReduced[i]) {
+                if (keepDims) {
+                    resultStrideIdx++;
+                }
+            } else {
+                resStride[i] = resultStride[resultStrideIdx++];
+            }
+        }
+
+        // 3. calculate data to result
+        const T* srcPtr = getRawData().get();
+        T* resPtr = result.getRawData().get();
+        std::vector<size_t> coord(srcShape.size(), 0);
+        size_t dstIdx = 0;
+
+        for (size_t srcIdx = 0; srcIdx < getTotalSize(); ++srcIdx) {
+            resPtr[dstIdx] += srcPtr[srcIdx];
+
+            for (long i = static_cast<long>(coord.size() - 1); i >= 0; --i) {
+                ++coord[i];
+                // need to carry, next value on position will add one
+                if (coord[i] == srcShape[i]) {
+                    coord[i] = 0;
+                    dstIdx -= resStride[i] * (srcShape[i] - 1);
+                    continue;
+                }
+                dstIdx += resStride[i];
+                break;
+            }
+        }
+
+        return result;
+    }
 
     /**
      * @brief Clean all the value of the tensor, set to default value (likely
@@ -702,10 +789,12 @@ template <typename T> class TensorWrapper {
      */
     TensorWrapper broadcastTo(const TensorShape& newShape) {
 
-        auto broadcasted = TensorShape::broadcastShape(this->data_.getShape(), newShape);
+        auto broadcasted =
+            TensorShape::broadcastShape(this->data_.getShape(), newShape);
         if (!broadcasted.has_value() || TensorShape(*broadcasted) != newShape) {
-            throw std::invalid_argument("Cannot broadcast shape " +
-                this->data_.getShape().toString() + " to " + newShape.toString());
+            throw std::invalid_argument("Cannot broadcast shape "
+                                        + this->data_.getShape().toString()
+                                        + " to " + newShape.toString());
         }
 
         TensorWrapper result;

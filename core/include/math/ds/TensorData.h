@@ -81,7 +81,7 @@ template <typename T> class TensorData {
     explicit TensorData(const TensorShape& shape,
                         const backend::Device device = backend::Device())
         : shape_(shape), stride_(shape), device_(device) {
-        size_t size = shape_.getTotalSize();
+        const size_t size = shape_.getTotalSize();
         if (device_.type == backend::DeviceType::CPU
             || device_.type == backend::DeviceType::SIMD) {
             data_ = std::make_shared<T[]>(size);

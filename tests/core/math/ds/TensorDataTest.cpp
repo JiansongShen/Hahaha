@@ -92,7 +92,7 @@ TEST_F(TensorDataTest, InitVecConstructor_Creates1DTensor) {
     TensorData<int> td(vec);
     EXPECT_EQ(td.getShape().getDims().size(), 1);
     EXPECT_EQ(td.getShape().getDims()[0], 3);
-    EXPECT_EQ(td.getStride().getSize(), 1);
+    EXPECT_EQ(td.getStride().getStrideSize(), 1);
     EXPECT_EQ(td.getStride()[0], 1);
     EXPECT_EQ(td.getData()[0], 7);
     EXPECT_EQ(td.getData()[2], 9);
@@ -105,7 +105,7 @@ TEST_F(TensorDataTest, ShapeValueConstructor) {
     for (size_t i = 0; i < 6; ++i) {
         EXPECT_EQ(tensor_data.getData()[i], 7);
     }
-    EXPECT_EQ(tensor_data.getStride().getSize(), 2);
+    EXPECT_EQ(tensor_data.getStride().getStrideSize(), 2);
     EXPECT_EQ(tensor_data.getStride()[0], 3);
     EXPECT_EQ(tensor_data.getStride()[1], 1);
 }
@@ -123,7 +123,7 @@ TEST_F(TensorDataTest, CopyConstructor) {
     TensorData<int> copied(original);
 
     EXPECT_EQ(copied.getShape(), original.getShape());
-    EXPECT_EQ(copied.getStride().getSize(), original.getStride().getSize());
+    EXPECT_EQ(copied.getStride().getStrideSize(), original.getStride().getStrideSize());
     for (size_t i = 0; i < original.getShape().getTotalSize(); ++i) {
         EXPECT_EQ(copied.getData()[i], original.getData()[i]);
     }
