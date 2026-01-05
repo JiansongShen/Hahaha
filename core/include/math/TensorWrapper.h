@@ -1,22 +1,3 @@
-// Copyright (c) 2025 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// Contributors:
-// Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
-// jiansongshen (jason.shen111@outlook.com ) (https://github.com/jiansongshen )
-//
-
 #ifndef HAHAHA_MATH_TENSOR_WRAPPER_H
 #define HAHAHA_MATH_TENSOR_WRAPPER_H
 
@@ -140,9 +121,17 @@ template <typename T> class TensorWrapper {
 
     /**
      * @brief Get a reference to the raw data pointer.
-     * @return Reference to the unique_ptr holding the data array.
+     * @return Reference to the shared_ptr holding the data array.
      */
-    std::unique_ptr<T[]>& getRawData() {
+    std::shared_ptr<T[]>& getRawData() {
+        return data_.getData();
+    }
+
+    /**
+     * @brief Get a const reference to the raw data pointer.
+     * @return Const Reference to the shared_ptr holding the data array.
+     */
+    const std::shared_ptr<T[]>& getRawData() const {
         return data_.getData();
     }
 
@@ -171,6 +160,14 @@ template <typename T> class TensorWrapper {
      */
     [[nodiscard]] const TensorStride& getStride() const {
         return data_.getStride();
+    }
+
+    /**
+     * @brief Set the tensor's strides.
+     * @param stride The new strides.
+     */
+    void setStride(const TensorStride& stride) {
+        data_.setStride(stride);
     }
 
     /**
@@ -226,9 +223,10 @@ template <typename T> class TensorWrapper {
 
         size_t linearIdx = 0;
         const auto* idxIt = indices.begin();
-        const auto& strideDims = data_.getStride().getDims();
+        const auto& strideDims = data_.getStride().getStrides();
 
-        for (size_t i = 0; i < shapeDims.size(); ++i) {
+        auto dimsSize = shapeDims.size();
+        for (size_t i = 0; i < dimsSize; ++i) {
             size_t dimIdx = *idxIt;
             if (dimIdx >= shapeDims[i]) {
                 throw std::out_of_range("Index out of bounds at dimension "
@@ -253,7 +251,7 @@ template <typename T> class TensorWrapper {
 
         size_t linearIdx = 0;
         const auto* idxIt = indices.begin();
-        const auto& strideDims = data_.getStride().getDims();
+        const auto& strideDims = data_.getStride().getStrides();
 
         for (size_t i = 0; i < shapeDims.size(); ++i) {
             size_t dimIdx = *idxIt;
@@ -272,11 +270,11 @@ template <typename T> class TensorWrapper {
      * Total size must remain invariant.
      *
      * @param newShape Vector of new dimension sizes.
-     * @return TensorWrapper<T> A new tensor with reshaped dimensions.
+     * @return TensorWrapper A new tensor with reshaped dimensions.
      */
-    TensorWrapper<T> reshape(const std::vector<size_t>& newShape) const {
+    TensorWrapper reshape(const std::vector<size_t>& newShape) const {
         size_t totalSize = std::accumulate(
-            newShape.begin(), newShape.end(), 1ULL, std::multiplies<size_t>());
+            newShape.begin(), newShape.end(), 1ULL, std::multiplies());
         if (totalSize != getTotalSize()) {
             throw std::invalid_argument("New shape total size ("
                                         + std::to_string(totalSize)
@@ -284,7 +282,7 @@ template <typename T> class TensorWrapper {
                                         + std::to_string(getTotalSize()) + ")");
         }
 
-        TensorWrapper<T> result;
+        TensorWrapper result;
         result.data_.setShape(TensorShape(newShape));
         result.data_.setStride(TensorStride(result.data_.getShape()));
 
@@ -311,9 +309,9 @@ template <typename T> class TensorWrapper {
      * Formula: res[i] = a[i] + b[i]
      *
      * @param other The tensor to add.
-     * @return TensorWrapper<T> result tensor.
+     * @return TensorWrapper result tensor.
      */
-    TensorWrapper<T> add(const TensorWrapper<T>& other) const {
+    TensorWrapper add(const TensorWrapper& other) const {
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.add(data_.getData()[0]);
         }
@@ -321,7 +319,7 @@ template <typename T> class TensorWrapper {
             return add(other.data_.getData()[0]);
         }
         if (getTotalSize() == 1 && other.getTotalSize() == 1) {
-            TensorWrapper<T> result;
+            TensorWrapper result;
             result.data_.setShape(data_.getShape());
             result.data_.setStride(data_.getStride());
             result.data_.setDevice(data_.getDevice());
@@ -338,7 +336,7 @@ template <typename T> class TensorWrapper {
 
         checkSameDevice(other);
 
-        TensorWrapper<T> result;
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -356,9 +354,9 @@ template <typename T> class TensorWrapper {
      * Formula: res[i] = a[i] - b[i]
      *
      * @param other The tensor to subtract.
-     * @return TensorWrapper<T> result tensor.
+     * @return TensorWrapper result tensor.
      */
-    TensorWrapper<T> subtract(const TensorWrapper<T>& other) const {
+    TensorWrapper subtract(const TensorWrapper& other) const {
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.subtractFrom(data_.getData()[0]);
         }
@@ -366,7 +364,7 @@ template <typename T> class TensorWrapper {
             return subtract(other.data_.getData()[0]);
         }
         if (getTotalSize() == 1 && other.getTotalSize() == 1) {
-            TensorWrapper<T> result;
+            TensorWrapper result;
             result.data_.setShape(data_.getShape());
             result.data_.setStride(data_.getStride());
             result.data_.setDevice(data_.getDevice());
@@ -383,7 +381,7 @@ template <typename T> class TensorWrapper {
 
         checkSameDevice(other);
 
-        TensorWrapper<T> result;
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -401,9 +399,9 @@ template <typename T> class TensorWrapper {
      * Formula: res[i] = a[i] * b[i]
      *
      * @param other The tensor to multiply.
-     * @return TensorWrapper<T> result tensor.
+     * @return TensorWrapper result tensor.
      */
-    TensorWrapper<T> multiply(const TensorWrapper<T>& other) const {
+    TensorWrapper multiply(const TensorWrapper& other) const {
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.multiply(data_.getData()[0]);
         }
@@ -411,7 +409,7 @@ template <typename T> class TensorWrapper {
             return multiply(other.data_.getData()[0]);
         }
         if (getTotalSize() == 1 && other.getTotalSize() == 1) {
-            TensorWrapper<T> result;
+            TensorWrapper result;
             result.data_.setShape(data_.getShape());
             result.data_.setStride(data_.getStride());
             result.data_.setDevice(data_.getDevice());
@@ -428,7 +426,7 @@ template <typename T> class TensorWrapper {
 
         checkSameDevice(other);
 
-        TensorWrapper<T> result;
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -446,9 +444,9 @@ template <typename T> class TensorWrapper {
      * Formula: res[i] = a[i] / b[i]
      *
      * @param other The tensor to divide.
-     * @return TensorWrapper<T> result tensor.
+     * @return TensorWrapper result tensor.
      */
-    TensorWrapper<T> divide(const TensorWrapper<T>& other) const {
+    TensorWrapper divide(const TensorWrapper& other) const {
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.divideInto(data_.getData()[0]);
         }
@@ -459,7 +457,7 @@ template <typename T> class TensorWrapper {
             if (other.data_.getData()[0] == T(0)) {
                 throw std::runtime_error("Division by zero");
             }
-            TensorWrapper<T> result;
+            TensorWrapper result;
             result.data_.setShape(data_.getShape());
             result.data_.setStride(data_.getStride());
             result.data_.setDevice(data_.getDevice());
@@ -476,7 +474,7 @@ template <typename T> class TensorWrapper {
 
         checkSameDevice(other);
 
-        TensorWrapper<T> result;
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -491,8 +489,8 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Scalar addition.
      */
-    TensorWrapper<T> add(T scalar) const {
-        TensorWrapper<T> result;
+    TensorWrapper add(T scalar) const {
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -507,8 +505,8 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Scalar subtraction.
      */
-    TensorWrapper<T> subtract(T scalar) const {
-        TensorWrapper<T> result;
+    TensorWrapper subtract(T scalar) const {
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -523,8 +521,8 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Scalar multiplication.
      */
-    TensorWrapper<T> multiply(T scalar) const {
-        TensorWrapper<T> result;
+    TensorWrapper multiply(T scalar) const {
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -539,8 +537,8 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Scalar division.
      */
-    TensorWrapper<T> divide(T scalar) const {
-        TensorWrapper<T> result;
+    TensorWrapper divide(T scalar) const {
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -555,8 +553,8 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Subtraction from scalar (scalar - tensor).
      */
-    TensorWrapper<T> subtractFrom(T scalar) const {
-        TensorWrapper<T> result;
+    TensorWrapper subtractFrom(T scalar) const {
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -571,8 +569,8 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Division into scalar (scalar / tensor).
      */
-    TensorWrapper<T> divideInto(T scalar) const {
-        TensorWrapper<T> result;
+    TensorWrapper divideInto(T scalar) const {
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         result.data_.setDevice(data_.getDevice());
@@ -591,7 +589,7 @@ template <typename T> class TensorWrapper {
      * where A is (M x K) and B is (K x N).
      *
      * @param other The tensor to multiply with.
-     * @return TensorWrapper<T> result tensor.
+     * @return TensorWrapper result tensor.
      */
     TensorWrapper matmul(const TensorWrapper& other) const {
         if (getDimensions() != 2 || other.getDimensions() != 2) {
@@ -616,7 +614,7 @@ template <typename T> class TensorWrapper {
         size_t rows = thisDims[0];
         size_t cols = otherDims[1];
 
-        TensorWrapper<T> result;
+        TensorWrapper result;
         result.data_.setShape(TensorShape({rows, cols}));
         result.data_.setStride(TensorStride(result.data_.getShape()));
         result.data_.setDevice(data_.getDevice());
@@ -633,9 +631,9 @@ template <typename T> class TensorWrapper {
      *
      * Formula: B[j, i] = A[i, j]
      *
-     * @return TensorWrapper<T> transposed tensor.
+     * @return TensorWrapper transposed tensor.
      */
-    TensorWrapper<T> transpose() const {
+    TensorWrapper transpose() const {
         if (getDimensions() != 2) {
             throw std::invalid_argument(
                 "transpose is only implemented for 2D tensors for now");
@@ -645,7 +643,7 @@ template <typename T> class TensorWrapper {
         size_t rows = shapeDims[0];
         size_t cols = shapeDims[1];
 
-        TensorWrapper<T> result;
+        TensorWrapper result;
         result.data_.setShape(TensorShape({cols, rows}));
         result.data_.setStride(TensorStride(result.data_.getShape()));
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
@@ -665,10 +663,115 @@ template <typename T> class TensorWrapper {
      */
     T sum() const {
         T result = T(0);
-        auto totalSize = getTotalSize();
+        const auto totalSize = getTotalSize();
         for (size_t i = 0; i < totalSize; ++i) {
             result += data_[i];
         }
+        return result;
+    }
+
+    TensorWrapper clone() const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setDevice(data_.getDevice());
+        result.data_.setData(std::make_shared<T[]>(getTotalSize()));
+        for (size_t i = 0; i < getTotalSize(); ++i) {
+            result.data_.getData()[i] = data_[i];
+        }
+        return result;
+    }
+
+    TensorWrapper sum(std::vector<size_t> axes,
+                      const bool keepDims = false) const {
+        if (axes.empty()) {
+            return this->clone();
+        }
+
+        std::ranges::sort(axes);
+        axes.erase(std::ranges::unique(axes).begin(), axes.end());
+        if (axes.size() == this->getShape().size()) {
+            TensorWrapper result;
+            result.data_.setShape(TensorShape({}));
+            result.data_.setStride(TensorStride(result.data_.getShape()));
+            result.data_.setData(std::make_shared<T[]>(1));
+            result.getRawData().get()[0] = this->sum();
+            return result;
+        }
+
+        // 1. get target shape
+        std::vector<bool> isReduced;
+        const std::vector<size_t>& srcShape = getShape();
+        std::vector<size_t> resShape;
+
+        isReduced.resize(srcShape.size(), false);
+        for (const unsigned long axe : axes) {
+            if (axe > isReduced.size() - 1) {
+                throw std::invalid_argument("axis is too big!");
+            }
+            isReduced[axe] = true;
+        }
+
+        for (size_t i = 0; i < srcShape.size(); ++i) {
+            // if sum for this dim, then remove it or set 1 in resShape
+            if (isReduced[i]) {
+                if (keepDims) {
+                    resShape.push_back(1);
+                }
+                continue;
+            }
+            // if not then just add dim
+            resShape.push_back(srcShape[i]);
+        }
+
+        // 2. calculate necessary datas
+        // need to calculate
+        // a. how many should dstIdx reduce when it needs to reduce
+        //      when coord carries at a position(current value on position is a)
+        //          if this pos is not reduced, then dstIdx should minus
+        //              a * correspondStride
+        //          if this pos is reduced, then do nothing,
+        // b. how many value should dstIdx add when it needs to add
+        //      when coord increases at a position,
+        //          if this pos is not reduced, then dstIdx should add a value
+        //              equals to the stride
+        //          if this pos is reduced, then dstIdx will add nothing
+        std::vector<size_t> resStride(srcShape.size(), 0);
+        TensorWrapper result((TensorShape(resShape)));
+        auto resultStride = result.getStride().getStrides();
+        size_t resultStrideIdx = 0;
+        for (size_t i = 0; i < srcShape.size(); ++i) {
+            if (isReduced[i]) {
+                if (keepDims) {
+                    resultStrideIdx++;
+                }
+            } else {
+                resStride[i] = resultStride[resultStrideIdx++];
+            }
+        }
+
+        // 3. calculate data to result
+        const T* srcPtr = getRawData().get();
+        T* resPtr = result.getRawData().get();
+        std::vector<size_t> coord(srcShape.size(), 0);
+        size_t dstIdx = 0;
+
+        for (size_t srcIdx = 0; srcIdx < getTotalSize(); ++srcIdx) {
+            resPtr[dstIdx] += srcPtr[srcIdx];
+
+            for (long i = static_cast<long>(coord.size() - 1); i >= 0; --i) {
+                ++coord[i];
+                // need to carry, next value on position will add one
+                if (coord[i] == srcShape[i]) {
+                    coord[i] = 0;
+                    dstIdx -= resStride[i] * (srcShape[i] - 1);
+                    continue;
+                }
+                dstIdx += resStride[i];
+                break;
+            }
+        }
+
         return result;
     }
 
@@ -677,7 +780,10 @@ template <typename T> class TensorWrapper {
      * 0).
      */
     void clear() {
-        auto totalSize = data_.getShape().getTotalSize();
+        if (data_.getData() == nullptr) {
+            return;
+        }
+        const auto totalSize = getTotalSize();
         for (size_t i = 0; i < totalSize; ++i) {
             data_[i] = T();
         }
@@ -685,41 +791,83 @@ template <typename T> class TensorWrapper {
 
     /**
      * @brief Broadcast tensor to match the shape of another tensor.
-     * @param other The target tensor for broadcasting.
+     * @param newShape The target tensor shape for broadcasting.
+     * @return the 'new' tensor that has a target shape but a shared data to
+     * this one
      */
-    void broadcast(const TensorWrapper<T>& /*other*/) {
-        throw std::runtime_error("Broadcasting not implemented yet");
+    TensorWrapper broadcastTo(const TensorShape& newShape) {
+
+        auto broadcasted =
+            TensorShape::broadcastShape(this->data_.getShape(), newShape);
+        if (!broadcasted.has_value() || TensorShape(*broadcasted) != newShape) {
+            throw std::invalid_argument("Cannot broadcast shape "
+                                        + this->data_.getShape().toString()
+                                        + " to " + newShape.toString());
+        }
+
+        TensorWrapper result;
+        result.data_ = this->data_.share();
+        if (newShape.getDims().size() < this->getShape().size()) {
+            throw std::invalid_argument(
+                "invalid argument of broadcastTo(), the target shape is "
+                + newShape.toString() + " but current shape is "
+                + this->data_.getShape().toString());
+        }
+
+        TensorStride newStride = this->data_.getStride();
+        auto shapeDiff = newShape.getDims().size() - this->getShape().size();
+        newStride.getStrides().insert(
+            newStride.getStrides().begin(), shapeDiff, 0);
+
+        long newShapeIdx = static_cast<long>(newShape.getDims().size() - 1);
+        long selfShapeIdx = static_cast<long>(this->getShape().size() - 1);
+
+        while (selfShapeIdx >= 0) {
+
+            if (newShape.getDims()[newShapeIdx] != 1
+                && getShape()[selfShapeIdx] == 1) {
+                newStride.getStrides()[newShapeIdx] = 0;
+            }
+
+            --newShapeIdx;
+            --selfShapeIdx;
+        }
+
+        result.data_.setShape(newShape);
+        result.data_.setStride(newStride);
+
+        return result;
     }
 
-    TensorWrapper<T> operator+(const TensorWrapper<T>& other) const {
+    TensorWrapper operator+(const TensorWrapper& other) const {
         return add(other);
     }
-    TensorWrapper<T> operator-(const TensorWrapper<T>& other) const {
+    TensorWrapper operator-(const TensorWrapper& other) const {
         return subtract(other);
     }
-    TensorWrapper<T> operator*(const TensorWrapper<T>& other) const {
+    TensorWrapper operator*(const TensorWrapper& other) const {
         return multiply(other);
     }
-    TensorWrapper<T> operator/(const TensorWrapper<T>& other) const {
+    TensorWrapper operator/(const TensorWrapper& other) const {
         return divide(other);
     }
 
     // Scalar operators
-    TensorWrapper<T> operator+(T scalar) const {
+    TensorWrapper operator+(T scalar) const {
         return add(scalar);
     }
-    TensorWrapper<T> operator-(T scalar) const {
+    TensorWrapper operator-(T scalar) const {
         return subtract(scalar);
     }
-    TensorWrapper<T> operator*(T scalar) const {
+    TensorWrapper operator*(T scalar) const {
         return multiply(scalar);
     }
-    TensorWrapper<T> operator/(T scalar) const {
+    TensorWrapper operator/(T scalar) const {
         return divide(scalar);
     }
 
-    TensorWrapper<T> operator-() const {
-        TensorWrapper<T> result;
+    TensorWrapper operator-() const {
+        TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
         const size_t tensorSize = getTotalSize();
@@ -730,7 +878,7 @@ template <typename T> class TensorWrapper {
         return result;
     }
 
-    TensorWrapper<T>& operator+=(const TensorWrapper<T>& other) {
+    TensorWrapper& operator+=(const TensorWrapper& other) {
         if (other.getTotalSize() == 1) {
             return *this += other.data_.getData()[0];
         }
@@ -750,7 +898,7 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
-    TensorWrapper<T>& operator-=(const TensorWrapper<T>& other) {
+    TensorWrapper& operator-=(const TensorWrapper& other) {
         if (other.getTotalSize() == 1) {
             return *this -= other.data_.getData()[0];
         }
@@ -770,7 +918,7 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
-    TensorWrapper<T>& operator*=(const TensorWrapper<T>& other) {
+    TensorWrapper& operator*=(const TensorWrapper& other) {
         if (other.getTotalSize() == 1) {
             return *this *= other.data_.getData()[0];
         }
@@ -790,7 +938,7 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
-    TensorWrapper<T>& operator/=(const TensorWrapper<T>& other) {
+    TensorWrapper& operator/=(const TensorWrapper& other) {
         if (other.getTotalSize() == 1) {
             return *this /= other.data_.getData()[0];
         }
@@ -813,7 +961,7 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
-    TensorWrapper<T>& operator+=(T scalar) {
+    TensorWrapper& operator+=(T scalar) {
         const size_t tensorSize = getTotalSize();
         for (size_t i = 0; i < tensorSize; ++i) {
             data_.getData()[i] += scalar;
@@ -821,7 +969,7 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
-    TensorWrapper<T>& operator-=(T scalar) {
+    TensorWrapper& operator-=(T scalar) {
         const size_t tensorSize = getTotalSize();
         for (size_t i = 0; i < tensorSize; ++i) {
             data_.getData()[i] -= scalar;
@@ -829,7 +977,7 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
-    TensorWrapper<T>& operator*=(T scalar) {
+    TensorWrapper& operator*=(T scalar) {
         const size_t tensorSize = getTotalSize();
         for (size_t i = 0; i < tensorSize; ++i) {
             data_.getData()[i] *= scalar;
@@ -837,7 +985,7 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
-    TensorWrapper<T>& operator/=(T scalar) {
+    TensorWrapper& operator/=(T scalar) {
         if (scalar == T(0)) {
             throw std::runtime_error("Division by zero");
         }
@@ -854,12 +1002,12 @@ template <typename T> class TensorWrapper {
      * @param alpha Scaling factor
      * @param other Other tensor
      */
-    void axpy(T alpha, const TensorWrapper<T>& other) {
+    void axpy(T alpha, const TensorWrapper& other) {
         if (getShape() != other.getShape()) {
             throw std::invalid_argument("Shape mismatch in axpy");
         }
         checkSameDevice(other);
-        
+
         // Dispatch to backend for hardware-specific optimization
         backend::DeviceComputeDispatcher<T>::dispatchAxpy(alpha, other, *this);
     }
@@ -871,7 +1019,7 @@ template <typename T> class TensorWrapper {
      * @brief Ensure that the other tensor is on the same device.
      * @param other The other tensor to check.
      */
-    void checkSameDevice(const TensorWrapper<T>& other) const {
+    void checkSameDevice(const TensorWrapper& other) const {
         if (getDevice() != other.getDevice()) {
             throw std::invalid_argument(
                 "Tensors must be on the same device for this operation (found "

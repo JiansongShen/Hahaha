@@ -35,7 +35,7 @@ template <typename T> class TensorWrapper;
  * @brief Internal storage class for tensor data and metadata.
  *
  * TensorData manages the raw memory allocation, the shape of the tensor,
- * and the memory strides. It uses std::unique_ptr for automatic memory
+ * and the memory strides. It uses std::shared_ptr for automatic memory
  * management on the CPU. For GPU, a separate memory management strategy
  * would be needed.
  *
@@ -59,12 +59,12 @@ template <typename T> class TensorData {
      */
     TensorData(const TensorShape& shape,
                T initValue,
-               backend::Device device = backend::Device())
+               const backend::Device device = backend::Device())
         : shape_(shape), stride_(shape), device_(device) {
         size_t size = shape_.getTotalSize();
         if (device_.type == backend::DeviceType::CPU
             || device_.type == backend::DeviceType::SIMD) {
-            data_ = std::make_unique<T[]>(size);
+            data_ = std::make_shared<T[]>(size);
             std::fill(data_.get(), data_.get() + size, initValue);
         } else {
             // TODO: Handle GPU allocation using compute::gpu::GpuMemory
@@ -72,18 +72,19 @@ template <typename T> class TensorData {
                 "GPU allocation not yet implemented in TensorData");
         }
     }
+
     /**
      * @brief Construct with given shape and initial value on a specific device.
      * @param shape The shape of the tensor.
      * @param device The device where the data should reside.
      */
     explicit TensorData(const TensorShape& shape,
-                        backend::Device device = backend::Device())
+                        const backend::Device device = backend::Device())
         : shape_(shape), stride_(shape), device_(device) {
-        size_t size = shape_.getTotalSize();
+        const size_t size = shape_.getTotalSize();
         if (device_.type == backend::DeviceType::CPU
             || device_.type == backend::DeviceType::SIMD) {
-            data_ = std::make_unique<T[]>(size);
+            data_ = std::make_shared<T[]>(size);
         } else {
             // TODO: Handle GPU allocation using compute::gpu::GpuMemory
             throw std::runtime_error(
@@ -99,7 +100,7 @@ template <typename T> class TensorData {
         size_t size = shape_.getTotalSize();
         if (device_.type == backend::DeviceType::CPU
             || device_.type == backend::DeviceType::SIMD) {
-            data_ = std::make_unique<T[]>(size);
+            data_ = std::make_shared<T[]>(size);
             std::copy(other.data_.get(), other.data_.get() + size, data_.get());
         } else {
             // TODO: Handle GPU deep copy
@@ -118,7 +119,7 @@ template <typename T> class TensorData {
     }
 
     explicit TensorData(const std::vector<T>& initVec)
-        : data_(std::make_unique<T[]>(initVec.size())),
+        : data_(std::make_shared<T[]>(initVec.size())),
           shape_(TensorShape(std::vector<size_t>{initVec.size()})) {
         stride_ = TensorStride(shape_);
         std::copy(initVec.begin(), initVec.end(), data_.get());
@@ -144,8 +145,17 @@ template <typename T> class TensorData {
         return *this;
     }
 
+    TensorData share() const {
+        TensorData sharedData = TensorData();
+        sharedData.shape_ = shape_;
+        sharedData.stride_ = stride_;
+        sharedData.device_ = device_;
+        sharedData.data_ = data_;
+        return sharedData;
+    }
+
     /**
-     * @brief Destructor. Automatically releases the unique_ptr.
+     * @brief Destructor. Automatically releases the shared_ptr.
      */
     ~TensorData() = default;
 
@@ -154,11 +164,10 @@ template <typename T> class TensorData {
      * lists).
      * @param data The NestedData object containing flattened data and shape.
      */
-    explicit TensorData(NestedData<T>&& data)
-        : shape_(data.getShape()) {
+    explicit TensorData(NestedData<T>&& data) : shape_(data.getShape()) {
         size_t size = data.getFlatData().size();
         if (size > 0) {
-            data_ = std::make_unique<T[]>(size);
+            data_ = std::make_shared<T[]>(size);
             std::copy(data.getFlatData().begin(),
                       data.getFlatData().end(),
                       data_.get());
@@ -170,25 +179,25 @@ template <typename T> class TensorData {
 
     /**
      * @brief Get the raw data pointer.
-     * @return Reference to the unique_ptr holding the data.
+     * @return Reference to the shared_ptr holding the data.
      */
-    std::unique_ptr<T[]>& getData() {
+    std::shared_ptr<T[]>& getData() {
         return data_;
     }
 
     /**
      * @brief Const version of data pointer access.
-     * @return Const reference to the unique_ptr.
+     * @return Const reference to the shared_ptr.
      */
-    const std::unique_ptr<T[]>& getData() const {
+    const std::shared_ptr<T[]>& getData() const {
         return data_;
     }
 
     /**
      * @brief Replace the current data array.
-     * @param data New data array as unique_ptr.
+     * @param data New data array as shared_ptr.
      */
-    void setData(std::unique_ptr<T[]> data) {
+    void setData(std::shared_ptr<T[]> data) {
         data_ = std::move(data);
     }
 
@@ -249,7 +258,7 @@ template <typename T> class TensorData {
     }
 
   private:
-    std::unique_ptr<T[]> data_; /**< Raw heap-allocated data array. */
+    std::shared_ptr<T[]> data_; /**< Raw heap-allocated data array. */
     TensorShape shape_;         /**< Dimensionality metadata. */
     TensorStride stride_;       /**< Memory skip values for indexing. */
     backend::Device device_;    /**< Device where data resides. */

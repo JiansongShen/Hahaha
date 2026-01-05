@@ -232,9 +232,9 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
         // topoList is [Inputs..., Ops..., Output]
         // reverse is [Output, Ops..., Inputs...]
         for (auto it = topoList.rbegin(); it != topoList.rend(); ++it) {
-            auto& node = *it;
-            // Execute the gradient function for this node to propagate to parents
-            if (node->gradFun_) {
+            // Execute the gradient function for this node to propagate to
+            // parents
+            if (auto& node = *it; node->gradFun_) {
                 node->gradFun_();
             }
         }
@@ -250,6 +250,10 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
         node->addParent(parent);
         node->setRequiresGrad(parent->getRequiresGrad());
         return node;
+    }
+
+    [[nodiscard]] common::Operator getOperatorType() const {
+        return operatorType_;
     }
 
   private:
