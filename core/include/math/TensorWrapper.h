@@ -163,6 +163,14 @@ template <typename T> class TensorWrapper {
     }
 
     /**
+     * @brief Set the tensor's strides.
+     * @param stride The new strides.
+     */
+    void setStride(const TensorStride& stride) {
+        data_.setStride(stride);
+    }
+
+    /**
      * @brief Get the device where the tensor resides.
      * @return const backend::Device& reference to the device.
      */

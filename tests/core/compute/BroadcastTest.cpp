@@ -37,7 +37,8 @@ TEST_F(BroadcastTest, BroadcastTo_LeadingDims) {
     Tensor<float> a(NestedData<float>{1.0f, 2.0f, 3.0f});
     std::vector<size_t> targetShape = {2, 3};
 
-    auto broadcastedNode = hahaha::compute::broadcast(a.getComputeNode(), targetShape);
+    auto broadcastedNode =
+        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
     EXPECT_EQ(b.getShape(), targetShape);
@@ -54,7 +55,8 @@ TEST_F(BroadcastTest, BroadcastTo_Scalar) {
     Tensor<float> a(5.0f); // Scalar tensor (actually shape {1} or {})
     std::vector<size_t> targetShape = {2, 2};
 
-    auto broadcastedNode = hahaha::compute::broadcast(a.getComputeNode(), targetShape);
+    auto broadcastedNode =
+        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
     EXPECT_EQ(b.getShape(), targetShape);
@@ -70,7 +72,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_LeadingDims) {
     a.setRequiresGrad(true);
     std::vector<size_t> targetShape = {2, 3};
 
-    auto broadcastedNode = hahaha::compute::broadcast(a.getComputeNode(), targetShape);
+    auto broadcastedNode =
+        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
     // Sum all elements to create a scalar loss
@@ -78,17 +81,17 @@ TEST_F(BroadcastTest, Broadcast_Gradient_LeadingDims) {
     // b = [[a0, a1, a2], [a0, a1, a2]]
     // L = 2*a0 + 2*a1 + 2*a2
     // dL/da0 = 2, dL/da1 = 2, dL/da2 = 2
-    
-    // We don't have a sum reduction operation exposed as a node easily here 
+
+    // We don't have a sum reduction operation exposed as a node easily here
     // unless we use multiple ops, but let's assume backward from ones
     // which simulates dL/db = 1
-    
-    b.backward(); 
+
+    b.backward();
 
     ASSERT_NE(a.grad(), nullptr);
     EXPECT_EQ(a.grad()->getShape().size(), 1);
     EXPECT_EQ(a.grad()->getShape()[0], 3);
-    
+
     EXPECT_FLOAT_EQ(a.grad()->at({0}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({1}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({2}), 2.0f);
@@ -100,7 +103,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_Scalar) {
     a.setRequiresGrad(true);
     std::vector<size_t> targetShape = {2, 2};
 
-    auto broadcastedNode = hahaha::compute::broadcast(a.getComputeNode(), targetShape);
+    auto broadcastedNode =
+        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
     // dL/db = 1 everywhere
@@ -118,19 +122,20 @@ TEST_F(BroadcastTest, Broadcast_Gradient_InnerDims) {
     a.setRequiresGrad(true);
     std::vector<size_t> targetShape = {3, 2};
 
-    auto broadcastedNode = hahaha::compute::broadcast(a.getComputeNode(), targetShape);
+    auto broadcastedNode =
+        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
-    
+
     // b = [[1, 1], [2, 2], [3, 3]]
     // dL/db = 1 everywhere
     // dL/da[0] = dL/db[0,0] + dL/db[0,1] = 2
-    
+
     b.backward();
 
     ASSERT_NE(a.grad(), nullptr);
     EXPECT_EQ(a.grad()->getShape()[0], 3);
     EXPECT_EQ(a.grad()->getShape()[1], 1);
-    
+
     EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({1, 0}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({2, 0}), 2.0f);
@@ -138,11 +143,11 @@ TEST_F(BroadcastTest, Broadcast_Gradient_InnerDims) {
 
 TEST_F(BroadcastTest, Broadcast_Error_Mismatch) {
     Tensor<float> a(NestedData<float>{1.0f, 2.0f}); // Shape {2}
-    std::vector<size_t> targetShape = {3}; // Cannot broadcast 2 to 3
+    std::vector<size_t> targetShape = {3};          // Cannot broadcast 2 to 3
 
-    EXPECT_THROW({
-        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
-    }, std::runtime_error);
+    EXPECT_THROW(
+        { hahaha::compute::broadcast(a.getComputeNode(), targetShape); },
+        std::runtime_error);
 }
 
 TEST_F(BroadcastTest, Broadcast_Gradient_Multiple_LeadingDims) {
@@ -153,7 +158,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_Multiple_LeadingDims) {
     a.setRequiresGrad(true);
     std::vector<size_t> targetShape = {2, 4, 3};
 
-    auto broadcastedNode = hahaha::compute::broadcast(a.getComputeNode(), targetShape);
+    auto broadcastedNode =
+        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
     b.backward();
@@ -175,14 +181,15 @@ TEST_F(BroadcastTest, Broadcast_Gradient_Identity_Loop_Check) {
     a.setRequiresGrad(true);
     std::vector<size_t> targetShape = {2, 2};
 
-    auto broadcastedNode = hahaha::compute::broadcast(a.getComputeNode(), targetShape);
+    auto broadcastedNode =
+        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
     b.backward();
 
     ASSERT_NE(a.grad(), nullptr);
     EXPECT_EQ(a.grad()->getShape(), targetShape);
-    
+
     EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({0, 1}), 1.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({1, 0}), 1.0f);
@@ -224,7 +231,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_NonUniform_InnerDims) {
         hahaha::compute::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
-    Tensor<float> w(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}});
+    Tensor<float> w(
+        NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}});
     auto c = b * w;
     c.backward();
 
@@ -240,7 +248,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_NonUniform_InnerDims) {
 }
 
 TEST_F(BroadcastTest, Broadcast_GradFun_NullGrad_DoesNothing) {
-    // Directly call gradFun without running backward() so res->getGrad() is null.
+    // Directly call gradFun without running backward() so res->getGrad() is
+    // null.
     Tensor<float> a(NestedData<float>{1.0f, 2.0f, 3.0f});
     a.setRequiresGrad(true);
     std::vector<size_t> targetShape = {2, 3};
@@ -253,14 +262,62 @@ TEST_F(BroadcastTest, Broadcast_GradFun_NullGrad_DoesNothing) {
     EXPECT_EQ(a.grad(), nullptr);
 }
 
-TEST_F(BroadcastTest, Broadcast_Error_TargetNotBroadcastResult_ThrowsRuntimeError) {
+TEST_F(BroadcastTest,
+       Broadcast_Error_TargetNotBroadcastResult_ThrowsRuntimeError) {
     // src shape {2,3}, target shape {1,3} is NOT a valid "broadcast-to",
-    // but the two shapes are broadcast-compatible (broadcast result would be {2,3}).
+    // but the two shapes are broadcast-compatible (broadcast result would be
+    // {2,3}).
     Tensor<float> a(NestedData<float>{{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}});
     std::vector<size_t> targetShape = {1, 3};
 
-    EXPECT_THROW({
-        hahaha::compute::broadcast(a.getComputeNode(), targetShape);
-    }, std::runtime_error);
+    EXPECT_THROW(
+        { hahaha::compute::broadcast(a.getComputeNode(), targetShape); },
+        std::runtime_error);
 }
 
+TEST_F(BroadcastTest, AutoBroadcast_Add_VectorToMatrix_ForwardAndGrad) {
+    // a: (3) will be broadcast to (2,3) to match w
+    Tensor<float> a(NestedData<float>{1.0f, 2.0f, 3.0f});
+    a.setRequiresGrad(true);
+    Tensor<float> w(
+        NestedData<float>{{10.0f, 20.0f, 30.0f}, {40.0f, 50.0f, 60.0f}});
+    w.setRequiresGrad(true);
+
+    auto c = w + a; // should auto-broadcast a to (2,3)
+
+    EXPECT_EQ(c.getShape(), (std::vector<size_t>{2, 3}));
+    EXPECT_FLOAT_EQ(c.at({0, 0}), 11.0f);
+    EXPECT_FLOAT_EQ(c.at({0, 1}), 22.0f);
+    EXPECT_FLOAT_EQ(c.at({0, 2}), 33.0f);
+    EXPECT_FLOAT_EQ(c.at({1, 0}), 41.0f);
+    EXPECT_FLOAT_EQ(c.at({1, 1}), 52.0f);
+    EXPECT_FLOAT_EQ(c.at({1, 2}), 63.0f);
+
+    // backward() uses implicit upstream grad of ones for non-scalar tensors.
+    // dL/dw = 1, dL/da = sum over leading axis => [2,2,2]
+    c.backward();
+
+    ASSERT_NE(w.grad(), nullptr);
+    EXPECT_EQ(w.grad()->getShape(), (std::vector<size_t>{2, 3}));
+    EXPECT_FLOAT_EQ(w.grad()->at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(w.grad()->at({1, 2}), 1.0f);
+
+    ASSERT_NE(a.grad(), nullptr);
+    EXPECT_EQ(a.grad()->getShape(), (std::vector<size_t>{3}));
+    EXPECT_FLOAT_EQ(a.grad()->at({0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad()->at({1}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad()->at({2}), 2.0f);
+}
+
+TEST_F(BroadcastTest, AutoBroadcast_Mul_ScalarToMatrix_Grad) {
+    Tensor<float> a(2.0f);
+    a.setRequiresGrad(true);
+    Tensor<float> w(NestedData<float>{{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}});
+
+    auto c = w * a; // scalar should broadcast to (2,3)
+    c.backward();
+
+    ASSERT_NE(a.grad(), nullptr);
+    // dL/da = sum(w) because upstream grad is ones
+    EXPECT_FLOAT_EQ(a.grad()->at({}), 21.0f);
+}

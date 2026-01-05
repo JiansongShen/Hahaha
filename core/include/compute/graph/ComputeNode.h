@@ -252,6 +252,10 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
         return node;
     }
 
+    [[nodiscard]] common::Operator getOperatorType() const {
+        return operatorType_;
+    }
+
   private:
     std::vector<std::shared_ptr<ComputeNode>> parents_; /**< Input nodes. */
     std::shared_ptr<math::TensorWrapper<T>> data_;      /**< Forward data. */

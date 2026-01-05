@@ -19,7 +19,9 @@
 #ifndef HAHAHA_BACKEND_DEVICE_COMPUTE_DISPATCHER_H
 #define HAHAHA_BACKEND_DEVICE_COMPUTE_DISPATCHER_H
 
+#include <cstddef>
 #include <stdexcept>
+#include <vector>
 
 #include "backend/Device.h"
 #include "common/Operator.h"
@@ -39,36 +41,105 @@ namespace hahaha::backend {
  */
 template <typename T> class DeviceComputeDispatcher {
   public:
+    /**
+     * @brief Stride-aware elementwise iterator.
+     *
+     * This supports broadcast views produced by TensorWrapper::broadcastTo()
+     * (i.e. stride can contain 0), without requiring materialization.
+     */
+    template <typename Fn>
+    static void forEachElement(const std::vector<size_t>& shape,
+                               const std::vector<size_t>& lhsStride,
+                               const std::vector<size_t>& rhsStride,
+                               T* lhsPtr,
+                               T* rhsPtr,
+                               T* outPtr,
+                               Fn&& fn) {
+        const size_t rank = shape.size();
+        if (rank == 0) {
+            // scalar
+            outPtr[0] = fn(lhsPtr[0], rhsPtr[0]);
+            return;
+        }
+
+        std::vector<size_t> coord(rank, 0);
+        size_t lhsOff = 0;
+        size_t rhsOff = 0;
+
+        // output is always written densely (outPtr[idx])
+        const size_t total = [&]() {
+            size_t prod = 1;
+            for (size_t d : shape)
+                prod *= d;
+            return prod;
+        }();
+
+        for (size_t outIdx = 0; outIdx < total; ++outIdx) {
+            outPtr[outIdx] = fn(lhsPtr[lhsOff], rhsPtr[rhsOff]);
+
+            // advance coordinate + offsets
+            for (long dim = static_cast<long>(rank) - 1; dim >= 0; --dim) {
+                coord[static_cast<size_t>(dim)]++;
+                if (coord[static_cast<size_t>(dim)]
+                    == shape[static_cast<size_t>(dim)]) {
+                    coord[static_cast<size_t>(dim)] = 0;
+                    lhsOff -= lhsStride[static_cast<size_t>(dim)]
+                        * (shape[static_cast<size_t>(dim)] - 1);
+                    rhsOff -= rhsStride[static_cast<size_t>(dim)]
+                        * (shape[static_cast<size_t>(dim)] - 1);
+                    continue;
+                }
+                lhsOff += lhsStride[static_cast<size_t>(dim)];
+                rhsOff += rhsStride[static_cast<size_t>(dim)];
+                break;
+            }
+        }
+    }
+
     static void dispatchBinary(common::Operator op,
                                const math::TensorWrapper<T>& lhs,
                                const math::TensorWrapper<T>& rhs,
                                math::TensorWrapper<T>& res) {
         auto device = lhs.getDevice();
         if (device.type == backend::DeviceType::CPU) {
-            size_t size = lhs.getTotalSize();
+            const auto& shape = lhs.getShape();
+            if (shape != rhs.getShape() || shape != res.getShape()) {
+                throw std::invalid_argument("dispatchBinary: shape mismatch");
+            }
+
+            const auto& lStride = lhs.getStride().getStrides();
+            const auto& rStride = rhs.getStride().getStrides();
             auto* lPtr = lhs.data_.getData().get();
             auto* rPtr = rhs.data_.getData().get();
             auto* resPtr = res.data_.getData().get();
 
             switch (op) {
             case common::Operator::Add:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lPtr[i] + rPtr[i];
+                forEachElement(
+                    shape, lStride, rStride, lPtr, rPtr, resPtr, [](T a, T b) {
+                        return a + b;
+                    });
                 break;
             case common::Operator::Sub:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lPtr[i] - rPtr[i];
+                forEachElement(
+                    shape, lStride, rStride, lPtr, rPtr, resPtr, [](T a, T b) {
+                        return a - b;
+                    });
                 break;
             case common::Operator::Mul:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lPtr[i] * rPtr[i];
+                forEachElement(
+                    shape, lStride, rStride, lPtr, rPtr, resPtr, [](T a, T b) {
+                        return a * b;
+                    });
                 break;
             case common::Operator::Div:
-                for (size_t i = 0; i < size; ++i) {
-                    if (rPtr[i] == T(0))
-                        throw std::runtime_error("Division by zero");
-                    resPtr[i] = lPtr[i] / rPtr[i];
-                }
+                forEachElement(
+                    shape, lStride, rStride, lPtr, rPtr, resPtr, [](T a, T b) {
+                        if (b == T(0)) {
+                            throw std::runtime_error("Division by zero");
+                        }
+                        return a / b;
+                    });
                 break;
             default:
                 throw std::runtime_error("Unsupported binary op");
@@ -86,28 +157,53 @@ template <typename T> class DeviceComputeDispatcher {
                                math::TensorWrapper<T>& res) {
         auto device = lhs.getDevice();
         if (device.type == backend::DeviceType::CPU) {
-            size_t size = lhs.getTotalSize();
+            const auto& shape = lhs.getShape();
+            if (shape != res.getShape()) {
+                throw std::invalid_argument("dispatchScalar: shape mismatch");
+            }
+
+            const auto& lStride = lhs.getStride().getStrides();
             auto* lPtr = lhs.data_.getData().get();
             auto* resPtr = res.data_.getData().get();
 
             switch (op) {
             case common::Operator::Add:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lPtr[i] + rhs;
+                forEachElement(shape,
+                               lStride,
+                               lStride,
+                               lPtr,
+                               lPtr,
+                               resPtr,
+                               [rhs](T a, T /*unused*/) { return a + rhs; });
                 break;
             case common::Operator::Sub:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lPtr[i] - rhs;
+                forEachElement(shape,
+                               lStride,
+                               lStride,
+                               lPtr,
+                               lPtr,
+                               resPtr,
+                               [rhs](T a, T /*unused*/) { return a - rhs; });
                 break;
             case common::Operator::Mul:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lPtr[i] * rhs;
+                forEachElement(shape,
+                               lStride,
+                               lStride,
+                               lPtr,
+                               lPtr,
+                               resPtr,
+                               [rhs](T a, T /*unused*/) { return a * rhs; });
                 break;
             case common::Operator::Div:
                 if (rhs == T(0))
                     throw std::runtime_error("Division by zero");
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lPtr[i] / rhs;
+                forEachElement(shape,
+                               lStride,
+                               lStride,
+                               lPtr,
+                               lPtr,
+                               resPtr,
+                               [rhs](T a, T /*unused*/) { return a / rhs; });
                 break;
             default:
                 throw std::runtime_error("Unsupported scalar op");
@@ -124,29 +220,57 @@ template <typename T> class DeviceComputeDispatcher {
                                math::TensorWrapper<T>& res) {
         auto device = rhs.getDevice();
         if (device.type == backend::DeviceType::CPU) {
-            size_t size = rhs.getTotalSize();
+            const auto& shape = rhs.getShape();
+            if (shape != res.getShape()) {
+                throw std::invalid_argument("dispatchScalar: shape mismatch");
+            }
+
+            const auto& rStride = rhs.getStride().getStrides();
             auto* rPtr = rhs.data_.getData().get();
             auto* resPtr = res.data_.getData().get();
 
             switch (op) {
             case common::Operator::Add:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lhs + rPtr[i];
+                forEachElement(shape,
+                               rStride,
+                               rStride,
+                               rPtr,
+                               rPtr,
+                               resPtr,
+                               [lhs](T a, T /*unused*/) { return lhs + a; });
                 break;
             case common::Operator::Sub:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lhs - rPtr[i];
+                forEachElement(shape,
+                               rStride,
+                               rStride,
+                               rPtr,
+                               rPtr,
+                               resPtr,
+                               [lhs](T a, T /*unused*/) { return lhs - a; });
                 break;
             case common::Operator::Mul:
-                for (size_t i = 0; i < size; ++i)
-                    resPtr[i] = lhs * rPtr[i];
+                forEachElement(shape,
+                               rStride,
+                               rStride,
+                               rPtr,
+                               rPtr,
+                               resPtr,
+                               [lhs](T a, T /*unused*/) { return lhs * a; });
                 break;
             case common::Operator::Div:
-                for (size_t i = 0; i < size; ++i) {
-                    if (rPtr[i] == T(0))
-                        throw std::runtime_error("Division by zero");
-                    resPtr[i] = lhs / rPtr[i];
-                }
+                forEachElement(shape,
+                               rStride,
+                               rStride,
+                               rPtr,
+                               rPtr,
+                               resPtr,
+                               [lhs](T a, T /*unused*/) {
+                                   if (a == T(0)) {
+                                       throw std::runtime_error(
+                                           "Division by zero");
+                                   }
+                                   return lhs / a;
+                               });
                 break;
             default:
                 throw std::runtime_error("Unsupported scalar op");
