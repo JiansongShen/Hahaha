@@ -19,12 +19,32 @@
 #ifndef HAHAHA_COMPUTE_COMPUTE_FUN_MAT_MUL_H
 #define HAHAHA_COMPUTE_COMPUTE_FUN_MAT_MUL_H
 
-#include "ComputeFunCommon.h"
+#include "compute/graph/ComputeNode.h"
+#include "math/TensorWrapper.h"
 
 namespace hahaha::compute {
 
 // --- Matrix Multiplication ---
 
+/**
+ * @brief Matrix multiplication (2D) node: Z = X @ Y.
+ *
+ * Forward (plain text):
+ * - Z[i,j] = sum_k X[i,k] * Y[k,j]
+ *
+ * Backward (plain text):
+ * - dL/dX = dL/dZ @ transpose(Y)
+ * - dL/dY = transpose(X) @ dL/dZ
+ *
+ * Notes:
+ * - MatMul does not use broadcasting; shapes must be valid matrix dims.
+ * - transpose() and matmul() are implemented on TensorWrapper.
+ *
+ * @tparam T Numeric type.
+ * @param lhs Left matrix node (X).
+ * @param rhs Right matrix node (Y).
+ * @return Result node representing Z = X @ Y.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 matmul(const std::shared_ptr<ComputeNode<T>>& lhs,
@@ -50,14 +70,14 @@ matmul(const std::shared_ptr<ComputeNode<T>>& lhs,
                 auto gradLhs = std::make_shared<math::TensorWrapper<T>>(
                     gradPtr->matmul(rhsT));
                 lhs->accumulateGrad(gradLhs);
-                //lhs->backward();
+                // lhs->backward();
             }
             if (rhs->getRequiresGrad()) {
                 auto lhsT = lhs->getData()->transpose();
                 auto gradRhs = std::make_shared<math::TensorWrapper<T>>(
                     lhsT.matmul(*gradPtr));
                 rhs->accumulateGrad(gradRhs);
-                //rhs->backward();
+                // rhs->backward();
             }
         }
     });
@@ -68,4 +88,3 @@ matmul(const std::shared_ptr<ComputeNode<T>>& lhs,
 } // namespace hahaha::compute
 
 #endif // HAHAHA_COMPUTE_COMPUTE_FUN_MAT_MUL_H
-

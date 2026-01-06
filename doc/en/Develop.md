@@ -124,15 +124,9 @@ All code must pass `clang-format` and `clang-tidy`.
 - **CUDA Preparation**: Kernel functions use camelCase (`gemmKernel()`).
 - **Profiling**: Nsight Compute (CUDA); perf/gprof (CPU).
 
-### 10. Best Practices
-- **Small Iterations**: Commit small features daily.
-- **Modularity**: One class per `.h`/`.cpp`. Separate core logic (`core`, `ml`, `display`).
-- **Educational Comments**: Explain complex logic with pseudo-code (e.g., `// Backprop: gradInput = gradOutput * weight^T`).
-
-### 11. PR Checklist
+### 10. PR Checklist
 - [ ] Code compiles via `ninja -C builddir`.
 - [ ] All unit tests pass via `meson test -C builddir`.
 - [ ] `./format.sh` has been run for consistent styling.
 - [ ] Key logic includes educational comments.
 - [ ] Doxygen comments added for new public APIs.
-

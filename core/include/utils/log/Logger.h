@@ -197,8 +197,9 @@ class Logger {
                 stream_.flush(); // Ensure data is written
             }
             if (config_.isWriteToConsole()) {
-                std::cout << timestamp << "[" << toString(entry.getLevel())
-                          << "]" << entry.getMessage() << '\n';
+                std::cout << timestamp << "["
+                          << toColoredString(entry.getLevel()) << "]"
+                          << entry.getMessage() << '\n';
                 std::cout.flush(); // Ensure data is written
             }
         }

@@ -33,7 +33,7 @@ Provides high-performance multi-dimensional tensor operations and mathematical t
     - [ ] `slice/crop`: Tensor slicing and cropping (e.g., `a[{0, 5}, {2, 4}]`).
     - [ ] `concatenate/stack`: Tensor joining.
     - [ ] `split`: Tensor splitting.
-    - [ ] `broadcast_to`: Explicit broadcasting.
+    - [x] `broadcast_to`: Explicit broadcasting.
 - [ ] **Random Number Generation**
     - [ ] `uniform`, `normal`: Sampling from uniform and normal distributions.
     - [ ] `shuffle`: Random shuffling.
@@ -130,4 +130,3 @@ Provides computational graph-based automatic differentiation and neural network 
 - [ ] **Iris**: Flower classification (Classical ML example).
 - [ ] **Linear Regression Demo**: House price prediction (Math/Regression example).
 - [ ] **Matrix Benchmark**: Performance comparison with NumPy/Eigen.
-

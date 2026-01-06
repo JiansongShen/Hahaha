@@ -50,6 +50,14 @@ namespace hahaha::compute {
  * - Gradients are propagated during the backward pass using the chain rule:
  *   dL/dx = dL/dz * dz/dx
  *
+ * Plain-text formulas:
+ * - Forward computes intermediate tensors, e.g. z = f(x, y).
+ * - Backward propagates gradients using the chain rule:
+ *   dL/dx = (dL/dz) * (dz/dx)
+ *   dL/dy = (dL/dz) * (dz/dy)
+ * - When a node is used multiple times, gradients accumulate:
+ *   grad_total = sum(grad_contrib_k)
+ *
  * @tparam T The numeric data type (e.g., float, double).
  */
 template <typename T>
@@ -115,7 +123,13 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
      *
      * In the backward pass, a node might receive gradients from multiple
      * children (e.g., if it's used multiple times in an expression).
-     * Formula: grad_total = sum(incoming_gradients)
+     *
+     * Plain-text formula:
+     * - grad_total = grad_total + grad_incoming
+     *
+     * Notes:
+     * - The first incoming gradient is cloned to avoid aliasing issues.
+     * - Subsequent gradients are added elementwise.
      *
      * @param grad The incoming gradient tensor.
      */
@@ -211,6 +225,18 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
      * If this is the output node (e.g., Loss), its gradient is initialized
      * to 1.0 (dL/dL = 1). Then it calls its gradFun to propagate gradients
      * to parents.
+     *
+     * Plain-text formulas:
+     * - For the root node (Loss), initialize upstream gradient as:
+     *   dL/dLoss = 1
+     * - Backprop order is reverse topological order so that when a node's
+     *   gradFun runs, its accumulated gradient dL/d(node) is already final.
+     *
+     * Algorithm (plain text):
+     * 1) topo = toposort(output)
+     * 2) if grad(output) not set: grad(output) = ones_like(output)
+     * 3) for node in reverse(topo): run node.gradFun() to accumulate into
+     * parents
      */
     void backward() {
         if (!requiresGrad_) {
