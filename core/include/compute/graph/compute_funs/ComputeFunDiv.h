@@ -26,6 +26,30 @@ namespace hahaha::compute {
 
 // --- Division ---
 
+/**
+ * @brief Elementwise division with automatic broadcasting.
+ *
+ * Forward (plain text):
+ * - z = x / y
+ * - If shapes differ but are broadcast-compatible, x/y are first broadcast to
+ *   a common shape using `broadcastNodes(lhs, rhs)`.
+ *
+ * Backward (plain text):
+ * - dz/dx = 1 / y
+ * - dz/dy = -x / (y * y)
+ * - dL/dx += dL/dz * (1 / y)
+ * - dL/dy += dL/dz * (-x / (y * y))
+ *
+ * Notes:
+ * - If broadcasting happened, the `Broadcast` nodes handle gradient reduction
+ *   (summing along broadcasted axes).
+ * - Division by zero is checked in the underlying TensorWrapper/dispatcher.
+ *
+ * @tparam T Numeric type.
+ * @param lhs Numerator node.
+ * @param rhs Denominator node.
+ * @return Result node representing z = lhs / rhs.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 div(const std::shared_ptr<ComputeNode<T>>& lhs,
@@ -72,12 +96,26 @@ div(const std::shared_ptr<ComputeNode<T>>& lhs,
     return resNode;
 }
 
+/**
+ * @brief Divide a tensor node by a scalar (lhs / scalar).
+ *
+ * Plain text:
+ * - Convert scalar to a scalar ComputeNode on the same device, then call
+ *   the tensor-tensor `div`.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>> div(const std::shared_ptr<ComputeNode<T>>& lhs,
                                     const T& rhsScalar) {
     return div(lhs, createScalarNode(rhsScalar, lhs));
 }
 
+/**
+ * @brief Divide a scalar by a tensor node (scalar / rhs).
+ *
+ * Plain text:
+ * - This is NOT commutative, so we build a scalar node as LHS and call
+ *   tensor-tensor `div(lhsScalarNode, rhs)`.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 div(const T& lhsScalar, const std::shared_ptr<ComputeNode<T>>& rhs) {
