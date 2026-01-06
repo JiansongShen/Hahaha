@@ -132,8 +132,8 @@ SpaceBeforeRangeBasedForLoopColon: true
 - **兼容性**：代码必须在 GCC/Clang 上编译；无 MSVC 特定。
 
 ### 7. 测试与基准规范
-- **单元测试**：GoogleTest（Meson 集成）；文件名 `test_matrix.cpp`；测试类 `MatrixTest`。
-  示例：`TEST(MatrixTest, MatmulBasic) { ... EXPECT_EQ(result(0,0), expected); }`
+- **单元测试**：GoogleTest（Meson 集成）；文件名 `SomeClassTest.cpp`；测试类 `MatrixTest`。
+  示例：`TEST_F(MatrixTest, MatmulBasic) { ... EXPECT_EQ(result(0,0), expected); }`
 - **覆盖率**：目标 90%；用 gcov/lcov 生成报告（CI 运行）。
 - **基准测试**：Google Benchmark；文件名 `bench_matrix.cpp`。
   示例：`BENCHMARK(matrixMatmul) -> Arg(1024) -> Unit(benchmark::kMillisecond);`
@@ -165,19 +165,8 @@ SpaceBeforeRangeBasedForLoopColon: true
 - **剖析工具**：Nsight Compute（CUDA）；perf/gprof（CPU）。
 - **量化**：后期支持 FP16/INT8；用混合精度注释。
 
-### 10. 常见开发坑与最佳实践
-- **坑避免**：
-  - 内存泄漏：每函数检查 RAII；运行 ASan。
-  - 编译慢：最小化头依赖（pimpl 模式）；用 modules (C++23)。
-  - 调试难：用 gdb/lldb；CUDA 用 cuda-gdb/Nsight。
-  - 浮点精度：用 epsilon 检查（e.g., `EXPECT_NEAR(result, expected, 1e-5)`）。
-- **最佳实践**：
-  - 小步迭代：每天 commit 小功能。
-  - 模块化：每个 .h/.cpp 一类；核心分离（core/ml/display）。
-  - 教育注释：复杂处加伪代码解释（e.g., `// 反向传播：grad_input = grad_output * weight^T`）。
-  - 版本兼容：用 #if __cplusplus >= 202300L 检查 C++23。
 
-### 11. PR 提交清单
+### 10. PR 提交清单
 - [ ] 代码通过 `ninja -C builddir` 编译。
 - [ ] 所有单元测试通过 `meson test -C builddir`。
 - [ ] 已运行 `./format.sh` 确保风格一致。
