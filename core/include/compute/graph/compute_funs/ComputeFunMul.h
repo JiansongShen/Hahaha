@@ -26,6 +26,28 @@ namespace hahaha::compute {
 
 // --- Multiplication ---
 
+/**
+ * @brief Elementwise multiplication with automatic broadcasting.
+ *
+ * Forward (plain text):
+ * - z = x * y
+ * - If shapes differ but are broadcast-compatible, x/y are first broadcast to
+ *   a common shape using `broadcastNodes(lhs, rhs)`.
+ *
+ * Backward (plain text):
+ * - dz/dx = y, dz/dy = x
+ * - dL/dx += dL/dz * y
+ * - dL/dy += dL/dz * x
+ *
+ * Notes:
+ * - If broadcasting happened, the `Broadcast` nodes handle gradient reduction
+ *   (summing along broadcasted axes).
+ *
+ * @tparam T Numeric type.
+ * @param lhs Left operand node.
+ * @param rhs Right operand node.
+ * @return Result node representing z = lhs * rhs.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 mul(const std::shared_ptr<ComputeNode<T>>& lhs,
@@ -65,12 +87,25 @@ mul(const std::shared_ptr<ComputeNode<T>>& lhs,
     return resNode;
 }
 
+/**
+ * @brief Multiply a tensor node by a scalar (lhs * scalar).
+ *
+ * Plain text:
+ * - Convert scalar to a scalar ComputeNode on the same device, then call
+ *   the tensor-tensor `mul`.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>> mul(const std::shared_ptr<ComputeNode<T>>& lhs,
                                     const T& rhsScalar) {
     return mul(lhs, createScalarNode(rhsScalar, lhs));
 }
 
+/**
+ * @brief Multiply a scalar with a tensor node (scalar * rhs).
+ *
+ * Plain text:
+ * - Multiplication is commutative, so this forwards to (rhs * scalar).
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 mul(const T& lhsScalar, const std::shared_ptr<ComputeNode<T>>& rhs) {

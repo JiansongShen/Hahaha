@@ -21,7 +21,6 @@
 
 #include <memory>
 
-#include "common/Operator.h"
 #include "compute/graph/ComputeNode.h"
 #include "math/TensorWrapper.h"
 #include "math/ds/TensorData.h"
@@ -31,6 +30,20 @@ namespace hahaha::compute {
 /**
  * @brief Helper to create a constant scalar node on the same device as a
  * reference node.
+ *
+ * Plain-text semantics:
+ * - Creates a leaf node holding a scalar tensor (totalSize == 1) on the same
+ *   device as `refNode`.
+ * - This allows binary ops to treat scalar inputs uniformly as ComputeNodes.
+ *
+ * Note:
+ * - The scalar is represented as a 0-dim shape (TensorShape({})) in this code
+ *   base.
+ *
+ * @tparam T Numeric type.
+ * @param value Scalar value.
+ * @param refNode Reference node whose device is used.
+ * @return Leaf ComputeNode containing the scalar tensor.
  */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
@@ -44,4 +57,3 @@ createScalarNode(const T& value,
 } // namespace hahaha::compute
 
 #endif // HAHAHA_COMPUTE_COMPUTE_FUN_COMMON_H
-

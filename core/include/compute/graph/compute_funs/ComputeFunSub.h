@@ -26,6 +26,28 @@ namespace hahaha::compute {
 
 // --- Subtraction ---
 
+/**
+ * @brief Elementwise subtraction with automatic broadcasting.
+ *
+ * Forward (plain text):
+ * - z = x - y
+ * - If shapes differ but are broadcast-compatible, x/y are first broadcast to
+ *   a common shape using `broadcastNodes(lhs, rhs)`.
+ *
+ * Backward (plain text):
+ * - dz/dx = 1, dz/dy = -1
+ * - dL/dx += dL/dz
+ * - dL/dy += -dL/dz
+ *
+ * Notes:
+ * - If broadcasting happened, the `Broadcast` nodes handle gradient reduction
+ *   (summing along broadcasted axes).
+ *
+ * @tparam T Numeric type.
+ * @param lhs Left operand node.
+ * @param rhs Right operand node.
+ * @return Result node representing z = lhs - rhs.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 sub(const std::shared_ptr<ComputeNode<T>>& lhs,
@@ -64,12 +86,26 @@ sub(const std::shared_ptr<ComputeNode<T>>& lhs,
     return resNode;
 }
 
+/**
+ * @brief Subtract a scalar from a tensor node (lhs - scalar).
+ *
+ * Plain text:
+ * - Convert scalar to a scalar ComputeNode on the same device, then call
+ *   the tensor-tensor `sub`.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>> sub(const std::shared_ptr<ComputeNode<T>>& lhs,
                                     const T& rhsScalar) {
     return sub(lhs, createScalarNode(rhsScalar, lhs));
 }
 
+/**
+ * @brief Subtract a tensor node from a scalar (scalar - rhs).
+ *
+ * Plain text:
+ * - This is NOT commutative, so we build a scalar node as LHS and call
+ *   tensor-tensor `sub(lhsScalarNode, rhs)`.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 sub(const T& lhsScalar, const std::shared_ptr<ComputeNode<T>>& rhs) {

@@ -46,6 +46,26 @@ template <typename T> class DeviceComputeDispatcher {
      *
      * This supports broadcast views produced by TensorWrapper::broadcastTo()
      * (i.e. stride can contain 0), without requiring materialization.
+     *
+     * The traversal is multi-dimensional but writes output as a dense
+     * row-major buffer.
+     *
+     * Plain-text formulas:
+     * - Linear offset update (row-major walk):
+     *   offset_next = offset + stride[dim]
+     * - Broadcasted dimension is represented by stride[dim] = 0, so:
+     *   offset_next = offset (re-uses the same value)
+     * - Total elements:
+     *   total = product(shape[d]) for d in [0..rank-1]
+     *
+     * @tparam Fn Callable with signature `T fn(T lhs, T rhs)`.
+     * @param shape Output shape (must match elementwise broadcast result).
+     * @param lhsStride LHS strides aligned with `shape` rank.
+     * @param rhsStride RHS strides aligned with `shape` rank.
+     * @param lhsPtr Pointer to LHS base storage (may be shared/broadcast view).
+     * @param rhsPtr Pointer to RHS base storage (may be shared/broadcast view).
+     * @param outPtr Pointer to dense output buffer.
+     * @param fn Elementwise function.
      */
     template <typename Fn>
     static void forEachElement(const std::vector<size_t>& shape,
@@ -102,6 +122,15 @@ template <typename T> class DeviceComputeDispatcher {
                                math::TensorWrapper<T>& res) {
         auto device = lhs.getDevice();
         if (device.type == backend::DeviceType::CPU) {
+            /**
+             * Plain-text formulas (elementwise):
+             * - Add: res[i] = lhs[i] + rhs[i]
+             * - Sub: res[i] = lhs[i] - rhs[i]
+             * - Mul: res[i] = lhs[i] * rhs[i]
+             * - Div: res[i] = lhs[i] / rhs[i]   (rhs[i] != 0)
+             *
+             * Note: lhs/rhs may be broadcast views, so indexing uses strides.
+             */
             const auto& shape = lhs.getShape();
             if (shape != rhs.getShape() || shape != res.getShape()) {
                 throw std::invalid_argument("dispatchBinary: shape mismatch");
@@ -157,6 +186,13 @@ template <typename T> class DeviceComputeDispatcher {
                                math::TensorWrapper<T>& res) {
         auto device = lhs.getDevice();
         if (device.type == backend::DeviceType::CPU) {
+            /**
+             * Plain-text formulas (scalar on RHS):
+             * - Add: res[i] = lhs[i] + rhs
+             * - Sub: res[i] = lhs[i] - rhs
+             * - Mul: res[i] = lhs[i] * rhs
+             * - Div: res[i] = lhs[i] / rhs   (rhs != 0)
+             */
             const auto& shape = lhs.getShape();
             if (shape != res.getShape()) {
                 throw std::invalid_argument("dispatchScalar: shape mismatch");
@@ -220,6 +256,13 @@ template <typename T> class DeviceComputeDispatcher {
                                math::TensorWrapper<T>& res) {
         auto device = rhs.getDevice();
         if (device.type == backend::DeviceType::CPU) {
+            /**
+             * Plain-text formulas (scalar on LHS):
+             * - Add: res[i] = lhs + rhs[i]
+             * - Sub: res[i] = lhs - rhs[i]
+             * - Mul: res[i] = lhs * rhs[i]
+             * - Div: res[i] = lhs / rhs[i]   (rhs[i] != 0)
+             */
             const auto& shape = rhs.getShape();
             if (shape != res.getShape()) {
                 throw std::invalid_argument("dispatchScalar: shape mismatch");

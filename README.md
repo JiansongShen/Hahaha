@@ -1,66 +1,94 @@
-# Hahaha[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+# Hahaha [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-A lightweight numerical computing and machine learning library with core components implemented in C++. Designed for learners and small-scale projects, Hahaha provides efficient tensor operations, automatic differentiation foundation, and essential ML components.
+Hahaha is an **education-first** numerical computing and machine learning library written in **C++23**.
+It aims to provide a **clear, inspectable implementation** of tensors, automatic differentiation, and training
+loops, together with **visualization tooling** so learners can *see* what happens during training.
 
-## 🚀 Features
+## What this project is for
 
-- **Tensor Module**: Comprehensive tensor data structure with shape management (`TensorShape`), stride control (`TensorStride`), and nested data handling (`NestedData`) for efficient numerical operations
-- **Automatic Differentiation Ready**: Foundation for computational graphs through `ComputeGraph.h`
-- **High-Performance Computing**: Optimized for modern C++23 standards with CUDA 13.0 acceleration support
-- **Complete Development Environment**: Docker-based development container with `.devcontainer` configuration for consistent setup across platforms
-- **Professional Tooling**: Integrated code formatting (`clang-format`), static analysis (`clang-tidy`), and unit testing (Google Test)
-- **Example Applications**: Complete MNIST handwritten digit recognition example demonstrating network layers, activation functions, optimizers, and training workflow
+- **Learning**: read the code and understand how tensors, broadcasting, and autograd work end-to-end.
+- **Teaching / Demos**: run examples that visualize the training process (loss curves, parameter updates, etc.).
+- **Small experiments**: simple models and datasets (e.g. MNIST) without depending on a large framework.
 
-## 🛠️ Installation & Setup
+## Key features
+
+- **Tensor core**: `Tensor` / `TensorWrapper` with shape (`TensorShape`), stride (`TensorStride`), broadcasting,
+  reshape, transpose, and basic math.
+- **Autograd + compute graph**: define-by-run graph building via `compute/graph/*` and backward propagation
+  with unit tests.
+- **Broadcasting as a first-class op**: explicit `Broadcast` node with correct gradient reduction.
+- **Visualization + educational UX**:
+  - ImGui-based visualizer and demos under `examples/` to show training dynamics.
+  - Code is intentionally written to be readable and traceable, with tests as executable documentation.
+- **Tooling**: Meson + Ninja build, GoogleTest, formatting script `./format.sh`.
+
+## Build and run
 
 ### Prerequisites
 
-- Docker (for containerized development)
-- Git
-- Meson ≥ 1.3.2
-- ninja ≥ 1.11.1
-- NVIDIA GPU with CUDA 13.0 support (optional, for GPU acceleration)
+- C++ compiler with C++23 support (GCC/Clang)
+- Meson and Ninja
+- GoogleTest (Meson can find it as a system dependency)
+- Optional for visualization demos: GLFW + OpenGL
+- Optional for container workflow: Docker
 
-### Quick Start with Docker
+### Build (native)
 
 ```bash
-# Clone the repository
-git clone https://github.com/Napbad/Hahaha.git && cd Hahaha
-
-# Build the development image
-docker build -t hahaha-dev .
-
-# Run the development container
-docker run --gpus all -it --rm -v $(pwd):/workspace hahaha-dev
-
-# Compile the project
-mkdir build && cd build
-meson .. && ninja
+meson setup builddir --buildtype=debug
+meson compile -C builddir
+meson test -C builddir -v
 ```
 
-### VS Code Development
+### Run examples
 
-The project includes full `.devcontainer` support:
-1. Open this folder in VS Code
-2. Click "Reopen in Container" when prompted
-3. The development environment will be automatically configured
+After building, you can run:
 
-## 📚 Usage Examples
+```bash
+# Basic tensor usage
+./builddir/examples/basic_usage/hahaha_example_tensor_basic_usage
 
-### Basic Tensor Operations
+# Autograd demo
+./builddir/examples/autograd/hahaha_example_autograd
+
+# ML training demo (CLI)
+./builddir/examples/ml_basic_usage/hahaha_example_ml_basic_usage
+
+# Visualization demo (requires GLFW/OpenGL but not very nice)
+./builddir/examples/ml_visualizer/hahaha_example_ml_visualizer
+```
+
+## Minimal usage example
 
 ```cpp
-#include "math/ds/TensorData.h"
+#include "Tensor.h"
 
-// Create tensors with initializer lists
-hahaha::math::TensorData<int> tensor1({{1, 2}, {3, 4}});
-hahaha::math::TensorData<double> tensor2({{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}});
+using hahaha::Tensor;
+using hahaha::math::NestedData;
 
-// Single value tensor
-hahaha::math::TensorData<float> scalar(42.0f);
+int main() {
+    Tensor<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    Tensor<float> b(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}});
+    a.setRequiresGrad(true);
+    b.setRequiresGrad(true);
+
+    auto c = a * b + 2.0f;
+    c.backward();
+
+    // Inspect gradients
+    // a.grad(), b.grad()
+    return 0;
+}
 ```
 
-## 🤝 Contributing
+## Where to look (recommended reading order)
+
+- **Tensor & shape/stride**: `core/include/math/TensorWrapper.h`, `core/include/math/ds/*`
+- **Compute graph & autograd**: `core/include/compute/graph/*`, especially `ComputeNode` and `compute_funs/*`
+- **Visualization**: `core/src/display/*` and `examples/ml_visualizer/*`
+- **Tests as documentation**: `tests/core/*` (broadcast + autograd tests show expected behavior)
+
+## Contributing
 
 Contributions are welcome! Please follow these guidelines:
 
@@ -72,6 +100,6 @@ Contributions are welcome! Please follow these guidelines:
 
 Please ensure your code follows the project's coding standards by running `format.sh` before submitting.
 
-## 📄 License
+## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
