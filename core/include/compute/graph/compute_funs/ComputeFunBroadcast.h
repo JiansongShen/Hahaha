@@ -20,16 +20,62 @@
 #ifndef HAHAHA_COMPUTEFUNBROADCAST_H_CA2A2F550C26484097AE9BAB15204C65
 #define HAHAHA_COMPUTEFUNBROADCAST_H_CA2A2F550C26484097AE9BAB15204C65
 
-#include "ComputeFunCommon.h"
+#include "compute/graph/ComputeNode.h"
+#include "math/TensorWrapper.h"
 
 namespace hahaha::compute {
 
 using math::TensorShape;
+
+/**
+ * @brief Validate that `sourceNode` can be broadcast to `targetTensorShape`.
+ *
+ * Broadcasting rule (plain text):
+ * Compare shapes from the last dimension to the first. For each dimension:
+ * - If equal: ok
+ * - If one side is 1(or has no dimension (like {1, 2} and {(no dimension) 2})):
+ * ok (that side can be expanded)
+ * - Otherwise: incompatible
+ *
+ * The broadcast result shape is the per-dimension max after applying the rule.
+ * This helper additionally enforces that the broadcast result equals
+ * `targetTensorShape` (i.e. we are broadcasting *to* the requested shape).
+ *
+ * @tparam T Numeric type.
+ * @param sourceNode Source node.
+ * @param targetTensorShape Target shape (vector form).
+ * @throws std::runtime_error if broadcasting is not possible or target is not
+ *         the broadcast result.
+ */
 template <typename T>
 void checkTensorCanBroadcastTo(
     const std::shared_ptr<ComputeNode<T>>& sourceNode,
     const std::vector<size_t>& targetTensorShape);
 
+/**
+ * @brief Broadcast a node to a target shape (view semantics).
+ *
+ * Forward (plain text):
+ * - The output is a view of the same underlying storage.
+ * - Broadcasted dimensions are represented by stride = 0, so repeated reads
+ *   map to the same source element.
+ *
+ * Backward (plain text):
+ * - Let y = broadcast(x) with y.shape = target.
+ * - Upstream gradient is dL/dy.
+ * - Gradient for x is a reduction over broadcasted axes:
+ *   dL/dx = sum(dL/dy, axes=broadcasted_axes, keepDims=rank_equal)
+ *
+ * Example:
+ * - x.shape = (3), y.shape = (2,3)
+ * - broadcasted_axes = {0}
+ * - dL/dx[j] = dL/dy[0,j] + dL/dy[1,j]
+ *
+ * @tparam T Numeric type.
+ * @param sourceNode Source node.
+ * @param targetTensorShape Target shape.
+ * @return New compute node representing broadcast view.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 broadcast(const std::shared_ptr<ComputeNode<T>>& sourceNode,
@@ -111,6 +157,22 @@ void checkTensorCanBroadcastTo(
     }
 }
 
+/**
+ * @brief Broadcast two nodes to a common compatible shape if needed.
+ *
+ * Plain text:
+ * - target = broadcast_shape(lhs.shape, rhs.shape)
+ * - return (broadcast(lhs, target) if needed, broadcast(rhs, target) if needed)
+ *
+ * This function is typically used as the first step of any elementwise binary
+ * operator to support shape mismatch and scalar/tensor mixing.
+ *
+ * @tparam T Numeric type.
+ * @param lhs LHS node.
+ * @param rhs RHS node.
+ * @return Pair of nodes with identical shapes.
+ * @throws std::invalid_argument if shapes are not broadcast-compatible.
+ */
 template <typename T>
 std::pair<std::shared_ptr<ComputeNode<T>>, std::shared_ptr<ComputeNode<T>>>
 broadcastNodes(const std::shared_ptr<ComputeNode<T>>& lhs,

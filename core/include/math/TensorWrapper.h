@@ -306,7 +306,16 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise addition.
      *
-     * Formula: res[i] = a[i] + b[i]
+     * Plain-text formula:
+     * - res[i] = a[i] + b[i]
+     *
+     * Scalar behavior (plain text):
+     * - If one operand has totalSize == 1, it is treated as a scalar:
+     *   res[i] = tensor[i] + scalar
+     *
+     * Constraints:
+     * - For non-scalar case, shapes must match exactly (TensorWrapper-level).
+     * - For device execution, both tensors must be on the same device.
      *
      * @param other The tensor to add.
      * @return TensorWrapper result tensor.
@@ -351,7 +360,12 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise subtraction.
      *
-     * Formula: res[i] = a[i] - b[i]
+     * Plain-text formula:
+     * - res[i] = a[i] - b[i]
+     *
+     * Scalar behavior (plain text):
+     * - tensor - scalar: res[i] = tensor[i] - scalar
+     * - scalar - tensor: res[i] = scalar - tensor[i]  (see subtractFrom)
      *
      * @param other The tensor to subtract.
      * @return TensorWrapper result tensor.
@@ -396,7 +410,11 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise multiplication.
      *
-     * Formula: res[i] = a[i] * b[i]
+     * Plain-text formula:
+     * - res[i] = a[i] * b[i]
+     *
+     * Scalar behavior (plain text):
+     * - res[i] = tensor[i] * scalar
      *
      * @param other The tensor to multiply.
      * @return TensorWrapper result tensor.
@@ -441,7 +459,12 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise division.
      *
-     * Formula: res[i] = a[i] / b[i]
+     * Plain-text formula:
+     * - res[i] = a[i] / b[i]  (b[i] != 0)
+     *
+     * Scalar behavior (plain text):
+     * - tensor / scalar: res[i] = tensor[i] / scalar  (scalar != 0)
+     * - scalar / tensor: res[i] = scalar / tensor[i]  (tensor[i] != 0)
      *
      * @param other The tensor to divide.
      * @return TensorWrapper result tensor.
@@ -794,6 +817,22 @@ template <typename T> class TensorWrapper {
      * @param newShape The target tensor shape for broadcasting.
      * @return the 'new' tensor that has a target shape but a shared data to
      * this one
+     *
+     * Plain-text semantics:
+     * - This operation does NOT allocate new storage. It returns a view.
+     * - Broadcasted axes are represented by setting stride[axis] = 0.
+     * - Reading element at coordinate `idx` uses:
+     *   linear = sum(idx[d] * stride[d])
+     *   value = base_ptr[linear]
+     *
+     * Example:
+     * - self.shape = (1, 3), self.stride = (3, 1)
+     * - newShape = (2, 3)
+     * - result.stride becomes (0, 1)
+     * - So result[0, j] and result[1, j] map to the same source element.
+     *
+     * @throws std::invalid_argument if newShape is not broadcast-compatible,
+     *         or if newShape rank is smaller than current rank.
      */
     TensorWrapper broadcastTo(const TensorShape& newShape) {
 
