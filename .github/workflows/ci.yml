@@ -52,7 +52,7 @@ jobs:
 
           # macOS (x86_64) - AppleClang
           - name: macos-x64-appleclang
-            runs_on: macos-13
+            runs_on: macos-15-intel
             os: macos
             arch: x64
             compiler: appleclang
@@ -61,7 +61,7 @@ jobs:
 
           # macOS (x86_64) - Homebrew LLVM Clang
           - name: macos-x64-llvm
-            runs_on: macos-13
+            runs_on: macos-15-intel
             os: macos
             arch: x64
             compiler: llvm
@@ -70,7 +70,7 @@ jobs:
 
           # macOS (ARM64, Apple Silicon) - AppleClang
           - name: macos-arm64-appleclang
-            runs_on: macos-14
+            runs_on: macos-latest
             os: macos
             arch: arm64
             compiler: appleclang
@@ -79,7 +79,7 @@ jobs:
 
           # macOS (ARM64, Apple Silicon) - Homebrew LLVM Clang
           - name: macos-arm64-llvm
-            runs_on: macos-14
+            runs_on: macos-latest
             os: macos
             arch: arm64
             compiler: llvm
@@ -124,7 +124,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake pkg-config \
-            libgtest-dev
+            libgtest-dev \
+            libgl1-mesa-dev libglfw3-dev
           # Ubuntu ships googletest sources via libgtest-dev; build & install libs.
           if [ -d "/usr/src/googletest" ]; then
             GTEST_SRC="/usr/src/googletest"
@@ -172,7 +173,8 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1.13.0
 
-      - name: Configure Meson
+      - name: Configure Meson (non-Windows)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           set -euo pipefail
@@ -192,12 +194,51 @@ jobs:
 
           meson setup "${BUILDDIR}" --buildtype=debug
 
-      - name: Build (tests only)
+      - name: Configure Meson (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $builddir = "builddir-${{ matrix.name }}"
+
+          # Avoid Git-Bash toolchain collisions on Windows.
+          # Ensure we use MSVC/clang-cl toolchain from msvc-dev-cmd environment.
+
+          if ("${{ matrix.compiler }}" -eq "clang-cl") {
+            $env:CC = "clang-cl"
+            $env:CXX = "clang-cl"
+          } else {
+            Remove-Item Env:CC -ErrorAction SilentlyContinue
+            Remove-Item Env:CXX -ErrorAction SilentlyContinue
+          }
+
+          Write-Host "Compiler selection:"
+          Write-Host "  matrix.compiler=${{ matrix.compiler }}"
+          Write-Host "  CC=$env:CC"
+          Write-Host "  CXX=$env:CXX"
+
+          # Meson on MSVC/clang-cl uses vc++* dialect names; vc++latest maps to
+          # the newest language mode available.
+          meson setup $builddir --buildtype=debug -Dcpp_std=vc++latest
+
+      - name: Build (tests only) (non-Windows)
+        if: runner.os != 'Windows'
         shell: bash
         run: meson compile -C "builddir-${{ matrix.name }}" tests/hahaha_tests
 
-      - name: Run tests
+      - name: Build (tests only) (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: meson compile -C "builddir-${{ matrix.name }}" tests/hahaha_tests
+
+      - name: Run tests (non-Windows)
+        if: runner.os != 'Windows'
         shell: bash
+        run: meson test -C "builddir-${{ matrix.name }}" -v --no-rebuild
+
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
         run: meson test -C "builddir-${{ matrix.name }}" -v --no-rebuild
 
   coverage:
@@ -223,7 +264,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake pkg-config \
-            libgtest-dev gcovr
+            libgtest-dev gcovr \
+            libgl1-mesa-dev libglfw3-dev
           # Ubuntu ships googletest sources via libgtest-dev; build & install libs.
           if [ -d "/usr/src/googletest" ]; then
             GTEST_SRC="/usr/src/googletest"
