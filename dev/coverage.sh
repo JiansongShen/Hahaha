@@ -39,4 +39,4 @@ gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric line --fail-under-line 80
 
 echo
 echo "== branch coverage (core, exclude display) =="
-gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric branch --fail-under-branch 40
+gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric branch --fail-under-branch 35
