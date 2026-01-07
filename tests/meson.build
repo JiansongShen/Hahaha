@@ -50,6 +50,7 @@ test_executable = executable('hahaha_tests', test_sources,
                            cpp_args: cov_cpp_args,
                            link_args: cov_link_args,
                            link_with: hahaha_lib,
-                           dependencies: [gtest_dep])
+                           dependencies: [gtest_dep],
+                           override_options : ['cpp_std=' + hahaha_cpp_std])
 
 test('hahaha_unit_tests', test_executable)
