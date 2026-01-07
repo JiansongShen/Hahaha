@@ -20,6 +20,7 @@
 #define HAHAHA_BACKEND_VECTORIZE_SIMD_VECTOR_H
 
 #include <cstddef>
+#include <span>
 #include <type_traits>
 
 namespace hahaha::backend::vectorize {
@@ -41,15 +42,15 @@ template <typename T, size_t Width> class SimdVector {
 
     /**
      * @brief Load data from a memory location into the SIMD vector.
-     * @param ptr Pointer to the data to load.
+     * @param data Non-owning view of exactly Width elements.
      */
-    void load(const T* ptr);
+    void load(std::span<const T, Width> data);
 
     /**
      * @brief Store the SIMD vector data to a memory location.
-     * @param ptr Pointer to the memory location.
+     * @param out Non-owning view of exactly Width elements.
      */
-    void store(T* ptr) const;
+    void store(std::span<T, Width> out) const;
 
     /**
      * @brief Perform element-wise addition with another SIMD vector.
