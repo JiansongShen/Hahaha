@@ -14,7 +14,7 @@ gtest_dep = dependency('gtest', main : true, required : false)
 if not gtest_dep.found()
     # Pure Meson fallback:
     # Prefer a Meson subproject. In CI, install it via:
-    #   meson wrap install gtest
+    #   meson subprojects download gtest
     fs = import('fs')
     if fs.is_dir(join_paths(meson.project_source_root(), 'subprojects'))
         # WrapDB project name is "gtest" (directory may be googletest-<ver>).
@@ -22,7 +22,7 @@ if not gtest_dep.found()
     endif
 
     if not gtest_dep.found()
-        error('GTest dependency not found. Install system gtest, or run `meson wrap install gtest` to enable the Meson subproject fallback.')
+        error('GTest dependency not found. Install system gtest, or run `meson subprojects download gtest` to enable the Meson subproject fallback.')
     endif
 endif
 

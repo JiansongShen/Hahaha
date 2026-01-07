@@ -143,8 +143,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew update
-          brew install cmake googletest
-          echo "CMAKE_PREFIX_PATH=$(brew --prefix googletest)" >> $GITHUB_ENV
+          brew install cmake
 
       - name: Install LLVM (macOS, llvm builds)
         if: runner.os == 'macOS' && matrix.compiler == 'llvm'
@@ -152,6 +151,13 @@ jobs:
           brew update
           brew install llvm
           echo "$(brew --prefix llvm)/bin" >> $GITHUB_PATH
+
+      - name: Download subprojects (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          meson subprojects download gtest
 
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
@@ -163,7 +169,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          meson wrap install gtest
+          meson subprojects download gtest
 
       - name: Install LLVM (Windows, clang-cl builds)
         if: runner.os == 'Windows' && matrix.compiler == 'clang-cl'
