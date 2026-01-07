@@ -1,0 +1,6 @@
+
+
+option('display',
+       type: 'boolean',
+       value: true,
+       description: 'Build visualization/display components (GLFW/OpenGL/ImGui). Disable for headless CI.')

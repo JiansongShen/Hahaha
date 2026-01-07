@@ -59,12 +59,27 @@ endforeach
 
 sources = run_command('find', 'core/src', '-name', '*.cpp', '-type', 'f', check: true).stdout().strip().split('\n')
 
-# Conditionally add ImGui backends
+display_enabled = get_option('display')
+
+if not display_enabled
+  # Headless build: drop display sources that depend on GLFW/OpenGL/X11.
+  filtered_sources = []
+  foreach s : sources
+    if s != '' and not s.startswith('core/src/display/') and not s.startswith('core/include/display/')
+      filtered_sources += s
+    endif
+  endforeach
+  sources = filtered_sources
+endif
+
+# Conditionally add ImGui backends (only when display is enabled)
 imgui_backend_sources = []
-# Even if dependency is not found by pkg-config, we try to compile if headers are present
-# On Arch, the user might have them but pkg-config might not be set up in this environment
-imgui_backend_sources += 'extern/externlibs/imgui/backends/imgui_impl_glfw.cpp'
-imgui_backend_sources += 'extern/externlibs/imgui/backends/imgui_impl_opengl3.cpp'
+if display_enabled
+  # Even if dependency is not found by pkg-config, we try to compile if headers are present
+  # On Arch, the user might have them but pkg-config might not be set up in this environment
+  imgui_backend_sources += 'extern/externlibs/imgui/backends/imgui_impl_glfw.cpp'
+  imgui_backend_sources += 'extern/externlibs/imgui/backends/imgui_impl_opengl3.cpp'
+endif
 
 # Exclude backends from general extern_sources to avoid duplicates
 extern_sources = run_command('find', 'extern', '-name', '*.cpp', '-type', 'f',
@@ -74,16 +89,16 @@ extern_sources = run_command('find', 'extern', '-name', '*.cpp', '-type', 'f',
                              '!', '-path', '*/misc/fonts/*',
                              check: true).stdout().strip().split('\n')
 
+hahaha_deps = [dl_dep] + stacktrace_dep
+if display_enabled
+  hahaha_deps += [glfw_dep, gl_dep]
+endif
+
 hahaha_lib = static_library('hahaha', sources + extern_sources + imgui_backend_sources,
                             install : true,
                             include_directories : include_dir,
                             cpp_args : lib_args,
-                            dependencies : [
-                                glfw_dep,
-                                gl_dep,
-                                dl_dep,
-                                stacktrace_dep
-                            ]
+                            dependencies : hahaha_deps
 )
 
 hahaha = declare_dependency(link_with: hahaha_lib,
