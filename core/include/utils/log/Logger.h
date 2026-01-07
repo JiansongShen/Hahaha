@@ -28,13 +28,26 @@
 #include <mutex>
 #include <queue>
 #include <sstream>
-#include <stacktrace>
 #include <string>
 #include <thread>
 
 #include "utils/log/LogLevel.h"
 #include "utils/log/LogMessageEntry.h"
 #include "utils/log/LoggerConfig.h"
+
+// std::stacktrace is not universally available yet (notably some libc++
+// builds). Make stacktrace support optional so the project can build on all CI
+// platforms.
+#if defined(__has_include)
+#if __has_include(<stacktrace>)
+#include <stacktrace>
+#define HAHAHA_HAS_STACKTRACE 1
+#else
+#define HAHAHA_HAS_STACKTRACE 0
+#endif
+#else
+#define HAHAHA_HAS_STACKTRACE 0
+#endif
 
 namespace hahaha::utils {
 /**
@@ -130,8 +143,10 @@ class Logger {
      * @param level Severity level.
      * @param trace Stacktrace to include in the log.
      */
+#if HAHAHA_HAS_STACKTRACE
     static void
     log(const std::string& msg, LogLevel level, const std::stacktrace& trace);
+#endif
 
     /** @brief Log a FATAL level message. */
     static void fatal(const std::string& msg);
@@ -303,9 +318,14 @@ inline void Logger::trace(const char* msg) {
 }
 
 inline void Logger::logWithStacktrace(const std::string& msg, LogLevel level) {
+#if HAHAHA_HAS_STACKTRACE
     log(msg, level, std::stacktrace::current());
+#else
+    log(msg, level);
+#endif
 }
 
+#if HAHAHA_HAS_STACKTRACE
 inline void Logger::log(const std::string& msg,
                         LogLevel level,
                         const std::stacktrace& trace) {
@@ -314,6 +334,7 @@ inline void Logger::log(const std::string& msg,
     std::string const fullMessage = msg + "\nStacktrace:\n" + oss.str();
     log(fullMessage, level);
 }
+#endif
 
 } // namespace hahaha::utils
 
