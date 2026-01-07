@@ -25,7 +25,6 @@ meson test -C "${BUILD_DIR}" -v --no-rebuild
 GCOVR_COMMON_ARGS=(
   -r .
   --merge-mode-functions=merge-use-line-min
-  --merge-lines
   --exclude-unreachable-branches
   --exclude-noncode-lines
   --filter 'core/.'
