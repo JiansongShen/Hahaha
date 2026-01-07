@@ -18,7 +18,10 @@ if not gtest_dep.found()
     fs = import('fs')
     if fs.is_dir(join_paths(meson.project_source_root(), 'subprojects'))
         # WrapDB project name is "gtest" (directory may be googletest-<ver>).
-        gtest_dep = dependency('gtest', fallback : ['gtest', 'gtest_main_dep'])
+        # Force static library to avoid macOS-LLVM linkage issues.
+        gtest_dep = dependency('gtest',
+                               fallback : ['gtest', 'gtest_main_dep'],
+                               default_options : ['default_library=static'])
     endif
 
     if not gtest_dep.found()

@@ -34,7 +34,9 @@ class TensorWrapperBranchTest : public ::testing::Test {
 
 TEST_F(TensorWrapperBranchTest, MoveAssignment_SelfAssignment) {
     TensorWrapper<float> a({2, 2}, 1.0f);
-    a = std::move(a); // Should handle self-assignment
+    TensorWrapper<float>* ptr = &a;
+    a = std::move(
+        *ptr); // Handle self-assignment through pointer to bypass -Wself-move
     EXPECT_EQ(a.getTotalSize(), 4u);
 }
 
