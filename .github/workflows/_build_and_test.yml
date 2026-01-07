@@ -140,7 +140,8 @@ jobs:
           # Install clang-20 for full C++23 support including std::expected
           # Add LLVM official repository for latest versions
           # Ubuntu 24.04 is "noble", but LLVM repo uses codename
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          wget -O /tmp/llvm-snapshot.gpg.key https://apt.llvm.org/llvm-snapshot.gpg.key
+          sudo cp /tmp/llvm-snapshot.gpg.key /etc/apt/trusted.gpg.d/llvm-snapshot.asc
           # Try noble first (Ubuntu 24.04), fallback to jammy if not available
           if echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble main" | sudo tee /etc/apt/sources.list.d/llvm.list 2>/dev/null; then
             echo "deb-src http://apt.llvm.org/noble/ llvm-toolchain-noble main" | sudo tee -a /etc/apt/sources.list.d/llvm.list
@@ -151,27 +152,46 @@ jobs:
             REPO_CODENAME="jammy"
           fi
           sudo apt-get update
+          # Check available clang versions
+          echo "=== Available clang versions ==="
+          apt-cache search clang- | grep "^clang-[0-9]" | head -10 || true
           # Try to install clang-20 first, then fallback to newer versions
-          if sudo apt-get install -y --no-install-recommends clang-20 2>/dev/null; then
-            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-20 100
-            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-20 100
-          elif sudo apt-get install -y --no-install-recommends clang-19 2>/dev/null; then
-            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 100
-            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
-          elif sudo apt-get install -y --no-install-recommends clang-18 2>/dev/null; then
-            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
-            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-          elif sudo apt-get install -y --no-install-recommends clang-17 2>/dev/null; then
-            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-17 100
-            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 100
-          elif sudo apt-get install -y --no-install-recommends clang-16 2>/dev/null; then
-            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 100
-            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 100
+          INSTALLED_VERSION=""
+          if apt-cache show clang-20 >/dev/null 2>&1 && sudo apt-get install -y --no-install-recommends clang-20; then
+            INSTALLED_VERSION="20"
+            echo "✓ Installed clang-20"
+          elif apt-cache show clang-19 >/dev/null 2>&1 && sudo apt-get install -y --no-install-recommends clang-19; then
+            INSTALLED_VERSION="19"
+            echo "✓ Installed clang-19 (clang-20 not available)"
+          elif apt-cache show clang-18 >/dev/null 2>&1 && sudo apt-get install -y --no-install-recommends clang-18; then
+            INSTALLED_VERSION="18"
+            echo "⚠ Installed clang-18 (clang-20 not available)"
+          elif apt-cache show clang-17 >/dev/null 2>&1 && sudo apt-get install -y --no-install-recommends clang-17; then
+            INSTALLED_VERSION="17"
+            echo "⚠ Installed clang-17 (clang-20 not available)"
+          elif apt-cache show clang-16 >/dev/null 2>&1 && sudo apt-get install -y --no-install-recommends clang-16; then
+            INSTALLED_VERSION="16"
+            echo "⚠ Installed clang-16 (clang-20 not available)"
           else
             # Fallback to default clang (may not support std::expected)
             sudo apt-get install -y --no-install-recommends clang
+            INSTALLED_VERSION="default"
+            echo "⚠ Installed default clang (clang-20 not available)"
+          fi
+          # Set alternatives if we installed a specific version
+          if [ "$INSTALLED_VERSION" != "default" ] && [ "$INSTALLED_VERSION" != "" ]; then
+            sudo update-alternatives --remove-all clang 2>/dev/null || true
+            sudo update-alternatives --remove-all clang++ 2>/dev/null || true
+            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$INSTALLED_VERSION 100
+            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-$INSTALLED_VERSION 100
+            sudo update-alternatives --set clang /usr/bin/clang-$INSTALLED_VERSION
+            sudo update-alternatives --set clang++ /usr/bin/clang++-$INSTALLED_VERSION
           fi
           # Verify clang version (std::expected requires clang 16+)
+          echo "=== Clang version check ==="
+          which clang
+          which clang++
+          clang --version
           clang++ --version
 
       - name: Install dependencies (macOS)
