@@ -32,6 +32,8 @@ GCOVR_COMMON_ARGS=(
   --exclude 'examples/.'
   --exclude 'core/src/display/.'
   --exclude 'core/include/display/.'
+  # --html-details
+  # -o cover/coverage.html
 )
 
 echo "== line coverage (core, exclude display) =="
