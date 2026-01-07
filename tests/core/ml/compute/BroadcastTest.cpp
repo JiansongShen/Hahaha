@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 
 #include "Tensor.h"
-#include "compute/graph/ComputeFun.h"
+#include "ml/compute/graph/ComputeFun.h"
 
 using hahaha::Tensor;
 using hahaha::math::NestedData;

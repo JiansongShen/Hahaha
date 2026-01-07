@@ -21,9 +21,9 @@
 
 #include <memory>
 
-#include "compute/graph/ComputeNode.h"
 #include "math/TensorWrapper.h"
 #include "math/ds/TensorData.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::compute {
 

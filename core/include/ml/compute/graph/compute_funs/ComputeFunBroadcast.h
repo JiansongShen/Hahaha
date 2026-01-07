@@ -20,8 +20,8 @@
 #ifndef HAHAHA_COMPUTEFUNBROADCAST_H_CA2A2F550C26484097AE9BAB15204C65
 #define HAHAHA_COMPUTEFUNBROADCAST_H_CA2A2F550C26484097AE9BAB15204C65
 
-#include "compute/graph/ComputeNode.h"
 #include "math/TensorWrapper.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::compute {
 

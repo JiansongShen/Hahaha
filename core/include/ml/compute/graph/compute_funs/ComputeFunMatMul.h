@@ -19,8 +19,8 @@
 #ifndef HAHAHA_COMPUTE_COMPUTE_FUN_MAT_MUL_H
 #define HAHAHA_COMPUTE_COMPUTE_FUN_MAT_MUL_H
 
-#include "compute/graph/ComputeNode.h"
 #include "math/TensorWrapper.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::compute {
 
