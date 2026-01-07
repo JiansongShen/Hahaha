@@ -156,9 +156,14 @@ jobs:
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          echo "Using vcpkg to install googletest"
-          vcpkg install gtest:x64-windows
-          echo "CMAKE_PREFIX_PATH=$env:VCPKG_INSTALLATION_ROOT\\installed\\x64-windows" >> $env:GITHUB_ENV
+          echo "Using Meson WrapDB to provide googletest."
+
+      - name: Install googletest (Meson wrap, Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          meson wrap install gtest --force
 
       - name: Install LLVM (Windows, clang-cl builds)
         if: runner.os == 'Windows' && matrix.compiler == 'clang-cl'
@@ -179,6 +184,10 @@ jobs:
           if [ "${{ matrix.compiler }}" = "llvm" ]; then
             export CC="$(brew --prefix llvm)/bin/clang"
             export CXX="$(brew --prefix llvm)/bin/clang++"
+            # Homebrew LLVM on macOS can end up mixing stdlib settings.
+            # Force libc++ to avoid missing libc++ symbols at link time (e.g. std::__1::__hash_memory).
+            export CXXFLAGS="${CXXFLAGS-} -stdlib=libc++"
+            export LDFLAGS="${LDFLAGS-} -stdlib=libc++"
           elif [ -n "${{ matrix.cc }}" ]; then
             export CC="${{ matrix.cc }}"
             export CXX="${{ matrix.cxx }}"

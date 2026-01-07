@@ -82,7 +82,6 @@ RUN apt-get update && apt-get install -y \
     python3 \
     swig \
     python3-pip \
-    libgtest-dev \
     clang \
     meson \
     fish \
@@ -116,20 +115,9 @@ RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100 \
 ENV CC=clang
 ENV CXX=clang++
 
-# Build and install Google Test from source
-# The Debian/Ubuntu package `libgtest-dev` provides sources under /usr/src.
-# Use the standard location installed by the package instead of a non-existent /usr/core path.
-RUN if [ -d "/usr/src/googletest" ]; then \
-            cd /usr/src/googletest && \
-            cmake . && \
-            cmake --build . --target install; \
-        elif [ -d "/usr/src/gtest" ]; then \
-            cd /usr/src/gtest && \
-            cmake . && \
-            cmake --build . --target install; \
-        else \
-            echo "googletest sources not found in /usr/src; skipping build"; \
-        fi
+# NOTE:
+# Project test dependencies (e.g. googletest) are provided via Meson WrapDB
+# (subprojects/*.wrap) instead of system packages.
 
 # RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 

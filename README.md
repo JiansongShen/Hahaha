@@ -20,7 +20,7 @@ loops, together with **visualization tooling** so learners can *see* what happen
 - **Visualization + educational UX**:
   - ImGui-based visualizer and demos under `examples/` to show training dynamics.
   - Code is intentionally written to be readable and traceable, with tests as executable documentation.
-- **Tooling**: Meson + Ninja build, GoogleTest, formatting script `./format.sh`.
+- **Tooling**: Meson + Ninja build, GoogleTest, formatting script `python3 dev/format.py`.
 
 ## Build and run
 
@@ -98,7 +98,7 @@ Contributions are welcome! Please follow these guidelines:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a pull request
 
-Please ensure your code follows the project's coding standards by running `format.sh` before submitting.
+Please ensure your code follows the project's coding standards by running `python3 dev/format.py` before submitting.
 
 ## License
 

@@ -7,9 +7,6 @@
 # Include directories
 include_dirs = [
     'core/include',
-    'extern/externlibs/imgui',
-    'extern/externlibs/imgui/backends',
-    'extern/externlibs/imgui/examples/libs/glfw/include' # Fallback for GLFW
 ]
 include_dir = include_directories(include_dirs)
 fs = import('fs')
@@ -58,41 +55,49 @@ if not display_enabled
   sources = filtered_sources
 endif
 
-# Conditionally add ImGui backends (only when display is enabled)
-imgui_backend_sources = []
-if display_enabled
-  # Even if dependency is not found by pkg-config, we try to compile if headers are present
-  # On Arch, the user might have them but pkg-config might not be set up in this environment
-  imgui_backend_sources += 'extern/externlibs/imgui/backends/imgui_impl_glfw.cpp'
-  imgui_backend_sources += 'extern/externlibs/imgui/backends/imgui_impl_opengl3.cpp'
-endif
 
-extern_sources = []
+
+imgui_dep = []
 if display_enabled
-  # Exclude backends from general extern_sources to avoid duplicates.
-  # We use Python glob here for cross-platform source discovery (Windows doesn't have GNU find).
-  extern_glob_code = '''
-import glob
-paths = glob.glob("extern/**/*.cpp", recursive=True)
-def keep(p):
-  p = p.replace("\\\\", "/")
-  if "/examples/" in p: return False
-  if "/backends/" in p: return False
-  if "/misc/freetype/" in p: return False
-  if "/misc/fonts/" in p: return False
-  return True
-print("\\n".join([p for p in paths if keep(p)]))
-'''
-  extern_sources = run_command(py, '-c', extern_glob_code,
-                               check: true).stdout().strip().split('\n')
+  # Use Meson wrap subproject for ImGui (no vendored extern/ tree).
+  #
+  # IMPORTANT:
+  # The WrapDB ImGui subproject defaults many backends to 'auto'. If Vulkan is
+  # detected (even partially), it may try to compile imgui_impl_vulkan.cpp,
+  # which requires <vulkan/vulkan.h>. To keep display builds lightweight and
+  # CI-friendly, we only enable the backends we actually use (GLFW + OpenGL3).
+  imgui_sp = subproject('imgui',
+                        default_options: [
+                          'opengl=enabled',
+                          'glfw=enabled',
+
+                          'vulkan=disabled',
+                          'webgpu=disabled',
+
+                          'dx9=disabled',
+                          'dx10=disabled',
+                          'dx11=disabled',
+                          'dx12=disabled',
+                          'metal=disabled',
+
+                          'sdl2_renderer=disabled',
+                          'sdl3_renderer=disabled',
+                          'sdl2=disabled',
+                          'sdl3=disabled',
+
+                          'osx=disabled',
+                          'win=disabled',
+                          'allegro5=disabled',
+                        ])
+  imgui_dep = imgui_sp.get_variable('imgui_dep')
 endif
 
 hahaha_deps = [dl_dep] + stacktrace_dep
 if display_enabled
-  hahaha_deps += [glfw_dep, gl_dep]
+  hahaha_deps += [glfw_dep, gl_dep, imgui_dep]
 endif
 
-hahaha_lib = static_library('hahaha', sources + extern_sources + imgui_backend_sources,
+hahaha_lib = static_library('hahaha', sources,
                             install : true,
                             include_directories : include_dir,
                             cpp_args : lib_args,
@@ -100,7 +105,8 @@ hahaha_lib = static_library('hahaha', sources + extern_sources + imgui_backend_s
 )
 
 hahaha = declare_dependency(link_with: hahaha_lib,
-                            include_directories: include_dir)
+                            include_directories: include_dir,
+                            dependencies: hahaha_deps)
 
 subdir('tests')
 subdir('examples')

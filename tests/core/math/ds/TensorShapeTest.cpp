@@ -19,8 +19,8 @@
 #include "math/ds/TensorShape.h"
 
 #include <cstddef>
-#include <optional>
 #include <gtest/gtest.h>
+#include <optional>
 
 class TensorShapeTest : public ::testing::Test {
   protected:
@@ -173,8 +173,8 @@ TEST_F(TensorShapeTest, BroadcastShape_SameShape_ReturnsSame) {
 
 TEST_F(TensorShapeTest, BroadcastShape_ScalarWithTensor_ReturnsTensorShape) {
     // scalar is rank-0 (dims == {})
-    auto res = TensorShape::broadcastShape(TensorShape({}),
-                                           TensorShape({2, 3}));
+    auto res =
+        TensorShape::broadcastShape(TensorShape({}), TensorShape({2, 3}));
     ASSERT_TRUE(res.has_value());
     EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
 }
@@ -191,6 +191,15 @@ TEST_F(TensorShapeTest, BroadcastShape_DimOneBroadcasts) {
     // (1,3) with (2,3) -> (2,3)
     auto res =
         TensorShape::broadcastShape(TensorShape({1, 3}), TensorShape({2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+}
+
+TEST_F(TensorShapeTest, BroadcastShape_RhsHasDimOne_UsesLhsDim) {
+    // (2,3) with (1,3) -> (2,3)
+    // This specifically covers the `d2 == 1` branch in broadcastShape().
+    auto res =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({1, 3}));
     ASSERT_TRUE(res.has_value());
     EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
 }

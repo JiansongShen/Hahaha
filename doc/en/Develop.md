@@ -8,7 +8,7 @@ Welcome to the Hahaha project! This is an education-first deep learning framewor
 - `tests/`: Unit tests.
 - `sample/`: Example applications (e.g., `sample/mnist/`).
 - `doc/`: Documentation.
-- `format.sh`: One-click formatting script.
+- `dev/format.py`: Cross-platform formatting script.
 
 ### 2. General Principles
 - **Education First**: Code must be concise and readable. Every module/function should have a clear intent. Use modern C++23 features but avoid unnecessary complexity.
@@ -26,7 +26,7 @@ ninja -C builddir
 meson test -C builddir -v
 
 # Format code
-./format.sh
+python3 dev/format.py
 ```
 
 ### 4. Naming Conventions
@@ -127,6 +127,6 @@ All code must pass `clang-format` and `clang-tidy`.
 ### 10. PR Checklist
 - [ ] Code compiles via `ninja -C builddir`.
 - [ ] All unit tests pass via `meson test -C builddir`.
-- [ ] `./format.sh` has been run for consistent styling.
+- [ ] `python3 dev/format.py` has been run for consistent styling.
 - [ ] Key logic includes educational comments.
 - [ ] Doxygen comments added for new public APIs.
