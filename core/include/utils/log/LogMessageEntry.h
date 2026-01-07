@@ -34,7 +34,7 @@ namespace hahaha::utils {
  * and provides a method to format it for output. It is cache-aligned
  * for better performance in the asynchronous logging queue.
  */
-struct LogMessageEntry {
+struct alignas(64) LogMessageEntry {
 
   public:
     /**
@@ -95,7 +95,7 @@ struct LogMessageEntry {
   private:
     std::string message_; /**< Log message content. */
     LogLevel level_;      /**< Log severity level. */
-} __attribute__((aligned(64)));
+};
 
 } // namespace hahaha::utils
 

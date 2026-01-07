@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
+// Copyright (c) 2025 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// Contributors:
+// Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
 #include "backend/DeviceComputeDispatcher.h"
@@ -234,6 +237,128 @@ TEST(DeviceComputeDispatcherTest, DispatchMatMul_UnsupportedDevice_Throws) {
 
     EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchMatMul(a, b, res),
                  std::runtime_error);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchScalar_UnsupportedDevice_Throws) {
+    TensorWrapper<float> a(TensorShape({2, 2}), 1.0f, Device(DeviceType::SIMD));
+    TensorWrapper<float> res(
+        TensorShape({2, 2}), 0.0f, Device(DeviceType::SIMD));
+
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
+                     Operator::Add, a, 1.0f, res),
+                 std::runtime_error);
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
+                     Operator::Add, 1.0f, a, res),
+                 std::runtime_error);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchBinary_Broadcasting_Works) {
+    // (2, 2) + (2, 1) -> (2, 2)
+    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    TensorWrapper<float> b(NestedData<float>{{10.0f}, {20.0f}}); // shape (2, 1)
+    TensorWrapper<float> b_broadcasted =
+        b.broadcastTo(TensorShape({2, 2})); // strides will have 0
+
+    TensorWrapper<float> res(
+        TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
+
+    DeviceComputeDispatcher<float>::dispatchBinary(
+        Operator::Add, a, b_broadcasted, res);
+
+    // res[0,0] = 1 + 10 = 11
+    // res[0,1] = 2 + 10 = 12
+    // res[1,0] = 3 + 20 = 23
+    // res[1,1] = 4 + 20 = 24
+    EXPECT_FLOAT_EQ(res.at({0, 0}), 11.0f);
+    EXPECT_FLOAT_EQ(res.at({0, 1}), 12.0f);
+    EXPECT_FLOAT_EQ(res.at({1, 0}), 23.0f);
+    EXPECT_FLOAT_EQ(res.at({1, 1}), 24.0f);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchBinary_Broadcasting_Lhs_Works) {
+    // (1, 2) + (2, 2) -> (2, 2)
+    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}}); // shape (1, 2)
+    TensorWrapper<float> a_broadcasted = a.broadcastTo(TensorShape({2, 2}));
+    TensorWrapper<float> b(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}});
+
+    TensorWrapper<float> res(
+        TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
+
+    DeviceComputeDispatcher<float>::dispatchBinary(
+        Operator::Add, a_broadcasted, b, res);
+
+    // res[0,0] = 1 + 10 = 11
+    // res[0,1] = 2 + 20 = 22
+    // res[1,0] = 1 + 30 = 31
+    // res[1,1] = 2 + 40 = 42
+    EXPECT_FLOAT_EQ(res.at({0, 0}), 11.0f);
+    EXPECT_FLOAT_EQ(res.at({0, 1}), 22.0f);
+    EXPECT_FLOAT_EQ(res.at({1, 0}), 31.0f);
+    EXPECT_FLOAT_EQ(res.at({1, 1}), 42.0f);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchBinary_Broadcasting_Deep_Works) {
+    // (1, 2, 1) + (2, 1, 2) -> (2, 2, 2)
+    TensorWrapper<float> a(NestedData<float>{{{1.0f}, {2.0f}}}); // 1x2x1
+    TensorWrapper<float> b(
+        NestedData<float>{{{10.0f, 20.0f}}, {{30.0f, 40.0f}}}); // 2x1x2
+
+    auto ab = a.broadcastTo(TensorShape({2, 2, 2}));
+    auto bb = b.broadcastTo(TensorShape({2, 2, 2}));
+
+    TensorWrapper<float> res(TensorShape({2, 2, 2}), 0.0f);
+    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Add, ab, bb, res);
+
+    // a[0,0,0]=1, a[0,1,0]=2
+    // b[0,0,0]=10, b[0,0,1]=20, b[1,0,0]=30, b[1,0,1]=40
+    // res[0,0,0] = 1 + 10 = 11
+    // res[0,0,1] = 1 + 20 = 21
+    // res[0,1,0] = 2 + 10 = 12
+    // res[0,1,1] = 2 + 20 = 22
+    // res[1,0,0] = 1 + 30 = 31
+    // res[1,0,1] = 1 + 40 = 41
+    EXPECT_FLOAT_EQ(res.at({0, 0, 0}), 11.0f);
+    EXPECT_FLOAT_EQ(res.at({1, 1, 1}), 42.0f);
+}
+
+TEST(DeviceComputeDispatcherTest, ForEachElement_CoordinateCarry_Coverage) {
+    // This is to specifically trigger the 'continue' inside the dimension loop
+    // of forEachElement where it carries over to the next dimension.
+    // Shape (2, 2)
+    TensorWrapper<float> a(NestedData<float>{{1, 2}, {3, 4}});
+    TensorWrapper<float> res(TensorShape({2, 2}), 0.0f);
+
+    // We already have DispatchBinary tests, but let's make sure we hit the
+    // inner loop multiple times
+    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Add, a, a, res);
+    EXPECT_FLOAT_EQ(res.at({1, 1}), 8.0f);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchScalar_Rhs_DivZero_Throws) {
+    TensorWrapper<float> a(NestedData<float>{1.0f, 2.0f});
+    TensorWrapper<float> res(TensorShape({2}), 0.0f);
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
+                     Operator::Div, a, 0.0f, res),
+                 std::runtime_error);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchScalar_Lhs_DivZero_Throws) {
+    TensorWrapper<float> a(NestedData<float>{1.0f, 0.0f});
+    TensorWrapper<float> res(TensorShape({2}), 0.0f);
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
+                     Operator::Div, 1.0f, a, res),
+                 std::runtime_error);
+}
+
+TEST(DeviceComputeDispatcherTest,
+     DispatchMatMul_InnerDimensionMismatch_NoCheckYetButRun) {
+    // Current implementation doesn't check inner dimension, it just loops.
+    // We should at least cover the code.
+    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}});   // 1x2
+    TensorWrapper<float> b(NestedData<float>{{3.0f}, {4.0f}}); // 2x1
+    TensorWrapper<float> res(TensorShape({1, 1}), 0.0f);
+    DeviceComputeDispatcher<float>::dispatchMatMul(a, b, res);
+    EXPECT_FLOAT_EQ(res.at({0, 0}), 11.0f);
 }
 
 TEST(DeviceComputeDispatcherTest, DispatchAxpy_UnsupportedDevice_Throws) {

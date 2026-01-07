@@ -19,7 +19,6 @@
 #include <gtest/gtest.h>
 
 #include "Tensor.h"
-#include "ml/compute/graph/ComputeFun.h"
 
 using hahaha::Tensor;
 using hahaha::math::NestedData;
@@ -320,4 +319,20 @@ TEST_F(BroadcastTest, AutoBroadcast_Mul_ScalarToMatrix_Grad) {
     ASSERT_NE(a.grad(), nullptr);
     // dL/da = sum(w) because upstream grad is ones
     EXPECT_FLOAT_EQ(a.grad()->at({}), 21.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_GradFun_ComplexInners) {
+    // Shape {2, 1, 2} -> {2, 2, 2}
+    Tensor<float> a(NestedData<float>{{{1, 2}}, {{3, 4}}});
+    a.setRequiresGrad(true);
+    std::vector<size_t> targetShape = {2, 2, 2};
+
+    auto b = hahaha::compute::broadcast(a.getComputeNode(), targetShape);
+    Tensor<float> bt(b);
+
+    bt.backward();
+
+    ASSERT_NE(a.grad(), nullptr);
+    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad()->at({1, 0, 1}), 2.0f);
 }

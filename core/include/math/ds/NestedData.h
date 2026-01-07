@@ -19,9 +19,11 @@
 #ifndef HAHAHA_MATH_DS_NESTED_DATA_H
 #define HAHAHA_MATH_DS_NESTED_DATA_H
 
-#include <stdexcept>
 #include <initializer_list>
+#include <stdexcept>
 #include <vector>
+
+#include "utils/Macros.h"
 
 // Forward declaration for friend class template
 class NestedDataTest;
@@ -76,17 +78,18 @@ template <typename T> struct NestedData {
                                             "inconsistent shapes.");
             }
         }
-        shape_.insert(shape_.end(), firstNestedData.shape_.begin(),
+        shape_.insert(shape_.end(),
+                      firstNestedData.shape_.begin(),
                       firstNestedData.shape_.end());
 
         size_t totalElements = 0;
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (const auto& val : data) {
             totalElements += val.flatData_.size();
         }
         flatData_.reserve(totalElements);
 
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (const auto& val : data) {
             flatData_.insert(
                 flatData_.end(), val.flatData_.begin(), val.flatData_.end());

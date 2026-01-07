@@ -37,7 +37,7 @@ enum class DeviceType : std::uint8_t {
 /**
  * @brief Represents a compute device where data resides and operations occur.
  */
-struct Device {
+struct alignas(2) Device {
     DeviceType type = DeviceType::CPU; /**< Type of the device. */
     std::uint8_t id =
         0; /**< Unique identifier for multiple devices of the same type. */
@@ -80,7 +80,7 @@ struct Device {
         }
         return deviceName + ":" + std::to_string(id);
     }
-} __attribute__((aligned(2)));
+};
 
 } // namespace hahaha::backend
 

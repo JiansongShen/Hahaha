@@ -1,3 +1,12 @@
+/*
+ * @Author: napbad napbad.sen@gmail.com
+ * @Date: 2026-01-07 14:03:19
+ * @LastEditors: napbad napbad.sen@gmail.com
+ * @LastEditTime: 2026-01-07 14:26:50
+ * @FilePath: /Hahaha/tests/core/utils/log/LogLevelTest.cpp
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
+ * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // Copyright (c) 2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +28,28 @@
 using hahaha::utils::LogLevel;
 using hahaha::utils::toColoredString;
 using hahaha::utils::toString;
+
+TEST(LogLevelTest, ToString_ValidValues) {
+    EXPECT_EQ(toString(LogLevel::TRACE), "TRACE");
+    EXPECT_EQ(toString(LogLevel::DEBUG), "DEBUG");
+    EXPECT_EQ(toString(LogLevel::INFO), "INFO ");
+    EXPECT_EQ(toString(LogLevel::WARN), "WARN ");
+    EXPECT_EQ(toString(LogLevel::ERROR), "ERROR");
+    EXPECT_EQ(toString(LogLevel::FATAL), "FATAL");
+}
+
+TEST(LogLevelTest, ToColoredString_ValidValues) {
+    EXPECT_NE(toColoredString(LogLevel::TRACE).find("TRACE"),
+              std::string::npos);
+    EXPECT_NE(toColoredString(LogLevel::DEBUG).find("DEBUG"),
+              std::string::npos);
+    EXPECT_NE(toColoredString(LogLevel::INFO).find("INFO"), std::string::npos);
+    EXPECT_NE(toColoredString(LogLevel::WARN).find("WARN"), std::string::npos);
+    EXPECT_NE(toColoredString(LogLevel::ERROR).find("ERROR"),
+              std::string::npos);
+    EXPECT_NE(toColoredString(LogLevel::FATAL).find("FATAL"),
+              std::string::npos);
+}
 
 TEST(LogLevelTest, ToString_InvalidValue_ReturnsUnknown) {
     auto invalid = static_cast<LogLevel>(999);

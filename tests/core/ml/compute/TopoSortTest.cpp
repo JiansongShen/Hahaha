@@ -155,6 +155,13 @@ TEST_F(TopoSortTest, MultipleCallsIndependence) {
     // This confirms our fix for the state residue bug.
 }
 
+TEST_F(TopoSortTest, NullNode) {
+    std::shared_ptr<ComputeNode<float>> a = nullptr;
+    TopoSort<float> sorter;
+    auto list = sorter.toTopoList(a);
+    EXPECT_TRUE(list.empty());
+}
+
 TEST_F(TopoSortTest, UnaryAndBinaryMix) {
     /*
          A

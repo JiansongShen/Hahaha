@@ -134,6 +134,11 @@ template <typename T> class Tensor {
         return Tensor(compute::div(this->computeNode_, scalar));
     }
 
+    /** @brief Unary negation operator. */
+    Tensor<T> operator-() const {
+        return Tensor(compute::neg(this->computeNode_));
+    }
+
     /** @brief Matrix multiplication. */
     Tensor<T> matmul(const Tensor<T>& other) const {
         return Tensor(compute::matmul(this->computeNode_, other.computeNode_));

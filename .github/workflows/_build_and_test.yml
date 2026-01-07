@@ -188,12 +188,13 @@ jobs:
           set -euo pipefail
           BUILDDIR="builddir-${{ matrix.name }}"
           if [ "${{ matrix.compiler }}" = "llvm" ]; then
-            export CC="$(brew --prefix llvm)/bin/clang"
-            export CXX="$(brew --prefix llvm)/bin/clang++"
+            LLVM_PREFIX=$(brew --prefix llvm)
+            export CC="$LLVM_PREFIX/bin/clang"
+            export CXX="$LLVM_PREFIX/bin/clang++"
             # Homebrew LLVM on macOS can end up mixing stdlib settings.
             # Force libc++ to avoid missing libc++ symbols at link time (e.g. std::__1::__hash_memory).
-            export CXXFLAGS="${CXXFLAGS-} -stdlib=libc++"
-            export LDFLAGS="${LDFLAGS-} -stdlib=libc++"
+            export CXXFLAGS="${CXXFLAGS-} -stdlib=libc++ -I$LLVM_PREFIX/include"
+            export LDFLAGS="${LDFLAGS-} -stdlib=libc++ -L$LLVM_PREFIX/lib -Wl,-rpath,$LLVM_PREFIX/lib"
           elif [ -n "${{ matrix.cc }}" ]; then
             export CC="${{ matrix.cc }}"
             export CXX="${{ matrix.cxx }}"

@@ -24,9 +24,9 @@
 #include <optional>
 #include <string>
 #include <vector>
-#include <optional>
 
 #include "common/definitions.h"
+#include "utils/Macros.h"
 
 class TensorShapeTest;
 
@@ -114,7 +114,7 @@ class TensorShape {
             return 1;
         }
         size_t size = 1;
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (const auto& dim : dims_) {
             size *= dim;
         }
@@ -132,7 +132,7 @@ class TensorShape {
      */
     [[nodiscard]] std::string toString() const {
         std::string result = "(";
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (size_t i = 0; i < dims_.size(); ++i) {
             // NOLINENEXTLINE
             result += std::to_string(dims_[i]);

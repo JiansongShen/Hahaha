@@ -24,6 +24,7 @@
 
 #include "common/definitions.h"
 #include "math/ds/TensorShape.h"
+#include "utils/Macros.h"
 
 namespace hahaha::math {
 using common::u32;
@@ -55,7 +56,7 @@ class TensorStride {
             return;
         }
         strides_[dims.size() - 1] = 1;
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (size_t i = dims.size() - 1; i > 0; --i) {
             strides_[i - 1] = strides_[i] * static_cast<size_t>(dims[i]);
         }
@@ -106,7 +107,7 @@ class TensorStride {
         std::stringstream sstream;
         sstream << "[";
 
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (size_t i = 0; i < strides_.size(); ++i) {
             sstream << strides_[i];
             if (i != strides_.size() - 1) {
