@@ -38,13 +38,35 @@ echo -e "${GREEN_BOLD}$(printf '=%.0s' $(seq 1 $TERMINAL_WIDTH))${RESET_STYLE}"
 cd /workspace
 
 if command -v meson >/dev/null 2>&1; then
-  # Install googletest + imgui via Meson wraps (idempotent).
-  # Note: Meson wrap install does NOT support --force on some versions.
-  if [ ! -d "subprojects/googletest-1.17.0" ]; then
-    meson wrap install gtest
+  # Install/download googletest + imgui via Meson WrapDB (idempotent).
+  #
+  # IMPORTANT:
+  # - `meson wrap install <name>` FAILS (exit=1) when the wrap file already
+  #   exists in the repo (e.g. subprojects/gtest.wrap).
+  # - `meson subprojects download <name>` is the correct command when wrap
+  #   files are already tracked in git.
+  mkdir -p subprojects
+
+  # gtest
+  if compgen -G "subprojects/googletest-*" > /dev/null; then
+    echo "gtest subproject already present."
+  else
+    if [ -f "subprojects/gtest.wrap" ]; then
+      meson subprojects download gtest
+    else
+      meson wrap install gtest
+    fi
   fi
-  if [ ! -d "subprojects/imgui-1.91.6" ]; then
-    meson wrap install imgui
+
+  # imgui
+  if compgen -G "subprojects/imgui-*" > /dev/null; then
+    echo "imgui subproject already present."
+  else
+    if [ -f "subprojects/imgui.wrap" ]; then
+      meson subprojects download imgui
+    else
+      meson wrap install imgui
+    fi
   fi
 else
   echo "WARNING: meson not found in PATH; skip Meson wrap install." >&2
