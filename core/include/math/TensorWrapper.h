@@ -273,7 +273,7 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper A new tensor with reshaped dimensions.
      */
     TensorWrapper reshape(const std::vector<size_t>& newShape) const {
-        size_t totalSize = std::accumulate(
+        const size_t totalSize = std::accumulate(
             newShape.begin(), newShape.end(), 1ULL, std::multiplies());
         if (totalSize != getTotalSize()) {
             throw std::invalid_argument("New shape total size ("
@@ -774,8 +774,8 @@ template <typename T> class TensorWrapper {
         }
 
         // 3. calculate data to result
-        const T* srcPtr = getRawData().get();
-        T* resPtr = result.getRawData().get();
+        const std::shared_ptr<T[]> srcPtr = getRawData();
+        std::shared_ptr<T[]> resPtr = result.getRawData();
         std::vector<size_t> coord(srcShape.size(), 0);
         size_t dstIdx = 0;
 
@@ -1068,7 +1068,7 @@ template <typename T> class TensorWrapper {
     }
 
     // Friend classes for internal access
-    friend class ::TensorWrapperTest;
+    friend class TensorWrapperTest;
     friend class compute::ComputeNode<T>;
     friend class backend::DeviceComputeDispatcher<T>;
 };
