@@ -48,7 +48,7 @@ template <typename T> class DeviceComputeDispatcher {
      * This supports broadcast views produced by TensorWrapper::broadcastTo()
      * (i.e. stride can contain 0), without requiring materialization.
      *
-     * The traversal is multi-dimensional but writes output as a dense
+     * The traversal is multidimensional but writes output as a dense
      * row-major buffer.
      *
      * Plain-text formulas:
@@ -63,9 +63,9 @@ template <typename T> class DeviceComputeDispatcher {
      * @param shape Output shape (must match elementwise broadcast result).
      * @param lhsStride LHS strides aligned with `shape` rank.
      * @param rhsStride RHS strides aligned with `shape` rank.
-     * @param lhsPtr Pointer to LHS base storage (may be shared/broadcast view).
-     * @param rhsPtr Pointer to RHS base storage (may be shared/broadcast view).
-     * @param outPtr Pointer to dense output buffer.
+     * @param lhsBuf Pointer to LHS base storage (may be shared/broadcast view).
+     * @param rhsBuf Pointer to RHS base storage (may be shared/broadcast view).
+     * @param outBuf Pointer to dense output buffer.
      * @param fn Elementwise function.
      */
     template <typename Fn>

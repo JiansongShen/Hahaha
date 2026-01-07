@@ -27,6 +27,7 @@ GCOVR_COMMON_ARGS=(
   --merge-mode-functions=merge-use-line-min
   --exclude-unreachable-branches
   --exclude-noncode-lines
+  --merge-lines
   --filter 'core/.'
   --exclude 'subprojects/.'
   --exclude 'examples/.'

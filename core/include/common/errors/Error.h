@@ -35,24 +35,53 @@ namespace hahaha::common {
  */
 template <typename Derived, ErrorCode code> class ErrorBase {
   public:
+  public:
+    /**
+     * @brief The error code associated with this error type.
+     */
     static constexpr ErrorCode Code = code;
 
+    /**
+     * @brief Default constructor for ErrorBase.
+     */
     ErrorBase() = default;
 
+    /**
+     * @brief Constructor for ErrorBase with message and optional location.
+     *
+     * @param message The error message string
+     * @param location The source location where the error occurred (defaults to
+     * current location)
+     */
     explicit ErrorBase(
         std::string message,
         const std::source_location location = std::source_location::current())
         : message(std::move(message)), location(location) {
     }
 
+    /**
+     * @brief Get the error code associated with this error type.
+     *
+     * @return constexpr ErrorCode The error code
+     */
     static constexpr ErrorCode getCode() {
         return Code;
     }
 
+    /**
+     * @brief Get the error message.
+     *
+     * @return std::string The error message
+     */
     std::string getMessage() const {
         return message;
     }
 
+    /**
+     * @brief Get the location where the error occurred.
+     *
+     * @return std::string The location in format "filename:line_number"
+     */
     std::string getLocation() const {
         return std::string(location.file_name()) + ":"
             + std::to_string(location.line());
@@ -67,8 +96,9 @@ template <typename Derived, ErrorCode code> class ErrorBase {
     }
 
   protected:
-    std::string message;
-    std::source_location location;
+    std::string message; ///< The error message
+    std::source_location
+        location; ///< The source location where the error occurred
 };
 
 } // namespace hahaha::common
