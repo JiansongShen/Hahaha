@@ -20,6 +20,8 @@
 #define HAHAHA_BACKEND_GPU_GPU_MEMORY_H
 
 #include <cstddef>
+#include <cstdint>
+#include <span>
 
 namespace hahaha::backend::gpu {
 
@@ -29,43 +31,96 @@ namespace hahaha::backend::gpu {
 class GpuMemory {
   public:
     /**
-     * @brief Allocate memory on the GPU.
-     * @param size Size of memory to allocate in bytes.
-     * @return void* Pointer to the allocated memory.
+     * @brief RAII handle for a GPU device buffer.
+     *
+     * This stores the device address as an integer to avoid exposing raw
+     * pointers in the backend public API.
      */
-    static void* allocate(size_t size);
+    class DeviceBuffer {
+      public:
+        DeviceBuffer() = default;
+        DeviceBuffer(std::uintptr_t address, size_t size)
+            : address_(address), size_(size) {
+        }
+
+        ~DeviceBuffer() noexcept {
+            if (address_ != 0) {
+                GpuMemory::deallocate(address_);
+            }
+        }
+
+        DeviceBuffer(const DeviceBuffer&) = delete;
+        DeviceBuffer& operator=(const DeviceBuffer&) = delete;
+
+        DeviceBuffer(DeviceBuffer&& other) noexcept
+            : address_(other.address_), size_(other.size_) {
+            other.address_ = 0;
+            other.size_ = 0;
+        }
+
+        DeviceBuffer& operator=(DeviceBuffer&& other) noexcept {
+            if (this == &other) {
+                return *this;
+            }
+            if (address_ != 0) {
+                GpuMemory::deallocate(address_);
+            }
+            address_ = other.address_;
+            size_ = other.size_;
+            other.address_ = 0;
+            other.size_ = 0;
+            return *this;
+        }
+
+        [[nodiscard]] std::uintptr_t address() const {
+            return address_;
+        }
+
+        [[nodiscard]] size_t size() const {
+            return size_;
+        }
+
+      private:
+        std::uintptr_t address_ = 0;
+        size_t size_ = 0;
+    };
 
     /**
-     * @brief Deallocate memory on the GPU.
-     * @param ptr Pointer to the memory to deallocate.
+     * @brief Allocate memory on the GPU.
+     * @param size Size of memory to allocate in bytes.
+     * @return DeviceBuffer RAII-owned device buffer handle.
      */
-    static void deallocate(void* ptr);
+    static DeviceBuffer allocate(size_t size);
 
     /**
      * @brief Copy data from host to device.
-     * @param device_ptr Destination pointer on the device.
-     * @param host_ptr Source pointer on the host.
-     * @param size Size of data to copy in bytes.
+     * @param device Destination device buffer.
+     * @param host Source byte span on the host.
      */
-    static void
-    copyToDevice(void* device_ptr, const void* host_ptr, size_t size);
+    static void copyToDevice(DeviceBuffer& device,
+                             std::span<const std::byte> host);
 
     /**
      * @brief Copy data from device to host.
-     * @param host_ptr Destination pointer on the host.
-     * @param device_ptr Source pointer on the device.
-     * @param size Size of data to copy in bytes.
+     * @param host Destination byte span on the host.
+     * @param device Source device buffer.
      */
-    static void copyToHost(void* host_ptr, const void* device_ptr, size_t size);
+    static void copyToHost(std::span<std::byte> host,
+                           const DeviceBuffer& device);
 
     /**
      * @brief Copy data from device to device.
-     * @param dest_ptr Destination pointer on the device.
-     * @param src_ptr Source pointer on the device.
-     * @param size Size of data to copy in bytes.
+     * @param dest Destination device buffer.
+     * @param src Source device buffer.
      */
-    static void
-    copyDeviceToDevice(void* dest_ptr, const void* src_ptr, size_t size);
+    static void copyDeviceToDevice(DeviceBuffer& dest, const DeviceBuffer& src);
+
+  private:
+    /**
+     * @brief Deallocate memory on the GPU (internal).
+     * @param address Device address of the memory to deallocate.
+     */
+    static void deallocate(std::uintptr_t address);
 };
 
 } // namespace hahaha::backend::gpu

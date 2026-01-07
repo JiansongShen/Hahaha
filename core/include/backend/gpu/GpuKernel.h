@@ -19,7 +19,8 @@
 #ifndef HAHAHA_BACKEND_GPU_GPU_KERNEL_H
 #define HAHAHA_BACKEND_GPU_GPU_KERNEL_H
 
-#include <memory>
+#include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -48,11 +49,11 @@ class GpuKernel {
      * @brief Launch the kernel with specified grid and block dimensions.
      * @param grid_dims Dimensions of the grid (number of blocks).
      * @param block_dims Dimensions of the block (number of threads per block).
-     * @param args Arguments to pass to the kernel.
+     * @param args Addresses of arguments to pass to the kernel.
      */
     virtual void launch(const std::vector<size_t>& grid_dims,
                         const std::vector<size_t>& block_dims,
-                        void** args) = 0;
+                        std::span<const std::uintptr_t> args) = 0;
 
     /**
      * @brief Get the kernel name.
