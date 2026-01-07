@@ -23,9 +23,9 @@ BUILD_DIR="${1:-builddir}"
 cd "${ROOT_DIR}"
 
 if [ -d "${BUILD_DIR}" ]; then
-  meson setup --reconfigure "${BUILD_DIR}" -Db_coverage=true
+  meson setup --reconfigure "${BUILD_DIR}" -Db_coverage=true -Ddisplay=false
 else
-  meson setup "${BUILD_DIR}" --buildtype=debug -Db_coverage=true
+  meson setup "${BUILD_DIR}" --buildtype=debug -Db_coverage=true -Ddisplay=false
 fi
 meson compile -C "${BUILD_DIR}" tests/hahaha_tests
 meson test -C "${BUILD_DIR}" -v --no-rebuild
