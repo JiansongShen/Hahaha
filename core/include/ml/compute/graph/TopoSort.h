@@ -31,10 +31,10 @@ template <typename T> class TopoSort {
   public:
     /**
      * @brief Generates a topologically sorted list of nodes.
-     * 
+     *
      * The order ensures that parents appear before their children,
      * which is suitable for forward computation.
-     * 
+     *
      * @param node The starting node (usually the output/loss node).
      * @return A vector of shared pointers to ComputeNodes in topo order.
      */
@@ -49,16 +49,16 @@ template <typename T> class TopoSort {
     }
 
   private:
-    void
-    toTopoRecursiveList(const std::shared_ptr<ComputeNode<T>>& node,
-                        std::unordered_set<std::shared_ptr<ComputeNode<T>>>& visited,
-                        std::vector<std::shared_ptr<ComputeNode<T>>>& vec) {
+    void toTopoRecursiveList(
+        const std::shared_ptr<ComputeNode<T>>& node,
+        std::unordered_set<std::shared_ptr<ComputeNode<T>>>& visited,
+        std::vector<std::shared_ptr<ComputeNode<T>>>& vec) {
         if (node == nullptr || visited.contains(node)) {
             return;
         }
 
         visited.insert(node);
-        for (auto &parent : node->parents_) {
+        for (auto& parent : node->parents_) {
             toTopoRecursiveList(parent, visited, vec);
         }
         vec.push_back(node);

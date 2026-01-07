@@ -93,6 +93,8 @@ RUN apt-get update && apt-get install -y \
     libglu1-mesa-dev \
     pkgconf \
     pipx \
+    gcovr \
+    valgrind \
     && rm -rf /var/lib/apt/lists/*
 
 RUN  pipx ensurepath &&  pipx install pre-commit &&  pre-commit install

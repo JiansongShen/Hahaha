@@ -48,7 +48,7 @@ reshape(const std::shared_ptr<ComputeNode<T>>& parent,
                 auto reshapedGrad = std::make_shared<math::TensorWrapper<T>>(
                     gradPtr->reshape(originalShape));
                 p->accumulateGrad(reshapedGrad);
-                //p->backward();
+                // p->backward();
             }
         }
     });
@@ -76,7 +76,7 @@ transpose(const std::shared_ptr<ComputeNode<T>>& parent) {
                 auto transposedGrad = std::make_shared<math::TensorWrapper<T>>(
                     gradPtr->transpose());
                 parent->accumulateGrad(transposedGrad);
-                //parent->backward();
+                // parent->backward();
             }
         }
     });
@@ -86,4 +86,3 @@ transpose(const std::shared_ptr<ComputeNode<T>>& parent) {
 } // namespace hahaha::compute
 
 #endif // HAHAHA_COMPUTE_COMPUTE_FUN_UNARY_H
-

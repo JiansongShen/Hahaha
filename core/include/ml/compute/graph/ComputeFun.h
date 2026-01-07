@@ -19,12 +19,12 @@
 #ifndef HAHAHA_COMPUTE_COMPUTE_FUN_H
 #define HAHAHA_COMPUTE_COMPUTE_FUN_H
 
-#include "compute/graph/compute_funs/ComputeFunDiv.h"
-#include "compute/graph/compute_funs/ComputeFunMul.h"
-#include "compute/graph/compute_funs/ComputeFunUnary.h"
-#include "compute/graph/compute_funs/ComputeFunAdd.h"
-#include "compute/graph/compute_funs/ComputeFunMatMul.h"
-#include "compute/graph/compute_funs/ComputeFunSub.h"
-#include "compute/graph/compute_funs/ComputeFunBroadcast.h"
+#include "ml/compute/graph/compute_funs/ComputeFunAdd.h"
+#include "ml/compute/graph/compute_funs/ComputeFunBroadcast.h"
+#include "ml/compute/graph/compute_funs/ComputeFunDiv.h"
+#include "ml/compute/graph/compute_funs/ComputeFunMatMul.h"
+#include "ml/compute/graph/compute_funs/ComputeFunMul.h"
+#include "ml/compute/graph/compute_funs/ComputeFunSub.h"
+#include "ml/compute/graph/compute_funs/ComputeFunUnary.h"
 
 #endif // HAHAHA_COMPUTE_COMPUTE_FUN_H

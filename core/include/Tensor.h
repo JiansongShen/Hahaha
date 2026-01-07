@@ -24,10 +24,10 @@
 #include <vector>
 
 #include "backend/Device.h"
-#include "compute/graph/ComputeFun.h"
-#include "compute/graph/ComputeNode.h"
 #include "math/TensorWrapper.h"
 #include "math/ds/TensorData.h"
+#include "ml/compute/graph/ComputeFun.h"
+#include "ml/compute/graph/ComputeNode.h"
 #include "utils/common/HelperStruct.h"
 
 namespace hahaha {
