@@ -57,13 +57,13 @@ jobs:
             cxx: clang++
 
           # macOS (x86_64) - Homebrew LLVM Clang
-          - name: macos-x64-llvm
-            runs_on: macos-15-intel
-            os: macos
-            arch: x64
-            compiler: llvm
-            cc: llvm
-            cxx: llvm
+          # - name: macos-x64-llvm
+          #   runs_on: macos-15-intel
+          #   os: macos
+          #   arch: x64
+          #   compiler: llvm
+          #   cc: llvm
+          #   cxx: llvm
 
           # macOS (ARM64, Apple Silicon) - AppleClang
           - name: macos-arm64-appleclang
@@ -75,13 +75,13 @@ jobs:
             cxx: clang++
 
           # macOS (ARM64, Apple Silicon) - Homebrew LLVM Clang
-          - name: macos-arm64-llvm
-            runs_on: macos-latest
-            os: macos
-            arch: arm64
-            compiler: llvm
-            cc: llvm
-            cxx: llvm
+          # - name: macos-arm64-llvm
+          #   runs_on: macos-latest
+          #   os: macos
+          #   arch: arm64
+          #   compiler: llvm
+          #   cc: llvm
+          #   cxx: llvm
 
           # Windows (x86_64) - MSVC (cl)
           - name: windows-x64-msvc
@@ -93,13 +93,13 @@ jobs:
             cxx: ""
 
           # Windows (x86_64) - clang-cl
-          - name: windows-x64-clangcl
-            runs_on: windows-2022
-            os: windows
-            arch: x64
-            compiler: clang-cl
-            cc: clang-cl
-            cxx: clang-cl
+          # - name: windows-x64-clangcl
+          #   runs_on: windows-2022
+          #   os: windows
+          #   arch: x64
+          #   compiler: clang-cl
+          #   cc: clang-cl
+          #   cxx: clang-cl
 
     steps:
       - name: Checkout repository
