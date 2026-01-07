@@ -39,9 +39,13 @@ cd /workspace
 
 if command -v meson >/dev/null 2>&1; then
   # Install googletest + imgui via Meson wraps (idempotent).
-  # Use --force to heal partially downloaded states; Meson will no-op if already present.
-  meson wrap install gtest --force
-  meson wrap install imgui --force
+  # Note: Meson wrap install does NOT support --force on some versions.
+  if [ ! -d "subprojects/googletest-1.17.0" ]; then
+    meson wrap install gtest
+  fi
+  if [ ! -d "subprojects/imgui-1.91.6" ]; then
+    meson wrap install imgui
+  fi
 else
   echo "WARNING: meson not found in PATH; skip Meson wrap install." >&2
 fi

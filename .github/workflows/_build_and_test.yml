@@ -163,7 +163,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          meson wrap install gtest --force
+          meson wrap install gtest
 
       - name: Install LLVM (Windows, clang-cl builds)
         if: runner.os == 'Windows' && matrix.compiler == 'clang-cl'
