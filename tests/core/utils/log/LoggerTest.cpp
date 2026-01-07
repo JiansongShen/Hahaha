@@ -105,6 +105,7 @@ TEST_F(LoggerTest, LogMessageEntryTest) {
 }
 
 TEST_F(LoggerTest, LoggerWithStacktrace) {
+#if HAHAHA_HAS_STACKTRACE
     // Test logging with current stacktrace using logWithStacktrace
     hahaha::utils::Logger::logWithStacktrace(
         "Test message with logWithStacktrace", LogLevel::INFO);
@@ -145,4 +146,8 @@ TEST_F(LoggerTest, LoggerWithStacktrace) {
     EXPECT_TRUE(foundStacktrace);
     EXPECT_TRUE(foundMessage1);
     EXPECT_TRUE(foundMessage2);
+#else
+    GTEST_SKIP()
+        << "std::stacktrace is not available on this platform/toolchain.";
+#endif
 }
