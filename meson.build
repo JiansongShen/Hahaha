@@ -13,6 +13,7 @@ include_dirs = [
 ]
 include_dir = include_directories(include_dirs)
 fs = import('fs')
+py = import('python').find_installation(required: true)
 
 # Dependencies
 glfw_dep = dependency('glfw3', required : false)
@@ -22,8 +23,13 @@ cpp_compiler = meson.get_compiler('cpp')
 dl_dep = cpp_compiler.find_library('dl', required : false)
 
 stacktrace_dep = []
-if cpp_compiler.get_id() == 'gcc'
-    # Try common libraries that might be needed for std::stacktrace
+if ['gcc', 'clang'].contains(cpp_compiler.get_id())
+    # Try common libraries that might be needed for std::stacktrace.
+    #
+    # Note:
+    # - On libstdc++ (GCC toolchain), std::stacktrace implementation may live in
+    #   a separate library (often 'stdc++exp' or 'stdc++_libbacktrace').
+    # - This can also affect Clang builds that link against libstdc++.
     foreach lib : ['stdc++_libbacktrace', 'stdc++exp', 'backtrace']
         l = cpp_compiler.find_library(lib, required : false)
         if l.found()
@@ -35,29 +41,9 @@ endif
 # These arguments are only used to build the shared library
 lib_args = ['-DBUILDING_MESON_LIBRARY']
 
-# Get all the header files
-headers_raw = run_command('find', 'core/include', '-type', 'f',
-                          '(' ,'-name', '*.h', '-o', '-name', '*.cuh', '-o', '-name', '*.hpp', ')',
-                          check: false).stdout().strip().split('\n')
-extern_headers_raw = run_command('find', 'extern', '-type', 'f',
-                          '(' ,'-name', '*.h', '-o', '-name', '*.cuh', '-o', '-name', '*.hpp', ')',
-                          '!', '-path', '*/examples/*',
-                          '!', '-path', '*/misc/freetype/*',
-                          '!', '-path', '*/misc/fonts/*',
-                          check: false).stdout().strip().split('\n')
-headers = []
-foreach h : headers_raw
-        if h != ''
-                headers += h
-        endif
-endforeach
-foreach h : extern_headers_raw
-        if h != ''
-                headers += h
-        endif
-endforeach
-
-sources = run_command('find', 'core/src', '-name', '*.cpp', '-type', 'f', check: true).stdout().strip().split('\n')
+sources = run_command(py, '-c',
+                      'import glob; print("\\n".join(glob.glob("core/src/**/*.cpp", recursive=True)))',
+                      check: true).stdout().strip().split('\n')
 
 display_enabled = get_option('display')
 
@@ -81,13 +67,25 @@ if display_enabled
   imgui_backend_sources += 'extern/externlibs/imgui/backends/imgui_impl_opengl3.cpp'
 endif
 
-# Exclude backends from general extern_sources to avoid duplicates
-extern_sources = run_command('find', 'extern', '-name', '*.cpp', '-type', 'f',
-                             '!', '-path', '*/examples/*',
-                             '!', '-path', '*/backends/*',
-                             '!', '-path', '*/misc/freetype/*',
-                             '!', '-path', '*/misc/fonts/*',
-                             check: true).stdout().strip().split('\n')
+extern_sources = []
+if display_enabled
+  # Exclude backends from general extern_sources to avoid duplicates.
+  # We use Python glob here for cross-platform source discovery (Windows doesn't have GNU find).
+  extern_glob_code = '''
+import glob
+paths = glob.glob("extern/**/*.cpp", recursive=True)
+def keep(p):
+  p = p.replace("\\\\", "/")
+  if "/examples/" in p: return False
+  if "/backends/" in p: return False
+  if "/misc/freetype/" in p: return False
+  if "/misc/fonts/" in p: return False
+  return True
+print("\\n".join([p for p in paths if keep(p)]))
+'''
+  extern_sources = run_command(py, '-c', extern_glob_code,
+                               check: true).stdout().strip().split('\n')
+endif
 
 hahaha_deps = [dl_dep] + stacktrace_dep
 if display_enabled
