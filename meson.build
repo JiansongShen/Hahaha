@@ -1,6 +1,7 @@
     project('hahaha', 'cpp',
         version : '0.0.1',
         default_options : [
+                'cpp_std=c++23',
                 'warning_level=3'])
 
 # Include directories
@@ -107,8 +108,7 @@ hahaha_lib = static_library('hahaha', sources,
                             install : true,
                             include_directories : include_dir,
                             cpp_args : lib_args,
-                            dependencies : hahaha_deps,
-                            override_options : ['cpp_std=' + hahaha_cpp_std]
+                            dependencies : hahaha_deps
 )
 
 hahaha = declare_dependency(link_with: hahaha_lib,
