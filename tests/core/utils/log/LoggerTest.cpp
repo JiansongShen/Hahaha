@@ -113,12 +113,19 @@ TEST_F(LoggerTest, AllLogLevels) {
 }
 
 TEST_F(LoggerTest, LoggerConfigVariants) {
+    // Note: Static methods (Logger::info, Logger::debug, etc.) use the
+    // singleton Logger, while custom Logger instances are independent. The
+    // singleton Logger's worker thread may still be running after the test, so
+    // we need to ensure messages are processed.
+
     // 1. Both file and console enabled with time
     {
         LoggerConfig config(
             LogColor::RED, LogLevel::INFO, "test_both.txt", true, true, true);
         Logger logger(config);
         Logger::info("Both enabled");
+        // Wait for messages to be processed before logger destruction
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     // 2. Only console, no time
     {
@@ -126,6 +133,8 @@ TEST_F(LoggerTest, LoggerConfigVariants) {
             LogColor::BLUE, LogLevel::DEBUG, "", false, true, false);
         Logger logger(config);
         Logger::debug("Console only, no time");
+        // Wait for messages to be processed before logger destruction
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     // 3. Only file, with time
     {
@@ -137,7 +146,14 @@ TEST_F(LoggerTest, LoggerConfigVariants) {
                             true);
         Logger logger(config);
         Logger::warn("File only with time");
+        // Wait for messages to be processed before logger destruction
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
+    // Ensure singleton logger processes any remaining messages
+    // The singleton Logger will continue running after the test, which is
+    // expected behavior
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     if (std::filesystem::exists("test_both.txt"))
         std::filesystem::remove("test_both.txt");
