@@ -19,7 +19,10 @@
 #ifndef HAHAHA_COMPUTE_COMPUTE_FUN_UNARY_H
 #define HAHAHA_COMPUTE_COMPUTE_FUN_UNARY_H
 
+#include <memory>
+
 #include "ComputeFunCommon.h"
+#include "math/TensorWrapper.h"
 
 namespace hahaha::compute {
 
@@ -78,6 +81,30 @@ transpose(const std::shared_ptr<ComputeNode<T>>& parent) {
                 parent->accumulateGrad(transposedGrad);
                 // parent->backward();
             }
+        }
+    });
+    return resNode;
+}
+
+template <typename T>
+std::shared_ptr<ComputeNode<T>>
+neg(const std::shared_ptr<ComputeNode<T>>& parent) {
+    auto resData =
+        std::make_shared<math::TensorWrapper<T>>(-*parent->getData());
+    auto resNode =
+        ComputeNode<T>::createUnary(parent, resData, common::Operator::Neg);
+
+    std::weak_ptr<ComputeNode<T>> weakRes = resNode;
+    std::weak_ptr<ComputeNode<T>> weakParent = parent;
+
+    resNode->setGradFun([weakParent, weakRes]() {
+        auto res = weakRes.lock();
+        auto parent = weakParent.lock();
+        auto gradPtr = res->getGrad();
+        if (parent->getRequiresGrad()) {
+            auto negatedGrad =
+                std::make_shared<math::TensorWrapper<T>>(-*gradPtr);
+            parent->accumulateGrad(negatedGrad);
         }
     });
     return resNode;

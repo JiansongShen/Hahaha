@@ -132,7 +132,8 @@ TEST_F(TensorShapeTest, DimsAccess) {
     ASSERT_EQ(dims[0], 2);
     ASSERT_EQ(dims[1], 3);
 
-    ASSERT_EQ(&ts.getDims(), &ts.getDims());
+    ts.getDims()[0] = 5;
+    EXPECT_EQ(ts.getDims()[0], 5);
 }
 
 TEST_F(TensorShapeTest, ToString) {
@@ -156,56 +157,132 @@ TEST_F(TensorShapeTest, Reverse) {
     ASSERT_EQ(ts2.toString(), "(5, 4)");
 }
 
-TEST_F(TensorShapeTest, OperatorEqual) {
-    ASSERT_TRUE(TensorShape({1, 2, 3}) == TensorShape({1, 2, 3}));
+TEST_F(TensorShapeTest, Equality) {
+    EXPECT_TRUE(TensorShape({1, 2}) == TensorShape({1, 2}));
+    EXPECT_FALSE(TensorShape({1, 2}) == TensorShape({1, 3}));
+    EXPECT_TRUE(TensorShape({1, 2}) != TensorShape({1, 3}));
+    EXPECT_FALSE(TensorShape({1, 2}) != TensorShape({1, 2}));
+    EXPECT_TRUE(TensorShape({1}) != TensorShape({1, 2}));
 }
 
-TEST_F(TensorShapeTest, OperatorNotEqual) {
-    ASSERT_TRUE(TensorShape({1, 2, 3}) != TensorShape({1, 2, 4}));
-}
+TEST_F(TensorShapeTest, BroadcastShape) {
+    // Same shape
+    auto res0 =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({2, 3}));
+    ASSERT_TRUE(res0.has_value());
+    EXPECT_EQ(TensorShape(*res0), TensorShape({2, 3}));
 
-TEST_F(TensorShapeTest, BroadcastShape_SameShape_ReturnsSame) {
-    auto res = TensorShape::broadcastShape(TensorShape({2, 3, 4}),
-                                           TensorShape({2, 3, 4}));
-    ASSERT_TRUE(res.has_value());
-    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3, 4}));
-}
+    // Prefix dims
+    auto res1 =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({3}));
+    ASSERT_TRUE(res1.has_value());
+    EXPECT_EQ(TensorShape(*res1), TensorShape({2, 3}));
 
-TEST_F(TensorShapeTest, BroadcastShape_ScalarWithTensor_ReturnsTensorShape) {
-    // scalar is rank-0 (dims == {})
-    auto res =
-        TensorShape::broadcastShape(TensorShape({}), TensorShape({2, 3}));
-    ASSERT_TRUE(res.has_value());
-    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
-}
-
-TEST_F(TensorShapeTest, BroadcastShape_PrefixDims_ReturnsTargetShape) {
-    // (3) with (2,3) -> (2,3)
-    auto res =
-        TensorShape::broadcastShape(TensorShape({3}), TensorShape({2, 3}));
-    ASSERT_TRUE(res.has_value());
-    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
-}
-
-TEST_F(TensorShapeTest, BroadcastShape_DimOneBroadcasts) {
-    // (1,3) with (2,3) -> (2,3)
-    auto res =
+    // Dim 1 on LHS
+    auto res1b =
         TensorShape::broadcastShape(TensorShape({1, 3}), TensorShape({2, 3}));
-    ASSERT_TRUE(res.has_value());
-    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+    ASSERT_TRUE(res1b.has_value());
+    EXPECT_EQ(TensorShape(*res1b), TensorShape({2, 3}));
+
+    // Dim 1 on RHS
+    auto res2 =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({2, 1}));
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), TensorShape({2, 3}));
+
+    // Incompatible
+    auto res3 = TensorShape::broadcastShape(TensorShape({2}), TensorShape({3}));
+    ASSERT_FALSE(res3.has_value());
 }
 
-TEST_F(TensorShapeTest, BroadcastShape_RhsHasDimOne_UsesLhsDim) {
-    // (2,3) with (1,3) -> (2,3)
-    // This specifically covers the `d2 == 1` branch in broadcastShape().
-    auto res =
-        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({1, 3}));
+TEST_F(TensorShapeTest, BroadcastShape_MoreComplex) {
+    // (1, 2, 1) and (3, 1, 4) -> (3, 2, 4)
+    auto res = TensorShape::broadcastShape(TensorShape({1, 2, 1}),
+                                           TensorShape({3, 1, 4}));
     ASSERT_TRUE(res.has_value());
-    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+    EXPECT_EQ(TensorShape(*res), TensorShape({3, 2, 4}));
+
+    // (2, 3, 1) and (1, 3, 5) -> (2, 3, 5)
+    auto res2 = TensorShape::broadcastShape(TensorShape({2, 3, 1}),
+                                            TensorShape({1, 3, 5}));
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), TensorShape({2, 3, 5}));
 }
 
-TEST_F(TensorShapeTest, BroadcastShape_Incompatible_ReturnsNullopt) {
-    auto res =
-        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({4, 3}));
+TEST_F(TensorShapeTest, EmptyShapeOperations) {
+    TensorShape ts;
+    ts.reverse(); // Should not crash
+    EXPECT_EQ(ts.getDims().size(), 0);
+    EXPECT_EQ(ts.getTotalSize(), 1);
+    EXPECT_EQ(ts.toString(), "()");
+}
+
+TEST_F(TensorShapeTest, MutableDims) {
+    TensorShape ts({1, 2});
+    std::vector<size_t>& dims = ts.getDims();
+    dims.push_back(3);
+    EXPECT_EQ(ts.getTotalSize(), 6);
+    EXPECT_EQ(ts.toString(), "(1, 2, 3)");
+}
+
+TEST_F(TensorShapeTest, ConstDimsAccess) {
+    const TensorShape ts({4, 5, 6});
+    const std::vector<size_t>& dims = ts.getDims();
+    ASSERT_EQ(dims.size(), 3);
+    ASSERT_EQ(dims[0], 4);
+    ASSERT_EQ(dims[1], 5);
+    ASSERT_EQ(dims[2], 6);
+}
+
+TEST_F(TensorShapeTest, Inequality) {
+    TensorShape ts1({1, 2});
+    TensorShape ts2({1, 3});
+    TensorShape ts3({1, 2, 3});
+    EXPECT_TRUE(ts1 != ts2);
+    EXPECT_TRUE(ts1 != ts3);
+    EXPECT_FALSE(ts1 != ts1);
+}
+
+TEST_F(TensorShapeTest, BroadcastWithScalar) {
+    auto res1 =
+        TensorShape::broadcastShape(TensorShape({}), TensorShape({2, 3}));
+    ASSERT_TRUE(res1.has_value());
+    EXPECT_EQ(TensorShape(*res1), TensorShape({2, 3}));
+
+    auto res2 =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({}));
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), TensorShape({2, 3}));
+}
+
+TEST_F(TensorShapeTest, BroadcastIncompatibleRank) {
+    auto res = TensorShape::broadcastShape(TensorShape({2, 3, 4}),
+                                           TensorShape({3, 5}));
+    // Last dimension 4 and 5 are incompatible
     ASSERT_FALSE(res.has_value());
+}
+
+TEST_F(TensorShapeTest, CopyAssignment) {
+    TensorShape ts1({1, 2, 3});
+    TensorShape ts2;
+    ts2 = ts1;
+    EXPECT_EQ(ts2, ts1);
+}
+
+TEST_F(TensorShapeTest, MoveAssignmentOperator) {
+    TensorShape ts1({7, 8});
+    TensorShape ts2;
+    ts2 = std::move(ts1);
+    EXPECT_EQ(ts2.getTotalSize(), 56);
+}
+
+TEST_F(TensorShapeTest, DefaultConstructorAndAssignment) {
+    TensorShape ts;
+    EXPECT_EQ(ts.getDims().size(), 0);
+    EXPECT_EQ(ts.getTotalSize(), 1);
+
+    TensorShape ts2({1});
+    ts = ts2;
+    EXPECT_EQ(ts.getDims().size(), 1);
+    EXPECT_EQ(ts.getTotalSize(), 1);
 }

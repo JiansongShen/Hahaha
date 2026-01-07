@@ -1,3 +1,12 @@
+/*
+ * @Author: napbad napbad.sen@gmail.com
+ * @Date: 2026-01-07 11:22:15
+ * @LastEditors: napbad napbad.sen@gmail.com
+ * @LastEditTime: 2026-01-07 14:55:35
+ * @FilePath: /Hahaha/tests/core/ml/model/LinearRegressionTest.cpp
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
+ * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 //  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,4 +58,15 @@ TEST_F(LinearRegressionTest, GetParametersAndSetters_Work) {
     // Weight and bias are scalar/1D tensors in current minimal implementation.
     EXPECT_EQ(vec[0].getTotalSize(), 1u);
     EXPECT_EQ(vec[1].getTotalSize(), 1u);
+}
+
+TEST_F(LinearRegressionTest, Setters_WorkWithMultipleElements) {
+    LinearRegression<f32> model;
+    model.setWeights({1.0f, 2.0f, 3.0f});
+    model.setBias({0.5f, 0.6f});
+
+    auto params = model.getParameters();
+    auto& vec = params.getParameters();
+    EXPECT_EQ(vec[0].getTotalSize(), 3u);
+    EXPECT_EQ(vec[1].getTotalSize(), 2u);
 }

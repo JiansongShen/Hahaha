@@ -19,7 +19,6 @@
 #include "math/ds/TensorData.h"
 
 #include <gtest/gtest.h>
-
 #include <vector>
 
 #include "backend/Device.h"
@@ -73,8 +72,7 @@ TEST_F(TensorDataTest, ShapeValueConstructor_GpuDevice_ThrowsRuntimeError) {
     EXPECT_THROW(TensorData<int>(shape,
                                  1,
                                  hahaha::backend::Device(
-                                     hahaha::backend::DeviceType::GPU,
-                                     0)),
+                                     hahaha::backend::DeviceType::GPU, 0)),
                  std::runtime_error);
 }
 
@@ -82,8 +80,7 @@ TEST_F(TensorDataTest, ShapeOnlyConstructor_GpuDevice_ThrowsRuntimeError) {
     hahaha::math::TensorShape shape({2, 2});
     EXPECT_THROW(TensorData<int>(shape,
                                  hahaha::backend::Device(
-                                     hahaha::backend::DeviceType::GPU,
-                                     0)),
+                                     hahaha::backend::DeviceType::GPU, 0)),
                  std::runtime_error);
 }
 
@@ -123,7 +120,8 @@ TEST_F(TensorDataTest, CopyConstructor) {
     TensorData<int> copied(original);
 
     EXPECT_EQ(copied.getShape(), original.getShape());
-    EXPECT_EQ(copied.getStride().getStrideSize(), original.getStride().getStrideSize());
+    EXPECT_EQ(copied.getStride().getStrideSize(),
+              original.getStride().getStrideSize());
     for (size_t i = 0; i < original.getShape().getTotalSize(); ++i) {
         EXPECT_EQ(copied.getData()[i], original.getData()[i]);
     }
@@ -202,4 +200,54 @@ TEST_F(TensorDataTest, OperatorIndex_ReferencesUnderlyingData) {
     TensorData<int> td(hahaha::math::TensorShape({3}), 0);
     td[1] = 123;
     EXPECT_EQ(td.getData()[1], 123);
+}
+
+TEST_F(TensorDataTest, CopyConstructor_SIMDDevice) {
+    hahaha::math::TensorShape shape({2, 2});
+    hahaha::backend::Device simdDevice(hahaha::backend::DeviceType::SIMD, 0);
+    TensorData<int> original(shape, 10, simdDevice);
+    TensorData<int> copied(original);
+
+    EXPECT_EQ(copied.getDevice().type, hahaha::backend::DeviceType::SIMD);
+    EXPECT_EQ(copied.getData()[0], 10);
+}
+
+TEST_F(TensorDataTest, CopyConstructor_GpuDevice_Throws) {
+    hahaha::math::TensorShape shape({1});
+    TensorData<int> original;
+    // Hack to set device to GPU since constructor throws
+    original.setDevice(
+        hahaha::backend::Device(hahaha::backend::DeviceType::GPU, 0));
+
+    // We can't easily populate data for GPU yet as it's not implemented,
+    // but the copy constructor should check device type first.
+    // However, original.data_ will be null. Let's see if we can trigger the
+    // throw.
+
+    // Actually, looking at TensorData.h:
+    // TensorData(const TensorData& other) : ... {
+    //    if (device_.type == CPU || SIMD) { ... } else { throw ... }
+    // }
+
+    EXPECT_THROW(TensorData<int> copied(original), std::runtime_error);
+}
+
+TEST_F(TensorDataTest, Share_NullData) {
+    TensorData<int> original;
+    auto shared = original.share();
+    EXPECT_EQ(shared.getData().get(), nullptr);
+    EXPECT_EQ(shared.getShape().getDims().size(), 0);
+}
+
+TEST_F(TensorDataTest, DoubleTypeTensor) {
+    TensorData<double> td(hahaha::math::TensorShape({2}), 3.14);
+    EXPECT_DOUBLE_EQ(td[0], 3.14);
+    EXPECT_DOUBLE_EQ(td[1], 3.14);
+}
+
+TEST_F(TensorDataTest, Share_FromNestedData) {
+    TensorData<int> td(hahaha::math::NestedData<int>{{1, 2}, {3, 4}});
+    auto shared = td.share();
+    EXPECT_EQ(shared[0], 1);
+    EXPECT_EQ(shared[3], 4);
 }

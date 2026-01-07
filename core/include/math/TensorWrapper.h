@@ -321,12 +321,15 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper result tensor.
      */
     TensorWrapper add(const TensorWrapper& other) const {
+        checkSameDevice(other);
+
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.add(data_.getData()[0]);
         }
         if (other.getTotalSize() == 1 && getTotalSize() > 1) {
             return add(other.data_.getData()[0]);
         }
+
         if (getTotalSize() == 1 && other.getTotalSize() == 1) {
             TensorWrapper result;
             result.data_.setShape(data_.getShape());
@@ -342,8 +345,6 @@ template <typename T> class TensorWrapper {
             throw std::invalid_argument(
                 "Tensors must have the same shape for addition");
         }
-
-        checkSameDevice(other);
 
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
@@ -371,6 +372,9 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper result tensor.
      */
     TensorWrapper subtract(const TensorWrapper& other) const {
+
+        checkSameDevice(other);
+
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.subtractFrom(data_.getData()[0]);
         }
@@ -392,8 +396,6 @@ template <typename T> class TensorWrapper {
             throw std::invalid_argument(
                 "Tensors must have the same shape for subtraction");
         }
-
-        checkSameDevice(other);
 
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
@@ -420,6 +422,8 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper result tensor.
      */
     TensorWrapper multiply(const TensorWrapper& other) const {
+
+        checkSameDevice(other);
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.multiply(data_.getData()[0]);
         }
@@ -441,8 +445,6 @@ template <typename T> class TensorWrapper {
             throw std::invalid_argument(
                 "Tensors must have the same shape for multiplication");
         }
-
-        checkSameDevice(other);
 
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
@@ -470,6 +472,9 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper result tensor.
      */
     TensorWrapper divide(const TensorWrapper& other) const {
+
+        checkSameDevice(other);
+
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.divideInto(data_.getData()[0]);
         }
@@ -494,8 +499,6 @@ template <typename T> class TensorWrapper {
             throw std::invalid_argument(
                 "Tensors must have the same shape for division");
         }
-
-        checkSameDevice(other);
 
         TensorWrapper result;
         result.data_.setShape(data_.getShape());

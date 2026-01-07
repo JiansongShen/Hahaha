@@ -72,7 +72,9 @@ class Logger {
      */
     explicit Logger(LoggerConfig config)
         : config_(std::move(config)), running_(true) {
-        stream_.open(config_.getFile().data());
+        if (config_.isWriteToFile()) {
+            stream_.open(config_.getFile().data());
+        }
         workerThread_ = std::thread(&Logger::process, this);
     }
 

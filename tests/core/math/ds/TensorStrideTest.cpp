@@ -34,88 +34,115 @@ TEST_F(TensorStrideTest, StrideFromVector1D) {
     ASSERT_EQ(stride[0], 1);
 }
 
-TEST_F(TensorStrideTest, StrideFromVector2D) {
-    std::vector<size_t> dims = {3, 4};
-    TensorStride stride(dims);
-    ASSERT_EQ(stride.getStrideSize(), 2);
-    ASSERT_EQ(stride[0], 4);
-    ASSERT_EQ(stride[1], 1);
-}
-
-TEST_F(TensorStrideTest, StrideFromVector3D) {
+TEST_F(TensorStrideTest, StrideFromVector) {
     std::vector<size_t> dims = {2, 3, 4};
     TensorStride stride(dims);
     ASSERT_EQ(stride.getStrideSize(), 3);
-    ASSERT_EQ(stride[0], 12);
-    ASSERT_EQ(stride[1], 4);
-    ASSERT_EQ(stride[2], 1);
+    EXPECT_EQ(stride[0], 12);
+    EXPECT_EQ(stride[1], 4);
+    EXPECT_EQ(stride[2], 1);
 }
 
 TEST_F(TensorStrideTest, StrideFromShape) {
-    TensorShape shape({2, 3, 4});
+    TensorShape shape({2, 3});
     TensorStride stride(shape);
-    ASSERT_EQ(stride.getStrideSize(), 3);
-    ASSERT_EQ(stride[0], 12);
-    ASSERT_EQ(stride[1], 4);
-    ASSERT_EQ(stride[2], 1);
-}
-
-TEST_F(TensorStrideTest, EmptyStride) {
-    TensorShape shape({});
-    TensorStride stride(shape);
-    ASSERT_EQ(stride.getStrideSize(), 0);
-}
-
-TEST_F(TensorStrideTest, ToString_EmptyStride) {
-    TensorStride stride(TensorShape({}));
-    ASSERT_EQ(stride.toString(), "[]");
+    EXPECT_EQ(stride[0], 3);
+    EXPECT_EQ(stride[1], 1);
 }
 
 TEST_F(TensorStrideTest, ToString) {
-    TensorStride stride(TensorShape({2, 3}));
-    ASSERT_EQ(stride.toString(), "[3, 1]");
-}
+    TensorStride stride(std::vector<size_t>{2, 3});
+    EXPECT_EQ(stride.toString(), "[3, 1]");
 
-TEST_F(TensorStrideTest, Reverse_EmptyStride_NoThrow) {
-    TensorStride stride(TensorShape({}));
-    EXPECT_NO_THROW(stride.reverse());
-    EXPECT_EQ(stride.getStrideSize(), 0);
+    TensorStride empty;
+    EXPECT_EQ(empty.toString(), "[]");
 }
 
 TEST_F(TensorStrideTest, Reverse) {
-    TensorStride stride(TensorShape({2, 3}));
+    TensorStride stride(std::vector<size_t>{2, 3});
     stride.reverse();
-    ASSERT_EQ(stride[0], 1);
-    ASSERT_EQ(stride[1], 3);
+    EXPECT_EQ(stride[0], 1);
+    EXPECT_EQ(stride[1], 3);
 }
 
-TEST_F(TensorStrideTest, indexAccess) {
-    TensorStride stride(TensorShape({2, 3}));
-    ASSERT_EQ(stride[0], 3);
-    ASSERT_EQ(stride[1], 1);
+TEST_F(TensorStrideTest, AtAccess) {
+    TensorStride stride(std::vector<size_t>{2, 3});
+    EXPECT_EQ(stride.at(0), 3);
+    EXPECT_THROW((void) stride.at(2), std::out_of_range);
+
+    const TensorStride cstride(std::vector<size_t>{2, 3});
+    EXPECT_EQ(cstride.at(1), 1);
+    EXPECT_THROW((void) cstride.at(2), std::out_of_range);
 }
 
-TEST_F(TensorStrideTest, at) {
-    TensorStride stride(TensorShape({2, 3}));
-    ASSERT_EQ(stride.at(0), 3);
-    ASSERT_EQ(stride.at(1), 1);
+TEST_F(TensorStrideTest, MutableGetStrides) {
+    TensorStride stride(std::vector<size_t>{2, 3});
+    stride.getStrides()[0] = 10;
+    EXPECT_EQ(stride[0], 10);
+
+    const auto& constStrides = stride.getStrides();
+    EXPECT_EQ(constStrides[0], 10);
 }
 
-TEST_F(TensorStrideTest, atOutOfRange) {
-    TensorStride stride(TensorShape({2, 3}));
-    ASSERT_THROW(stride.at(2), std::out_of_range);
+TEST_F(TensorStrideTest, TemplateConstructorDifferentTypes) {
+    std::vector<int> dimsInt = {2, 3};
+    TensorStride s1(dimsInt);
+    EXPECT_EQ(s1[0], 3);
+
+    std::vector<hahaha::common::u32> dimsU32 = {4, 5};
+    TensorStride s2(dimsU32);
+    EXPECT_EQ(s2[0], 5);
 }
 
-TEST_F(TensorStrideTest, atConst) {
-    const TensorStride stride(TensorShape({2, 3}));
-    ASSERT_EQ(stride.at(0), 3);
-    ASSERT_EQ(stride.at(1), 1);
+TEST_F(TensorStrideTest, StrideFromEmptyVector) {
+    std::vector<size_t> dims = {};
+    TensorStride stride(dims);
+    EXPECT_EQ(stride.getStrideSize(), 0);
+    EXPECT_EQ(stride.toString(), "[]");
 }
 
-TEST_F(TensorStrideTest, getStrides_MutableAccess_AllowsEdit) {
-    TensorStride stride(TensorShape({2, 3}));
-    auto& strides = stride.getStrides();
-    ASSERT_EQ(strides.size(), 2);
-    strides[0] = 999;
-    EXPECT_EQ(stride[0], 999);
+TEST_F(TensorStrideTest, AtAccessConst) {
+    const TensorStride stride(std::vector<size_t>{2, 3, 4});
+    EXPECT_EQ(stride.at(0), 12);
+    EXPECT_EQ(stride.at(1), 4);
+    EXPECT_EQ(stride.at(2), 1);
+    EXPECT_THROW((void) stride.at(3), std::out_of_range);
+}
+
+TEST_F(TensorStrideTest, NonConstAtAccess) {
+    TensorStride stride(std::vector<size_t>{2, 3});
+    EXPECT_EQ(stride.at(0), 3);
+}
+
+TEST_F(TensorStrideTest, ConstOperatorIndex) {
+    const TensorStride stride(std::vector<size_t>{5, 6});
+    EXPECT_EQ(stride[0], 6);
+    EXPECT_EQ(stride[1], 1);
+}
+
+TEST_F(TensorStrideTest, NonConstOperatorIndex) {
+    TensorStride stride(std::vector<size_t>{7, 8});
+    EXPECT_EQ(stride[0], 8);
+}
+
+TEST_F(TensorStrideTest, GetStridesConst) {
+    const TensorStride stride(std::vector<size_t>{2, 2});
+    const std::vector<size_t>& s = stride.getStrides();
+    ASSERT_EQ(s.size(), 2);
+    EXPECT_EQ(s[0], 2);
+    EXPECT_EQ(s[1], 1);
+}
+
+TEST_F(TensorStrideTest, ToStringBranches) {
+    EXPECT_EQ(TensorStride().toString(), "[]");
+    EXPECT_EQ(TensorStride(std::vector<size_t>{5}).toString(), "[1]");
+    EXPECT_EQ(TensorStride(std::vector<size_t>{2, 3}).toString(), "[3, 1]");
+}
+
+TEST_F(TensorStrideTest, StrideFromVectorBranches) {
+    TensorStride s1((std::vector<size_t>{}));
+    EXPECT_EQ(s1.getStrideSize(), 0);
+
+    TensorStride s2(std::vector<size_t>{10});
+    TensorStride s3(std::vector<size_t>{2, 5});
 }

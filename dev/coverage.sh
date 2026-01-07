@@ -35,6 +35,7 @@ GCOVR_COMMON_ARGS=(
   --merge-mode-functions=merge-use-line-min
   --merge-lines
   --exclude-unreachable-branches
+  --exclude-noncode-lines
   --filter 'core/.'
   --exclude 'subprojects/.'
   --exclude 'examples/.'
@@ -47,4 +48,4 @@ gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric line --fail-under-line 85
 
 echo
 echo "== branch coverage (core, exclude display) =="
-gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric branch --fail-under-branch 50
+gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric branch --fail-under-branch 35

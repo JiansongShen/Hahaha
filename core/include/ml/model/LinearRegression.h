@@ -1,3 +1,12 @@
+/*
+ * @Author: napbad napbad.sen@gmail.com
+ * @Date: 2026-01-05 22:01:30
+ * @LastEditors: napbad napbad.sen@gmail.com
+ * @LastEditTime: 2026-01-07 14:29:45
+ * @FilePath: /Hahaha/core/include/ml/model/LinearRegression.h
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
+ * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 //  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,23 +60,24 @@ template <typename T> class LinearRegression : public Model<T> {
         // x shape is s * n1 (Size of samples and features Number)
         // y shape is s * n2 (Size of samples and output Number)
 
-        // reshape to a matrix to support common situations
-        auto xShape = x.getShape();
-        if (xShape.size() != 2) {
-            x = x.reshape({xShape[0], 1}); // n rows and 1 column
-        }
+        // TODO(napbad): Implement Linear Regression
+        // // reshape to a matrix to support common situations
+        // auto xShape = x.getShape();
+        // if (xShape.size() != 2) {
+        //     x = x.reshape({xShape[0], 1}); // n rows and 1 column
+        // }
 
-        auto shape = x.getShape();
-        auto yPredict = x.matmul(weight_) + bias_;
-        auto mseLoss = computeMSELoss(y, yPredict);
+        // auto shape = x.getShape();
+        // auto yPredict = x.matmul(weight_) + bias_;
+        // auto mseLoss = computeMSELoss(y, yPredict);
 
-        SGDOptimizer<T> sgdOptimizer({}, T(0.00001));
-        sgdOptimizer.addParameter(weight_);
-        sgdOptimizer.addParameter(bias_);
+        // SGDOptimizer<T> sgdOptimizer({}, T(0.00001));
+        // sgdOptimizer.addParameter(weight_);
+        // sgdOptimizer.addParameter(bias_);
 
-        sgdOptimizer.zeroGrad();
-        mseLoss.backward();
-        sgdOptimizer.step();
+        // sgdOptimizer.zeroGrad();
+        // mseLoss.backward();
+        // sgdOptimizer.step();
     }
 
   private:

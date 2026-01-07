@@ -39,7 +39,7 @@ endif
 lib_args = ['-DBUILDING_MESON_LIBRARY']
 
 sources = run_command(py, '-c',
-                      'import glob; print("\\n".join(glob.glob("core/src/**/*.cpp", recursive=True)))',
+                      'import glob; import os; print("\\n".join(os.path.normpath(f).replace("\\\\", "/") for f in glob.glob("core/src/**/*.cpp", recursive=True)))',
                       check: true).stdout().strip().split('\n')
 
 display_enabled = get_option('display')
