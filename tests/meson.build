@@ -45,9 +45,15 @@ if get_option('b_coverage')
     endif
 endif
 
+# MSVC requires /bigobj for large object files (e.g., from TYPED_TEST templates)
+msvc_cpp_args = []
+if cpp_compiler.get_id() == 'msvc'
+    msvc_cpp_args += ['/bigobj']
+endif
+
 test_executable = executable('hahaha_tests', test_sources,
                            include_directories: [test_include_dir, include_dir],
-                           cpp_args: cov_cpp_args,
+                           cpp_args: cov_cpp_args + msvc_cpp_args,
                            link_args: cov_link_args,
                            link_with: hahaha_lib,
                            dependencies: [gtest_dep])
