@@ -1,74 +1,136 @@
-name: CI  
+name: CI
 
 on:
   push:
-    branches: [ dev, main ] 
+    branches: [ dev, main, project-structure-optimize ]
   pull_request:
-    branches: [ dev, main ] 
-    
+    branches: [ dev, main ]
+
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runs_on }}
     strategy:
+      fail-fast: false
       matrix:
         include:
-          - name: CPU-only
-            cuda: false
-          - name: With-CUDA
-            cuda: true
-
-    name: ${{ matrix.name }}
+          # Linux (x86_64)
+          - name: ubuntu-x64
+            runs_on: ubuntu-24.04
+            os: linux
+            arch: x64
+          # Linux (ARM64) - GitHub-hosted ARM runners are in public preview.
+          - name: ubuntu-arm64
+            runs_on: ubuntu-24.04-arm
+            os: linux
+            arch: arm64
+          # macOS (x86_64)
+          - name: macos-x64
+            runs_on: macos-13
+            os: macos
+            arch: x64
+          # macOS (ARM64, Apple Silicon)
+          - name: macos-arm64
+            runs_on: macos-14
+            os: macos
+            arch: arm64
+          # Windows (x86_64)
+          - name: windows-x64
+            runs_on: windows-2022
+            os: windows
+            arch: x64
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      
-      - name: Install Meson and Ninja
-        run: pip install meson ninja
 
-      - name: Install system dependencies
+      - name: Install Meson and Ninja (pip)
+        run: python -m pip install --upgrade pip && python -m pip install meson ninja
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential clang-tidy clang-format libglib2.0-dev pkg-config \
-            cmake libgtest-dev \
-            libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
-            
-      - name: Install Google Test from source
-        run: |
-          sudo apt-get install -y cmake libgtest-dev
-          if [ ! -d "/usr/src/googletest" ]; then
-            sudo mkdir -p /usr/src/googletest
-            sudo apt-get source libgtest-dev || echo "apt-get source failed, fallback to git"
-            if [ -d "/usr/src/googletest" ] && [ -z "$(ls -A /usr/src/googletest)" ]; then
-              sudo git clone https://github.com/google/googletest.git /usr/src/googletest
-              cd /usr/src/googletest
-              sudo git checkout release-1.14.0  
-            fi
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake pkg-config \
+            libgtest-dev
+          # Ubuntu ships googletest sources via libgtest-dev; build & install libs.
+          if [ -d "/usr/src/googletest" ]; then
+            GTEST_SRC="/usr/src/googletest"
+          else
+            GTEST_SRC="/usr/src/gtest"
           fi
-          cd /usr/src/googletest
-          sudo cmake -B build -S .
-          sudo cmake --build build --target install
-          sudo ldconfig  
+          sudo cmake -S "$GTEST_SRC" -B /tmp/gtest-build -DCMAKE_INSTALL_PREFIX=/usr/local
+          sudo cmake --build /tmp/gtest-build --target install -j2
+          sudo ldconfig
 
-      - name: Install dependencies
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential clang-tidy clang-format
+          brew update
+          brew install cmake googletest
+          echo "CMAKE_PREFIX_PATH=$(brew --prefix googletest)" >> $GITHUB_ENV
+
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          echo "Using vcpkg to install googletest"
+          vcpkg install gtest:x64-windows
+          echo "CMAKE_PREFIX_PATH=$env:VCPKG_INSTALLATION_ROOT\\installed\\x64-windows" >> $env:GITHUB_ENV
+
+      - name: Set up MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1.13.0
 
       - name: Configure Meson
-        run: |
-          meson setup build
-          
-      - name: Build
-        run: meson compile -C build
+        run: meson setup builddir --buildtype=debug
+
+      - name: Build (tests only)
+        run: meson compile -C builddir tests/hahaha_tests
 
       - name: Run tests
-        run: meson test -C build --verbose
-      
+        run: meson test -C builddir -v --no-rebuild
+
+  coverage:
+    name: coverage (core line>=70, branch>=50; exclude display)
+    runs-on: ubuntu-24.04
+    needs: build-and-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Meson and Ninja (pip)
+        run: python -m pip install --upgrade pip && python -m pip install meson ninja
+
+      - name: Install dependencies (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake pkg-config \
+            libgtest-dev gcovr
+          # Ubuntu ships googletest sources via libgtest-dev; build & install libs.
+          if [ -d "/usr/src/googletest" ]; then
+            GTEST_SRC="/usr/src/googletest"
+          else
+            GTEST_SRC="/usr/src/gtest"
+          fi
+          sudo cmake -S "$GTEST_SRC" -B /tmp/gtest-build -DCMAKE_INSTALL_PREFIX=/usr/local
+          sudo cmake --build /tmp/gtest-build --target install -j2
+          sudo ldconfig
+
+      - name: Run coverage gates
+        run: bash dev/coverage.sh builddir-coverage

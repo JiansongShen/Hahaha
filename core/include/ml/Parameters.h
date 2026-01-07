@@ -30,7 +30,21 @@ template <typename T> class Parameters {
         parameters.push_back(parameter);
     }
 
-    std::vector<Tensor<T>>& getParameters() const {
+    /**
+     * @brief Get parameters (mutable).
+     * @return std::vector<Tensor<T>>& mutable reference to internal parameter
+     * list.
+     */
+    std::vector<Tensor<T>>& getParameters() {
+        return parameters;
+    }
+
+    /**
+     * @brief Get parameters (read-only).
+     * @return const std::vector<Tensor<T>>& const reference to internal
+     * parameter list.
+     */
+    [[nodiscard]] const std::vector<Tensor<T>>& getParameters() const {
         return parameters;
     }
 
