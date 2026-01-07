@@ -35,6 +35,17 @@ TEST(DeviceComputeDispatcherTest, DeviceToString_CoversAllEnumValues) {
     EXPECT_EQ(Device(DeviceType::SIMD, 1).toString(), "SIMD:1");
 }
 
+TEST(DeviceComputeDispatcherTest, DeviceEqualityAndInequality) {
+    EXPECT_TRUE(Device(DeviceType::CPU, 0) == Device(DeviceType::CPU, 0));
+    EXPECT_FALSE(Device(DeviceType::CPU, 0) != Device(DeviceType::CPU, 0));
+
+    EXPECT_FALSE(Device(DeviceType::CPU, 0) == Device(DeviceType::CPU, 1));
+    EXPECT_TRUE(Device(DeviceType::CPU, 0) != Device(DeviceType::CPU, 1));
+
+    EXPECT_FALSE(Device(DeviceType::CPU, 0) == Device(DeviceType::SIMD, 0));
+    EXPECT_TRUE(Device(DeviceType::CPU, 0) != Device(DeviceType::SIMD, 0));
+}
+
 TEST(DeviceComputeDispatcherTest, DispatchBinary_AllOps_WorkForDenseTensors) {
     TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
     TensorWrapper<float> b(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}});
@@ -165,4 +176,70 @@ TEST(DeviceComputeDispatcherTest, DispatchAxpy_UpdatesInPlace) {
     EXPECT_FLOAT_EQ(res.at({0}), 8.0f);
     EXPECT_FLOAT_EQ(res.at({1}), 16.0f);
     EXPECT_FLOAT_EQ(res.at({2}), 24.0f);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchBinary_UnsupportedOp_Throws) {
+    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    TensorWrapper<float> b(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}});
+    TensorWrapper<float> res(
+        TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
+
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchBinary(
+                     Operator::MatMul, a, b, res),
+                 std::runtime_error);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchBinary_UnsupportedDevice_Throws) {
+    TensorWrapper<float> a(TensorShape({2, 2}), 1.0f, Device(DeviceType::SIMD));
+    TensorWrapper<float> b(TensorShape({2, 2}), 2.0f, Device(DeviceType::SIMD));
+    TensorWrapper<float> res(
+        TensorShape({2, 2}), 0.0f, Device(DeviceType::SIMD));
+
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchBinary(
+                     Operator::Add, a, b, res),
+                 std::runtime_error);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchScalar_LhsScalar_Div_Succeeds) {
+    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    TensorWrapper<float> res(
+        TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
+
+    DeviceComputeDispatcher<float>::dispatchScalar(
+        Operator::Div, 12.0f, a, res);
+    EXPECT_FLOAT_EQ(res.at({0, 0}), 12.0f);
+    EXPECT_FLOAT_EQ(res.at({0, 1}), 6.0f);
+    EXPECT_FLOAT_EQ(res.at({1, 0}), 4.0f);
+    EXPECT_FLOAT_EQ(res.at({1, 1}), 3.0f);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchScalar_UnsupportedOp_Throws) {
+    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    TensorWrapper<float> res(
+        TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
+
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
+                     Operator::MatMul, a, 1.0f, res),
+                 std::runtime_error);
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
+                     Operator::MatMul, 1.0f, a, res),
+                 std::runtime_error);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchMatMul_UnsupportedDevice_Throws) {
+    TensorWrapper<float> a(TensorShape({2, 2}), 1.0f, Device(DeviceType::SIMD));
+    TensorWrapper<float> b(TensorShape({2, 2}), 1.0f, Device(DeviceType::SIMD));
+    TensorWrapper<float> res(
+        TensorShape({2, 2}), 0.0f, Device(DeviceType::SIMD));
+
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchMatMul(a, b, res),
+                 std::runtime_error);
+}
+
+TEST(DeviceComputeDispatcherTest, DispatchAxpy_UnsupportedDevice_Throws) {
+    TensorWrapper<float> x(TensorShape({3}), 1.0f, Device(DeviceType::SIMD));
+    TensorWrapper<float> res(TensorShape({3}), 2.0f, Device(DeviceType::SIMD));
+
+    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchAxpy(1.0f, x, res),
+                 std::runtime_error);
 }

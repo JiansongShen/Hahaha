@@ -16,11 +16,10 @@
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
-#include <algorithm>
+#include <imgui.h>
 #include <map>
 
 #include "display/Visualizer.h"
-#include "imgui.h"
 
 namespace hahaha::display {
 

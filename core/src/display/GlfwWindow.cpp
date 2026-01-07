@@ -20,8 +20,18 @@
 
 #include <stdexcept>
 
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "imgui.h"
+
+// Avoid including ImGui backend headers from a Meson subproject directory.
+// We compile the backend .cpp files and declare the symbols we use here.
+extern bool ImGui_ImplGlfw_InitForOpenGL(GLFWwindow* window,
+                                         bool install_callbacks);
+extern void ImGui_ImplGlfw_NewFrame();
+extern void ImGui_ImplGlfw_Shutdown();
+
+extern bool ImGui_ImplOpenGL3_Init(const char* glsl_version);
+extern void ImGui_ImplOpenGL3_NewFrame();
+extern void ImGui_ImplOpenGL3_Shutdown();
 
 namespace hahaha::display {
 

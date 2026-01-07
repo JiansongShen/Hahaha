@@ -3,7 +3,7 @@
  # @Author: napbad napbad.sen@gmail.com
  # @Date: 2026-01-07 11:07:08
  # @LastEditors: napbad napbad.sen@gmail.com
- # @LastEditTime: 2026-01-07 11:28:49
+ # @LastEditTime: 2026-01-07 13:45:27
  # @FilePath: /Hahaha/dev/coverage.sh
  # @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 ###
@@ -36,7 +36,7 @@ GCOVR_COMMON_ARGS=(
   --merge-lines
   --exclude-unreachable-branches
   --filter 'core/.'
-  --exclude 'extern/.'
+  --exclude 'subprojects/.'
   --exclude 'examples/.'
   --exclude 'core/src/display/.'
   --exclude 'core/include/display/.'
