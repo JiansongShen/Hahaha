@@ -1,12 +1,4 @@
-/*
- * @Author: napbad napbad.sen@gmail.com
- * @Date: 2026-01-07 14:03:19
- * @LastEditors: napbad napbad.sen@gmail.com
- * @LastEditTime: 2026-01-07 14:26:50
- * @FilePath: /Hahaha/tests/core/utils/log/LogLevelTest.cpp
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
- * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
+
 // Copyright (c) 2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
