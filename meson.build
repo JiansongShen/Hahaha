@@ -1,8 +1,7 @@
     project('hahaha', 'cpp',
         version : '0.0.1',
         default_options : [
-                'warning_level=3',
-                'cpp_std=c++23'])
+                'warning_level=3'])
 
 # Include directories
 include_dirs = [
@@ -17,6 +16,13 @@ glfw_dep = dependency('glfw3', required : false)
 gl_dep = dependency('gl', required : false)
 dl_dep = meson.get_compiler('cpp').find_library('dl', required : false)
 cpp_compiler = meson.get_compiler('cpp')
+
+# Select the best C++ standard string for the current compiler
+# Meson 1.1.0+ handles c++23, but clang-cl on older Meson needs c++latest
+hahaha_cpp_std = 'c++23'
+if cpp_compiler.get_id() == 'clang-cl'
+    hahaha_cpp_std = 'c++latest'
+endif
 dl_dep = cpp_compiler.find_library('dl', required : false)
 
 stacktrace_dep = []
@@ -101,7 +107,8 @@ hahaha_lib = static_library('hahaha', sources,
                             install : true,
                             include_directories : include_dir,
                             cpp_args : lib_args,
-                            dependencies : hahaha_deps
+                            dependencies : hahaha_deps,
+                            override_options : ['cpp_std=' + hahaha_cpp_std]
 )
 
 hahaha = declare_dependency(link_with: hahaha_lib,
