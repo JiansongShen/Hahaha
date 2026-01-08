@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 jobs:
-  build-and-test:
+  meson-build-and-test:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runs_on }}
     strategy:
@@ -309,3 +309,120 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: meson test -C "builddir-${{ matrix.name }}" -v --no-rebuild
+
+  cmake-build-and-test:
+    name: cmake-${{ matrix.name }}
+    runs-on: ${{ matrix.runs_on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-x64-gcc
+            runs_on: ubuntu-24.04
+            os: linux
+          - name: macos-arm64
+            runs_on: macos-latest
+            os: macos
+          - name: windows-x64-msvc
+            runs_on: windows-2022
+            os: windows
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew update
+          brew install cmake ninja
+
+      - name: Install Ninja (Windows, pip)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --upgrade pip
+          python -m pip install ninja
+
+      - name: Set up MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+
+      - name: Download wrap dependencies (no Meson) (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 dev/fetch_wrap_deps.py --all
+
+      - name: Download wrap dependencies (no Meson) (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python dev/fetch_wrap_deps.py --all
+
+      - name: Configure CMake (headless) (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja \
+            -DHAHAHA_DISPLAY=OFF \
+            -DHAHAHA_BUILD_TESTS=ON \
+            -DHAHAHA_BUILD_EXAMPLES=ON
+
+      - name: Configure CMake (headless) (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja `
+            -DHAHAHA_DISPLAY=OFF `
+            -DHAHAHA_BUILD_TESTS=ON `
+            -DHAHAHA_BUILD_EXAMPLES=ON
+
+      - name: Build (CMake) (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake --build "build-cmake-${{ matrix.name }}" --parallel 2
+
+      - name: Build (CMake) (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          cmake --build "build-cmake-${{ matrix.name }}" --parallel 2
+
+      - name: Run tests (CTest) (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ctest --test-dir "build-cmake-${{ matrix.name }}" -V
+
+      - name: Run tests (CTest) (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          ctest --test-dir "build-cmake-${{ matrix.name }}" -V
