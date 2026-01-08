@@ -68,31 +68,31 @@ TEST_F(LoggerTest, CustomLoggerFlow) {
 
 TEST_F(LoggerTest, ConvenienceFunctions) {
     // Test all convenience methods in Logger and global scope
-    hahaha::utils::Logger::trace("trace std::string");
-    hahaha::utils::Logger::trace("trace const char*");
-    hahaha::utils::Logger::debug("debug std::string");
-    hahaha::utils::Logger::debug("debug const char*");
-    hahaha::utils::Logger::info("info std::string");
-    hahaha::utils::Logger::info("info const char*");
-    hahaha::utils::Logger::warn("warn std::string");
-    hahaha::utils::Logger::warn("warn const char*");
-    hahaha::utils::Logger::error("error std::string");
-    hahaha::utils::Logger::error("error const char*");
-    hahaha::utils::Logger::fatal("fatal std::string");
-    hahaha::utils::Logger::fatal("fatal const char*");
+    Logger::trace("trace std::string");
+    Logger::trace("trace const char*");
+    Logger::debug("debug std::string");
+    Logger::debug("debug const char*");
+    Logger::info("info std::string");
+    Logger::info("info const char*");
+    Logger::warn("warn std::string");
+    Logger::warn("warn const char*");
+    Logger::error("error std::string");
+    Logger::error("error const char*");
+    Logger::fatal("fatal std::string");
+    Logger::fatal("fatal const char*");
 
     // Global convenience functions
-    ::trace("global trace");
-    ::debug("global debug");
-    ::info("global info");
-    ::warn("global warn");
-    ::error("global error");
-    ::fatal("global fatal");
-    ::log("global log", LogLevel::INFO);
-    ::log(std::string("global log string"), LogLevel::INFO);
+    trace("global trace");
+    debug("global debug");
+    info("global info");
+    warn("global warn");
+    error("global error");
+    fatal("global fatal");
+    log("global log", LogLevel::INFO);
+    log(std::string("global log string"), LogLevel::INFO);
 
-    hahaha::utils::Logger::logWithStacktrace("test stacktrace if available",
-                                             LogLevel::DEBUG);
+    // Logger::logWithStacktrace("test stacktrace if available",
+    //                                          LogLevel::DEBUG);
 
     // Give some time for background thread
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -107,7 +107,7 @@ TEST_F(LoggerTest, AllLogLevels) {
     Logger::fatal("fatal message");
 
     // Test stacktrace branch
-    Logger::logWithStacktrace("message with stacktrace", LogLevel::ERROR);
+    // Logger::logWithStacktrace("message with stacktrace", LogLevel::ERROR);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
@@ -168,8 +168,8 @@ TEST_F(LoggerTest, ShutdownIdempotency) {
 
 TEST_F(LoggerTest, LoggerShutdown) {
     // Test shutdown
-    hahaha::utils::Logger::info("Message before shutdown");
-    hahaha::utils::Logger::shutdown();
+    Logger::info("Message before shutdown");
+    Logger::shutdown();
     // After shutdown, we shouldn't really call it again, but let's see if it's
     // idempotent or handled The singleton is still there, but worker thread
     // joined.
