@@ -1,3 +1,4 @@
+
 //  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,11 +27,26 @@
 
 namespace hahaha::ml {
 
+/**
+ * @brief Linear regression model.
+ *
+ * This model implements linear regression: y = x * weight + bias
+ *
+ * @tparam T The numeric type.
+ */
 template <typename T> class LinearRegression : public Model<T> {
   public:
+    /**
+     * @brief Construct a LinearRegression model with zero-initialized weights
+     * and bias.
+     */
     LinearRegression() : weight_(T(0)), bias_(T(0)) {
     }
 
+    /**
+     * @brief Get all trainable parameters of the model.
+     * @return Parameters<T> Container with weight and bias parameters.
+     */
     Parameters<T> getParameters() override {
         Parameters<T> parameters;
 
@@ -39,41 +55,55 @@ template <typename T> class LinearRegression : public Model<T> {
         return parameters;
     }
 
+    /**
+     * @brief Set the weight parameters.
+     * @param weights Vector of weight values.
+     */
     void setWeights(std::vector<T> weights) {
         weight_ = Tensor<T>::buildFromVector(weights);
     }
 
+    /**
+     * @brief Set the bias parameters.
+     * @param bias Vector of bias values.
+     */
     void setBias(std::vector<T> bias) {
         bias_ = Tensor<T>::buildFromVector(bias);
     }
 
+    /**
+     * @brief Train the model on the given data.
+     * @param x Input features. Shape: (num_samples, num_features).
+     * @param y Target values. Shape: (num_samples, num_outputs).
+     */
     void train(Tensor<T> x, Tensor<T> y) override {
         // x shape is s * n1 (Size of samples and features Number)
         // y shape is s * n2 (Size of samples and output Number)
 
-        // reshape to a matrix to support common situations
-        auto xShape = x.getShape();
-        if (xShape.size() != 2) {
-            x = x.reshape({xShape[0], 1}); // n rows and 1 column
-        }
+        // TODO(napbad): Implement Linear Regression
+        // // reshape to a matrix to support common situations
+        // auto xShape = x.getShape();
+        // if (xShape.size() != 2) {
+        //     x = x.reshape({xShape[0], 1}); // n rows and 1 column
+        // }
 
-        auto shape = x.getShape();
-        auto yPredict = x.matmul(weight_) + bias_;
-        auto mseLoss = computeMSELoss(y, yPredict);
+        // auto shape = x.getShape();
+        // auto yPredict = x.matmul(weight_) + bias_;
+        // auto mseLoss = computeMSELoss(y, yPredict);
 
-        SGDOptimizer<T> sgdOptimizer({}, T(0.00001));
-        sgdOptimizer.addParameter(weight_);
-        sgdOptimizer.addParameter(bias_);
+        // SGDOptimizer<T> sgdOptimizer({}, T(0.00001));
+        // sgdOptimizer.addParameter(weight_);
+        // sgdOptimizer.addParameter(bias_);
 
-        sgdOptimizer.zeroGrad();
-        mseLoss.backward();
-        sgdOptimizer.step();
+        // sgdOptimizer.zeroGrad();
+        // mseLoss.backward();
+        // sgdOptimizer.step();
     }
 
   private:
-    Tensor<T> weight_; // shape is n1 * n2 (Input features Number and output
-                       // sample Number)
-    Tensor<T> bias_;   // shape is n2 (output Number)
+    Tensor<T> weight_; /**< Weight matrix. Shape: (num_input_features,
+                          num_outputs). */
+    Tensor<T> bias_;   /**< Bias vector. Shape: (num_outputs,). */
 };
 
 } // namespace hahaha::ml

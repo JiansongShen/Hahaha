@@ -23,10 +23,28 @@
 
 namespace hahaha::ml {
 
+/**
+ * @brief Base class for all loss functions.
+ *
+ * Loss functions measure the difference between predicted and actual values.
+ * This base class provides the interface that all loss functions must
+ * implement.
+ *
+ * @tparam T The numeric type.
+ */
 template <typename T> class Loss {
   public:
+    /**
+     * @brief Virtual destructor.
+     */
     virtual ~Loss() = default;
 
+    /**
+     * @brief Compute the loss between true and predicted values.
+     * @param yTrue The true (target) values.
+     * @param yPredict The predicted values.
+     * @return Tensor<T> The computed loss value.
+     */
     virtual Tensor<T> computeLoss(Tensor<T> /*yTrue*/, Tensor<T> /*yPredict*/) {
         return Tensor<T>(T(0));
     }

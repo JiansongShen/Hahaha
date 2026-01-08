@@ -8,7 +8,7 @@
 - `tests/`：单元测试。
 - `sample/`：示例应用（如 `sample/mnist/`）。
 - `doc/`：文档目录。
-- `format.sh`：一键格式化脚本。
+- `dev/format.py`：跨平台格式化脚本。
 
 ### 2. 总体开发原则
 - **教育优先**：代码必须简洁、易读。每个模块/函数应有清晰意图；优先现代 C++23 特性，但避免复杂性。
@@ -26,7 +26,7 @@ ninja -C builddir
 meson test -C builddir -v
 
 # 格式化代码
-./format.sh
+python3 dev/format.py
 ```
 
 ### 4. 命名规范（Naming Conventions）
@@ -169,6 +169,6 @@ SpaceBeforeRangeBasedForLoopColon: true
 ### 10. PR 提交清单
 - [ ] 代码通过 `ninja -C builddir` 编译。
 - [ ] 所有单元测试通过 `meson test -C builddir`。
-- [ ] 已运行 `./format.sh` 确保风格一致。
+- [ ] 已运行 `python3 dev/format.py` 确保风格一致。
 - [ ] 关键逻辑附带教育性注释。
 - [ ] 新增公开接口已添加 Doxygen 注释。

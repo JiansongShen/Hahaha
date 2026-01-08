@@ -74,38 +74,74 @@ class LoggerConfig {
 
     ~LoggerConfig() = default;
 
+    /**
+     * @brief Get the default text color.
+     * @return LogColor The color setting.
+     */
     [[nodiscard]] LogColor getColor() const {
         return color_;
     }
 
+    /**
+     * @brief Get the minimum log level.
+     * @return LogLevel The log level.
+     */
     [[nodiscard]] LogLevel getLevel() const {
         return level_;
     }
 
+    /**
+     * @brief Get the log file path.
+     * @return std::string_view The file path.
+     */
     [[nodiscard]] std::string_view getFile() const {
         return file_;
     }
 
+    /**
+     * @brief Check if file logging is enabled.
+     * @return bool True if file logging is enabled.
+     */
     [[nodiscard]] bool isWriteToFile() const {
         return writeToFile_;
     }
 
+    /**
+     * @brief Check if console logging is enabled.
+     * @return bool True if console logging is enabled.
+     */
     [[nodiscard]] bool isWriteToConsole() const {
         return writeToConsole_;
     }
 
+    /**
+     * @brief Check if timestamp is enabled.
+     * @return bool True if timestamp is enabled.
+     */
     [[nodiscard]] bool isEnableTime() const {
         return timeEnabled_;
     }
 
+    /**
+     * @brief Set the default text color.
+     * @param color The new color.
+     */
     void setColor(LogColor color) {
         color_ = color;
     }
 
+    /**
+     * @brief Set the minimum log level.
+     * @param level The new log level.
+     */
     void setLevel(LogLevel level) {
         level_ = level;
     }
 
+    /**
+     * @brief Set the log file path.
+     * @param file The new file path.
+     */
     void setFile(std::string_view file) {
         file_ = file;
     }

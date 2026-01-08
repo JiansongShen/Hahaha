@@ -1,3 +1,4 @@
+
 //  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +18,9 @@
 //
 //
 
-#include <gtest/gtest.h>
-
 #include "ml/model/LinearRegression.h"
+
+#include <gtest/gtest.h>
 
 using namespace hahaha::ml;
 using namespace hahaha::common;
@@ -34,4 +35,30 @@ class LinearRegressionTest : public ::testing::Test {
 
 TEST_F(LinearRegressionTest, LinearRegressionInit) {
     LinearRegression<f32> linearRegression;
+}
+
+TEST_F(LinearRegressionTest, GetParametersAndSetters_Work) {
+    LinearRegression<f32> model;
+
+    model.setWeights({1.0f});
+    model.setBias({0.5f});
+
+    auto params = model.getParameters();
+    auto& vec = params.getParameters();
+    ASSERT_EQ(vec.size(), 2u);
+
+    // Weight and bias are scalar/1D tensors in current minimal implementation.
+    EXPECT_EQ(vec[0].getTotalSize(), 1u);
+    EXPECT_EQ(vec[1].getTotalSize(), 1u);
+}
+
+TEST_F(LinearRegressionTest, Setters_WorkWithMultipleElements) {
+    LinearRegression<f32> model;
+    model.setWeights({1.0f, 2.0f, 3.0f});
+    model.setBias({0.5f, 0.6f});
+
+    auto params = model.getParameters();
+    auto& vec = params.getParameters();
+    EXPECT_EQ(vec[0].getTotalSize(), 3u);
+    EXPECT_EQ(vec[1].getTotalSize(), 2u);
 }

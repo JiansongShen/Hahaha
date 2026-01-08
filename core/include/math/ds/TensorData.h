@@ -118,6 +118,11 @@ template <typename T> class TensorData {
           stride_(std::move(other.stride_)), device_(other.device_) {
     }
 
+    /**
+     * @brief Construct from a vector of values.
+     * @param initVec Vector of values to initialize the tensor with. Creates
+     *                a 1D tensor with the same size as the vector.
+     */
     explicit TensorData(const std::vector<T>& initVec)
         : data_(std::make_shared<T[]>(initVec.size())),
           shape_(TensorShape(std::vector<size_t>{initVec.size()})) {
@@ -145,6 +150,15 @@ template <typename T> class TensorData {
         return *this;
     }
 
+    /**
+     * @brief Create a shared view of the tensor data.
+     *
+     * This creates a new TensorData instance that shares the underlying
+     * data array with the current instance. Both instances will point to
+     * the same memory.
+     *
+     * @return TensorData A new TensorData instance sharing the same data.
+     */
     TensorData share() const {
         TensorData sharedData = TensorData();
         sharedData.shape_ = shape_;
@@ -202,8 +216,9 @@ template <typename T> class TensorData {
     }
 
     /**
-     * @brief Return value of target index of the flat data
-     * @param idx the index of the data.
+     * @brief Access element at the given flat index.
+     * @param idx The linear index into the flattened data array.
+     * @return T& Reference to the element at the given index.
      */
     T& operator[](size_t idx) const {
         return data_[idx];
