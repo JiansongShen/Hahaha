@@ -204,13 +204,18 @@ jobs:
         run: |
           brew update
           brew install llvm
-          echo "$(brew --prefix llvm)/bin" >> $GITHUB_PATH
-          echo "CC=$(brew --prefix llvm)/bin/clang" >> $GITHUB_ENV
-          echo "CXX=$(brew --prefix llvm)/bin/clang++" >> $GITHUB_ENV
-          echo "/usr/local/opt/llvm/bin:$PATH" >> $GITHUB_PATH
-          export LDFLAGS="-L/usr/local/opt/llvm/lib"
-          export CPPFLAGS="-I/usr/local/opt/llvm/include"
-          echo "=== LLVM version check ==="
+          LLVM_PATH="$(brew --prefix llvm)"
+          # Add to GITHUB_PATH for subsequent steps
+          echo "${LLVM_PATH}/bin" >> $GITHUB_PATH
+          # Set env vars for subsequent steps
+          echo "CC=${LLVM_PATH}/bin/clang" >> $GITHUB_ENV
+          echo "CXX=${LLVM_PATH}/bin/clang++" >> $GITHUB_ENV
+          echo "LDFLAGS=-L${LLVM_PATH}/lib -L${LLVM_PATH}/lib/c++ -Wl,-rpath,${LLVM_PATH}/lib/c++" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I${LLVM_PATH}/include" >> $GITHUB_ENV
+
+          # Update current shell PATH to verify immediately
+          export PATH="${LLVM_PATH}/bin:$PATH"
+          echo "=== LLVM version check (Immediate) ==="
           which clang
           which clang++
           clang --version
