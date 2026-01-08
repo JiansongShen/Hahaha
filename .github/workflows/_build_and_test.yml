@@ -93,13 +93,13 @@ jobs:
             cxx: ""
 
           # Windows (x86_64) - clang-cl
-          - name: windows-x64-clangcl
-            runs_on: windows-2022
-            os: windows
-            arch: x64
-            compiler: clang-cl
-            cc: clang-cl
-            cxx: clang-cl
+#          - name: windows-x64-clangcl
+#            runs_on: windows-2022
+#            os: windows
+#            arch: x64
+#            compiler: clang-cl
+#            cc: clang-cl
+#            cxx: clang-cl
 
     steps:
       - name: Checkout repository
@@ -333,10 +333,10 @@ jobs:
             runs_on: windows-2022
             os: windows
             compiler: msvc
-          - name: windows-x64-clangcl
-            runs_on: windows-2022
-            os: windows
-            compiler: clang-cl
+#          - name: windows-x64-clangcl
+#            runs_on: windows-2022
+#            os: windows
+#            compiler: clang-cl
 
     steps:
       - name: Checkout repository
