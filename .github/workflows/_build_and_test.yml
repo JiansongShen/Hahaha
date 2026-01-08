@@ -56,14 +56,14 @@ jobs:
           #   cc: clang
           #   cxx: clang++
 
-          # macOS (x86_64) - Homebrew LLVM Clang
-          - name: macos-x64-llvm
+          # macOS (x86_64) - Homebrew GCC (for full C++23 <stacktrace> support)
+          - name: macos-x64-gcc
             runs_on: macos-15-intel
             os: macos
             arch: x64
-            compiler: llvm
-            cc: llvm
-            cxx: llvm
+            compiler: gcc
+            cc: gcc-14
+            cxx: g++-14
 
           # macOS (ARM64, Apple Silicon) - AppleClang
           # - name: macos-arm64-appleclang
@@ -74,14 +74,14 @@ jobs:
           #   cc: clang
           #   cxx: clang++
 
-          # macOS (ARM64, Apple Silicon) - Homebrew LLVM Clang
-          - name: macos-arm64-llvm
+          # macOS (ARM64, Apple Silicon) - Homebrew GCC (for full C++23 <stacktrace> support)
+          - name: macos-arm64-gcc
             runs_on: macos-latest
             os: macos
             arch: arm64
-            compiler: llvm
-            cc: llvm
-            cxx: llvm
+            compiler: gcc
+            cc: gcc-14
+            cxx: g++-14
 
           # Windows (x86_64) - MSVC (cl)
           - name: windows-x64-msvc
@@ -199,6 +199,19 @@ jobs:
           brew update
           brew install cmake
 
+      - name: Install GCC (macOS, gcc builds)
+        if: runner.os == 'macOS' && matrix.compiler == 'gcc'
+        run: |
+          brew update
+          brew install gcc
+          # GCC is usually installed as gcc-14, g++-14, etc.
+          # We set the environment variables to point to these specific versions.
+          echo "CC=gcc-14" >> $GITHUB_ENV
+          echo "CXX=g++-14" >> $GITHUB_ENV
+          echo "=== GCC version check ==="
+          gcc-14 --version
+          g++-14 --version
+
       - name: Install LLVM (macOS, llvm builds)
         if: runner.os == 'macOS' && matrix.compiler == 'llvm'
         run: |
@@ -265,6 +278,10 @@ jobs:
             # Force libc++ to avoid missing libc++ symbols at link time (e.g. std::__1::__hash_memory).
             export CXXFLAGS="${CXXFLAGS-} -stdlib=libc++ -I$LLVM_PREFIX/include"
             export LDFLAGS="${LDFLAGS-} -stdlib=libc++ -L$LLVM_PREFIX/lib -Wl,-rpath,$LLVM_PREFIX/lib"
+          elif [ "${{ matrix.compiler }}" = "gcc" ] && [ "${{ runner.os }}" = "macOS" ]; then
+             # For macOS GCC, we explicitly set the compilers found in PATH (e.g. gcc-14)
+             export CC="${{ matrix.cc }}"
+             export CXX="${{ matrix.cxx }}"
           elif [ -n "${{ matrix.cc }}" ]; then
             export CC="${{ matrix.cc }}"
             export CXX="${{ matrix.cxx }}"
