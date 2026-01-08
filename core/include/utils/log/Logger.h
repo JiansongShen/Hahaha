@@ -27,8 +27,8 @@
 #include <iostream>
 #include <mutex>
 #include <queue>
-#include <sstream>
-#include <stacktrace>
+// #include <sstream>
+// #include <stacktrace>
 #include <string>
 #include <thread>
 
@@ -113,8 +113,8 @@ class Logger {
      * @param msg The message string.
      * @param level Severity level.
      */
-    static void logWithStacktrace(const std::string& msg,
-                                  LogLevel level = LogLevel::ERROR);
+    // static void logWithStacktrace(const std::string& msg,
+    // LogLevel level = LogLevel::ERROR);
 
     /**
      * @brief Log a message with a specific level.
@@ -132,8 +132,9 @@ class Logger {
      * @param level Severity level.
      * @param trace Stacktrace to include in the log.
      */
-    static void
-    log(const std::string& msg, LogLevel level, const std::stacktrace& trace);
+    // static void
+    // log(const std::string& msg, LogLevel level, const std::stacktrace&
+    // trace);
 
     /** @brief Log a FATAL level message. */
     static void fatal(const std::string& msg);
@@ -304,18 +305,18 @@ inline void Logger::trace(const char* msg) {
     log(std::string(msg), LogLevel::TRACE);
 }
 
-inline void Logger::logWithStacktrace(const std::string& msg, LogLevel level) {
-    log(msg, level, std::stacktrace::current());
-}
+// inline void Logger::logWithStacktrace(const std::string& msg, LogLevel level)
+// { log(msg, level, std::stacktrace::current());
+// }
 
-inline void Logger::log(const std::string& msg,
-                        LogLevel level,
-                        const std::stacktrace& trace) {
-    std::ostringstream oss;
-    oss << trace;
-    std::string const fullMessage = msg + "\nStacktrace:\n" + oss.str();
-    log(fullMessage, level);
-}
+// inline void Logger::log(const std::string& msg,
+//                         LogLevel level,
+//                         const std::stacktrace& trace) {
+//     std::ostringstream oss;
+//     oss << trace;
+//     std::string const fullMessage = msg + "\nStacktrace:\n" + oss.str();
+//     log(fullMessage, level);
+// }
 
 } // namespace hahaha::utils
 
