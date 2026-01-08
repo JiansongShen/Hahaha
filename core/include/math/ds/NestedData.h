@@ -47,7 +47,6 @@ template <typename T> class TensorData;
  */
 template <typename T> struct NestedData {
 
-  public:
     /**
      * @brief Construct from a single scalar value.
      * @param data The scalar value.
@@ -64,7 +63,7 @@ template <typename T> struct NestedData {
      *
      * @param data The nested initializer list.
      */
-    NestedData(std::initializer_list<NestedData<T>> data) {
+    NestedData(std::initializer_list<NestedData> data) {
         if (data.size() == 0) {
             return;
         }
@@ -117,7 +116,7 @@ template <typename T> struct NestedData {
     std::vector<size_t> shape_; /**< Computed shape of the input list. */
 
     friend class TensorData<T>;
-    friend class ::NestedDataTest;
+    friend class NestedDataTest;
 };
 } // namespace hahaha::math
 

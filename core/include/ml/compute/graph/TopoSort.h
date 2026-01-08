@@ -26,6 +26,15 @@
 namespace hahaha::compute {
 template <typename T> class ComputeNode;
 
+/**
+ * @brief Topological sorting utility for computational graph nodes.
+ *
+ * This class provides utilities to perform topological sorting on
+ * computational graphs, ensuring that parent nodes appear before their
+ * children. This is essential for forward and backward propagation.
+ *
+ * @tparam T The numeric type.
+ */
 template <typename T> class TopoSort {
 
   public:
@@ -36,7 +45,7 @@ template <typename T> class TopoSort {
      * which is suitable for forward computation.
      *
      * @param node The starting node (usually the output/loss node).
-     * @return A vector of shared pointers to ComputeNodes in topo order.
+     * @return A vector of shared pointers to ComputeNodes in topological order.
      */
     std::vector<std::shared_ptr<ComputeNode<T>>>
     toTopoList(const std::shared_ptr<ComputeNode<T>>& node) {
@@ -49,6 +58,12 @@ template <typename T> class TopoSort {
     }
 
   private:
+    /**
+     * @brief Recursive helper function for topological sorting.
+     * @param node The current node to process.
+     * @param visited Set of already visited nodes.
+     * @param vec Output vector to store the sorted nodes.
+     */
     void toTopoRecursiveList(
         const std::shared_ptr<ComputeNode<T>>& node,
         std::unordered_set<std::shared_ptr<ComputeNode<T>>>& visited,

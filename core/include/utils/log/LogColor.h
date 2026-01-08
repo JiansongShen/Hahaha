@@ -26,15 +26,15 @@ namespace hahaha::utils {
  * @brief ANSI color codes for console output.
  */
 enum class LogColor {
-    BLACK,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    MAGENTA,
-    CYAN,
-    WHITE,
-    RESET
+    BLACK,   /**< Black color. */
+    RED,     /**< Red color. */
+    GREEN,   /**< Green color. */
+    YELLOW,  /**< Yellow color. */
+    BLUE,    /**< Blue color. */
+    MAGENTA, /**< Magenta color. */
+    CYAN,    /**< Cyan color. */
+    WHITE,   /**< White color. */
+    RESET    /**< Reset to default color. */
 };
 
 /**

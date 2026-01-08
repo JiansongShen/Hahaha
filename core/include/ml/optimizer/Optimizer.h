@@ -112,6 +112,6 @@ template <typename T> class Optimizer {
     T learningRate_;                    /**< Learning rate. */
 };
 
-} // namespace hahaha::ml_basic_usage
+} // namespace hahaha::ml
 
 #endif // HAHAHA_ML_OPTIMIZER_OPTIMIZER_H

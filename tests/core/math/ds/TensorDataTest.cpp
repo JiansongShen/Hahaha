@@ -251,3 +251,122 @@ TEST_F(TensorDataTest, Share_FromNestedData) {
     EXPECT_EQ(shared[0], 1);
     EXPECT_EQ(shared[3], 4);
 }
+
+// ============================================================================
+// Dimension-specific tests: 0D to 3D initialization
+// ============================================================================
+
+TEST_F(TensorDataTest, ZeroDimension_Scalar) {
+    // 0D scalar: SingleValueConstruction
+    auto nData = hahaha::math::NestedData(42);
+    TensorData td(std::move(nData));
+    EXPECT_EQ(td.getShape().getDims().size(), 0);
+    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getData()[0], 42);
+}
+
+TEST_F(TensorDataTest, OneDimension_Vector) {
+    // 1D: [1, 2, 3]
+    TensorData<int> td(hahaha::math::NestedData<int>{1, 2, 3});
+    EXPECT_EQ(td.getShape().getDims().size(), 1);
+    EXPECT_EQ(td.getShape().getDims()[0], 3);
+    EXPECT_EQ(td.getShape().getTotalSize(), 3);
+    EXPECT_EQ(td.getData()[0], 1);
+    EXPECT_EQ(td.getData()[2], 3);
+}
+
+TEST_F(TensorDataTest, OneDimension_SingleElement) {
+    // 1D with single element: [1] (different from scalar)
+    TensorData<int> td(hahaha::math::NestedData<int>{1});
+    EXPECT_EQ(td.getShape().getDims().size(), 1);
+    EXPECT_EQ(td.getShape().getDims()[0], 1);
+    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getData()[0], 1);
+}
+
+TEST_F(TensorDataTest, TwoDimension_Matrix) {
+    // 2D: {{1, 2}, {3, 4}}
+    TensorData<int> td(hahaha::math::NestedData<int>{{1, 2}, {3, 4}});
+    EXPECT_EQ(td.getShape().getDims().size(), 2);
+    EXPECT_EQ(td.getShape().getDims()[0], 2);
+    EXPECT_EQ(td.getShape().getDims()[1], 2);
+    EXPECT_EQ(td.getShape().getTotalSize(), 4);
+    EXPECT_EQ(td.getData()[0], 1);
+    EXPECT_EQ(td.getData()[3], 4);
+}
+
+TEST_F(TensorDataTest, TwoDimension_SingleElement) {
+    // 2D with single element: {{1}} (high-dimensional scalar)
+    TensorData<int> td(hahaha::math::NestedData<int>{{1}});
+    EXPECT_EQ(td.getShape().getDims().size(), 2);
+    EXPECT_EQ(td.getShape().getDims()[0], 1);
+    EXPECT_EQ(td.getShape().getDims()[1], 1);
+    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getData()[0], 1);
+}
+
+TEST_F(TensorDataTest, ThreeDimension_Tensor) {
+    // 3D: {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}}
+    TensorData<int> td(
+        hahaha::math::NestedData<int>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
+    EXPECT_EQ(td.getShape().getDims().size(), 3);
+    EXPECT_EQ(td.getShape().getDims()[0], 2);
+    EXPECT_EQ(td.getShape().getDims()[1], 2);
+    EXPECT_EQ(td.getShape().getDims()[2], 2);
+    EXPECT_EQ(td.getShape().getTotalSize(), 8);
+    EXPECT_EQ(td.getData()[0], 1);
+    EXPECT_EQ(td.getData()[7], 8);
+}
+
+TEST_F(TensorDataTest, ThreeDimension_SingleElement) {
+    // 3D with single element: {{{1}}} (3D scalar)
+    TensorData<int> td(hahaha::math::NestedData<int>{{{1}}});
+    EXPECT_EQ(td.getShape().getDims().size(), 3);
+    EXPECT_EQ(td.getShape().getDims()[0], 1);
+    EXPECT_EQ(td.getShape().getDims()[1], 1);
+    EXPECT_EQ(td.getShape().getDims()[2], 1);
+    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getData()[0], 1);
+}
+
+// ============================================================================
+// ShapeValueConstructor Tests - All Dimensions (0D to 3D)
+// ============================================================================
+
+TEST_F(TensorDataTest, ShapeValueConstructor_0D_Scalar) {
+    hahaha::math::TensorShape shape0D({});
+    TensorData<int> td0D(shape0D, 42);
+    EXPECT_EQ(td0D.getShape().getDims().size(), 0);
+    EXPECT_EQ(td0D.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td0D.getData()[0], 42);
+}
+
+TEST_F(TensorDataTest, ShapeValueConstructor_1D_Vector) {
+    hahaha::math::TensorShape shape1D({3});
+    TensorData<int> td1D(shape1D, 7);
+    EXPECT_EQ(td1D.getShape().getDims().size(), 1);
+    EXPECT_EQ(td1D.getShape().getTotalSize(), 3);
+    for (size_t i = 0; i < 3; ++i) {
+        EXPECT_EQ(td1D.getData()[i], 7);
+    }
+}
+
+TEST_F(TensorDataTest, ShapeValueConstructor_2D_Matrix) {
+    hahaha::math::TensorShape shape2D({2, 3});
+    TensorData<int> td2D(shape2D, 5);
+    EXPECT_EQ(td2D.getShape().getDims().size(), 2);
+    EXPECT_EQ(td2D.getShape().getTotalSize(), 6);
+    for (size_t i = 0; i < 6; ++i) {
+        EXPECT_EQ(td2D.getData()[i], 5);
+    }
+}
+
+TEST_F(TensorDataTest, ShapeValueConstructor_3D_Tensor) {
+    hahaha::math::TensorShape shape3D({2, 2, 2});
+    TensorData<int> td3D(shape3D, 9);
+    EXPECT_EQ(td3D.getShape().getDims().size(), 3);
+    EXPECT_EQ(td3D.getShape().getTotalSize(), 8);
+    for (size_t i = 0; i < 8; ++i) {
+        EXPECT_EQ(td3D.getData()[i], 9);
+    }
+}

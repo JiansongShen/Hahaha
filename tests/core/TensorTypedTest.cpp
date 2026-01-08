@@ -118,7 +118,7 @@ TYPED_TEST_SUITE(TensorTypedTest, NumericTypes);
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Constructor_FromNestedData_CreatesCorrectTensor) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     EXPECT_EQ(tensor.getShape().size(), 2);
     EXPECT_EQ(tensor.getShape()[0], 2);
@@ -128,7 +128,7 @@ TYPED_TEST(TensorTypedTest, Constructor_FromNestedData_CreatesCorrectTensor) {
 }
 
 TYPED_TEST(TensorTypedTest, Constructor_FromScalar_CreatesScalarTensor) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     T scalarValue = T(99);
     Tensor<T> tensor(scalarValue);
     EXPECT_EQ(tensor.getTotalSize(), 1);
@@ -137,7 +137,7 @@ TYPED_TEST(TensorTypedTest, Constructor_FromScalar_CreatesScalarTensor) {
 }
 
 TYPED_TEST(TensorTypedTest, BuildFromVector_Creates1DTensor) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     auto t = Tensor<T>::buildFromVector({T(1), T(2), T(3)});
     EXPECT_EQ(t.getShape().size(), 1);
     EXPECT_EQ(t.getShape()[0], 3);
@@ -150,7 +150,7 @@ TYPED_TEST(TensorTypedTest, BuildFromVector_Creates1DTensor) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Add_TwoTensors_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     Tensor<T> t2(NestedData<T>{{T(5), T(6)}, {T(7), T(8)}});
     auto res = t1 + t2;
@@ -159,7 +159,7 @@ TYPED_TEST(TensorTypedTest, Add_TwoTensors_CorrectResult) {
 }
 
 TYPED_TEST(TensorTypedTest, Add_TensorScalar_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}});
     T scalar = T(10);
     auto res = tensor + scalar;
@@ -168,7 +168,7 @@ TYPED_TEST(TensorTypedTest, Add_TensorScalar_CorrectResult) {
 }
 
 TYPED_TEST(TensorTypedTest, Add_ScalarTensor_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}});
     T scalar = T(10);
     auto res = scalar + tensor;
@@ -181,7 +181,7 @@ TYPED_TEST(TensorTypedTest, Add_ScalarTensor_CorrectResult) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Subtract_TwoTensors_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(5), T(6)}});
     Tensor<T> t2(NestedData<T>{{T(1), T(2)}});
     auto res = t1 - t2;
@@ -190,7 +190,7 @@ TYPED_TEST(TensorTypedTest, Subtract_TwoTensors_CorrectResult) {
 }
 
 TYPED_TEST(TensorTypedTest, Subtract_TensorScalar_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(10), T(20)}});
     T scalar = T(5);
     auto res = tensor - scalar;
@@ -199,7 +199,7 @@ TYPED_TEST(TensorTypedTest, Subtract_TensorScalar_CorrectResult) {
 }
 
 TYPED_TEST(TensorTypedTest, Subtract_ScalarTensor_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(10), T(20)}});
     T scalar = T(30);
     auto res = scalar - tensor;
@@ -212,7 +212,7 @@ TYPED_TEST(TensorTypedTest, Subtract_ScalarTensor_CorrectResult) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Multiply_TwoTensors_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t2(NestedData<T>{{T(3), T(4)}});
     auto res = t1 * t2;
@@ -221,7 +221,7 @@ TYPED_TEST(TensorTypedTest, Multiply_TwoTensors_CorrectResult) {
 }
 
 TYPED_TEST(TensorTypedTest, Multiply_TensorScalar_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}});
     T scalar = T(5);
     auto res = tensor * scalar;
@@ -234,7 +234,7 @@ TYPED_TEST(TensorTypedTest, Multiply_TensorScalar_CorrectResult) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Divide_TwoTensors_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(10), T(20)}});
     Tensor<T> t2(NestedData<T>{{T(2), T(4)}});
     auto res = t1 / t2;
@@ -243,7 +243,7 @@ TYPED_TEST(TensorTypedTest, Divide_TwoTensors_CorrectResult) {
 }
 
 TYPED_TEST(TensorTypedTest, Divide_TensorScalar_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(10), T(20)}});
     T scalar = T(2);
     auto res = tensor / scalar;
@@ -253,7 +253,7 @@ TYPED_TEST(TensorTypedTest, Divide_TensorScalar_CorrectResult) {
 
 TYPED_TEST(TensorTypedTest,
            Divide_TwoTensors_DivisionByZero_ThrowsRuntimeError) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t_zero(NestedData<T>{{T(0), T(1)}});
     EXPECT_THROW(t1 / t_zero, std::runtime_error);
@@ -261,7 +261,7 @@ TYPED_TEST(TensorTypedTest,
 
 TYPED_TEST(TensorTypedTest,
            Divide_TensorScalar_DivisionByZero_ThrowsRuntimeError) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}});
     EXPECT_THROW(tensor / T(0), std::runtime_error);
 }
@@ -271,7 +271,7 @@ TYPED_TEST(TensorTypedTest,
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, UnaryNegation_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(-2)}});
     auto neg_tensor = -tensor;
     EXPECT_EQ(neg_tensor.at({0, 0}), T(-1));
@@ -286,7 +286,7 @@ TYPED_TEST(TensorTypedTest, UnaryNegation_CorrectResult) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Matmul_ValidMatrices_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> matrix_a(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     Tensor<T> matrix_b(NestedData<T>{{T(5), T(6)}, {T(7), T(8)}});
     auto matrix_c = matrix_a.matmul(matrix_b);
@@ -305,7 +305,7 @@ TYPED_TEST(TensorTypedTest, Matmul_ValidMatrices_CorrectResult) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Sum_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     T result = tensor.sum();
     EXPECT_EQ(result, T(10));
@@ -316,7 +316,7 @@ TYPED_TEST(TensorTypedTest, Sum_CorrectResult) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Add_IntegerOverflow_Behavior) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isUnsignedInteger()
                   || TestFixture::isSignedInteger()) {
         T maxVal = this->maxValue();
@@ -346,7 +346,7 @@ TYPED_TEST(TensorTypedTest, Add_IntegerOverflow_Behavior) {
 }
 
 TYPED_TEST(TensorTypedTest, Multiply_IntegerOverflow_Behavior) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isUnsignedInteger()
                   || TestFixture::isSignedInteger()) {
         // Use values that would overflow when multiplied
@@ -365,7 +365,7 @@ TYPED_TEST(TensorTypedTest, Multiply_IntegerOverflow_Behavior) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, FloatingPoint_Infinity_Handling) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isFloatingPoint()) {
         T inf = std::numeric_limits<T>::infinity();
         Tensor<T> t1_inf(NestedData<T>{{inf}});
@@ -389,7 +389,7 @@ TYPED_TEST(TensorTypedTest, FloatingPoint_Infinity_Handling) {
 }
 
 TYPED_TEST(TensorTypedTest, FloatingPoint_NaN_Handling) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isFloatingPoint()) {
         T nan = std::numeric_limits<T>::quiet_NaN();
         Tensor<T> t1(NestedData<T>{{nan, T(1)}});
@@ -408,7 +408,7 @@ TYPED_TEST(TensorTypedTest, FloatingPoint_NaN_Handling) {
 }
 
 TYPED_TEST(TensorTypedTest, FloatingPoint_ZeroDivision_Throws) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isFloatingPoint()) {
         Tensor<T> t1(NestedData<T>{{T(1.0), T(2.0)}});
         Tensor<T> t_zero(NestedData<T>{{T(0.0), T(1.0)}});
@@ -421,7 +421,7 @@ TYPED_TEST(TensorTypedTest, FloatingPoint_ZeroDivision_Throws) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, IntegerDivision_RoundingBehavior) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isSignedInteger()
                   || TestFixture::isUnsignedInteger()) {
         // Test integer division truncation
@@ -440,7 +440,7 @@ TYPED_TEST(TensorTypedTest, IntegerDivision_RoundingBehavior) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, FloatingPoint_Precision) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isFloatingPoint()) {
         // Test that floating point operations maintain reasonable precision
         T val1 = T(0.1);
@@ -458,7 +458,7 @@ TYPED_TEST(TensorTypedTest, FloatingPoint_Precision) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Reshape_ValidNewShape_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor_orig(NestedData<T>{T(1), T(2), T(3), T(4), T(5), T(6)});
     auto tensor_reshaped = tensor_orig.reshape({2, 3});
     EXPECT_EQ(tensor_reshaped.getShape().size(), 2);
@@ -471,7 +471,7 @@ TYPED_TEST(TensorTypedTest, Reshape_ValidNewShape_CorrectResult) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Transpose_Valid2DTensor_CorrectResult) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor_orig(
         NestedData<T>{{T(1), T(2), T(3)}, {T(4), T(5), T(6)}});
     auto tensor_transposed = tensor_orig.transpose();
@@ -487,7 +487,7 @@ TYPED_TEST(TensorTypedTest, Transpose_Valid2DTensor_CorrectResult) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Backward_SimpleAddition_GradientPropagation) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isFloatingPoint()) {
         Tensor<T> a(NestedData<T>{{T(1.0), T(2.0)}});
         Tensor<T> b(NestedData<T>{{T(3.0), T(4.0)}});
@@ -506,7 +506,7 @@ TYPED_TEST(TensorTypedTest, Backward_SimpleAddition_GradientPropagation) {
 }
 
 TYPED_TEST(TensorTypedTest, Backward_Multiplication_GradientPropagation) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     if constexpr (TestFixture::isFloatingPoint()) {
         Tensor<T> a(NestedData<T>{{T(2.0)}});
         Tensor<T> b(NestedData<T>{{T(3.0)}});
@@ -530,7 +530,7 @@ TYPED_TEST(TensorTypedTest, Backward_Multiplication_GradientPropagation) {
 
 TYPED_TEST(TensorTypedTest,
            Add_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t2(NestedData<T>{{T(1), T(2), T(3)}});
     EXPECT_THROW(t1 + t2, std::invalid_argument);
@@ -538,7 +538,7 @@ TYPED_TEST(TensorTypedTest,
 
 TYPED_TEST(TensorTypedTest,
            Subtract_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t2(NestedData<T>{{T(1), T(2), T(3)}});
     EXPECT_THROW(t1 - t2, std::invalid_argument);
@@ -546,7 +546,7 @@ TYPED_TEST(TensorTypedTest,
 
 TYPED_TEST(TensorTypedTest,
            Multiply_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t2(NestedData<T>{{T(1), T(2), T(3)}});
     EXPECT_THROW(t1 * t2, std::invalid_argument);
@@ -554,14 +554,14 @@ TYPED_TEST(TensorTypedTest,
 
 TYPED_TEST(TensorTypedTest,
            Divide_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t2(NestedData<T>{{T(1), T(2), T(3)}});
     EXPECT_THROW(t1 / t2, std::invalid_argument);
 }
 
 TYPED_TEST(TensorTypedTest, Matmul_Non2DTensors_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> matrix_a(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     Tensor<T> tensor_1d(NestedData<T>{T(1), T(2)});
     EXPECT_THROW(matrix_a.matmul(tensor_1d), std::invalid_argument);
@@ -570,7 +570,7 @@ TYPED_TEST(TensorTypedTest, Matmul_Non2DTensors_ThrowsInvalidArgument) {
 
 TYPED_TEST(TensorTypedTest,
            Matmul_InnerDimensionMismatch_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> matrix_a(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     Tensor<T> matrix_d(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}, {T(5), T(6)}});
     EXPECT_THROW(matrix_a.matmul(matrix_d),
@@ -578,13 +578,13 @@ TYPED_TEST(TensorTypedTest,
 }
 
 TYPED_TEST(TensorTypedTest, Transpose_Non2DTensor_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor_1d(NestedData<T>{T(1), T(2), T(3)});
     EXPECT_THROW(tensor_1d.transpose(), std::invalid_argument);
 }
 
 TYPED_TEST(TensorTypedTest, Reshape_SizeMismatch_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor_orig(NestedData<T>{T(1), T(2), T(3), T(4)});
     EXPECT_THROW(tensor_orig.reshape({3}),
                  std::invalid_argument); // Total size 3 != 4
@@ -597,7 +597,7 @@ TYPED_TEST(TensorTypedTest, Reshape_SizeMismatch_ThrowsInvalidArgument) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Constructor_NestedData_3D_CorrectlyInitializes) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}},
                                    {{T(5), T(6)}, {T(7), T(8)}}});
     EXPECT_EQ(tensor.getShape().size(), 3);
@@ -608,7 +608,7 @@ TYPED_TEST(TensorTypedTest, Constructor_NestedData_3D_CorrectlyInitializes) {
 
 TYPED_TEST(TensorTypedTest,
            Constructor_NestedData_IrregularShape_ThrowsInvalidArgument) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     EXPECT_THROW(Tensor<T>(NestedData<T>{{T(1)}, {T(1), T(2)}}),
                  std::invalid_argument);
     if constexpr (TestFixture::isFloatingPoint()) {
@@ -622,7 +622,7 @@ TYPED_TEST(TensorTypedTest,
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, GetShape_ReturnsCorrectDimensionsAndSize) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor_2d(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     EXPECT_EQ(tensor_2d.getShape()[0], 2);
     EXPECT_EQ(tensor_2d.getShape()[1], 2);
@@ -637,7 +637,7 @@ TYPED_TEST(TensorTypedTest, GetShape_ReturnsCorrectDimensionsAndSize) {
 }
 
 TYPED_TEST(TensorTypedTest, GetDimensions_ReturnsCorrectCount) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor_scalar(T(1));
     EXPECT_EQ(tensor_scalar.getShape().size(), 0); // Scalar has 0 dimensions
     Tensor<T> tensor_1d(NestedData<T>{T(1), T(2), T(3)});
@@ -647,7 +647,7 @@ TYPED_TEST(TensorTypedTest, GetDimensions_ReturnsCorrectCount) {
 }
 
 TYPED_TEST(TensorTypedTest, ElementAccess_OutOfBounds_ThrowsOutOfRange) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     EXPECT_THROW(tensor.at({0, 0, 0}), std::out_of_range); // Dimension mismatch
     EXPECT_THROW(tensor.at({2, 0}), std::out_of_range); // Index out of bounds
@@ -658,7 +658,7 @@ TYPED_TEST(TensorTypedTest, ElementAccess_OutOfBounds_ThrowsOutOfRange) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, To_Gpu_ThrowsRuntimeError) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     EXPECT_THROW(
         t.to(hahaha::backend::Device(hahaha::backend::DeviceType::GPU, 0)),
@@ -666,7 +666,7 @@ TYPED_TEST(TensorTypedTest, To_Gpu_ThrowsRuntimeError) {
 }
 
 TYPED_TEST(TensorTypedTest, Clear_ResetsUnderlyingData) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     t.clear();
     EXPECT_EQ(t.at({0, 0}), T(0));
@@ -678,13 +678,13 @@ TYPED_TEST(TensorTypedTest, Clear_ResetsUnderlyingData) {
 // ============================================================================
 
 TYPED_TEST(TensorTypedTest, Grad_WhenNoBackward_ReturnsNullptr) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t(T(3));
     EXPECT_EQ(t.grad(), nullptr);
 }
 
 TYPED_TEST(TensorTypedTest, RequiresGrad_FlagIsStoredOnNode) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t(T(1));
     EXPECT_FALSE(t.getRequiresGrad());
     t.setRequiresGrad(true);
@@ -692,7 +692,7 @@ TYPED_TEST(TensorTypedTest, RequiresGrad_FlagIsStoredOnNode) {
 }
 
 TYPED_TEST(TensorTypedTest, ClearGrad_NoGrad_NoThrow) {
-    using T = typename TestFixture::Type;
+    using T = TestFixture::Type;
     Tensor<T> t(T(1));
     EXPECT_NO_THROW(t.clearGrad());
 }

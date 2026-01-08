@@ -194,3 +194,85 @@ TEST_F(NestedDataTest, SingleElementList) {
     ASSERT_EQ(nd.getShape()[0], 1);
     ASSERT_EQ(nd.getShape()[1], 1);
 }
+
+// ============================================================================
+// Dimension-specific tests: 0D to 3D initialization
+// ============================================================================
+
+TEST_F(NestedDataTest, ZeroDimension_Scalar) {
+    // 0D scalar: SingleValueConstruction
+    NestedData<int> nd(42);
+    ASSERT_EQ(nd.getFlatData().size(), 1);
+    ASSERT_EQ(nd.getFlatData()[0], 42);
+    ASSERT_EQ(nd.getShape().size(), 0);
+}
+
+TEST_F(NestedDataTest, OneDimension_Vector) {
+    // 1D: [1, 2, 3]
+    NestedData<int> nd({1, 2, 3});
+    ASSERT_EQ(nd.getFlatData().size(), 3);
+    ASSERT_EQ(nd.getShape().size(), 1);
+    ASSERT_EQ(nd.getShape()[0], 3);
+    ASSERT_EQ(nd.getFlatData()[0], 1);
+    ASSERT_EQ(nd.getFlatData()[2], 3);
+}
+
+TEST_F(NestedDataTest, OneDimension_SingleElement) {
+    // 1D with single element: [1] (different from scalar)
+    NestedData<int> nd{1};
+    ASSERT_EQ(nd.getFlatData().size(), 1);
+    ASSERT_EQ(nd.getShape().size(), 1);
+    ASSERT_EQ(nd.getShape()[0], 1);
+    ASSERT_EQ(nd.getFlatData()[0], 1);
+}
+
+TEST_F(NestedDataTest, TwoDimension_Matrix) {
+    // 2D: {{1, 2}, {3, 4}}
+    NestedData<int> nd = {{1, 2}, {3, 4}};
+    ASSERT_EQ(nd.getFlatData().size(), 4);
+    ASSERT_EQ(nd.getShape().size(), 2);
+    ASSERT_EQ(nd.getShape()[0], 2);
+    ASSERT_EQ(nd.getShape()[1], 2);
+    ASSERT_EQ(nd.getFlatData()[0], 1);
+    ASSERT_EQ(nd.getFlatData()[3], 4);
+}
+
+TEST_F(NestedDataTest, TwoDimension_SingleElement) {
+    // 2D with single element: {{1}} (high-dimensional scalar)
+    NestedData<int> nd = {{1}};
+    ASSERT_EQ(nd.getFlatData().size(), 1);
+    ASSERT_EQ(nd.getShape().size(), 2);
+    ASSERT_EQ(nd.getShape()[0], 1);
+    ASSERT_EQ(nd.getShape()[1], 1);
+    ASSERT_EQ(nd.getFlatData()[0], 1);
+}
+
+TEST_F(NestedDataTest, ThreeDimension_Tensor) {
+    // 3D: {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}}
+    NestedData<int> nd = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}};
+    ASSERT_EQ(nd.getFlatData().size(), 8);
+    ASSERT_EQ(nd.getShape().size(), 3);
+    ASSERT_EQ(nd.getShape()[0], 2);
+    ASSERT_EQ(nd.getShape()[1], 2);
+    ASSERT_EQ(nd.getShape()[2], 2);
+    ASSERT_EQ(nd.getFlatData()[0], 1);
+    ASSERT_EQ(nd.getFlatData()[7], 8);
+}
+
+TEST_F(NestedDataTest, ThreeDimension_SingleElement) {
+    // 3D with single element: {{{1}}} (3D scalar)
+    NestedData<int> nd = {{{1}}};
+    ASSERT_EQ(nd.getFlatData().size(), 1);
+    ASSERT_EQ(nd.getShape().size(), 3);
+    ASSERT_EQ(nd.getShape()[0], 1);
+    ASSERT_EQ(nd.getShape()[1], 1);
+    ASSERT_EQ(nd.getShape()[2], 1);
+    ASSERT_EQ(nd.getFlatData()[0], 1);
+}
+
+TEST_F(NestedDataTest, ThreeDimension_IrregularShape) {
+    // 3D with different sizes in last dimension: {{{1, 2}, {3}}, {{4, 5}, {6}}}
+    // This should fail validation
+    EXPECT_THROW((NestedData<int>{{{{1, 2}, {3}}, {{4, 5}, {6}}}}),
+                 std::invalid_argument);
+}

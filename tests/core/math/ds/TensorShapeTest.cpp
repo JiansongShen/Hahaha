@@ -286,3 +286,280 @@ TEST_F(TensorShapeTest, DefaultConstructorAndAssignment) {
     EXPECT_EQ(ts.getDims().size(), 1);
     EXPECT_EQ(ts.getTotalSize(), 1);
 }
+
+// ============================================================================
+// Dimension-specific tests: 0D to 3D broadcast
+// ============================================================================
+
+TEST_F(TensorShapeTest, Broadcast_0D_ScalarToAnyShape) {
+    // 0D scalar () can broadcast to any shape
+    TensorShape scalar({});
+
+    // Scalar to 0D
+    auto res0 = TensorShape::broadcastShape(scalar, TensorShape({}));
+    ASSERT_TRUE(res0.has_value());
+    EXPECT_EQ(TensorShape(*res0), TensorShape({}));
+
+    // Scalar to 1D
+    auto res1 = TensorShape::broadcastShape(scalar, TensorShape({3}));
+    ASSERT_TRUE(res1.has_value());
+    EXPECT_EQ(TensorShape(*res1), TensorShape({3}));
+
+    // Scalar to 2D
+    auto res2 = TensorShape::broadcastShape(scalar, TensorShape({2, 3}));
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), TensorShape({2, 3}));
+
+    // Scalar to 3D
+    auto res3 = TensorShape::broadcastShape(scalar, TensorShape({2, 2, 2}));
+    ASSERT_TRUE(res3.has_value());
+    EXPECT_EQ(TensorShape(*res3), TensorShape({2, 2, 2}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_1D_VectorToMatrix) {
+    // 1D [3] can broadcast to 2D with matching last dim
+    auto res =
+        TensorShape::broadcastShape(TensorShape({3}), TensorShape({2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+
+    // 1D [2] can broadcast to 2D [2, 2] (dim=1 case)
+    auto res2 =
+        TensorShape::broadcastShape(TensorShape({1}), TensorShape({2, 2}));
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), TensorShape({2, 2}));
+
+    // 1D [3] cannot broadcast to [2, 4] (incompatible)
+    auto res3 =
+        TensorShape::broadcastShape(TensorShape({3}), TensorShape({2, 4}));
+    ASSERT_FALSE(res3.has_value());
+}
+
+TEST_F(TensorShapeTest, Broadcast_2D_MatrixTo3D) {
+    // 2D [1, 3] can not broadcast to 3D [2, 3, 4]
+    auto res = TensorShape::broadcastShape(TensorShape({1, 3}),
+                                           TensorShape({2, 3, 4}));
+    ASSERT_FALSE(res.has_value());
+
+    // 2D [3, 4] can broadcast to 3D [2, 3, 4]
+    auto res2 = TensorShape::broadcastShape(TensorShape({3, 4}),
+                                            TensorShape({2, 3, 4}));
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), TensorShape({2, 3, 4}));
+
+    // 2D [2, 3] cannot broadcast to [2, 3, 4] (last dim mismatch: 3 != 4)
+    auto res3 = TensorShape::broadcastShape(TensorShape({2, 3}),
+                                            TensorShape({2, 3, 4}));
+    ASSERT_FALSE(res3.has_value());
+}
+
+TEST_F(TensorShapeTest, Broadcast_3D_To3D) {
+    // 3D [1, 2, 3] can broadcast to [2, 2, 3]
+    auto res = TensorShape::broadcastShape(TensorShape({1, 2, 3}),
+                                           TensorShape({2, 2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+
+    // 3D [2, 1, 3] can broadcast to [2, 2, 3]
+    auto res2 = TensorShape::broadcastShape(TensorShape({2, 1, 3}),
+                                            TensorShape({2, 2, 3}));
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), TensorShape({2, 2, 3}));
+
+    // 3D [2, 2, 1] can broadcast to [2, 2, 3]
+    auto res3 = TensorShape::broadcastShape(TensorShape({2, 2, 1}),
+                                            TensorShape({2, 2, 3}));
+    ASSERT_TRUE(res3.has_value());
+    EXPECT_EQ(TensorShape(*res3), TensorShape({2, 2, 3}));
+
+    // 3D [2, 2, 3] cannot broadcast to [2, 2, 4] (last dim mismatch)
+    auto res4 = TensorShape::broadcastShape(TensorShape({2, 2, 3}),
+                                            TensorShape({2, 2, 4}));
+    ASSERT_FALSE(res4.has_value());
+}
+
+TEST_F(TensorShapeTest, Broadcast_ScalarTypes_Distinction) {
+    // Test different scalar representations
+
+    // 0D scalar: ()
+    TensorShape scalar0D({});
+    EXPECT_EQ(scalar0D.getDims().size(), 0);
+    EXPECT_EQ(scalar0D.getTotalSize(), 1);
+
+    // 1D scalar: [1]
+    TensorShape scalar1D({1});
+    EXPECT_EQ(scalar1D.getDims().size(), 1);
+    EXPECT_EQ(scalar1D.getTotalSize(), 1);
+
+    // 2D scalar: [1, 1]
+    TensorShape scalar2D({1, 1});
+    EXPECT_EQ(scalar2D.getDims().size(), 2);
+    EXPECT_EQ(scalar2D.getTotalSize(), 1);
+
+    // 3D scalar: [1, 1, 1]
+    TensorShape scalar3D({1, 1, 1});
+    EXPECT_EQ(scalar3D.getDims().size(), 3);
+    EXPECT_EQ(scalar3D.getTotalSize(), 1);
+
+    // All can broadcast to [2, 2, 2]
+    TensorShape target({2, 2, 2});
+
+    auto res0 = TensorShape::broadcastShape(scalar0D, target);
+    ASSERT_TRUE(res0.has_value());
+    EXPECT_EQ(TensorShape(*res0), target);
+
+    auto res1 = TensorShape::broadcastShape(scalar1D, target);
+    ASSERT_TRUE(res1.has_value());
+    EXPECT_EQ(TensorShape(*res1), target);
+
+    auto res2 = TensorShape::broadcastShape(scalar2D, target);
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), target);
+
+    auto res3 = TensorShape::broadcastShape(scalar3D, target);
+    ASSERT_TRUE(res3.has_value());
+    EXPECT_EQ(TensorShape(*res3), target);
+}
+
+// ============================================================================
+// Broadcast Tests - All 16 Dimension Combinations (0D, 1D, 2D, 3D)
+// ============================================================================
+
+TEST_F(TensorShapeTest, Broadcast_0Dvs0D_SameShape) {
+    auto res = TensorShape::broadcastShape(TensorShape({}), TensorShape({}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_0Dvs1D_ScalarToVector) {
+    auto res = TensorShape::broadcastShape(TensorShape({}), TensorShape({3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_0Dvs2D_ScalarToMatrix) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({}), TensorShape({2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_0Dvs3D_ScalarToTensor) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({}), TensorShape({2, 2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_1Dvs0D_VectorToScalar) {
+    auto res = TensorShape::broadcastShape(TensorShape({3}), TensorShape({}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_1Dvs1D_SameShape) {
+    auto res = TensorShape::broadcastShape(TensorShape({3}), TensorShape({3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_1Dvs1D_Incompatible) {
+    auto res = TensorShape::broadcastShape(TensorShape({2}), TensorShape({3}));
+    ASSERT_FALSE(res.has_value());
+}
+
+TEST_F(TensorShapeTest, Broadcast_1Dvs2D_VectorToMatrix_Compatible) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({3}), TensorShape({2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_1Dvs2D_VectorToMatrix_Incompatible) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({2}), TensorShape({2, 3}));
+    ASSERT_FALSE(res.has_value());
+}
+
+TEST_F(TensorShapeTest, Broadcast_1Dvs3D_VectorToTensor_Compatible) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({3}), TensorShape({2, 2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_2Dvs0D_MatrixToScalar) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_2Dvs1D_MatrixToVector_Compatible) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_2Dvs2D_SameShape) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_2Dvs2D_DimOneBroadcasting) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({1, 3}), TensorShape({2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_2Dvs3D_MatrixToTensor_Compatible) {
+    auto res = TensorShape::broadcastShape(TensorShape({2, 3}),
+                                           TensorShape({2, 2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_2Dvs3D_MatrixToTensor_Incompatible) {
+    auto res = TensorShape::broadcastShape(TensorShape({2, 2}),
+                                           TensorShape({2, 2, 3}));
+    ASSERT_FALSE(res.has_value());
+}
+
+TEST_F(TensorShapeTest, Broadcast_3Dvs0D_TensorToScalar) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({2, 2, 3}), TensorShape({}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_3Dvs1D_TensorToVector_Compatible) {
+    auto res =
+        TensorShape::broadcastShape(TensorShape({2, 2, 3}), TensorShape({3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_3Dvs2D_TensorToMatrix_Compatible) {
+    auto res = TensorShape::broadcastShape(TensorShape({2, 2, 3}),
+                                           TensorShape({2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_3Dvs3D_SameShape) {
+    auto res = TensorShape::broadcastShape(TensorShape({2, 2, 3}),
+                                           TensorShape({2, 2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+}
+
+TEST_F(TensorShapeTest, Broadcast_3Dvs3D_DimOneBroadcasting) {
+    auto res = TensorShape::broadcastShape(TensorShape({1, 2, 3}),
+                                           TensorShape({2, 2, 3}));
+    ASSERT_TRUE(res.has_value());
+    EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
+}
