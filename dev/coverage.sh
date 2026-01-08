@@ -2,12 +2,14 @@
 set -euo pipefail
 
 # Usage:
-#   ./dev/coverage.sh [builddir]
+#   ./dev/coverage.sh [builddir] [--clean]
 #
 # Policy:
 # - Focus on "core" and exclude display (UI/visualization) code from coverage.
 # - Use gcovr merge options to avoid double-counting template instantiations
 #   across multiple translation units.
+# --clean means clean the builddir before running.
+
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="${1:-builddir}"

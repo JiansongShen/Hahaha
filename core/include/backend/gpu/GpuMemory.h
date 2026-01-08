@@ -20,8 +20,9 @@
 #define HAHAHA_BACKEND_GPU_GPU_MEMORY_H
 
 #include <cstddef>
-#include <cstdint>
 #include <span>
+
+#include "backend/gpu/DeviceBuffer.h"
 
 namespace hahaha::backend::gpu {
 
@@ -30,61 +31,6 @@ namespace hahaha::backend::gpu {
  */
 class GpuMemory {
   public:
-    /**
-     * @brief RAII handle for a GPU device buffer.
-     *
-     * This stores the device address as an integer to avoid exposing raw
-     * pointers in the backend public API.
-     */
-    class DeviceBuffer {
-      public:
-        DeviceBuffer() = default;
-        DeviceBuffer(std::uintptr_t address, size_t size)
-            : address_(address), size_(size) {
-        }
-
-        ~DeviceBuffer() noexcept {
-            if (address_ != 0) {
-                GpuMemory::deallocate(address_);
-            }
-        }
-
-        DeviceBuffer(const DeviceBuffer&) = delete;
-        DeviceBuffer& operator=(const DeviceBuffer&) = delete;
-
-        DeviceBuffer(DeviceBuffer&& other) noexcept
-            : address_(other.address_), size_(other.size_) {
-            other.address_ = 0;
-            other.size_ = 0;
-        }
-
-        DeviceBuffer& operator=(DeviceBuffer&& other) noexcept {
-            if (this == &other) {
-                return *this;
-            }
-            if (address_ != 0) {
-                GpuMemory::deallocate(address_);
-            }
-            address_ = other.address_;
-            size_ = other.size_;
-            other.address_ = 0;
-            other.size_ = 0;
-            return *this;
-        }
-
-        [[nodiscard]] std::uintptr_t address() const {
-            return address_;
-        }
-
-        [[nodiscard]] size_t size() const {
-            return size_;
-        }
-
-      private:
-        std::uintptr_t address_ = 0;
-        size_t size_ = 0;
-    };
-
     /**
      * @brief Allocate memory on the GPU.
      * @param size Size of memory to allocate in bytes.
@@ -119,8 +65,21 @@ class GpuMemory {
     /**
      * @brief Deallocate memory on the GPU (internal).
      * @param address Device address of the memory to deallocate.
+     *
+     * @note This method is private and can only be accessed by DeviceBuffer
+     *       through the friend declaration. DeviceBuffer uses this in its
+     *       destructor and move assignment operator to ensure proper cleanup.
      */
     static void deallocate(std::uintptr_t address);
+
+    /**
+     * @brief Friend declaration for DeviceBuffer.
+     *
+     * DeviceBuffer needs to access deallocate() in its destructor and move
+     * assignment operator to ensure proper RAII semantics for GPU memory
+     * management.
+     */
+    friend class DeviceBuffer;
 };
 
 } // namespace hahaha::backend::gpu

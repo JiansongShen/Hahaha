@@ -28,6 +28,14 @@ namespace hahaha::compute {
 
 // --- Unary Operations ---
 
+/**
+ * @brief Reshape operation for computational graph nodes.
+ * @tparam T The numeric type.
+ * @param parent The parent compute node to reshape.
+ * @param newShape The new shape for the tensor.
+ * @return std::shared_ptr<ComputeNode<T>> A new compute node representing the
+ * reshape operation.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 reshape(const std::shared_ptr<ComputeNode<T>>& parent,
@@ -58,6 +66,13 @@ reshape(const std::shared_ptr<ComputeNode<T>>& parent,
     return resNode;
 }
 
+/**
+ * @brief Transpose operation for computational graph nodes.
+ * @tparam T The numeric type.
+ * @param parent The parent compute node to transpose.
+ * @return std::shared_ptr<ComputeNode<T>> A new compute node representing the
+ * transpose operation.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 transpose(const std::shared_ptr<ComputeNode<T>>& parent) {
@@ -86,6 +101,13 @@ transpose(const std::shared_ptr<ComputeNode<T>>& parent) {
     return resNode;
 }
 
+/**
+ * @brief Unary negation operation for computational graph nodes.
+ * @tparam T The numeric type.
+ * @param parent The parent compute node to negate.
+ * @return std::shared_ptr<ComputeNode<T>> A new compute node representing the
+ * negation operation.
+ */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 neg(const std::shared_ptr<ComputeNode<T>>& parent) {

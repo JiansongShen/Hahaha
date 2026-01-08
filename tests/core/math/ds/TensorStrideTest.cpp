@@ -146,3 +146,98 @@ TEST_F(TensorStrideTest, StrideFromVectorBranches) {
     TensorStride s2(std::vector<size_t>{10});
     TensorStride s3(std::vector<size_t>{2, 5});
 }
+
+// ============================================================================
+// Dimension-specific tests: 0D to 3D stride
+// ============================================================================
+
+TEST_F(TensorStrideTest, ZeroDimension_EmptyStride) {
+    // 0D scalar has empty stride
+    std::vector<size_t> dims = {};
+    TensorStride stride(dims);
+    EXPECT_EQ(stride.getStrideSize(), 0);
+    EXPECT_EQ(stride.toString(), "[]");
+}
+
+TEST_F(TensorStrideTest, OneDimension_Stride) {
+    // 1D: [5] -> stride [1]
+    std::vector<size_t> dims = {5};
+    TensorStride stride(dims);
+    EXPECT_EQ(stride.getStrideSize(), 1);
+    EXPECT_EQ(stride[0], 1);
+    EXPECT_EQ(stride.toString(), "[1]");
+}
+
+TEST_F(TensorStrideTest, TwoDimension_Stride) {
+    // 2D: [2, 3] -> stride [3, 1]
+    std::vector<size_t> dims = {2, 3};
+    TensorStride stride(dims);
+    EXPECT_EQ(stride.getStrideSize(), 2);
+    EXPECT_EQ(stride[0], 3); // stride for first dimension
+    EXPECT_EQ(stride[1], 1); // stride for second dimension
+    EXPECT_EQ(stride.toString(), "[3, 1]");
+}
+
+TEST_F(TensorStrideTest, ThreeDimension_Stride) {
+    // 3D: [2, 3, 4] -> stride [12, 4, 1]
+    std::vector<size_t> dims = {2, 3, 4};
+    TensorStride stride(dims);
+    EXPECT_EQ(stride.getStrideSize(), 3);
+    EXPECT_EQ(stride[0], 12); // stride for first dimension: 3*4 = 12
+    EXPECT_EQ(stride[1], 4);  // stride for second dimension: 4
+    EXPECT_EQ(stride[2], 1);  // stride for third dimension: 1
+}
+
+TEST_F(TensorStrideTest, ThreeDimension_FromShape) {
+    // 3D: [2, 2, 2] -> stride [4, 2, 1]
+    TensorShape shape({2, 2, 2});
+    TensorStride stride(shape);
+    EXPECT_EQ(stride.getStrideSize(), 3);
+    EXPECT_EQ(stride[0], 4); // 2*2 = 4
+    EXPECT_EQ(stride[1], 2); // 2
+    EXPECT_EQ(stride[2], 1); // 1
+}
+
+TEST_F(TensorStrideTest, SingleElementShapes) {
+    // Test single element shapes: [1], [1, 1], [1, 1, 1]
+
+    // 1D: [1] -> stride [1]
+    TensorStride stride1D({1});
+    EXPECT_EQ(stride1D.getStrideSize(), 1);
+    EXPECT_EQ(stride1D[0], 1);
+
+    // 2D: [1, 1] -> stride [1, 1]
+    TensorStride stride2D({1, 1});
+    EXPECT_EQ(stride2D.getStrideSize(), 2);
+    EXPECT_EQ(stride2D[0], 1);
+    EXPECT_EQ(stride2D[1], 1);
+
+    // 3D: [1, 1, 1] -> stride [1, 1, 1]
+    TensorStride stride3D({1, 1, 1});
+    EXPECT_EQ(stride3D.getStrideSize(), 3);
+    EXPECT_EQ(stride3D[0], 1);
+    EXPECT_EQ(stride3D[1], 1);
+    EXPECT_EQ(stride3D[2], 1);
+}
+
+TEST_F(TensorStrideTest, Reverse_AllDimensions) {
+    // Test reverse for 0D, 1D, 2D, 3D
+
+    // 1D reverse
+    TensorStride stride1D({5});
+    stride1D.reverse();
+    EXPECT_EQ(stride1D[0], 1);
+
+    // 2D reverse
+    TensorStride stride2D({2, 3});
+    stride2D.reverse();
+    EXPECT_EQ(stride2D[0], 1); // becomes [1, 3]
+    EXPECT_EQ(stride2D[1], 3);
+
+    // 3D reverse
+    TensorStride stride3D({2, 3, 4});
+    stride3D.reverse();
+    EXPECT_EQ(stride3D[0], 1); // becomes [1, 4, 12]
+    EXPECT_EQ(stride3D[1], 4);
+    EXPECT_EQ(stride3D[2], 12);
+}

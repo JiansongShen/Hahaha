@@ -336,3 +336,254 @@ TEST_F(BroadcastTest, Broadcast_GradFun_ComplexInners) {
     EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad()->at({1, 0, 1}), 2.0f);
 }
+
+// ============================================================================
+// All 16 dimension combination tests: 0D, 1D, 2D, 3D cross operations
+// ============================================================================
+
+TEST_F(BroadcastTest, Broadcast_0Dvs0D_ScalarToScalar) {
+    Tensor<float> s0(5.0f);
+    s0.setRequiresGrad(true);
+    std::vector<size_t> target0D = {};
+    auto b = hahaha::compute::broadcast(s0.getComputeNode(), target0D);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 0);
+    EXPECT_FLOAT_EQ(bt.at({}), 5.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_0Dvs1D_ScalarToVector) {
+    Tensor<float> s0(5.0f);
+    s0.setRequiresGrad(true);
+    std::vector<size_t> target1D = {3};
+    auto b = hahaha::compute::broadcast(s0.getComputeNode(), target1D);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 1);
+    EXPECT_EQ(bt.getShape()[0], 3);
+    EXPECT_FLOAT_EQ(bt.at({0}), 5.0f);
+    EXPECT_FLOAT_EQ(bt.at({2}), 5.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_0Dvs2D_ScalarToMatrix) {
+    Tensor<float> s0(5.0f);
+    s0.setRequiresGrad(true);
+    std::vector<size_t> target2D = {2, 3};
+    auto b = hahaha::compute::broadcast(s0.getComputeNode(), target2D);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 2);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 3);
+    EXPECT_FLOAT_EQ(bt.at({0, 0}), 5.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 2}), 5.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_0Dvs3D_ScalarToTensor) {
+    Tensor<float> s0(5.0f);
+    s0.setRequiresGrad(true);
+    std::vector<size_t> target3D = {2, 2, 3};
+    auto b = hahaha::compute::broadcast(s0.getComputeNode(), target3D);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 3);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 2);
+    EXPECT_EQ(bt.getShape()[2], 3);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 5.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 1, 2}), 5.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_1Dvs1D_SameShape) {
+    Tensor<float> v1(NestedData<float>{1.0f, 2.0f, 3.0f});
+    v1.setRequiresGrad(true);
+    std::vector<size_t> target1D_same = {3};
+    auto b = hahaha::compute::broadcast(v1.getComputeNode(), target1D_same);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 1);
+    EXPECT_EQ(bt.getShape()[0], 3);
+    EXPECT_FLOAT_EQ(bt.at({0}), 1.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_1Dvs2D_VectorToMatrix) {
+    Tensor<float> v1(NestedData<float>{1.0f, 2.0f, 3.0f});
+    v1.setRequiresGrad(true);
+    std::vector<size_t> target1D2D = {2, 3};
+    auto b = hahaha::compute::broadcast(v1.getComputeNode(), target1D2D);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 2);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 3);
+    EXPECT_FLOAT_EQ(bt.at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 0}), 1.0f); // broadcast first dim
+}
+
+TEST_F(BroadcastTest, Broadcast_1Dvs3D_VectorToTensor) {
+    Tensor<float> v1(NestedData<float>{1.0f, 2.0f, 3.0f});
+    v1.setRequiresGrad(true);
+    std::vector<size_t> target1D3D = {2, 2, 3};
+    auto b = hahaha::compute::broadcast(v1.getComputeNode(), target1D3D);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 3);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 2);
+    EXPECT_EQ(bt.getShape()[2], 3);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 1, 0}), 1.0f); // broadcast first two dims
+}
+
+TEST_F(BroadcastTest, Broadcast_1Dvs2D_Incompatible_Throws) {
+    Tensor<float> v2(NestedData<float>{1.0f, 2.0f}); // shape [2]
+    std::vector<size_t> target1D2D_incompat = {
+        2, 3}; // can't broadcast [2] to [2, 3]
+    EXPECT_THROW(
+        hahaha::compute::broadcast(v2.getComputeNode(), target1D2D_incompat),
+        std::runtime_error);
+}
+
+TEST_F(BroadcastTest, Broadcast_2Dvs2D_SameShape) {
+    Tensor<float> m1(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    m1.setRequiresGrad(true);
+    std::vector<size_t> target2D_same = {2, 2};
+    auto b = hahaha::compute::broadcast(m1.getComputeNode(), target2D_same);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 2);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 2);
+    EXPECT_FLOAT_EQ(bt.at({0, 0}), 1.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_2Dvs2D_DimOneBroadcasting) {
+    Tensor<float> m2(NestedData<float>{{1.0f, 2.0f, 3.0f}}); // shape [1, 3]
+    std::vector<size_t> target2D_broadcast = {2, 3};
+    auto b =
+        hahaha::compute::broadcast(m2.getComputeNode(), target2D_broadcast);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 2);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 3);
+    EXPECT_FLOAT_EQ(bt.at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 0}), 1.0f); // broadcast first dim
+}
+
+TEST_F(BroadcastTest, Broadcast_2Dvs3D_MatrixToTensor) {
+    Tensor<float> m2(NestedData<float>{{1.0f, 2.0f, 3.0f}}); // shape [1, 3]
+    std::vector<size_t> target2D3D = {2, 2, 3};
+    auto b = hahaha::compute::broadcast(m2.getComputeNode(), target2D3D);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 3);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 2);
+    EXPECT_EQ(bt.getShape()[2], 3);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 1, 0}), 1.0f); // broadcast first dim
+}
+
+TEST_F(BroadcastTest, Broadcast_2Dvs3D_Incompatible_Throws) {
+    Tensor<float> m3(
+        NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}}); // shape [2, 2]
+    std::vector<size_t> target2D3D_incompat = {
+        2, 2, 3}; // can't broadcast [2, 2] to [2, 2, 3]
+    EXPECT_THROW(
+        hahaha::compute::broadcast(m3.getComputeNode(), target2D3D_incompat),
+        std::runtime_error);
+}
+
+TEST_F(BroadcastTest, Broadcast_3Dvs3D_SameShape) {
+    Tensor<float> t1(NestedData<float>{{{1.0f, 2.0f}, {3.0f, 4.0f}},
+                                       {{5.0f, 6.0f}, {7.0f, 8.0f}}});
+    t1.setRequiresGrad(true);
+    std::vector<size_t> target3D_same = {2, 2, 2};
+    auto b = hahaha::compute::broadcast(t1.getComputeNode(), target3D_same);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 3);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 2);
+    EXPECT_EQ(bt.getShape()[2], 2);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 1.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_3Dvs3D_DimOneBroadcasting) {
+    Tensor<float> t2(
+        NestedData<float>{{{1.0f, 2.0f, 3.0f}}}); // shape [1, 1, 3]
+    std::vector<size_t> target3D_broadcast = {2, 2, 3};
+    auto b =
+        hahaha::compute::broadcast(t2.getComputeNode(), target3D_broadcast);
+    Tensor<float> bt(b);
+    EXPECT_EQ(bt.getShape().size(), 3);
+    EXPECT_EQ(bt.getShape()[0], 2);
+    EXPECT_EQ(bt.getShape()[1], 2);
+    EXPECT_EQ(bt.getShape()[2], 3);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 1, 0}), 1.0f); // broadcast first two dims
+}
+
+// ============================================================================
+// Scalar Types Distinction Tests - Different scalar representations
+// ============================================================================
+
+TEST_F(BroadcastTest, Broadcast_ScalarTypes_0D_Scalar) {
+    std::vector<size_t> target = {2, 2, 2};
+    Tensor<float> s0(5.0f);
+    auto b = hahaha::compute::broadcast(s0.getComputeNode(), target);
+    Tensor<float> bt(b);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 5.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 1, 1}), 5.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_ScalarTypes_1D_SingleElement) {
+    std::vector<size_t> target = {2, 2, 2};
+    Tensor<float> s1(NestedData<float>{5.0f}); // shape [1]
+    auto b = hahaha::compute::broadcast(s1.getComputeNode(), target);
+    Tensor<float> bt(b);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 5.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 1, 1}), 5.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_ScalarTypes_2D_SingleElement) {
+    std::vector<size_t> target = {2, 2, 2};
+    Tensor<float> s2(NestedData<float>{{5.0f}}); // shape [1, 1]
+    auto b = hahaha::compute::broadcast(s2.getComputeNode(), target);
+    Tensor<float> bt(b);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 5.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 1, 1}), 5.0f);
+}
+
+TEST_F(BroadcastTest, Broadcast_ScalarTypes_3D_SingleElement) {
+    std::vector<size_t> target = {2, 2, 2};
+    Tensor<float> s3(NestedData<float>{{{5.0f}}}); // shape [1, 1, 1]
+    auto b = hahaha::compute::broadcast(s3.getComputeNode(), target);
+    Tensor<float> bt(b);
+    EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 5.0f);
+    EXPECT_FLOAT_EQ(bt.at({1, 1, 1}), 5.0f);
+}
+
+// ============================================================================
+// Error Cases Tests - Incompatible broadcasts for all dimensions
+// ============================================================================
+
+TEST_F(BroadcastTest, Broadcast_ErrorCase_1Dvs1D_IncompatibleSizes) {
+    Tensor<float> v1(NestedData<float>{1.0f, 2.0f}); // [2]
+    std::vector<size_t> target = {3};
+    EXPECT_THROW(hahaha::compute::broadcast(v1.getComputeNode(), target),
+                 std::runtime_error);
+}
+
+TEST_F(BroadcastTest, Broadcast_ErrorCase_2Dvs2D_IncompatibleInnerDimension) {
+    Tensor<float> m1(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}}); // [2, 2]
+    std::vector<size_t> target = {2, 3};
+    EXPECT_THROW(hahaha::compute::broadcast(m1.getComputeNode(), target),
+                 std::runtime_error);
+}
+
+TEST_F(BroadcastTest, Broadcast_ErrorCase_3Dvs3D_IncompatibleDimension) {
+    Tensor<float> t1(
+        NestedData<float>{{{1.0f, 2.0f}, {3.0f, 4.0f}},
+                          {{5.0f, 6.0f}, {7.0f, 8.0f}}}); // [2, 2, 2]
+    std::vector<size_t> target = {2, 2, 3};
+    EXPECT_THROW(hahaha::compute::broadcast(t1.getComputeNode(), target),
+                 std::runtime_error);
+}
+
+TEST_F(BroadcastTest, Broadcast_ErrorCase_LowerRankToHigherRank_Incompatible) {
+    Tensor<float> m2(NestedData<float>{{1.0f, 2.0f}}); // [1, 2]
+    std::vector<size_t> target = {2, 3}; // [1, 2] can't broadcast to [2, 3]
+    EXPECT_THROW(hahaha::compute::broadcast(m2.getComputeNode(), target),
+                 std::runtime_error);
+}

@@ -27,11 +27,26 @@
 
 namespace hahaha::ml {
 
+/**
+ * @brief Linear regression model.
+ *
+ * This model implements linear regression: y = x * weight + bias
+ *
+ * @tparam T The numeric type.
+ */
 template <typename T> class LinearRegression : public Model<T> {
   public:
+    /**
+     * @brief Construct a LinearRegression model with zero-initialized weights
+     * and bias.
+     */
     LinearRegression() : weight_(T(0)), bias_(T(0)) {
     }
 
+    /**
+     * @brief Get all trainable parameters of the model.
+     * @return Parameters<T> Container with weight and bias parameters.
+     */
     Parameters<T> getParameters() override {
         Parameters<T> parameters;
 
@@ -40,14 +55,27 @@ template <typename T> class LinearRegression : public Model<T> {
         return parameters;
     }
 
+    /**
+     * @brief Set the weight parameters.
+     * @param weights Vector of weight values.
+     */
     void setWeights(std::vector<T> weights) {
         weight_ = Tensor<T>::buildFromVector(weights);
     }
 
+    /**
+     * @brief Set the bias parameters.
+     * @param bias Vector of bias values.
+     */
     void setBias(std::vector<T> bias) {
         bias_ = Tensor<T>::buildFromVector(bias);
     }
 
+    /**
+     * @brief Train the model on the given data.
+     * @param x Input features. Shape: (num_samples, num_features).
+     * @param y Target values. Shape: (num_samples, num_outputs).
+     */
     void train(Tensor<T> x, Tensor<T> y) override {
         // x shape is s * n1 (Size of samples and features Number)
         // y shape is s * n2 (Size of samples and output Number)
@@ -73,9 +101,9 @@ template <typename T> class LinearRegression : public Model<T> {
     }
 
   private:
-    Tensor<T> weight_; // shape is n1 * n2 (Input features Number and output
-                       // sample Number)
-    Tensor<T> bias_;   // shape is n2 (output Number)
+    Tensor<T> weight_; /**< Weight matrix. Shape: (num_input_features,
+                          num_outputs). */
+    Tensor<T> bias_;   /**< Bias vector. Shape: (num_outputs,). */
 };
 
 } // namespace hahaha::ml
