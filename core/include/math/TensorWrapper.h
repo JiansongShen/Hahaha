@@ -110,6 +110,11 @@ template <typename T> class TensorWrapper {
     explicit TensorWrapper(NestedData<T>&& data) : data_(std::move(data)) {
     }
 
+    /**
+     * @brief Construct from a vector of values.
+     * @param initVec Vector of values to initialize the tensor with. Creates
+     *                a 1D tensor with the same size as the vector.
+     */
     explicit TensorWrapper(const std::vector<T>& initVec)
         : data_(TensorData<T>(initVec)) {
     }
@@ -273,7 +278,7 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper A new tensor with reshaped dimensions.
      */
     TensorWrapper reshape(const std::vector<size_t>& newShape) const {
-        size_t totalSize = std::accumulate(
+        const size_t totalSize = std::accumulate(
             newShape.begin(), newShape.end(), 1ULL, std::multiplies());
         if (totalSize != getTotalSize()) {
             throw std::invalid_argument("New shape total size ("
@@ -306,18 +311,30 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise addition.
      *
-     * Formula: res[i] = a[i] + b[i]
+     * Plain-text formula:
+     * - res[i] = a[i] + b[i]
+     *
+     * Scalar behavior (plain text):
+     * - If one operand has totalSize == 1, it is treated as a scalar:
+     *   res[i] = tensor[i] + scalar
+     *
+     * Constraints:
+     * - For non-scalar case, shapes must match exactly (TensorWrapper-level).
+     * - For device execution, both tensors must be on the same device.
      *
      * @param other The tensor to add.
      * @return TensorWrapper result tensor.
      */
     TensorWrapper add(const TensorWrapper& other) const {
+        checkSameDevice(other);
+
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.add(data_.getData()[0]);
         }
         if (other.getTotalSize() == 1 && getTotalSize() > 1) {
             return add(other.data_.getData()[0]);
         }
+
         if (getTotalSize() == 1 && other.getTotalSize() == 1) {
             TensorWrapper result;
             result.data_.setShape(data_.getShape());
@@ -334,8 +351,6 @@ template <typename T> class TensorWrapper {
                 "Tensors must have the same shape for addition");
         }
 
-        checkSameDevice(other);
-
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
@@ -351,12 +366,20 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise subtraction.
      *
-     * Formula: res[i] = a[i] - b[i]
+     * Plain-text formula:
+     * - res[i] = a[i] - b[i]
+     *
+     * Scalar behavior (plain text):
+     * - tensor - scalar: res[i] = tensor[i] - scalar
+     * - scalar - tensor: res[i] = scalar - tensor[i]  (see subtractFrom)
      *
      * @param other The tensor to subtract.
      * @return TensorWrapper result tensor.
      */
     TensorWrapper subtract(const TensorWrapper& other) const {
+
+        checkSameDevice(other);
+
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.subtractFrom(data_.getData()[0]);
         }
@@ -379,8 +402,6 @@ template <typename T> class TensorWrapper {
                 "Tensors must have the same shape for subtraction");
         }
 
-        checkSameDevice(other);
-
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
@@ -396,12 +417,18 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise multiplication.
      *
-     * Formula: res[i] = a[i] * b[i]
+     * Plain-text formula:
+     * - res[i] = a[i] * b[i]
+     *
+     * Scalar behavior (plain text):
+     * - res[i] = tensor[i] * scalar
      *
      * @param other The tensor to multiply.
      * @return TensorWrapper result tensor.
      */
     TensorWrapper multiply(const TensorWrapper& other) const {
+
+        checkSameDevice(other);
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.multiply(data_.getData()[0]);
         }
@@ -424,8 +451,6 @@ template <typename T> class TensorWrapper {
                 "Tensors must have the same shape for multiplication");
         }
 
-        checkSameDevice(other);
-
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
@@ -441,12 +466,20 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise division.
      *
-     * Formula: res[i] = a[i] / b[i]
+     * Plain-text formula:
+     * - res[i] = a[i] / b[i]  (b[i] != 0)
+     *
+     * Scalar behavior (plain text):
+     * - tensor / scalar: res[i] = tensor[i] / scalar  (scalar != 0)
+     * - scalar / tensor: res[i] = scalar / tensor[i]  (tensor[i] != 0)
      *
      * @param other The tensor to divide.
      * @return TensorWrapper result tensor.
      */
     TensorWrapper divide(const TensorWrapper& other) const {
+
+        checkSameDevice(other);
+
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.divideInto(data_.getData()[0]);
         }
@@ -472,8 +505,6 @@ template <typename T> class TensorWrapper {
                 "Tensors must have the same shape for division");
         }
 
-        checkSameDevice(other);
-
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
@@ -487,7 +518,9 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Scalar addition.
+     * @brief Element-wise scalar addition.
+     * @param scalar The scalar value to add to each element.
+     * @return TensorWrapper Result tensor with same shape as this.
      */
     TensorWrapper add(T scalar) const {
         TensorWrapper result;
@@ -503,7 +536,9 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Scalar subtraction.
+     * @brief Element-wise scalar subtraction.
+     * @param scalar The scalar value to subtract from each element.
+     * @return TensorWrapper Result tensor with same shape as this.
      */
     TensorWrapper subtract(T scalar) const {
         TensorWrapper result;
@@ -519,7 +554,9 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Scalar multiplication.
+     * @brief Element-wise scalar multiplication.
+     * @param scalar The scalar value to multiply each element by.
+     * @return TensorWrapper Result tensor with same shape as this.
      */
     TensorWrapper multiply(T scalar) const {
         TensorWrapper result;
@@ -535,7 +572,11 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Scalar division.
+     * @brief Element-wise scalar division.
+     * @param scalar The scalar value to divide each element by. Must not be
+     * zero.
+     * @return TensorWrapper Result tensor with same shape as this.
+     * @throws std::runtime_error if scalar is zero.
      */
     TensorWrapper divide(T scalar) const {
         TensorWrapper result;
@@ -551,7 +592,9 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Subtraction from scalar (scalar - tensor).
+     * @brief Element-wise subtraction from scalar (scalar - tensor).
+     * @param scalar The scalar value to subtract this tensor from.
+     * @return TensorWrapper Result tensor with same shape as this.
      */
     TensorWrapper subtractFrom(T scalar) const {
         TensorWrapper result;
@@ -567,7 +610,10 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Division into scalar (scalar / tensor).
+     * @brief Element-wise division into scalar (scalar / tensor).
+     * @param scalar The scalar value to divide by this tensor.
+     * @return TensorWrapper Result tensor with same shape as this.
+     * @throws std::runtime_error if any element of this tensor is zero.
      */
     TensorWrapper divideInto(T scalar) const {
         TensorWrapper result;
@@ -659,7 +705,8 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Sum all the data in the tensor wrapper.
+     * @brief Sum all elements in the tensor.
+     * @return T The sum of all tensor elements.
      */
     T sum() const {
         T result = T(0);
@@ -670,6 +717,10 @@ template <typename T> class TensorWrapper {
         return result;
     }
 
+    /**
+     * @brief Create a deep copy of this tensor.
+     * @return TensorWrapper A new tensor with copied data.
+     */
     TensorWrapper clone() const {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
@@ -682,6 +733,14 @@ template <typename T> class TensorWrapper {
         return result;
     }
 
+    /**
+     * @brief Sum tensor elements along specified axes.
+     * @param axes The axes along which to sum. Empty axes means sum all
+     * elements.
+     * @param keepDims If true, the reduced dimensions are kept with size 1.
+     * @return TensorWrapper Result tensor with summed values.
+     * @throws std::invalid_argument if any axis is out of bounds.
+     */
     TensorWrapper sum(std::vector<size_t> axes,
                       const bool keepDims = false) const {
         if (axes.empty()) {
@@ -690,6 +749,21 @@ template <typename T> class TensorWrapper {
 
         std::ranges::sort(axes);
         axes.erase(std::ranges::unique(axes).begin(), axes.end());
+
+        // 1. get target shape
+        std::vector<bool> isReduced;
+        const std::vector<size_t>& srcShape = getShape();
+        std::vector<size_t> resShape;
+
+        isReduced.resize(srcShape.size(), false);
+        for (const unsigned long axe : axes) {
+            if (static_cast<long>(axe)
+                > static_cast<long>(isReduced.size()) - 1) {
+                throw std::invalid_argument("axis is too big!");
+            }
+            isReduced[axe] = true;
+        }
+
         if (axes.size() == this->getShape().size()) {
             TensorWrapper result;
             result.data_.setShape(TensorShape({}));
@@ -699,17 +773,8 @@ template <typename T> class TensorWrapper {
             return result;
         }
 
-        // 1. get target shape
-        std::vector<bool> isReduced;
-        const std::vector<size_t>& srcShape = getShape();
-        std::vector<size_t> resShape;
-
-        isReduced.resize(srcShape.size(), false);
-        for (const unsigned long axe : axes) {
-            if (axe > isReduced.size() - 1) {
-                throw std::invalid_argument("axis is too big!");
-            }
-            isReduced[axe] = true;
+        if (this->getShape().size() == 0) {
+            return this->clone();
         }
 
         for (size_t i = 0; i < srcShape.size(); ++i) {
@@ -718,10 +783,10 @@ template <typename T> class TensorWrapper {
                 if (keepDims) {
                     resShape.push_back(1);
                 }
-                continue;
+            } else {
+                // if not then just add dim
+                resShape.push_back(srcShape[i]);
             }
-            // if not then just add dim
-            resShape.push_back(srcShape[i]);
         }
 
         // 2. calculate necessary datas
@@ -751,8 +816,8 @@ template <typename T> class TensorWrapper {
         }
 
         // 3. calculate data to result
-        const T* srcPtr = getRawData().get();
-        T* resPtr = result.getRawData().get();
+        const std::shared_ptr<T[]> srcPtr = getRawData();
+        std::shared_ptr<T[]> resPtr = result.getRawData();
         std::vector<size_t> coord(srcShape.size(), 0);
         size_t dstIdx = 0;
 
@@ -776,8 +841,8 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Clean all the value of the tensor, set to default value (likely
-     * 0).
+     * @brief Clear all values in the tensor, setting them to default value
+     * (likely 0).
      */
     void clear() {
         if (data_.getData() == nullptr) {
@@ -791,9 +856,24 @@ template <typename T> class TensorWrapper {
 
     /**
      * @brief Broadcast tensor to match the shape of another tensor.
+     *
+     * This operation does NOT allocate new storage. It returns a view.
+     * Broadcasted axes are represented by setting stride[axis] = 0.
+     * Reading element at coordinate `idx` uses:
+     * linear = sum(idx[d] * stride[d])
+     * value = base_ptr[linear]
+     *
+     * Example:
+     * - self.shape = (1, 3), self.stride = (3, 1)
+     * - newShape = (2, 3)
+     * - result.stride becomes (0, 1)
+     * - So result[0, j] and result[1, j] map to the same source element.
+     *
      * @param newShape The target tensor shape for broadcasting.
-     * @return the 'new' tensor that has a target shape but a shared data to
-     * this one
+     * @return TensorWrapper A new tensor that has the target shape but shares
+     *         data with this one.
+     * @throws std::invalid_argument if newShape is not broadcast-compatible,
+     *         or if newShape rank is smaller than current rank.
      */
     TensorWrapper broadcastTo(const TensorShape& newShape) {
 
@@ -839,33 +919,82 @@ template <typename T> class TensorWrapper {
         return result;
     }
 
+    /**
+     * @brief Addition operator (tensor + tensor).
+     * @param other The tensor to add.
+     * @return TensorWrapper Result of addition.
+     */
     TensorWrapper operator+(const TensorWrapper& other) const {
         return add(other);
     }
+
+    /**
+     * @brief Subtraction operator (tensor - tensor).
+     * @param other The tensor to subtract.
+     * @return TensorWrapper Result of subtraction.
+     */
     TensorWrapper operator-(const TensorWrapper& other) const {
         return subtract(other);
     }
+
+    /**
+     * @brief Multiplication operator (tensor * tensor).
+     * @param other The tensor to multiply.
+     * @return TensorWrapper Result of multiplication.
+     */
     TensorWrapper operator*(const TensorWrapper& other) const {
         return multiply(other);
     }
+
+    /**
+     * @brief Division operator (tensor / tensor).
+     * @param other The tensor to divide by.
+     * @return TensorWrapper Result of division.
+     */
     TensorWrapper operator/(const TensorWrapper& other) const {
         return divide(other);
     }
 
-    // Scalar operators
+    /**
+     * @brief Addition operator (tensor + scalar).
+     * @param scalar The scalar value to add.
+     * @return TensorWrapper Result of addition.
+     */
     TensorWrapper operator+(T scalar) const {
         return add(scalar);
     }
+
+    /**
+     * @brief Subtraction operator (tensor - scalar).
+     * @param scalar The scalar value to subtract.
+     * @return TensorWrapper Result of subtraction.
+     */
     TensorWrapper operator-(T scalar) const {
         return subtract(scalar);
     }
+
+    /**
+     * @brief Multiplication operator (tensor * scalar).
+     * @param scalar The scalar value to multiply.
+     * @return TensorWrapper Result of multiplication.
+     */
     TensorWrapper operator*(T scalar) const {
         return multiply(scalar);
     }
+
+    /**
+     * @brief Division operator (tensor / scalar).
+     * @param scalar The scalar value to divide by.
+     * @return TensorWrapper Result of division.
+     */
     TensorWrapper operator/(T scalar) const {
         return divide(scalar);
     }
 
+    /**
+     * @brief Unary negation operator (-tensor).
+     * @return TensorWrapper Negated tensor.
+     */
     TensorWrapper operator-() const {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
@@ -878,6 +1007,11 @@ template <typename T> class TensorWrapper {
         return result;
     }
 
+    /**
+     * @brief In-place addition operator (tensor += tensor).
+     * @param other The tensor to add.
+     * @return TensorWrapper& Reference to this.
+     */
     TensorWrapper& operator+=(const TensorWrapper& other) {
         if (other.getTotalSize() == 1) {
             return *this += other.data_.getData()[0];
@@ -898,6 +1032,11 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
+    /**
+     * @brief In-place subtraction operator (tensor -= tensor).
+     * @param other The tensor to subtract.
+     * @return TensorWrapper& Reference to this.
+     */
     TensorWrapper& operator-=(const TensorWrapper& other) {
         if (other.getTotalSize() == 1) {
             return *this -= other.data_.getData()[0];
@@ -918,6 +1057,11 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
+    /**
+     * @brief In-place multiplication operator (tensor *= tensor).
+     * @param other The tensor to multiply.
+     * @return TensorWrapper& Reference to this.
+     */
     TensorWrapper& operator*=(const TensorWrapper& other) {
         if (other.getTotalSize() == 1) {
             return *this *= other.data_.getData()[0];
@@ -938,6 +1082,11 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
+    /**
+     * @brief In-place division operator (tensor /= tensor).
+     * @param other The tensor to divide by.
+     * @return TensorWrapper& Reference to this.
+     */
     TensorWrapper& operator/=(const TensorWrapper& other) {
         if (other.getTotalSize() == 1) {
             return *this /= other.data_.getData()[0];
@@ -961,6 +1110,11 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
+    /**
+     * @brief In-place addition operator (tensor += scalar).
+     * @param scalar The scalar value to add.
+     * @return TensorWrapper& Reference to this.
+     */
     TensorWrapper& operator+=(T scalar) {
         const size_t tensorSize = getTotalSize();
         for (size_t i = 0; i < tensorSize; ++i) {
@@ -969,6 +1123,11 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
+    /**
+     * @brief In-place subtraction operator (tensor -= scalar).
+     * @param scalar The scalar value to subtract.
+     * @return TensorWrapper& Reference to this.
+     */
     TensorWrapper& operator-=(T scalar) {
         const size_t tensorSize = getTotalSize();
         for (size_t i = 0; i < tensorSize; ++i) {
@@ -977,6 +1136,11 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
+    /**
+     * @brief In-place multiplication operator (tensor *= scalar).
+     * @param scalar The scalar value to multiply.
+     * @return TensorWrapper& Reference to this.
+     */
     TensorWrapper& operator*=(T scalar) {
         const size_t tensorSize = getTotalSize();
         for (size_t i = 0; i < tensorSize; ++i) {
@@ -985,6 +1149,12 @@ template <typename T> class TensorWrapper {
         return *this;
     }
 
+    /**
+     * @brief In-place division operator (tensor /= scalar).
+     * @param scalar The scalar value to divide by. Must not be zero.
+     * @return TensorWrapper& Reference to this.
+     * @throws std::runtime_error if scalar is zero.
+     */
     TensorWrapper& operator/=(T scalar) {
         if (scalar == T(0)) {
             throw std::runtime_error("Division by zero");
@@ -1029,27 +1199,54 @@ template <typename T> class TensorWrapper {
     }
 
     // Friend classes for internal access
-    friend class ::TensorWrapperTest;
+    friend class TensorWrapperTest;
     friend class compute::ComputeNode<T>;
     friend class backend::DeviceComputeDispatcher<T>;
 };
 
-// Non-member scalar-tensor operators
+/**
+ * @brief Addition operator (scalar + tensor).
+ * @tparam T The numeric type.
+ * @param scalar The scalar value.
+ * @param tensor The tensor.
+ * @return TensorWrapper<T> Result of addition.
+ */
 template <typename T>
 TensorWrapper<T> operator+(T scalar, const TensorWrapper<T>& tensor) {
     return tensor.add(scalar);
 }
 
+/**
+ * @brief Subtraction operator (scalar - tensor).
+ * @tparam T The numeric type.
+ * @param scalar The scalar value.
+ * @param tensor The tensor.
+ * @return TensorWrapper<T> Result of subtraction.
+ */
 template <typename T>
 TensorWrapper<T> operator-(T scalar, const TensorWrapper<T>& tensor) {
     return tensor.subtractFrom(scalar);
 }
 
+/**
+ * @brief Multiplication operator (scalar * tensor).
+ * @tparam T The numeric type.
+ * @param scalar The scalar value.
+ * @param tensor The tensor.
+ * @return TensorWrapper<T> Result of multiplication.
+ */
 template <typename T>
 TensorWrapper<T> operator*(T scalar, const TensorWrapper<T>& tensor) {
     return tensor.multiply(scalar);
 }
 
+/**
+ * @brief Division operator (scalar / tensor).
+ * @tparam T The numeric type.
+ * @param scalar The scalar value.
+ * @param tensor The tensor.
+ * @return TensorWrapper<T> Result of division.
+ */
 template <typename T>
 TensorWrapper<T> operator/(T scalar, const TensorWrapper<T>& tensor) {
     return tensor.divideInto(scalar);

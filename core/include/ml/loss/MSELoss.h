@@ -24,15 +24,36 @@
 
 namespace hahaha::ml {
 
+/**
+ * @brief Mean Squared Error (MSE) loss function.
+ *
+ * MSE loss computes the mean of the squared differences between predicted
+ * and true values. Formula: MSE = mean((yTrue - yPredict)^2)
+ *
+ * @tparam T The numeric type.
+ */
 template <typename T> class MSELoss : public Loss<T> {
   public:
+    /**
+     * @brief Compute the MSE loss between true and predicted values.
+     * @param yTrue The true (target) values.
+     * @param yPredict The predicted values.
+     * @return Tensor<T> The computed MSE loss value.
+     */
     Tensor<T> computeLoss(Tensor<T> yTrue, Tensor<T> yPredict) {
-        // NOTE: Tensor::sum() currently returns a scalar value (T), not a Tensor.
-        // Wrap it back into a scalar Tensor.
+        // NOTE: Tensor::sum() currently returns a scalar value (T), not a
+        // Tensor. Wrap it back into a scalar Tensor.
         return Tensor<T>(((yTrue - yPredict) * (yTrue - yPredict)).sum());
     }
 };
 
+/**
+ * @brief Convenience function to compute MSE loss.
+ * @tparam T The numeric type.
+ * @param yTrue The true (target) values.
+ * @param yPredict The predicted values.
+ * @return Tensor<T> The computed MSE loss value.
+ */
 template <typename T>
 Tensor<T> computeMSELoss(Tensor<T> yTrue, Tensor<T> yPredict) {
     static MSELoss<T> loss;

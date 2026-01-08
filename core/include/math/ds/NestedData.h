@@ -19,9 +19,11 @@
 #ifndef HAHAHA_MATH_DS_NESTED_DATA_H
 #define HAHAHA_MATH_DS_NESTED_DATA_H
 
-#include <stdexcept>
 #include <initializer_list>
+#include <stdexcept>
 #include <vector>
+
+#include "utils/Macros.h"
 
 // Forward declaration for friend class template
 class NestedDataTest;
@@ -45,7 +47,6 @@ template <typename T> class TensorData;
  */
 template <typename T> struct NestedData {
 
-  public:
     /**
      * @brief Construct from a single scalar value.
      * @param data The scalar value.
@@ -62,7 +63,7 @@ template <typename T> struct NestedData {
      *
      * @param data The nested initializer list.
      */
-    NestedData(std::initializer_list<NestedData<T>> data) {
+    NestedData(std::initializer_list<NestedData> data) {
         if (data.size() == 0) {
             return;
         }
@@ -76,17 +77,18 @@ template <typename T> struct NestedData {
                                             "inconsistent shapes.");
             }
         }
-        shape_.insert(shape_.end(), firstNestedData.shape_.begin(),
+        shape_.insert(shape_.end(),
+                      firstNestedData.shape_.begin(),
                       firstNestedData.shape_.end());
 
         size_t totalElements = 0;
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (const auto& val : data) {
             totalElements += val.flatData_.size();
         }
         flatData_.reserve(totalElements);
 
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (const auto& val : data) {
             flatData_.insert(
                 flatData_.end(), val.flatData_.begin(), val.flatData_.end());
@@ -114,7 +116,7 @@ template <typename T> struct NestedData {
     std::vector<size_t> shape_; /**< Computed shape of the input list. */
 
     friend class TensorData<T>;
-    friend class ::NestedDataTest;
+    friend class NestedDataTest;
 };
 } // namespace hahaha::math
 
