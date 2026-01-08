@@ -48,40 +48,40 @@ jobs:
             cxx: clang++
 
           # macOS (x86_64) - AppleClang
-          - name: macos-x64-appleclang
-            runs_on: macos-15-intel
-            os: macos
-            arch: x64
-            compiler: appleclang
-            cc: clang
-            cxx: clang++
-
-          # macOS (x86_64) - Homebrew LLVM Clang
-          # - name: macos-x64-llvm
+          # - name: macos-x64-appleclang
           #   runs_on: macos-15-intel
           #   os: macos
           #   arch: x64
-          #   compiler: llvm
-          #   cc: llvm
-          #   cxx: llvm
+          #   compiler: appleclang
+          #   cc: clang
+          #   cxx: clang++
+
+          # macOS (x86_64) - Homebrew LLVM Clang
+          - name: macos-x64-llvm
+            runs_on: macos-15-intel
+            os: macos
+            arch: x64
+            compiler: llvm
+            cc: llvm
+            cxx: llvm
 
           # macOS (ARM64, Apple Silicon) - AppleClang
-          - name: macos-arm64-appleclang
-            runs_on: macos-latest
-            os: macos
-            arch: arm64
-            compiler: appleclang
-            cc: clang
-            cxx: clang++
-
-          # macOS (ARM64, Apple Silicon) - Homebrew LLVM Clang
-          # - name: macos-arm64-llvm
+          # - name: macos-arm64-appleclang
           #   runs_on: macos-latest
           #   os: macos
           #   arch: arm64
-          #   compiler: llvm
-          #   cc: llvm
-          #   cxx: llvm
+          #   compiler: appleclang
+          #   cc: clang
+          #   cxx: clang++
+
+          # macOS (ARM64, Apple Silicon) - Homebrew LLVM Clang
+          - name: macos-arm64-llvm
+            runs_on: macos-latest
+            os: macos
+            arch: arm64
+            compiler: llvm
+            cc: llvm
+            cxx: llvm
 
           # Windows (x86_64) - MSVC (cl)
           - name: windows-x64-msvc
