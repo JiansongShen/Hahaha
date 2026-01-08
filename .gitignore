@@ -266,3 +266,13 @@ benchmark_results/
 # Add your project-specific ignore patterns here
 
 tmp/*
+
+# Meson WrapDB / subprojects
+# Keep wrap descriptors + lock file in git for reproducibility, but do NOT
+# commit the downloaded/extracted dependency sources or the wrap cache.
+subprojects/*
+!subprojects/*.wrap
+!subprojects/.wraplock
+!subprojects/packagefiles/
+!subprojects/packagefiles/**
+subprojects/packagecache/

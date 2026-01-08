@@ -1,0 +1,36 @@
+// Copyright (c) 2025 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Contributors:
+// Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
+//
+
+#ifndef HAHAHA_UTILS_MACROS_H
+#define HAHAHA_UTILS_MACROS_H
+
+#if defined(_MSC_VER)
+#define HAHAHA_PRAGMA_UNROLL(n)
+#elif defined(__clang__)
+#define HAHAHA_STR(x) #x
+#define HAHAHA_XSTR(x) HAHAHA_STR(x)
+#define HAHAHA_PRAGMA_UNROLL(n) _Pragma(HAHAHA_XSTR(unroll n))
+#elif defined(__GNUC__)
+#define HAHAHA_STR(x) #x
+#define HAHAHA_XSTR(x) HAHAHA_STR(x)
+#define HAHAHA_PRAGMA_UNROLL(n) _Pragma(HAHAHA_XSTR(GCC unroll n))
+#else
+#define HAHAHA_PRAGMA_UNROLL(n)
+#endif
+
+#endif // HAHAHA_UTILS_MACROS_H

@@ -20,6 +20,7 @@
 #define HAHAHA_BACKEND_VECTORIZE_VECTORIZED_OP_H
 
 #include <cstddef>
+#include <span>
 #include <vector>
 
 namespace hahaha::backend::vectorize {
@@ -38,10 +39,9 @@ class VectorizedOp {
     /**
      * @brief Execute the vectorized operation on the given data.
      * @tparam T The numeric type of the data.
-     * @param data_ptr Pointer to the data.
-     * @param size Number of elements in the data.
+     * @param data Non-owning view of the data.
      */
-    template <typename T> void execute(T* data_ptr, size_t size);
+    template <typename T> void execute(std::span<T> data);
 
     /**
      * @brief Check if the operation can be vectorized for the current

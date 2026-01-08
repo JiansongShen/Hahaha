@@ -24,10 +24,10 @@
 #include <vector>
 
 #include "backend/Device.h"
-#include "compute/graph/ComputeFun.h"
-#include "compute/graph/ComputeNode.h"
 #include "math/TensorWrapper.h"
 #include "math/ds/TensorData.h"
+#include "ml/compute/graph/ComputeFun.h"
+#include "ml/compute/graph/ComputeNode.h"
 #include "utils/common/HelperStruct.h"
 
 namespace hahaha {
@@ -132,6 +132,11 @@ template <typename T> class Tensor {
     /** @brief Scalar division operator (Tensor / scalar). */
     Tensor<T> operator/(T scalar) const {
         return Tensor(compute::div(this->computeNode_, scalar));
+    }
+
+    /** @brief Unary negation operator. */
+    Tensor<T> operator-() const {
+        return Tensor(compute::neg(this->computeNode_));
     }
 
     /** @brief Matrix multiplication. */

@@ -26,6 +26,9 @@ namespace hahaha::utils {
 
 /**
  * @brief Severity levels for log messages.
+ *
+ * Log levels are ordered from least to most severe:
+ * TRACE < DEBUG < INFO < WARN < ERROR < FATAL
  */
 enum class LogLevel {
     TRACE, /**< Fine-grained informational events. */

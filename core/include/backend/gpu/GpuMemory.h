@@ -20,6 +20,9 @@
 #define HAHAHA_BACKEND_GPU_GPU_MEMORY_H
 
 #include <cstddef>
+#include <span>
+
+#include "backend/gpu/DeviceBuffer.h"
 
 namespace hahaha::backend::gpu {
 
@@ -31,41 +34,52 @@ class GpuMemory {
     /**
      * @brief Allocate memory on the GPU.
      * @param size Size of memory to allocate in bytes.
-     * @return void* Pointer to the allocated memory.
+     * @return DeviceBuffer RAII-owned device buffer handle.
      */
-    static void* allocate(size_t size);
-
-    /**
-     * @brief Deallocate memory on the GPU.
-     * @param ptr Pointer to the memory to deallocate.
-     */
-    static void deallocate(void* ptr);
+    static DeviceBuffer allocate(size_t size);
 
     /**
      * @brief Copy data from host to device.
-     * @param device_ptr Destination pointer on the device.
-     * @param host_ptr Source pointer on the host.
-     * @param size Size of data to copy in bytes.
+     * @param device Destination device buffer.
+     * @param host Source byte span on the host.
      */
-    static void
-    copyToDevice(void* device_ptr, const void* host_ptr, size_t size);
+    static void copyToDevice(DeviceBuffer& device,
+                             std::span<const std::byte> host);
 
     /**
      * @brief Copy data from device to host.
-     * @param host_ptr Destination pointer on the host.
-     * @param device_ptr Source pointer on the device.
-     * @param size Size of data to copy in bytes.
+     * @param host Destination byte span on the host.
+     * @param device Source device buffer.
      */
-    static void copyToHost(void* host_ptr, const void* device_ptr, size_t size);
+    static void copyToHost(std::span<std::byte> host,
+                           const DeviceBuffer& device);
 
     /**
      * @brief Copy data from device to device.
-     * @param dest_ptr Destination pointer on the device.
-     * @param src_ptr Source pointer on the device.
-     * @param size Size of data to copy in bytes.
+     * @param dest Destination device buffer.
+     * @param src Source device buffer.
      */
-    static void
-    copyDeviceToDevice(void* dest_ptr, const void* src_ptr, size_t size);
+    static void copyDeviceToDevice(DeviceBuffer& dest, const DeviceBuffer& src);
+
+  private:
+    /**
+     * @brief Deallocate memory on the GPU (internal).
+     * @param address Device address of the memory to deallocate.
+     *
+     * @note This method is private and can only be accessed by DeviceBuffer
+     *       through the friend declaration. DeviceBuffer uses this in its
+     *       destructor and move assignment operator to ensure proper cleanup.
+     */
+    static void deallocate(std::uintptr_t address);
+
+    /**
+     * @brief Friend declaration for DeviceBuffer.
+     *
+     * DeviceBuffer needs to access deallocate() in its destructor and move
+     * assignment operator to ensure proper RAII semantics for GPU memory
+     * management.
+     */
+    friend class DeviceBuffer;
 };
 
 } // namespace hahaha::backend::gpu
