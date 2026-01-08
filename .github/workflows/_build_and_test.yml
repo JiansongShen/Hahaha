@@ -5,7 +5,7 @@ on:
 
 jobs:
   meson-build-and-test:
-    name: ${{ matrix.name }}
+    name: meson-${{ matrix.name }}
     runs-on: ${{ matrix.runs_on }}
     strategy:
       fail-fast: false
@@ -93,13 +93,13 @@ jobs:
             cxx: ""
 
           # Windows (x86_64) - clang-cl
-          # - name: windows-x64-clangcl
-          #   runs_on: windows-2022
-          #   os: windows
-          #   arch: x64
-          #   compiler: clang-cl
-          #   cc: clang-cl
-          #   cxx: clang-cl
+          - name: windows-x64-clangcl
+            runs_on: windows-2022
+            os: windows
+            arch: x64
+            compiler: clang-cl
+            cc: clang-cl
+            cxx: clang-cl
 
     steps:
       - name: Checkout repository
@@ -320,12 +320,23 @@ jobs:
           - name: ubuntu-x64-gcc
             runs_on: ubuntu-24.04
             os: linux
-          - name: macos-arm64
+            compiler: gcc
+          - name: ubuntu-x64-clang
+            runs_on: ubuntu-24.04
+            os: linux
+            compiler: clang
+          - name: macos-arm64-llvm
             runs_on: macos-latest
             os: macos
+            compiler: llvm
           - name: windows-x64-msvc
             runs_on: windows-2022
             os: windows
+            compiler: msvc
+          - name: windows-x64-clangcl
+            runs_on: windows-2022
+            os: windows
+            compiler: clang-cl
 
     steps:
       - name: Checkout repository
@@ -345,6 +356,45 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake ninja-build
 
+      - name: Install Clang (Linux, clang builds)
+        if: runner.os == 'Linux' && matrix.compiler == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          wget -O /tmp/llvm-snapshot.gpg.key https://apt.llvm.org/llvm-snapshot.gpg.key
+          sudo cp /tmp/llvm-snapshot.gpg.key /etc/apt/trusted.gpg.d/llvm-snapshot.asc
+          if echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble main" | sudo tee /etc/apt/sources.list.d/llvm.list 2>/dev/null; then
+            echo "deb-src http://apt.llvm.org/noble/ llvm-toolchain-noble main" | sudo tee -a /etc/apt/sources.list.d/llvm.list
+            REPO_CODENAME="noble"
+          else
+            echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main" | sudo tee /etc/apt/sources.list.d/llvm.list
+            echo "deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy main" | sudo tee -a /etc/apt/sources.list.d/llvm.list
+            REPO_CODENAME="jammy"
+          fi
+          sudo apt-get update
+          INSTALLED_VERSION=""
+          if apt-cache show clang-20 >/dev/null 2>&1 && sudo apt-get install -y --no-install-recommends clang-20; then
+            INSTALLED_VERSION="20"
+          elif apt-cache show clang-19 >/dev/null 2>&1 && sudo apt-get install -y --no-install-recommends clang-19; then
+            INSTALLED_VERSION="19"
+          elif apt-cache show clang-18 >/dev/null 2>&1 && sudo apt-get install -y --no-install-recommends clang-18; then
+            INSTALLED_VERSION="18"
+          else
+            sudo apt-get install -y --no-install-recommends clang
+            INSTALLED_VERSION="default"
+          fi
+          if [ "$INSTALLED_VERSION" != "default" ] && [ "$INSTALLED_VERSION" != "" ]; then
+            sudo update-alternatives --remove-all clang 2>/dev/null || true
+            sudo update-alternatives --remove-all clang++ 2>/dev/null || true
+            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$INSTALLED_VERSION 100
+            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-$INSTALLED_VERSION 100
+            sudo update-alternatives --set clang /usr/bin/clang-$INSTALLED_VERSION
+            sudo update-alternatives --set clang++ /usr/bin/clang++-$INSTALLED_VERSION
+          fi
+          clang --version
+          clang++ --version
+
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         shell: bash
@@ -353,6 +403,22 @@ jobs:
           brew update
           brew install cmake ninja
 
+      - name: Install LLVM (macOS, llvm builds)
+        if: runner.os == 'macOS' && matrix.compiler == 'llvm'
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew update
+          brew install llvm
+          LLVM_PATH="$(brew --prefix llvm)"
+          echo "${LLVM_PATH}/bin" >> $GITHUB_PATH
+          echo "CC=${LLVM_PATH}/bin/clang" >> $GITHUB_ENV
+          echo "CXX=${LLVM_PATH}/bin/clang++" >> $GITHUB_ENV
+          # Prefer Homebrew LLVM libc++ headers (for C++23 facilities on macOS).
+          echo "CPPFLAGS=-I${LLVM_PATH}/include -isystem ${LLVM_PATH}/include/c++/v1" >> $GITHUB_ENV
+          # Link against Homebrew LLVM libc++ + unwind (some C++23 facilities may depend on unwind).
+          echo "LDFLAGS=-L${LLVM_PATH}/lib -L${LLVM_PATH}/lib/c++ -L${LLVM_PATH}/lib/unwind -lunwind -Wl,-rpath,${LLVM_PATH}/lib/c++ -Wl,-rpath,${LLVM_PATH}/lib/unwind" >> $GITHUB_ENV
+
       - name: Install Ninja (Windows, pip)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -360,6 +426,14 @@ jobs:
           $ErrorActionPreference = 'Stop'
           python -m pip install --upgrade pip
           python -m pip install ninja
+
+      - name: Install LLVM (Windows, clang-cl builds)
+        if: runner.os == 'Windows' && matrix.compiler == 'clang-cl'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          choco install llvm -y
+          echo "C:\\Program Files\\LLVM\\bin" >> $env:GITHUB_PATH
 
       - name: Set up MSVC (Windows)
         if: runner.os == 'Windows'
@@ -384,6 +458,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [ "${{ matrix.compiler }}" = "clang" ]; then
+            export CC=clang
+            export CXX=clang++
+          fi
           cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja \
             -DHAHAHA_DISPLAY=OFF \
             -DHAHAHA_BUILD_TESTS=ON \
@@ -394,7 +472,11 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja `
+          $extra = @()
+          if ("${{ matrix.compiler }}" -eq "clang-cl") {
+            $extra += "-DCMAKE_CXX_COMPILER=clang-cl"
+          }
+          cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja @extra `
             -DHAHAHA_DISPLAY=OFF `
             -DHAHAHA_BUILD_TESTS=ON `
             -DHAHAHA_BUILD_EXAMPLES=ON
