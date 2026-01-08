@@ -21,10 +21,12 @@
 
 #include <algorithm>
 #include <initializer_list>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "common/definitions.h"
+#include "utils/Macros.h"
 
 class TensorShapeTest;
 
@@ -93,8 +95,8 @@ class TensorShape {
     }
 
     /**
-     * @brief Get the dimensions vector.
-     * @return std::vector<size_t>& dimensions.
+     * @brief Get the dimensions vector (non-const version).
+     * @return std::vector<size_t>& Mutable reference to the dimensions.
      */
     [[nodiscard]] std::vector<size_t>& getDims() {
         return dims_;
@@ -112,7 +114,7 @@ class TensorShape {
             return 1;
         }
         size_t size = 1;
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (const auto& dim : dims_) {
             size *= dim;
         }
@@ -130,7 +132,7 @@ class TensorShape {
      */
     [[nodiscard]] std::string toString() const {
         std::string result = "(";
-#pragma unroll 5
+        HAHAHA_PRAGMA_UNROLL(5)
         for (size_t i = 0; i < dims_.size(); ++i) {
             // NOLINENEXTLINE
             result += std::to_string(dims_[i]);
@@ -142,6 +144,18 @@ class TensorShape {
         return result;
     }
 
+    /**
+     * @brief Compute the broadcast-compatible shape for two tensor shapes.
+     *
+     * Two shapes are broadcast-compatible if, for each dimension, they are
+     * either equal or one of them is 1. The result shape has the maximum
+     * size in each dimension.
+     *
+     * @param shape1 First tensor shape.
+     * @param shape2 Second tensor shape.
+     * @return std::optional<std::vector<size_t>> The broadcast-compatible
+     * shape, or std::nullopt if the shapes are not compatible.
+     */
     [[nodiscard]] static std::optional<std::vector<size_t>>
     broadcastShape(const TensorShape& shape1, const TensorShape& shape2) {
         std::optional result = std::vector<size_t>{};

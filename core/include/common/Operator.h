@@ -34,6 +34,7 @@ enum class Operator {
     MatMul,    /**< Matrix multiplication (dot product). */
     Div,       /**< Element-wise division. */
     Broadcast, /**< Broadcast operator. */
+    Neg,       /**< Unary negation. */
     Pow,       /**< Power operation (x^y). */
     Sqrt,      /**< Square root. */
     Exp,       /**< Exponential (e^x). */

@@ -17,10 +17,13 @@
 //
 
 #include "autograd_basic.h"
+#include "autograd_train.h"
 int main() {
-    auto_grad_add_example();
-    auto_grad_sub_example();
-    auto_grad_mul_example();
-    auto_grad_div_example();
-    auto_grad_matmul_example();
+    // auto_grad_add_example();
+    // auto_grad_sub_example();
+    // auto_grad_mul_example();
+    // auto_grad_div_example();
+    // auto_grad_matmul_example();
+    //
+    nn_train_example();
 }
