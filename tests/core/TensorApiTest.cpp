@@ -17,21 +17,24 @@
 #include "Tensor.h"
 
 using hahaha::Tensor;
+using hahaha::common::f32;
+using hahaha::common::f64;
+using hahaha::common::i16;
+using hahaha::common::i32;
+using hahaha::common::i64;
+using hahaha::common::i8;
+using hahaha::common::u16;
+using hahaha::common::u32;
+using hahaha::common::u64;
+using hahaha::common::u8;
 using hahaha::math::NestedData;
 
-typedef testing::Types<float,
-                       double,
-                       int,
-                       long,
-                       unsigned int,
-                       unsigned long,
-                       short,
-                       unsigned short>
-    TestTypes;
+using NumericTypes =
+    ::testing::Types<u8, i8, u16, i16, u32, i32, u64, i64, f32, f64>;
 
 template <class T> class TensorApiTest : public testing::Test {};
 
-TYPED_TEST_SUITE(TensorApiTest, TestTypes);
+TYPED_TEST_SUITE(TensorApiTest, NumericTypes);
 
 TYPED_TEST(TensorApiTest, BuildFromVector_Creates1DTensor) {
     auto t = Tensor<TypeParam>::buildFromVector({1, 2, 3});
