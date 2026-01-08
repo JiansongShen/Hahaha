@@ -205,6 +205,10 @@ jobs:
           brew update
           brew install llvm
           echo "$(brew --prefix llvm)/bin" >> $GITHUB_PATH
+          echo "CC=$(brew --prefix llvm)/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$(brew --prefix llvm)/bin/clang++" >> $GITHUB_ENV
+          echo "LDFLAGS=-L$(brew --prefix llvm)/lib -L$(brew --prefix llvm)/lib/c++ -Wl,-rpath,$(brew --prefix llvm)/lib/c++" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I$(brew --prefix llvm)/include" >> $GITHUB_ENV
 
       - name: Download subprojects (macOS)
         if: runner.os == 'macOS'
