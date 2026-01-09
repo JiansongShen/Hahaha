@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy static doxygen doc to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -22,12 +22,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    uses: ./.github/workflows/_doxygen_doc_gen.yml
   # Single deploy job since we're just deploying
   deploy:
-    needs: build
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -35,13 +31,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
-      - name: Upload artifact
+
+      - name: Setup Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+
+      - name: Generate Doxygen
+        run: |
+          doxygen Doxyfile
+
+      - name: Verify Doxygen output exists
+        run: |
+          test -d doc/doxygen/html
+          test -f doc/doxygen/html/index.html
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: './doc/doxygen/html/'
+          path: ./doc/doxygen/html
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
