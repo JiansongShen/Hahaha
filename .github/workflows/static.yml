@@ -26,8 +26,7 @@ jobs:
     uses: ./.github/workflows/_doxygen_doc_gen.yml
   # Single deploy job since we're just deploying
   deploy:
-    needs:
-      -
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
