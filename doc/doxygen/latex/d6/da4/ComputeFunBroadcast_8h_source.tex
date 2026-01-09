@@ -1,0 +1,175 @@
+\doxysection{Compute\+Fun\+Broadcast.\+h}
+\hypertarget{ComputeFunBroadcast_8h_source}{}\label{ComputeFunBroadcast_8h_source}\index{core/include/ml/compute/graph/compute\_funs/ComputeFunBroadcast.h@{core/include/ml/compute/graph/compute\_funs/ComputeFunBroadcast.h}}
+\mbox{\hyperlink{ComputeFunBroadcast_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ \$\{original.year\}\ -\/\ 2026\ Contributors\ of}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Hahaha("{}https://github.com/Napbad/Hahaha"{})}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_COMPUTEFUNBROADCAST\_H\_CA2A2F550C26484097AE9BAB15204C65}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ HAHAHA\_COMPUTEFUNBROADCAST\_H\_CA2A2F550C26484097AE9BAB15204C65}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{TensorWrapper_8h}{math/TensorWrapper.h}}"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{ComputeNode_8h}{ml/compute/graph/ComputeNode.h}}"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1compute}{hahaha::compute}}\ \{}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{using\ }math::TensorShape;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacehahaha_1_1compute_ae0796926bcd32642d21418b6f925231e}{checkTensorCanBroadcastTo}}(}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ sourceNode,}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<size\_t>\&\ targetTensorShape);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00080\ std::shared\_ptr<ComputeNode<T>>}
+\DoxyCodeLine{00081\ \mbox{\hyperlink{namespacehahaha_1_1compute_a5aaae1e7d55523fa72eb102ff5aba441}{broadcast}}(\textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ sourceNode,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::vector<size\_t>\&\ targetTensorShape)\ \{}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1compute_ae0796926bcd32642d21418b6f925231e}{checkTensorCanBroadcastTo}}(sourceNode,\ targetTensorShape);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{auto}\ resNode\ =\ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode_a4019a68a3aa787ab98c9d9f63bbc7f0a}{ComputeNode<T>::createUnary}}(}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ sourceNode,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ std::make\_shared<\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{math::TensorWrapper<T>}}>(}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ sourceNode-\/>getData()-\/>broadcastTo(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(targetTensorShape))),}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36abe55b6387170df0ca68f41225268e842}{common::Operator::Broadcast}},}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ std::weak\_ptr<ComputeNode<T>>\ weakRes\ =\ resNode;}
+\DoxyCodeLine{00094\ \ \ \ \ std::weak\_ptr<ComputeNode<T>>\ weakSrc\ =\ sourceNode;}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ resNode-\/>setGradFun([weakSrc,\ weakRes]\ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ res\ =\ weakRes.lock();}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ src\ =\ weakSrc.lock();}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ \&\&\ src)\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ std::shared\_ptr<math::TensorWrapper<T>>\ resData\ =\ res-\/>getData();}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ std::shared\_ptr<math::TensorWrapper<T>>\ srcData\ =\ src-\/>getData();}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ detect\ shape\ different}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ std::vector<size\_t>\ sumAxes;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::vector<size\_t>\ srcShape\ =\ srcData-\/>getShape();}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::vector<size\_t>\ resShape\ =\ resData-\/>getShape();}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ keepDims\ =\ resShape.size()\ ==\ srcShape.size();}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ srcIdx\ must\ smaller\ than\ resIdx}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ srcIdx\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\textcolor{keyword}{>}(srcShape.size()\ -\/\ 1);}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ resIdx\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\textcolor{keyword}{>}(resShape.size()\ -\/\ 1);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (srcIdx\ >=\ 0\ \&\&\ resIdx\ >=\ 0)\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (srcShape[srcIdx]\ !=\ resShape[resIdx])\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sumAxes.push\_back(resIdx);}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/srcIdx;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/resIdx;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (resIdx\ >=\ 0)\ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sumAxes.push\_back(resIdx);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/resIdx;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ grad\ =\ res-\/>getGrad();}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!grad)\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ srcGrad\ =\ grad-\/>sum(sumAxes,\ keepDims);}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ src-\/>accumulateGrad(}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::make\_shared<\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{math::TensorWrapper<T>}}>(std::move(srcGrad)));}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00133\ \ \ \ \ \});}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordflow}{return}\ resNode;}
+\DoxyCodeLine{00136\ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacehahaha_1_1compute_ae0796926bcd32642d21418b6f925231e}{checkTensorCanBroadcastTo}}(}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ sourceNode,}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<size\_t>\&\ targetTensorShape)\ \{}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ srcShape\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(sourceNode-\/>getData()-\/>getShape());}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}\ targetShape(targetTensorShape);}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ broadcastShape\ =}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1compute_1_1TensorShape_a98a4fcd569b8e68e0c94521efe4cd333}{TensorShape::broadcastShape}}(srcShape,\ targetShape);}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordflow}{if}\ (!broadcastShape.has\_value()}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ ||\ broadcastShape.value()\ !=\ targetTensorShape)\ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ std::string\ broadcastShapeStr\ =\ broadcastShape.has\_value()}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(broadcastShape.value()).\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_a75900710f0b9e476ba15e5ca1f12d00d}{toString}}()}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}None"{}};}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}broadcast\ shape\ mismatch:\ source\ tensor\ shape\ is\ "{}}}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ +\ srcShape.toString()\ +\ \textcolor{stringliteral}{"{},\ \(\backslash\)n\(\backslash\)tbut\ target\ tensor\ shape\ is\ "{}}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ +\ targetShape.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_a75900710f0b9e476ba15e5ca1f12d00d}{toString}}()}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{stringliteral}{"{}\(\backslash\)tdo\ you\ want\ to\ broadcast\ to\ :"{}}\ +\ broadcastShapeStr);}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00176\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00177\ std::pair<std::shared\_ptr<ComputeNode<T>>,\ std::shared\_ptr<ComputeNode<T>>>}
+\DoxyCodeLine{00178\ \mbox{\hyperlink{namespacehahaha_1_1compute_a5e8e2e590fc634faeb83381fa32b6ed9}{broadcastNodes}}(\textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ lhs,}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ rhs)\ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ lhsShape\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(lhs-\/>getData()-\/>getShape());}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ rhsShape\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(rhs-\/>getData()-\/>getShape());}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordflow}{if}\ (lhsShape\ ==\ rhsShape)\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \{lhs,\ rhs\};}
+\DoxyCodeLine{00185\ \ \ \ \ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ commonShape\ =\ \mbox{\hyperlink{classhahaha_1_1compute_1_1TensorShape_a98a4fcd569b8e68e0c94521efe4cd333}{TensorShape::broadcastShape}}(lhsShape,\ rhsShape);}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordflow}{if}\ (!commonShape.has\_value())\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Shapes\ are\ not\ broadcast-\/compatible:\ "{}}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ lhsShape.toString()\ +\ \textcolor{stringliteral}{"{}\ and\ "{}}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ rhsShape.toString());}
+\DoxyCodeLine{00192\ \ \ \ \ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keyword}{auto}\ targetShape\ =\ commonShape.value();}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keyword}{auto}\ newLhs\ =\ lhs;}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keyword}{auto}\ newRhs\ =\ rhs;}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordflow}{if}\ (lhsShape.getDims()\ !=\ targetShape)\ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ newLhs\ =\ \mbox{\hyperlink{namespacehahaha_1_1compute_a5aaae1e7d55523fa72eb102ff5aba441}{broadcast}}(lhs,\ targetShape);}
+\DoxyCodeLine{00200\ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keywordflow}{if}\ (rhsShape.getDims()\ !=\ targetShape)\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ newRhs\ =\ \mbox{\hyperlink{namespacehahaha_1_1compute_a5aaae1e7d55523fa72eb102ff5aba441}{broadcast}}(rhs,\ targetShape);}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordflow}{return}\ \{newLhs,\ newRhs\};}
+\DoxyCodeLine{00206\ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00209\ std::shared\_ptr<ComputeNode<T>>}
+\DoxyCodeLine{00210\ \mbox{\hyperlink{namespacehahaha_1_1compute_a5aaae1e7d55523fa72eb102ff5aba441}{broadcast}}(\textcolor{keyword}{const}\ T\&\ lhsScalar,\ \textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ rhs)\ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespacehahaha_1_1compute_a5aaae1e7d55523fa72eb102ff5aba441}{broadcast}}(rhs,\ lhsScalar);\ \textcolor{comment}{//\ Commutative}}
+\DoxyCodeLine{00212\ \}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00215\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacehahaha_1_1compute_ad155ce1e3424413da470b506627acc58}{broadcastNodeStrideRebuild}}(}
+\DoxyCodeLine{00216\ \ \ \ \ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\ bLhs,}
+\DoxyCodeLine{00217\ \ \ \ \ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{math::TensorWrapper<T>}}>\ resData)\ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordflow}{if}\ (bLhs-\/>getOperatorType()\ ==\ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36abe55b6387170df0ca68f41225268e842}{common::Operator::Broadcast}})\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ resData-\/>setStride(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{math::TensorStride}}(resData-\/>getShape()));}
+\DoxyCodeLine{00220\ \ \ \ \ \}}
+\DoxyCodeLine{00221\ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00224\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacehahaha_1_1compute_ad155ce1e3424413da470b506627acc58}{broadcastNodeStrideRebuild}}(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{math::TensorWrapper<T>}}\&\ resData)\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ resData.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aba99297665176a173cebd388d186fa30}{setStride}}(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{math::TensorStride}}(resData.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()));}
+\DoxyCodeLine{00226\ \}}
+\DoxyCodeLine{00227\ \}\ \textcolor{comment}{//\ namespace\ hahaha::compute}}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_COMPUTEFUNBROADCAST\_H\_CA2A2F550C26484097AE9BAB15204C65}}
+
+\end{DoxyCode}

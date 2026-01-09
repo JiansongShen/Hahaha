@@ -1,0 +1,18 @@
+var searchData=
+[
+  ['backend_3a_3adevicecomputedispatcher_3c_20t_20_3e_0',['DeviceComputeDispatcher&lt; T &gt;',['../d7/d04/classhahaha_1_1math_1_1TensorWrapper.html#a1410ae436485487977573f774d4878ff',1,'hahaha::math::TensorWrapper']]],
+  ['backward_1',['backward',['../d4/dfc/classhahaha_1_1compute_1_1ComputeNode.html#a992b702d131e2c144a5e2fd237702607',1,'hahaha::compute::ComputeNode::backward()'],['../de/d74/classhahaha_1_1Tensor.html#a68768381ff54a51167a64a05766cf179',1,'hahaha::Tensor::backward()'],['../da/d89/classTensor.html#a68768381ff54a51167a64a05766cf179',1,'Tensor::backward()']]],
+  ['basic_5flinear_5fregression_5ftrain_2eh_2',['basic_linear_regression_train.h',['../d5/d9f/basic__linear__regression__train_8h.html',1,'']]],
+  ['basic_5fusage_5fexample_5fmain_2ecpp_3',['basic_usage_example_main.cpp',['../da/d21/basic__usage__example__main_8cpp.html',1,'']]],
+  ['basicerror_4',['BasicError',['../d4/da0/namespacehahaha_1_1common.html#a48d69aea52b61b4f9cb027b8eedccd16a6454b2bfb879767746c92758949a79b0',1,'hahaha::common']]],
+  ['black_5',['BLACK',['../d7/d69/namespacehahaha_1_1utils.html#a04ab7141bef5510bffb7389b24259e92a08d0012388564e95c3b4a7407cf04965',1,'hahaha::utils']]],
+  ['blue_6',['BLUE',['../d7/d69/namespacehahaha_1_1utils.html#a04ab7141bef5510bffb7389b24259e92a1b3e1ee9bff86431dea6b181365ba65f',1,'hahaha::utils']]],
+  ['bool8_7',['bool8',['../d4/da0/namespacehahaha_1_1common.html#a2f914b36460e858a1bcc92b26b9b80c6',1,'hahaha::common']]],
+  ['broadcast_8',['Broadcast',['../d4/da0/namespacehahaha_1_1common.html#aac33879898e5ce7a44f2dd0cd8382a36abe55b6387170df0ca68f41225268e842',1,'hahaha::common']]],
+  ['broadcast_9',['broadcast',['../dc/d3e/classhahaha_1_1backend_1_1vectorize_1_1SimdVector.html#accba8e374fddbbcb6ef1f69218e96689',1,'hahaha::backend::vectorize::SimdVector::broadcast()'],['../d3/d24/namespacehahaha_1_1compute.html#a5aaae1e7d55523fa72eb102ff5aba441',1,'hahaha::compute::broadcast(const std::shared_ptr&lt; ComputeNode&lt; T &gt; &gt; &amp;sourceNode, const std::vector&lt; size_t &gt; &amp;targetTensorShape)'],['../d3/d24/namespacehahaha_1_1compute.html#af29c1a118d6177a3de43fcaad5b03b7e',1,'hahaha::compute::broadcast(const T &amp;lhsScalar, const std::shared_ptr&lt; ComputeNode&lt; T &gt; &gt; &amp;rhs)']]],
+  ['broadcastnodes_10',['broadcastNodes',['../d3/d24/namespacehahaha_1_1compute.html#a5e8e2e590fc634faeb83381fa32b6ed9',1,'hahaha::compute']]],
+  ['broadcastnodestriderebuild_11',['broadcastNodeStrideRebuild',['../d3/d24/namespacehahaha_1_1compute.html#ad155ce1e3424413da470b506627acc58',1,'hahaha::compute::broadcastNodeStrideRebuild(std::shared_ptr&lt; ComputeNode&lt; T &gt; &gt; bLhs, std::shared_ptr&lt; math::TensorWrapper&lt; T &gt; &gt; resData)'],['../d3/d24/namespacehahaha_1_1compute.html#ac1b085a23104aede460ba4f1d54bd786',1,'hahaha::compute::broadcastNodeStrideRebuild(math::TensorWrapper&lt; T &gt; &amp;resData)']]],
+  ['broadcastshape_12',['broadcastShape',['../d4/db0/classhahaha_1_1math_1_1TensorShape.html#a98a4fcd569b8e68e0c94521efe4cd333',1,'hahaha::math::TensorShape::broadcastShape()'],['../d0/d40/classhahaha_1_1compute_1_1TensorShape.html#a98a4fcd569b8e68e0c94521efe4cd333',1,'hahaha::compute::TensorShape::broadcastShape()']]],
+  ['broadcastto_13',['broadcastTo',['../d7/d04/classhahaha_1_1math_1_1TensorWrapper.html#a0e5e6a932f30cf99f4c805239370b63c',1,'hahaha::math::TensorWrapper']]],
+  ['buildfromvector_14',['buildFromVector',['../de/d74/classhahaha_1_1Tensor.html#a56a7d097e6584bfca71fcef52e678602',1,'hahaha::Tensor::buildFromVector()'],['../da/d89/classTensor.html#a56a7d097e6584bfca71fcef52e678602',1,'Tensor::buildFromVector()']]]
+];

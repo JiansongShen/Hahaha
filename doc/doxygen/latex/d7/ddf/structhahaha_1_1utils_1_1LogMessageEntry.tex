@@ -1,0 +1,144 @@
+\doxysection{hahaha\+::utils\+::Log\+Message\+Entry Struct Reference}
+\hypertarget{structhahaha_1_1utils_1_1LogMessageEntry}{}\label{structhahaha_1_1utils_1_1LogMessageEntry}\index{hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}}
+
+
+Represents a single log message entry in the queue.
+
+
+
+
+{\ttfamily \#include $<$Log\+Message\+Entry.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{structhahaha_1_1utils_1_1LogMessageEntry_a3fd1b6b37a10bf3c0f96efe91a6257cc}{Log\+Message\+Entry}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. Defaults to INFO level. \end{DoxyCompactList}\item
+\mbox{\hyperlink{structhahaha_1_1utils_1_1LogMessageEntry_a9caaed0cfd66aae01e28e78708ba91eb}{Log\+Message\+Entry}} (\mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{Log\+Level}} level, std\+::string message)
+\begin{DoxyCompactList}\small\item\em Construct with level and message. \end{DoxyCompactList}\item
+std\+::string \mbox{\hyperlink{structhahaha_1_1utils_1_1LogMessageEntry_a300153e4618d71b57a8629b1f3b03716}{to\+String}} ()
+\begin{DoxyCompactList}\small\item\em Format the entry as a colored string for console output. \end{DoxyCompactList}\item
+std\+::string \& \mbox{\hyperlink{structhahaha_1_1utils_1_1LogMessageEntry_a25c2824260732e8c498ea3574afb17ca}{get\+Message}} ()
+\begin{DoxyCompactList}\small\item\em Get the raw message string. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{structhahaha_1_1utils_1_1LogMessageEntry_a4af17b68262874c351982ebaefb0dbf2}{set\+Message}} (std\+::string message)
+\begin{DoxyCompactList}\small\item\em Set the message content. \end{DoxyCompactList}\item
+\mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{Log\+Level}} \mbox{\hyperlink{structhahaha_1_1utils_1_1LogMessageEntry_a92c028506ed3cb305e8bec58f08c44f6}{get\+Level}} () const
+\begin{DoxyCompactList}\small\item\em Get the severity level. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{structhahaha_1_1utils_1_1LogMessageEntry_a7161089110d1b47e115737a4c22e7f1b}{set\+Level}} (\mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{Log\+Level}} level)
+\begin{DoxyCompactList}\small\item\em Set the severity level. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a single log message entry in the queue.
+
+This structure holds the message content and its severity level, and provides a method to format it for output. It is cache-\/aligned for better performance in the asynchronous logging queue.
+
+\label{doc-constructors}
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_a3fd1b6b37a10bf3c0f96efe91a6257cc}\index{hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}!LogMessageEntry@{LogMessageEntry}}
+\index{LogMessageEntry@{LogMessageEntry}!hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}}
+\doxysubsubsection{\texorpdfstring{LogMessageEntry()}{LogMessageEntry()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{structhahaha_1_1utils_1_1LogMessageEntry_a3fd1b6b37a10bf3c0f96efe91a6257cc}
+hahaha\+::utils\+::\+Log\+Message\+Entry\+::\+Log\+Message\+Entry (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor. Defaults to INFO level.
+
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_a9caaed0cfd66aae01e28e78708ba91eb}\index{hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}!LogMessageEntry@{LogMessageEntry}}
+\index{LogMessageEntry@{LogMessageEntry}!hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}}
+\doxysubsubsection{\texorpdfstring{LogMessageEntry()}{LogMessageEntry()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{structhahaha_1_1utils_1_1LogMessageEntry_a9caaed0cfd66aae01e28e78708ba91eb}
+hahaha\+::utils\+::\+Log\+Message\+Entry\+::\+Log\+Message\+Entry (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{Log\+Level}}}]{level}{, }\item[{std\+::string}]{message}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct with level and message.
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & Severity of the message. \\
+\hline
+{\em message} & Content of the message. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_a92c028506ed3cb305e8bec58f08c44f6}\index{hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}!getLevel@{getLevel}}
+\index{getLevel@{getLevel}!hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}}
+\doxysubsubsection{\texorpdfstring{getLevel()}{getLevel()}}
+{\footnotesize\ttfamily \label{structhahaha_1_1utils_1_1LogMessageEntry_a92c028506ed3cb305e8bec58f08c44f6}
+\mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{Log\+Level}} hahaha\+::utils\+::\+Log\+Message\+Entry\+::get\+Level (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the severity level.
+
+\begin{DoxyReturn}{Returns}
+\doxylink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{Log\+Level} The level of this entry.
+\end{DoxyReturn}
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_a25c2824260732e8c498ea3574afb17ca}\index{hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}!getMessage@{getMessage}}
+\index{getMessage@{getMessage}!hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}}
+\doxysubsubsection{\texorpdfstring{getMessage()}{getMessage()}}
+{\footnotesize\ttfamily \label{structhahaha_1_1utils_1_1LogMessageEntry_a25c2824260732e8c498ea3574afb17ca}
+std\+::string \& hahaha\+::utils\+::\+Log\+Message\+Entry\+::get\+Message (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the raw message string.
+
+\begin{DoxyReturn}{Returns}
+std\+::string\& Reference to the message.
+\end{DoxyReturn}
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_a7161089110d1b47e115737a4c22e7f1b}\index{hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}!setLevel@{setLevel}}
+\index{setLevel@{setLevel}!hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}}
+\doxysubsubsection{\texorpdfstring{setLevel()}{setLevel()}}
+{\footnotesize\ttfamily \label{structhahaha_1_1utils_1_1LogMessageEntry_a7161089110d1b47e115737a4c22e7f1b}
+void hahaha\+::utils\+::\+Log\+Message\+Entry\+::set\+Level (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{Log\+Level}}}]{level}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the severity level.
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & New log level. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_a4af17b68262874c351982ebaefb0dbf2}\index{hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}!setMessage@{setMessage}}
+\index{setMessage@{setMessage}!hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}}
+\doxysubsubsection{\texorpdfstring{setMessage()}{setMessage()}}
+{\footnotesize\ttfamily \label{structhahaha_1_1utils_1_1LogMessageEntry_a4af17b68262874c351982ebaefb0dbf2}
+void hahaha\+::utils\+::\+Log\+Message\+Entry\+::set\+Message (\begin{DoxyParamCaption}\item[{std\+::string}]{message}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the message content.
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & New message string. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structhahaha_1_1utils_1_1LogMessageEntry_a300153e4618d71b57a8629b1f3b03716}\index{hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}!toString@{toString}}
+\index{toString@{toString}!hahaha::utils::LogMessageEntry@{hahaha::utils::LogMessageEntry}}
+\doxysubsubsection{\texorpdfstring{toString()}{toString()}}
+{\footnotesize\ttfamily \label{structhahaha_1_1utils_1_1LogMessageEntry_a300153e4618d71b57a8629b1f3b03716}
+std\+::string hahaha\+::utils\+::\+Log\+Message\+Entry\+::to\+String (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Format the entry as a colored string for console output.
+
+\begin{DoxyReturn}{Returns}
+std\+::string formatted and colored message.
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/utils/log/\mbox{\hyperlink{LogMessageEntry_8h}{Log\+Message\+Entry.\+h}}\end{DoxyCompactItemize}

@@ -1,0 +1,80 @@
+\doxysection{Optimizer.\+h}
+\hypertarget{Optimizer_8h_source}{}\label{Optimizer_8h_source}\index{core/include/ml/optimizer/Optimizer.h@{core/include/ml/optimizer/Optimizer.h}}
+\mbox{\hyperlink{Optimizer_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_ML\_OPTIMIZER\_OPTIMIZER\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HAHAHA\_ML\_OPTIMIZER\_OPTIMIZER\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Tensor_8h}{Tensor.h}}"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1ml}{hahaha::ml}}\ \{}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}}\ \{}
+\DoxyCodeLine{00039\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}}(std::vector<\mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<T>}}>\ parameters,\ T\ learningRate)}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ :\ parameters\_(std::move(parameters)),\ learningRate\_(learningRate)\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a75d9062e282ea1e6c38920e39ef9b293}{\string~Optimizer}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_abcee57a4e2e5f7bf5f73e8c46d404170}{Optimizer}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}}\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}}\&\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a337e199f22a67cfd78927da987037bf8}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}}\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a1fcfe42d6301f0e483012ae2f7dffe28}{Optimizer}}(\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}}\&\&)\ noexcept\ =\ default;}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}}\&\ operator=(\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}}\&\&)\ noexcept\ =\ default;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00064\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a4e0b41bcdf049ff6bcee9aec6e736987}{step}}()\ =\ 0;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00071\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_aebdc0f364dff09b5ade7cdad9ed744e5}{zeroGrad}}()\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ param\ :\ parameters\_)\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ param.clearGrad();}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a17f458080574480c7417335339843593}{setLearningRate}}(T\ learningRate)\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ learningRate\_\ =\ learningRate;}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00089\ \ \ \ \ [[nodiscard]]\ T\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a01b228a6b97ccdd54d897bd1e2921a80}{getLearningRate}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ learningRate\_;}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a9eaf941f5ee352d2dfbc9dfd68b90f81}{addParameter}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<T>}}\&\ param)\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ parameters\_.push\_back(param);}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00106\ \ \ \ \ std::vector<Tensor<T>>\&\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a02c1974133e5a901064f9ad4f1aba33a}{getParameters}}()\ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ parameters\_;}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00111\ \ \ \ \ std::vector<Tensor<T>>\ parameters\_;\ }
+\DoxyCodeLine{00112\ \ \ \ \ T\ learningRate\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00113\ \};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \}\ \textcolor{comment}{//\ namespace\ hahaha::ml}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_ML\_OPTIMIZER\_OPTIMIZER\_H}}
+
+\end{DoxyCode}

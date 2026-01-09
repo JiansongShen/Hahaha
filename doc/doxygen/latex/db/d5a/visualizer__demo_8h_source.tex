@@ -1,0 +1,131 @@
+\doxysection{visualizer\+\_\+demo.\+h}
+\hypertarget{visualizer__demo_8h_source}{}\label{visualizer__demo_8h_source}\index{examples/ml\_visualizer/visualizer\_demo.h@{examples/ml\_visualizer/visualizer\_demo.h}}
+\mbox{\hyperlink{visualizer__demo_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_EXAMPLE\_ML\_VISUALIZER\_DEMO\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HAHAHA\_EXAMPLE\_ML\_VISUALIZER\_DEMO\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Visualizer_8h}{display/Visualizer.h}}"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{GlfwWindow_8h}{display/GlfwWindow.h}}"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}imgui.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}imgui\_impl\_opengl3.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <GL/gl.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <thread>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1example}{hahaha::example}}\ \{}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ frameCount\ =\ 0;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacehahaha_1_1example_a2597f4c1927373326881fc47b9f7ad94}{run\_visualizer\_demo}}()\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{using\ namespace\ }\mbox{\hyperlink{namespacehahaha_1_1display}{hahaha::display}};}
+\DoxyCodeLine{00041\ \ \ \ \ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{comment}{//\ 1.\ Create\ and\ initialize\ the\ window\ (handles\ GLFW/OpenGL/ImGui\ initialization)}}
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow}{GlfwWindow}}\ window;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ window.\mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_a13ee52a6d1b4f65138290c28a10de788}{init}}(\textcolor{stringliteral}{"{}Hahaha\ ML\ Training\ Demo"{}},\ 1280,\ 720);}
+\DoxyCodeLine{00046\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\&\ e)\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Failed\ to\ initialize\ window:\ "{}}\ <<\ e.what()\ <<\ std::endl;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00049\ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//\ 2.\ Create\ the\ visualizer}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{auto}\ visualizer\ =\ \mbox{\hyperlink{namespacehahaha_1_1display_a6c35b9a1c45eacb4b6f0c116f76037f5}{createMLVisualizer}}();}
+\DoxyCodeLine{00053\ \ \ \ \ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ 3.\ Define\ our\ "{}Mock"{}\ model\ structure}}
+\DoxyCodeLine{00055\ \ \ \ \ visualizer-\/>addLayer(\{\textcolor{stringliteral}{"{}Input\ (Images)"{}},\ 784,\ 256\});}
+\DoxyCodeLine{00056\ \ \ \ \ visualizer-\/>addLayer(\{\textcolor{stringliteral}{"{}ReLU"{}},\ 256,\ 256\});}
+\DoxyCodeLine{00057\ \ \ \ \ visualizer-\/>addLayer(\{\textcolor{stringliteral}{"{}Hidden\ 1"{}},\ 256,\ 128\});}
+\DoxyCodeLine{00058\ \ \ \ \ visualizer-\/>addLayer(\{\textcolor{stringliteral}{"{}ReLU"{}},\ 128,\ 128\});}
+\DoxyCodeLine{00059\ \ \ \ \ visualizer-\/>addLayer(\{\textcolor{stringliteral}{"{}Hidden\ 2"{}},\ 128,\ 64\});}
+\DoxyCodeLine{00060\ \ \ \ \ visualizer-\/>addLayer(\{\textcolor{stringliteral}{"{}Sigmoid"{}},\ 64,\ 64\});}
+\DoxyCodeLine{00061\ \ \ \ \ visualizer-\/>addLayer(\{\textcolor{stringliteral}{"{}Output\ (Classes)"{}},\ 64,\ 10\});}
+\DoxyCodeLine{00062\ \ \ \ \ }
+\DoxyCodeLine{00063\ \ \ \ \ visualizer-\/>setStatus(\textcolor{stringliteral}{"{}Ready\ to\ train"{}});}
+\DoxyCodeLine{00064\ \ \ \ \ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{int}\ epoch\ =\ 0;}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{bool}\ training\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{float}\ currentLoss\ =\ 2.5f;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{float}\ currentAcc\ =\ 0.1f;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Starting\ Visualizer\ loop\ with\ a\ real\ GLFW\ window."{}}\ <<\ std::endl;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{//\ 4.\ Main\ Loop}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordflow}{while}\ (window.\mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_aba8d8454055654f855ecefba0d89104a}{render}}())\ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Handle\ User\ Interaction}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ ControlAction\ action\ =\ visualizer-\/>getControlAction();}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (action\ ==\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8faa6122a65eaa676f700ae68d393054a37}{ControlAction::Start}})\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ training\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ visualizer-\/>setStatus(\textcolor{stringliteral}{"{}Training\ in\ progress..."{}});}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (action\ ==\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa105b296a83f9c105355403f3332af50f}{ControlAction::Pause}})\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ training\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ visualizer-\/>setStatus(\textcolor{stringliteral}{"{}Training\ paused"{}});}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (action\ ==\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa11a755d598c0c417f9a36758c3da7481}{ControlAction::Stop}})\ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}User\ requested\ stop\ via\ UI."{}}\ <<\ std::endl;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (action\ ==\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa526d688f37a86d3c3f27d0c5016eb71d}{ControlAction::Reset}})\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ epoch\ =\ 0;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ currentLoss\ =\ 2.5f;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ currentAcc\ =\ 0.1f;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ visualizer-\/>setStatus(\textcolor{stringliteral}{"{}Reset\ completed"{}});}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Simulate\ Training\ Step}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (training)\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ currentLoss\ *=\ 0.995f;\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ currentAcc\ =\ 1.0f\ -\/\ (currentLoss\ /\ 2.5f);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (epoch\ <\ 1000\ \&\&\ (frameCount\ \%\ 10\ ==\ 0))\ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ visualizer-\/>recordMetrics(epoch++,\ currentLoss,\ currentAcc);}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (epoch\ \%\ 10\ ==\ 0)\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}[Demo]\ Epoch:\ "{}}\ <<\ epoch\ <<\ \textcolor{stringliteral}{"{},\ Loss:\ "{}}\ <<\ currentLoss\ <<\ \textcolor{stringliteral}{"{},\ Acc:\ "{}}\ <<\ currentAcc\ <<\ std::endl;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ frameCount++;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Render\ the\ UI\ widgets}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ visualizer-\/>renderFrame();}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Finalize\ rendering}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ ImGui::Render();}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ display\_w,\ display\_h;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ glfwGetFramebufferSize(window.\mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_a614e64e30f8b9cb702ef565f18080247}{getHandle}}(),\ \&display\_w,\ \&display\_h);}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ glViewport(0,\ 0,\ display\_w,\ display\_h);}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ glClearColor(0.1f,\ 0.1f,\ 0.12f,\ 1.00f);}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ glClear(GL\_COLOR\_BUFFER\_BIT);}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ ImGui\_ImplOpenGL3\_RenderDrawData(ImGui::GetDrawData());}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ glfwSwapBuffers(window.\mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_a614e64e30f8b9cb702ef565f18080247}{getHandle}}());}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Small\ sleep\ to\ control\ frame\ rate\ if\ vsync\ is\ off\ or\ for\ simulation\ stability}}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ std::this\_thread::sleep\_for(std::chrono::milliseconds(1));}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \}\ \textcolor{comment}{//\ namespace\ hahaha::example}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_EXAMPLE\_ML\_VISUALIZER\_DEMO\_H}}
+
+\end{DoxyCode}

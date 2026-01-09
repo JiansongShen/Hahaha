@@ -1,0 +1,89 @@
+\doxysection{hahaha\+::ml\+::Loss\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classhahaha_1_1ml_1_1Loss}{}\label{classhahaha_1_1ml_1_1Loss}\index{hahaha::ml::Loss$<$ T $>$@{hahaha::ml::Loss$<$ T $>$}}
+
+
+Base class for all loss functions.
+
+
+
+
+{\ttfamily \#include $<$Loss.\+h$>$}
+
+Inheritance diagram for hahaha\+::ml\+::Loss\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d2/dfe/classhahaha_1_1ml_1_1Loss}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+virtual \mbox{\hyperlink{classhahaha_1_1ml_1_1Loss_a1ad5d05b83ddf959476aefc073ac689a}{\texorpdfstring{$\sim$}{\string~}\+Loss}} ()=default
+\begin{DoxyCompactList}\small\item\em Virtual destructor. \end{DoxyCompactList}\item
+virtual \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ \mbox{\hyperlink{classhahaha_1_1ml_1_1Loss_a33b15d09e52add699d14a3d1cacc15cf}{compute\+Loss}} (\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$, \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$)
+\begin{DoxyCompactList}\small\item\em Compute the loss between true and predicted values. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class hahaha\+::ml\+::\+Loss$<$ T $>$}
+Base class for all loss functions.
+
+\doxylink{classhahaha_1_1ml_1_1Loss}{Loss} functions measure the difference between predicted and actual values. This base class provides the interface that all loss functions must implement.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The numeric type. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1ml_1_1Loss_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1ml_1_1Loss_a1ad5d05b83ddf959476aefc073ac689a}\index{hahaha::ml::Loss$<$ T $>$@{hahaha::ml::Loss$<$ T $>$}!````~Loss@{\texorpdfstring{$\sim$}{\string~}Loss}}
+\index{````~Loss@{\texorpdfstring{$\sim$}{\string~}Loss}!hahaha::ml::Loss$<$ T $>$@{hahaha::ml::Loss$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}Loss()}{\string~Loss()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1Loss_a1ad5d05b83ddf959476aefc073ac689a}
+template$<$typename T$>$ \\
+virtual \mbox{\hyperlink{classhahaha_1_1ml_1_1Loss}{hahaha\+::ml\+::\+Loss}}$<$ T $>$\+::\texorpdfstring{$\sim$}{\string~}\mbox{\hyperlink{classhahaha_1_1ml_1_1Loss}{Loss}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+Virtual destructor.
+
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1ml_1_1Loss_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1ml_1_1Loss_a33b15d09e52add699d14a3d1cacc15cf}\index{hahaha::ml::Loss$<$ T $>$@{hahaha::ml::Loss$<$ T $>$}!computeLoss@{computeLoss}}
+\index{computeLoss@{computeLoss}!hahaha::ml::Loss$<$ T $>$@{hahaha::ml::Loss$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{computeLoss()}{computeLoss()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1Loss_a33b15d09e52add699d14a3d1cacc15cf}
+template$<$typename T$>$ \\
+virtual \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ \mbox{\hyperlink{classhahaha_1_1ml_1_1Loss}{hahaha\+::ml\+::\+Loss}}$<$ T $>$\+::compute\+Loss (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$}]{}{, }\item[{\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Compute the loss between true and predicted values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em y\+True} & The true (target) values. \\
+\hline
+{\em y\+Predict} & The predicted values. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classhahaha_1_1Tensor}{Tensor$<$\+T$>$} The computed loss value.
+\end{DoxyReturn}
+
+
+Reimplemented in \mbox{\hyperlink{classhahaha_1_1ml_1_1MSELoss_a50d98f6db134346b323c83b70c18b794}{hahaha\+::ml\+::\+MSELoss$<$ T $>$}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/ml/loss/\mbox{\hyperlink{Loss_8h}{Loss.\+h}}\end{DoxyCompactItemize}

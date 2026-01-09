@@ -1,0 +1,130 @@
+\doxysection{hahaha\+::display\+::Glfw\+Window Class Reference}
+\hypertarget{classhahaha_1_1display_1_1GlfwWindow}{}\label{classhahaha_1_1display_1_1GlfwWindow}\index{hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}}
+
+
+Concrete \doxylink{classhahaha_1_1display_1_1Window}{Window} implementation using GLFW and Open\+GL.
+
+
+
+
+{\ttfamily \#include $<$Glfw\+Window.\+h$>$}
+
+Inheritance diagram for hahaha\+::display\+::Glfw\+Window\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d8/da6/classhahaha_1_1display_1_1GlfwWindow}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_a48dabe1ee0f0379f271a5067a4335645}{Glfw\+Window}} ()=default
+\item
+\mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_a51346bf552678ec284ad1aef7b45d159}{\texorpdfstring{$\sim$}{\string~}\+Glfw\+Window}} () override
+\item
+void \mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_a13ee52a6d1b4f65138290c28a10de788}{init}} (const std\+::string \&title, int width, int height) override
+\begin{DoxyCompactList}\small\item\em Initialize the window. \end{DoxyCompactList}\item
+bool \mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_aba8d8454055654f855ecefba0d89104a}{render}} () override
+\begin{DoxyCompactList}\small\item\em Render a frame. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_a61286051171a17fd46cc268202554072}{close}} () override
+\begin{DoxyCompactList}\small\item\em Close the window. \end{DoxyCompactList}\item
+GLFWwindow \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classhahaha_1_1display_1_1GlfwWindow_a614e64e30f8b9cb702ef565f18080247}{get\+Handle}} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classhahaha_1_1display_1_1Window}{hahaha\+::display\+::\+Window}}}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1display_1_1Window_a7ddd6b49e50194ea9c94dcde62f42e7b}{Window}} ()=default
+\item
+virtual \mbox{\hyperlink{classhahaha_1_1display_1_1Window_a1782133dd082141a5fb290a0393ef761}{\texorpdfstring{$\sim$}{\string~}\+Window}} ()=default
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Concrete \doxylink{classhahaha_1_1display_1_1Window}{Window} implementation using GLFW and Open\+GL.
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1display_1_1GlfwWindow_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1display_1_1GlfwWindow_a48dabe1ee0f0379f271a5067a4335645}\index{hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}!GlfwWindow@{GlfwWindow}}
+\index{GlfwWindow@{GlfwWindow}!hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}}
+\doxysubsubsection{\texorpdfstring{GlfwWindow()}{GlfwWindow()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1GlfwWindow_a48dabe1ee0f0379f271a5067a4335645}
+hahaha\+::display\+::\+Glfw\+Window\+::\+Glfw\+Window (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\Hypertarget{classhahaha_1_1display_1_1GlfwWindow_a51346bf552678ec284ad1aef7b45d159}\index{hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}!````~GlfwWindow@{\texorpdfstring{$\sim$}{\string~}GlfwWindow}}
+\index{````~GlfwWindow@{\texorpdfstring{$\sim$}{\string~}GlfwWindow}!hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}GlfwWindow()}{\string~GlfwWindow()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1GlfwWindow_a51346bf552678ec284ad1aef7b45d159}
+hahaha\+::display\+::\+Glfw\+Window\+::\texorpdfstring{$\sim$}{\string~}\+Glfw\+Window (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1display_1_1GlfwWindow_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1display_1_1GlfwWindow_a61286051171a17fd46cc268202554072}\index{hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}!close@{close}}
+\index{close@{close}!hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}}
+\doxysubsubsection{\texorpdfstring{close()}{close()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1GlfwWindow_a61286051171a17fd46cc268202554072}
+void hahaha\+::display\+::\+Glfw\+Window\+::close (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Close the window.
+
+
+
+Implements \mbox{\hyperlink{classhahaha_1_1display_1_1Window_aeb3ed8ffbd1c7f05c8ad662d87ff6a70}{hahaha\+::display\+::\+Window}}.
+
+\Hypertarget{classhahaha_1_1display_1_1GlfwWindow_a614e64e30f8b9cb702ef565f18080247}\index{hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}!getHandle@{getHandle}}
+\index{getHandle@{getHandle}!hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}}
+\doxysubsubsection{\texorpdfstring{getHandle()}{getHandle()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1GlfwWindow_a614e64e30f8b9cb702ef565f18080247}
+GLFWwindow \texorpdfstring{$\ast$}{*} hahaha\+::display\+::\+Glfw\+Window\+::get\+Handle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+\Hypertarget{classhahaha_1_1display_1_1GlfwWindow_a13ee52a6d1b4f65138290c28a10de788}\index{hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}!init@{init}}
+\index{init@{init}!hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1GlfwWindow_a13ee52a6d1b4f65138290c28a10de788}
+void hahaha\+::display\+::\+Glfw\+Window\+::init (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{title}{, }\item[{int}]{width}{, }\item[{int}]{height}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Initialize the window.
+
+
+\begin{DoxyParams}{Parameters}
+{\em title} & \doxylink{classhahaha_1_1display_1_1Window}{Window} title. \\
+\hline
+{\em width} & \doxylink{classhahaha_1_1display_1_1Window}{Window} width. \\
+\hline
+{\em height} & \doxylink{classhahaha_1_1display_1_1Window}{Window} height. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{classhahaha_1_1display_1_1Window_a7c33a30386683e4d140463096cbd8667}{hahaha\+::display\+::\+Window}}.
+
+\Hypertarget{classhahaha_1_1display_1_1GlfwWindow_aba8d8454055654f855ecefba0d89104a}\index{hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}!render@{render}}
+\index{render@{render}!hahaha::display::GlfwWindow@{hahaha::display::GlfwWindow}}
+\doxysubsubsection{\texorpdfstring{render()}{render()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1GlfwWindow_aba8d8454055654f855ecefba0d89104a}
+bool hahaha\+::display\+::\+Glfw\+Window\+::render (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Render a frame.
+
+\begin{DoxyReturn}{Returns}
+bool True if the window should remain open.
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classhahaha_1_1display_1_1Window_a11a22b9154eaf72370152d9860e01b8b}{hahaha\+::display\+::\+Window}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item
+core/include/display/\mbox{\hyperlink{GlfwWindow_8h}{Glfw\+Window.\+h}}\item
+core/src/display/\mbox{\hyperlink{GlfwWindow_8cpp}{Glfw\+Window.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,1218 @@
+\doxysection{Tensor\+Wrapper\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classTensorWrapper}{}\label{classTensorWrapper}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+
+
+Main \doxylink{classTensor}{Tensor} class providing a high-\/level API for numerical operations.
+
+
+
+
+{\ttfamily \#include $<$Tensor\+Wrapper.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\Hypertarget{classTensorWrapper_a3ec36ae4755e438bad7773314c7295af}\label{classTensorWrapper_a3ec36ae4755e438bad7773314c7295af}
+{\bfseries Tensor\+Wrapper} ()=default
+\begin{DoxyCompactList}\small\item\em Default constructor for an empty tensor. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper_aa7ca248ac43d0a1d735a594648f80a8e}{Tensor\+Wrapper}} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&shape, T init\+Value, backend\+::\+Device device=backend\+::\+Device())
+\begin{DoxyCompactList}\small\item\em Construct a tensor with a given shape and initial value on a specific device. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper_ac7de7b892966bb4e4d45561136eb38f8}{Tensor\+Wrapper}} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&shape, backend\+::\+Device device)
+\begin{DoxyCompactList}\small\item\em Construct a tensor with a given shape on a specific device, with elements initialized to 0 (default). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper_aa6a7375db1c176c0436ec6e9de57637c}{Tensor\+Wrapper}} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&shape)
+\begin{DoxyCompactList}\small\item\em Construct a tensor with a given shape, with elements initialized to 0 (default CPU). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper_a7b08ea3aee30a9aa65f92f4443e2ec5e}{Tensor\+Wrapper}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other)
+\begin{DoxyCompactList}\small\item\em Copy constructor. Performs a deep copy of the data. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper_ad9915ae689686dbd3ac7bcbd2fcf4c75}{Tensor\+Wrapper}} (\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&\&other) noexcept
+\begin{DoxyCompactList}\small\item\em Move constructor. Transfers ownership of the data. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper_afa30a6c9b6a19483d80072ad2ba88f11}{Tensor\+Wrapper}} (\mbox{\hyperlink{structNestedData}{Nested\+Data}}$<$ T $>$ \&\&data)
+\begin{DoxyCompactList}\small\item\em Construct from \doxylink{structNestedData}{Nested\+Data} (e.\+g., nested initializer list). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper_a266e41357bd5fcc83d98bea204f94393}{Tensor\+Wrapper}} (const std\+::vector$<$ T $>$ \&init\+Vec)
+\begin{DoxyCompactList}\small\item\em Construct from a vector of values. \end{DoxyCompactList}\item
+\Hypertarget{classTensorWrapper_a11fb7632330dbbd70836ad902423de5c}\label{classTensorWrapper_a11fb7632330dbbd70836ad902423de5c}
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& {\bfseries operator=} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&)=delete
+\begin{DoxyCompactList}\small\item\em Copy assignment is deleted to encourage explicit copying. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_a60e521822a77f2048835a1edf5ef37ef}{operator=}} (\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&\&other) noexcept
+\begin{DoxyCompactList}\small\item\em Move assignment operator. \end{DoxyCompactList}\item
+\Hypertarget{classTensorWrapper_af18b29784111f48f269391afbfd91313}\label{classTensorWrapper_af18b29784111f48f269391afbfd91313}
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+Tensor\+Wrapper} ()=default
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item
+std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ \& \mbox{\hyperlink{classTensorWrapper_aa748eca2d67670eb4c63a731252dc92e}{get\+Raw\+Data}} ()
+\begin{DoxyCompactList}\small\item\em Get a reference to the raw data pointer. \end{DoxyCompactList}\item
+const std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ \& \mbox{\hyperlink{classTensorWrapper_aa5becf01ad4ecce3b91eb27040454576}{get\+Raw\+Data}} () const
+\begin{DoxyCompactList}\small\item\em Get a const reference to the raw data pointer. \end{DoxyCompactList}\item
+const std\+::vector$<$ size\+\_\+t $>$ \& \mbox{\hyperlink{classTensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{get\+Shape}} () const
+\begin{DoxyCompactList}\small\item\em Get the tensor\textquotesingle{}s shape. \end{DoxyCompactList}\item
+size\+\_\+t \mbox{\hyperlink{classTensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{get\+Total\+Size}} () const
+\begin{DoxyCompactList}\small\item\em Get the tensor\textquotesingle{}s shape. \end{DoxyCompactList}\item
+const \mbox{\hyperlink{classTensorStride}{Tensor\+Stride}} \& \mbox{\hyperlink{classTensorWrapper_a3ad2496190561b964827889484eb003d}{get\+Stride}} () const
+\begin{DoxyCompactList}\small\item\em Get the tensor\textquotesingle{}s strides. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classTensorWrapper_aba99297665176a173cebd388d186fa30}{set\+Stride}} (const \mbox{\hyperlink{classTensorStride}{Tensor\+Stride}} \&stride)
+\begin{DoxyCompactList}\small\item\em Set the tensor\textquotesingle{}s strides. \end{DoxyCompactList}\item
+const backend\+::\+Device \& \mbox{\hyperlink{classTensorWrapper_a32418318e144a50ba2d16eef90c46099}{get\+Device}} () const
+\begin{DoxyCompactList}\small\item\em Get the device where the tensor resides. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classTensorWrapper_ad3509b42c9934c96cfca848c09dbe924}{to}} (const backend\+::\+Device \&device)
+\begin{DoxyCompactList}\small\item\em Move the tensor to a different device. \end{DoxyCompactList}\item
+T \& \mbox{\hyperlink{classTensorWrapper_aa92da87432758b6d17a1f61a759dea15}{at}} (const std\+::initializer\+\_\+list$<$ size\+\_\+t $>$ \&indices)
+\begin{DoxyCompactList}\small\item\em Element access with bounds checking. \end{DoxyCompactList}\item
+const T \& \mbox{\hyperlink{classTensorWrapper_a65e967926cfaaca8debce6dc72de3309}{at}} (const std\+::initializer\+\_\+list$<$ size\+\_\+t $>$ \&indices) const
+\begin{DoxyCompactList}\small\item\em Constant element access with bounds checking. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a7212eb02f9d72d022681a7043b08a10f}{reshape}} (const std\+::vector$<$ size\+\_\+t $>$ \&new\+Shape) const
+\begin{DoxyCompactList}\small\item\em Reshape tensor to new dimensions. \end{DoxyCompactList}\item
+size\+\_\+t \mbox{\hyperlink{classTensorWrapper_ab062a1dd9043d2fa175b2d08fe432c9e}{get\+Dimensions}} () const
+\begin{DoxyCompactList}\small\item\em Number of dimensions. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}{add}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise addition. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a392743921d9b1638711bea10788a8269}{add}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise scalar addition. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a3ffb4beea3a34d2019c1e5d4ca8d6720}{subtract}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise subtraction. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_ae8469e071e030c57d1986a29e11b3581}{subtract}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise scalar subtraction. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}{multiply}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise multiplication. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a1d8f50572e3b37e656342b1f923e6ce2}{multiply}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise scalar multiplication. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a9eabad273324f711918e3b23550b0c2b}{divide}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise division. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a41617131febf160c2439c807647a5590}{divide}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise scalar division. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_acc8604d33da71edf35906738a570c15a}{subtract\+From}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise subtraction from scalar (scalar -\/ tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a9375873343ddd46ff96d4feff379720b}{divide\+Into}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Element-\/wise division into scalar (scalar / tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a1c042962f1850f335a219544aa0c9887}{matmul}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Matrix multiplication (for 2D tensors). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a81d9f5aed779ff67cf06dd70fda6aa35}{transpose}} () const
+\begin{DoxyCompactList}\small\item\em Transpose operation (for 2D tensors). \end{DoxyCompactList}\item
+T \mbox{\hyperlink{classTensorWrapper_a2e36cee5ce7a0eb6efb1a8514cdbcc59}{sum}} () const
+\begin{DoxyCompactList}\small\item\em Sum all elements in the tensor. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a328ad673ab84fbbf1031dda750d4bd10}{sum}} (std\+::vector$<$ size\+\_\+t $>$ axes, const bool keep\+Dims=false) const
+\begin{DoxyCompactList}\small\item\em Sum tensor elements along specified axes. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a2f4399df11a8a817a2c7806dc42e210c}{clone}} () const
+\begin{DoxyCompactList}\small\item\em Create a deep copy of this tensor. \end{DoxyCompactList}\item
+\Hypertarget{classTensorWrapper_adc1d5fd41da7955e2c08899e0c2c6872}\label{classTensorWrapper_adc1d5fd41da7955e2c08899e0c2c6872}
+void {\bfseries clear} ()
+\begin{DoxyCompactList}\small\item\em Clear all values in the tensor, setting them to default value (likely 0). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a0e5e6a932f30cf99f4c805239370b63c}{broadcast\+To}} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&new\+Shape)
+\begin{DoxyCompactList}\small\item\em Broadcast tensor to match the shape of another tensor. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a672ada83ffcf1aceddd4d0dd93e8fe62}{operator+}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Addition operator (tensor + tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a2d9820c9f9404b6c718490c85c37ee18}{operator+}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Addition operator (tensor + scalar). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_ad62ab52415934c01843f0d20b668bfce}{operator-\/}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Subtraction operator (tensor -\/ tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_aa700e6f429c0a3dcb948c5dcab63f1a6}{operator-\/}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Subtraction operator (tensor -\/ scalar). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_adc24e2b61e37c310b86a897abf743a40}{operator-\/}} () const
+\begin{DoxyCompactList}\small\item\em Unary negation operator (-\/tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_ab53cb86b513b6d5d6acd8a8f06cd9363}{operator\texorpdfstring{$\ast$}{*}}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplication operator (tensor \texorpdfstring{$\ast$}{*} tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a0741daeb0419cdc13987231c203d4eef}{operator\texorpdfstring{$\ast$}{*}}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Multiplication operator (tensor \texorpdfstring{$\ast$}{*} scalar). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_a6529f9cc4d85310638c3ebcd70393e07}{operator/}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other) const
+\begin{DoxyCompactList}\small\item\em Division operator (tensor / tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classTensorWrapper_ad11bf9254e9ee2bc684a7408fd799587}{operator/}} (T scalar) const
+\begin{DoxyCompactList}\small\item\em Division operator (tensor / scalar). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_afbc4218ac6137eadd10b8b1b796fdb53}{operator+=}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other)
+\begin{DoxyCompactList}\small\item\em In-\/place addition operator (tensor += tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_ab781e9c3146d476167cf4c12fd9dec63}{operator+=}} (T scalar)
+\begin{DoxyCompactList}\small\item\em In-\/place addition operator (tensor += scalar). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_a6b22cc7c2389d9b70153c279354235da}{operator-\/=}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other)
+\begin{DoxyCompactList}\small\item\em In-\/place subtraction operator (tensor -\/= tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_a12aa8c9dd35b2df1bf2b222dc34142a3}{operator-\/=}} (T scalar)
+\begin{DoxyCompactList}\small\item\em In-\/place subtraction operator (tensor -\/= scalar). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_a6e0251a36b93c1d883fd3a4d09e0e652}{operator\texorpdfstring{$\ast$}{*}=}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other)
+\begin{DoxyCompactList}\small\item\em In-\/place multiplication operator (tensor \texorpdfstring{$\ast$}{*}= tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_a5b8cabc34b49798b448d0c6389bd5038}{operator\texorpdfstring{$\ast$}{*}=}} (T scalar)
+\begin{DoxyCompactList}\small\item\em In-\/place multiplication operator (tensor \texorpdfstring{$\ast$}{*}= scalar). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_a522fc4388eec187e9fb8b68019864ecc}{operator/=}} (const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other)
+\begin{DoxyCompactList}\small\item\em In-\/place division operator (tensor /= tensor). \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classTensorWrapper_a4752b08848d798caff356fac3a1eb60b}{operator/=}} (T scalar)
+\begin{DoxyCompactList}\small\item\em In-\/place division operator (tensor /= scalar). \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classTensorWrapper_a62e9e053c8941383447ff11da5b0f9b6}{axpy}} (T alpha, const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \&other)
+\begin{DoxyCompactList}\small\item\em In-\/place update\+: this = this + alpha \texorpdfstring{$\ast$}{*} other Useful for optimizers (e.\+g., SGD\+: param = param -\/ lr \texorpdfstring{$\ast$}{*} grad). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item
+\Hypertarget{classTensorWrapper_a3ffafb7e173b1d19446307b2bbfa62e6}\label{classTensorWrapper_a3ffafb7e173b1d19446307b2bbfa62e6}
+class {\bfseries Tensor\+Wrapper\+Test}
+\item
+\Hypertarget{classTensorWrapper_ac38d11dc81e22d8d2a3b77e2f8e37c7f}\label{classTensorWrapper_ac38d11dc81e22d8d2a3b77e2f8e37c7f}
+class {\bfseries compute\+::\+Compute\+Node$<$ T $>$}
+\item
+\Hypertarget{classTensorWrapper_a1410ae436485487977573f774d4878ff}\label{classTensorWrapper_a1410ae436485487977573f774d4878ff}
+class {\bfseries backend\+::\+Device\+Compute\+Dispatcher$<$ T $>$}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class Tensor\+Wrapper$<$ T $>$}
+Main \doxylink{classTensor}{Tensor} class providing a high-\/level API for numerical operations.
+
+This class wraps \doxylink{classTensorData}{Tensor\+Data} and provides a comprehensive set of operations including basic arithmetic, matrix multiplication, and reshape capabilities. It is designed to work with automatic differentiation and computational graphs.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The numeric type of the tensor elements. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\label{doc-constructors}
+\Hypertarget{classTensorWrapper_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classTensorWrapper_aa7ca248ac43d0a1d735a594648f80a8e}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!TensorWrapper@{TensorWrapper}}
+\index{TensorWrapper@{TensorWrapper}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorWrapper()}{TensorWrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_aa7ca248ac43d0a1d735a594648f80a8e}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::\+Tensor\+Wrapper (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&}]{shape}{, }\item[{T}]{init\+Value}{, }\item[{backend\+::\+Device}]{device}{ = {\ttfamily backend\+:\+:Device()}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct a tensor with a given shape and initial value on a specific device.
+
+
+\begin{DoxyParams}{Parameters}
+{\em shape} & The shape of the tensor. \\
+\hline
+{\em init\+Value} & The initial value for all elements. \\
+\hline
+{\em device} & The device where the data should reside. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_ac7de7b892966bb4e4d45561136eb38f8}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!TensorWrapper@{TensorWrapper}}
+\index{TensorWrapper@{TensorWrapper}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorWrapper()}{TensorWrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ac7de7b892966bb4e4d45561136eb38f8}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::\+Tensor\+Wrapper (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&}]{shape}{, }\item[{backend\+::\+Device}]{device}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct a tensor with a given shape on a specific device, with elements initialized to 0 (default).
+
+
+\begin{DoxyParams}{Parameters}
+{\em shape} & The shape of the tensor. \\
+\hline
+{\em device} & The device where the data should reside. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_aa6a7375db1c176c0436ec6e9de57637c}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!TensorWrapper@{TensorWrapper}}
+\index{TensorWrapper@{TensorWrapper}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorWrapper()}{TensorWrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_aa6a7375db1c176c0436ec6e9de57637c}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::\+Tensor\+Wrapper (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&}]{shape}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct a tensor with a given shape, with elements initialized to 0 (default CPU).
+
+
+\begin{DoxyParams}{Parameters}
+{\em shape} & The shape of the tensor. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_a7b08ea3aee30a9aa65f92f4443e2ec5e}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!TensorWrapper@{TensorWrapper}}
+\index{TensorWrapper@{TensorWrapper}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorWrapper()}{TensorWrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a7b08ea3aee30a9aa65f92f4443e2ec5e}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::\+Tensor\+Wrapper (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy constructor. Performs a deep copy of the data.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to copy from. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_ad9915ae689686dbd3ac7bcbd2fcf4c75}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!TensorWrapper@{TensorWrapper}}
+\index{TensorWrapper@{TensorWrapper}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorWrapper()}{TensorWrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ad9915ae689686dbd3ac7bcbd2fcf4c75}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::\+Tensor\+Wrapper (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move constructor. Transfers ownership of the data.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The source tensor to move from. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_afa30a6c9b6a19483d80072ad2ba88f11}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!TensorWrapper@{TensorWrapper}}
+\index{TensorWrapper@{TensorWrapper}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorWrapper()}{TensorWrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_afa30a6c9b6a19483d80072ad2ba88f11}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::\+Tensor\+Wrapper (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structNestedData}{Nested\+Data}}$<$ T $>$ \&\&}]{data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct from \doxylink{structNestedData}{Nested\+Data} (e.\+g., nested initializer list).
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The source nested data. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_a266e41357bd5fcc83d98bea204f94393}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!TensorWrapper@{TensorWrapper}}
+\index{TensorWrapper@{TensorWrapper}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorWrapper()}{TensorWrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a266e41357bd5fcc83d98bea204f94393}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::\+Tensor\+Wrapper (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ T $>$ \&}]{init\+Vec}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct from a vector of values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em init\+Vec} & Vector of values to initialize the tensor with. Creates a 1D tensor with the same size as the vector. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{classTensorWrapper_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classTensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!add@{add}}
+\index{add@{add}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::add (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise addition.
+
+Plain-\/text formula\+:
+\begin{DoxyItemize}
+\item res\mbox{[}i\mbox{]} = a\mbox{[}i\mbox{]} + b\mbox{[}i\mbox{]}
+\end{DoxyItemize}
+
+Scalar behavior (plain text)\+:
+\begin{DoxyItemize}
+\item If one operand has total\+Size == 1, it is treated as a scalar\+: res\mbox{[}i\mbox{]} = tensor\mbox{[}i\mbox{]} + scalar
+\end{DoxyItemize}
+
+Constraints\+:
+\begin{DoxyItemize}
+\item For non-\/scalar case, shapes must match exactly (Tensor\+Wrapper-\/level).
+\item For device execution, both tensors must be on the same device.
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} result tensor.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a392743921d9b1638711bea10788a8269}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!add@{add}}
+\index{add@{add}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a392743921d9b1638711bea10788a8269}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::add (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise scalar addition.
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to add to each element. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result tensor with same shape as this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_aa92da87432758b6d17a1f61a759dea15}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!at@{at}}
+\index{at@{at}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_aa92da87432758b6d17a1f61a759dea15}
+template$<$typename T$>$ \\
+T \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::at (\begin{DoxyParamCaption}\item[{const std\+::initializer\+\_\+list$<$ size\+\_\+t $>$ \&}]{indices}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element access with bounds checking.
+
+Formula for linear index in row-\/major\+: index = sum(indices\mbox{[}i\mbox{]} \texorpdfstring{$\ast$}{*} strides\mbox{[}i\mbox{]})
+
+
+\begin{DoxyParams}{Parameters}
+{\em indices} & List of indices for each dimension. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+T\& reference to the element.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a65e967926cfaaca8debce6dc72de3309}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!at@{at}}
+\index{at@{at}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a65e967926cfaaca8debce6dc72de3309}
+template$<$typename T$>$ \\
+const T \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::at (\begin{DoxyParamCaption}\item[{const std\+::initializer\+\_\+list$<$ size\+\_\+t $>$ \&}]{indices}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constant element access with bounds checking.
+
+
+\begin{DoxyParams}{Parameters}
+{\em indices} & List of indices for each dimension. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+const T\& reference to the element.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a62e9e053c8941383447ff11da5b0f9b6}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!axpy@{axpy}}
+\index{axpy@{axpy}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{axpy()}{axpy()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a62e9e053c8941383447ff11da5b0f9b6}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::axpy (\begin{DoxyParamCaption}\item[{T}]{alpha}{, }\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place update\+: this = this + alpha \texorpdfstring{$\ast$}{*} other Useful for optimizers (e.\+g., SGD\+: param = param -\/ lr \texorpdfstring{$\ast$}{*} grad).
+
+
+\begin{DoxyParams}{Parameters}
+{\em alpha} & Scaling factor \\
+\hline
+{\em other} & Other tensor \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_a0e5e6a932f30cf99f4c805239370b63c}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!broadcastTo@{broadcastTo}}
+\index{broadcastTo@{broadcastTo}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{broadcastTo()}{broadcastTo()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a0e5e6a932f30cf99f4c805239370b63c}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::broadcast\+To (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&}]{new\+Shape}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Broadcast tensor to match the shape of another tensor.
+
+This operation does NOT allocate new storage. It returns a view. Broadcasted axes are represented by setting stride\mbox{[}axis\mbox{]} = 0. Reading element at coordinate {\ttfamily idx} uses\+: linear = sum(idx\mbox{[}d\mbox{]} \texorpdfstring{$\ast$}{*} stride\mbox{[}d\mbox{]}) value = base\+\_\+ptr\mbox{[}linear\mbox{]}
+
+Example\+:
+\begin{DoxyItemize}
+\item self.\+shape = (1, 3), self.\+stride = (3, 1)
+\item new\+Shape = (2, 3)
+\item result.\+stride becomes (0, 1)
+\item So result\mbox{[}0, j\mbox{]} and result\mbox{[}1, j\mbox{]} map to the same source element.
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Shape} & The target tensor shape for broadcasting. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} A new tensor that has the target shape but shares data with this one.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if new\+Shape is not broadcast-\/compatible, or if new\+Shape rank is smaller than current rank. \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{classTensorWrapper_a2f4399df11a8a817a2c7806dc42e210c}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!clone@{clone}}
+\index{clone@{clone}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{clone()}{clone()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a2f4399df11a8a817a2c7806dc42e210c}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::clone (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create a deep copy of this tensor.
+
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} A new tensor with copied data.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a9eabad273324f711918e3b23550b0c2b}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!divide@{divide}}
+\index{divide@{divide}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{divide()}{divide()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a9eabad273324f711918e3b23550b0c2b}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::divide (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise division.
+
+Plain-\/text formula\+:
+\begin{DoxyItemize}
+\item res\mbox{[}i\mbox{]} = a\mbox{[}i\mbox{]} / b\mbox{[}i\mbox{]} (b\mbox{[}i\mbox{]} != 0)
+\end{DoxyItemize}
+
+Scalar behavior (plain text)\+:
+\begin{DoxyItemize}
+\item tensor / scalar\+: res\mbox{[}i\mbox{]} = tensor\mbox{[}i\mbox{]} / scalar (scalar != 0)
+\item scalar / tensor\+: res\mbox{[}i\mbox{]} = scalar / tensor\mbox{[}i\mbox{]} (tensor\mbox{[}i\mbox{]} != 0)
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to divide. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} result tensor.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a41617131febf160c2439c807647a5590}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!divide@{divide}}
+\index{divide@{divide}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{divide()}{divide()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a41617131febf160c2439c807647a5590}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::divide (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise scalar division.
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to divide each element by. Must not be zero. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result tensor with same shape as this.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & if scalar is zero. \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{classTensorWrapper_a9375873343ddd46ff96d4feff379720b}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!divideInto@{divideInto}}
+\index{divideInto@{divideInto}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{divideInto()}{divideInto()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a9375873343ddd46ff96d4feff379720b}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::divide\+Into (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise division into scalar (scalar / tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to divide by this tensor. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result tensor with same shape as this.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & if any element of this tensor is zero. \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{classTensorWrapper_a32418318e144a50ba2d16eef90c46099}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!getDevice@{getDevice}}
+\index{getDevice@{getDevice}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getDevice()}{getDevice()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a32418318e144a50ba2d16eef90c46099}
+template$<$typename T$>$ \\
+const backend\+::\+Device \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::get\+Device (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the device where the tensor resides.
+
+\begin{DoxyReturn}{Returns}
+const backend\+::\+Device\& reference to the device.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_ab062a1dd9043d2fa175b2d08fe432c9e}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!getDimensions@{getDimensions}}
+\index{getDimensions@{getDimensions}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getDimensions()}{getDimensions()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ab062a1dd9043d2fa175b2d08fe432c9e}
+template$<$typename T$>$ \\
+size\+\_\+t \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::get\+Dimensions (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Number of dimensions.
+
+\begin{DoxyReturn}{Returns}
+size\+\_\+t dimension count.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_aa748eca2d67670eb4c63a731252dc92e}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!getRawData@{getRawData}}
+\index{getRawData@{getRawData}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getRawData()}{getRawData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_aa748eca2d67670eb4c63a731252dc92e}
+template$<$typename T$>$ \\
+std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::get\+Raw\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get a reference to the raw data pointer.
+
+\begin{DoxyReturn}{Returns}
+Reference to the shared\+\_\+ptr holding the data array.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_aa5becf01ad4ecce3b91eb27040454576}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!getRawData@{getRawData}}
+\index{getRawData@{getRawData}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getRawData()}{getRawData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_aa5becf01ad4ecce3b91eb27040454576}
+template$<$typename T$>$ \\
+const std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::get\+Raw\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get a const reference to the raw data pointer.
+
+\begin{DoxyReturn}{Returns}
+Const Reference to the shared\+\_\+ptr holding the data array.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!getShape@{getShape}}
+\index{getShape@{getShape}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getShape()}{getShape()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}
+template$<$typename T$>$ \\
+const std\+::vector$<$ size\+\_\+t $>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::get\+Shape (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the tensor\textquotesingle{}s shape.
+
+\begin{DoxyReturn}{Returns}
+const std\+::vector$<$size\+\_\+t$>$\& reference to internal shape.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a3ad2496190561b964827889484eb003d}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!getStride@{getStride}}
+\index{getStride@{getStride}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getStride()}{getStride()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a3ad2496190561b964827889484eb003d}
+template$<$typename T$>$ \\
+const \mbox{\hyperlink{classTensorStride}{Tensor\+Stride}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::get\+Stride (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the tensor\textquotesingle{}s strides.
+
+\begin{DoxyReturn}{Returns}
+const \doxylink{classTensorStride}{Tensor\+Stride}\& reference to internal strides.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!getTotalSize@{getTotalSize}}
+\index{getTotalSize@{getTotalSize}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getTotalSize()}{getTotalSize()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}
+template$<$typename T$>$ \\
+size\+\_\+t \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::get\+Total\+Size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the tensor\textquotesingle{}s shape.
+
+\begin{DoxyReturn}{Returns}
+size\+\_\+t of total\+Size.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a1c042962f1850f335a219544aa0c9887}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!matmul@{matmul}}
+\index{matmul@{matmul}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{matmul()}{matmul()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a1c042962f1850f335a219544aa0c9887}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::matmul (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Matrix multiplication (for 2D tensors).
+
+Formula\+: C\mbox{[}i, j\mbox{]} = sum(\+A\mbox{[}i, k\mbox{]} \texorpdfstring{$\ast$}{*} B\mbox{[}k, j\mbox{]}) for k in 0..K-\/1 where A is (M x K) and B is (K x N).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to multiply with. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} result tensor.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!multiply@{multiply}}
+\index{multiply@{multiply}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{multiply()}{multiply()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::multiply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise multiplication.
+
+Plain-\/text formula\+:
+\begin{DoxyItemize}
+\item res\mbox{[}i\mbox{]} = a\mbox{[}i\mbox{]} \texorpdfstring{$\ast$}{*} b\mbox{[}i\mbox{]}
+\end{DoxyItemize}
+
+Scalar behavior (plain text)\+:
+\begin{DoxyItemize}
+\item res\mbox{[}i\mbox{]} = tensor\mbox{[}i\mbox{]} \texorpdfstring{$\ast$}{*} scalar
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to multiply. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} result tensor.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a1d8f50572e3b37e656342b1f923e6ce2}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!multiply@{multiply}}
+\index{multiply@{multiply}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{multiply()}{multiply()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a1d8f50572e3b37e656342b1f923e6ce2}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::multiply (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise scalar multiplication.
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to multiply each element by. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result tensor with same shape as this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_ab53cb86b513b6d5d6acd8a8f06cd9363}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ab53cb86b513b6d5d6acd8a8f06cd9363}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplication operator (tensor \texorpdfstring{$\ast$}{*} tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to multiply. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result of multiplication.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a0741daeb0419cdc13987231c203d4eef}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a0741daeb0419cdc13987231c203d4eef}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplication operator (tensor \texorpdfstring{$\ast$}{*} scalar).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to multiply. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result of multiplication.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a6e0251a36b93c1d883fd3a4d09e0e652}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator\texorpdfstring{$\ast$}{*}=@{operator\texorpdfstring{$\ast$}{*}=}}
+\index{operator\texorpdfstring{$\ast$}{*}=@{operator\texorpdfstring{$\ast$}{*}=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}=()}{operator*=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a6e0251a36b93c1d883fd3a4d09e0e652}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator\texorpdfstring{$\ast$}{*}= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place multiplication operator (tensor \texorpdfstring{$\ast$}{*}= tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to multiply. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& Reference to this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a5b8cabc34b49798b448d0c6389bd5038}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator\texorpdfstring{$\ast$}{*}=@{operator\texorpdfstring{$\ast$}{*}=}}
+\index{operator\texorpdfstring{$\ast$}{*}=@{operator\texorpdfstring{$\ast$}{*}=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}=()}{operator*=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a5b8cabc34b49798b448d0c6389bd5038}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator\texorpdfstring{$\ast$}{*}= (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place multiplication operator (tensor \texorpdfstring{$\ast$}{*}= scalar).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to multiply. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& Reference to this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a672ada83ffcf1aceddd4d0dd93e8fe62}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator+@{operator+}}
+\index{operator+@{operator+}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a672ada83ffcf1aceddd4d0dd93e8fe62}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Addition operator (tensor + tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result of addition.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a2d9820c9f9404b6c718490c85c37ee18}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator+@{operator+}}
+\index{operator+@{operator+}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a2d9820c9f9404b6c718490c85c37ee18}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator+ (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Addition operator (tensor + scalar).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result of addition.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_afbc4218ac6137eadd10b8b1b796fdb53}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator+=@{operator+=}}
+\index{operator+=@{operator+=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator+=()}{operator+=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_afbc4218ac6137eadd10b8b1b796fdb53}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator+= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place addition operator (tensor += tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& Reference to this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_ab781e9c3146d476167cf4c12fd9dec63}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator+=@{operator+=}}
+\index{operator+=@{operator+=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator+=()}{operator+=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ab781e9c3146d476167cf4c12fd9dec63}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator+= (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place addition operator (tensor += scalar).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& Reference to this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_adc24e2b61e37c310b86a897abf743a40}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator-\/()}{operator-()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_adc24e2b61e37c310b86a897abf743a40}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator-\/ (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Unary negation operator (-\/tensor).
+
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Negated tensor.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_ad62ab52415934c01843f0d20b668bfce}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator-\/()}{operator-()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ad62ab52415934c01843f0d20b668bfce}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator-\/ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Subtraction operator (tensor -\/ tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to subtract. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result of subtraction.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_aa700e6f429c0a3dcb948c5dcab63f1a6}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator-\/()}{operator-()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_aa700e6f429c0a3dcb948c5dcab63f1a6}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator-\/ (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Subtraction operator (tensor -\/ scalar).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to subtract. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result of subtraction.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a6b22cc7c2389d9b70153c279354235da}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator-\/=@{operator-\/=}}
+\index{operator-\/=@{operator-\/=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator-\/=()}{operator-=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a6b22cc7c2389d9b70153c279354235da}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator-\/= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place subtraction operator (tensor -\/= tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to subtract. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& Reference to this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a12aa8c9dd35b2df1bf2b222dc34142a3}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator-\/=@{operator-\/=}}
+\index{operator-\/=@{operator-\/=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator-\/=()}{operator-=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a12aa8c9dd35b2df1bf2b222dc34142a3}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator-\/= (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place subtraction operator (tensor -\/= scalar).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to subtract. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& Reference to this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a6529f9cc4d85310638c3ebcd70393e07}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator/@{operator/}}
+\index{operator/@{operator/}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a6529f9cc4d85310638c3ebcd70393e07}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator/ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Division operator (tensor / tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to divide by. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result of division.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_ad11bf9254e9ee2bc684a7408fd799587}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator/@{operator/}}
+\index{operator/@{operator/}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ad11bf9254e9ee2bc684a7408fd799587}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator/ (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Division operator (tensor / scalar).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to divide by. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result of division.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a522fc4388eec187e9fb8b68019864ecc}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator/=@{operator/=}}
+\index{operator/=@{operator/=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator/=()}{operator/=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a522fc4388eec187e9fb8b68019864ecc}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator/= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place division operator (tensor /= tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to divide by. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& Reference to this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a4752b08848d798caff356fac3a1eb60b}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator/=@{operator/=}}
+\index{operator/=@{operator/=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator/=()}{operator/=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a4752b08848d798caff356fac3a1eb60b}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator/= (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+In-\/place division operator (tensor /= scalar).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to divide by. Must not be zero. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& Reference to this.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & if scalar is zero. \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{classTensorWrapper_a60e521822a77f2048835a1edf5ef37ef}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a60e521822a77f2048835a1edf5ef37ef}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move assignment operator.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The source tensor to move from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper}\& reference to this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a7212eb02f9d72d022681a7043b08a10f}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!reshape@{reshape}}
+\index{reshape@{reshape}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{reshape()}{reshape()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a7212eb02f9d72d022681a7043b08a10f}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::reshape (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{new\+Shape}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Reshape tensor to new dimensions.
+
+Total size must remain invariant.
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Shape} & Vector of new dimension sizes. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} A new tensor with reshaped dimensions.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_aba99297665176a173cebd388d186fa30}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!setStride@{setStride}}
+\index{setStride@{setStride}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{setStride()}{setStride()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_aba99297665176a173cebd388d186fa30}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::set\+Stride (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorStride}{Tensor\+Stride}} \&}]{stride}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the tensor\textquotesingle{}s strides.
+
+
+\begin{DoxyParams}{Parameters}
+{\em stride} & The new strides. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_a3ffb4beea3a34d2019c1e5d4ca8d6720}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!subtract@{subtract}}
+\index{subtract@{subtract}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{subtract()}{subtract()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a3ffb4beea3a34d2019c1e5d4ca8d6720}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::subtract (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}}$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise subtraction.
+
+Plain-\/text formula\+:
+\begin{DoxyItemize}
+\item res\mbox{[}i\mbox{]} = a\mbox{[}i\mbox{]} -\/ b\mbox{[}i\mbox{]}
+\end{DoxyItemize}
+
+Scalar behavior (plain text)\+:
+\begin{DoxyItemize}
+\item tensor -\/ scalar\+: res\mbox{[}i\mbox{]} = tensor\mbox{[}i\mbox{]} -\/ scalar
+\item scalar -\/ tensor\+: res\mbox{[}i\mbox{]} = scalar -\/ tensor\mbox{[}i\mbox{]} (see subtract\+From)
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tensor to subtract. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} result tensor.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_ae8469e071e030c57d1986a29e11b3581}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!subtract@{subtract}}
+\index{subtract@{subtract}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{subtract()}{subtract()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ae8469e071e030c57d1986a29e11b3581}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::subtract (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise scalar subtraction.
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to subtract from each element. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result tensor with same shape as this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_acc8604d33da71edf35906738a570c15a}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!subtractFrom@{subtractFrom}}
+\index{subtractFrom@{subtractFrom}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{subtractFrom()}{subtractFrom()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_acc8604d33da71edf35906738a570c15a}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::subtract\+From (\begin{DoxyParamCaption}\item[{T}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Element-\/wise subtraction from scalar (scalar -\/ tensor).
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & The scalar value to subtract this tensor from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result tensor with same shape as this.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a2e36cee5ce7a0eb6efb1a8514cdbcc59}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!sum@{sum}}
+\index{sum@{sum}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{sum()}{sum()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a2e36cee5ce7a0eb6efb1a8514cdbcc59}
+template$<$typename T$>$ \\
+T \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::sum (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sum all elements in the tensor.
+
+\begin{DoxyReturn}{Returns}
+T The sum of all tensor elements.
+\end{DoxyReturn}
+\Hypertarget{classTensorWrapper_a328ad673ab84fbbf1031dda750d4bd10}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!sum@{sum}}
+\index{sum@{sum}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{sum()}{sum()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a328ad673ab84fbbf1031dda750d4bd10}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::sum (\begin{DoxyParamCaption}\item[{std\+::vector$<$ size\+\_\+t $>$}]{axes}{, }\item[{const bool}]{keep\+Dims}{ = {\ttfamily false}}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sum tensor elements along specified axes.
+
+
+\begin{DoxyParams}{Parameters}
+{\em axes} & The axes along which to sum. Empty axes means sum all elements. \\
+\hline
+{\em keep\+Dims} & If true, the reduced dimensions are kept with size 1. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} Result tensor with summed values.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if any axis is out of bounds. \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{classTensorWrapper_ad3509b42c9934c96cfca848c09dbe924}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!to@{to}}
+\index{to@{to}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{to()}{to()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_ad3509b42c9934c96cfca848c09dbe924}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::to (\begin{DoxyParamCaption}\item[{const backend\+::\+Device \&}]{device}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Move the tensor to a different device.
+
+
+\begin{DoxyParams}{Parameters}
+{\em device} & The target device. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorWrapper_a81d9f5aed779ff67cf06dd70fda6aa35}\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!transpose@{transpose}}
+\index{transpose@{transpose}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{transpose()}{transpose()}}
+{\footnotesize\ttfamily \label{classTensorWrapper_a81d9f5aed779ff67cf06dd70fda6aa35}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensorWrapper}{Tensor\+Wrapper}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ T $>$\+::transpose (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Transpose operation (for 2D tensors).
+
+Formula\+: B\mbox{[}j, i\mbox{]} = A\mbox{[}i, j\mbox{]}
+
+\begin{DoxyReturn}{Returns}
+\doxylink{classTensorWrapper}{Tensor\+Wrapper} transposed tensor.
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item
+core/include/backend/Device\+Compute\+Dispatcher.\+h\item
+core/include/math/Tensor\+Wrapper.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,104 @@
+\doxysection{autograd\+\_\+train.\+h}
+\hypertarget{autograd__train_8h_source}{}\label{autograd__train_8h_source}\index{examples/autograd/autograd\_train.h@{examples/autograd/autograd\_train.h}}
+\mbox{\hyperlink{autograd__train_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ jiansongshen\ (jason.shen111@outlook.com)\ (https://github.com/jiansongshen)}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <random>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Tensor_8h}{Tensor.h}}"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{definitions_8h}{common/definitions.h}}"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{SGDOptimizer_8h}{ml/optimizer/SGDOptimizer.h}}"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Logger_8h}{utils/log/Logger.h}}"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{using\ }\mbox{\hyperlink{classhahaha_1_1Tensor}{hahaha::Tensor}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }\mbox{\hyperlink{namespacehahaha_1_1common}{hahaha::common}};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{autograd__train_8h_afc26f0c5b29fe21a190cb019bb3dfcc6}{nn\_train\_example}}()\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ std::mt19937\ engine;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ std::random\_device\ randomDevice;}
+\DoxyCodeLine{00036\ \ \ \ \ std::seed\_seq\ seed\{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ randomDevice(),}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\textcolor{keyword}{>}(}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ std::chrono::steady\_clock::now().time\_since\_epoch().count())\};}
+\DoxyCodeLine{00040\ \ \ \ \ engine.seed(seed);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ std::uniform\_real\_distribution<float>\ dist(0,\ 1);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ DataSize\ =\ 100;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ TrainLoop\ =\ 100;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ std::vector<f32>\ x;}
+\DoxyCodeLine{00048\ \ \ \ \ std::vector<f32>\ y;}
+\DoxyCodeLine{00049\ \ \ \ \ x.resize(DataSize);}
+\DoxyCodeLine{00050\ \ \ \ \ y.resize(DataSize);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//\ y\ =\ 2\ *\ x}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ DataSize;\ ++i)\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ val\ =\ dist(engine);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ x[i]\ =\ val;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ y[i]\ =\ val\ *\ 2;}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}x:\ "{}}\ +\ std::to\_string(x[0])\ +\ \textcolor{stringliteral}{"{}\ y:\ "{}}\ +\ std::to\_string(y[0]));}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<f32>}}\ xTensor\ =\ \mbox{\hyperlink{classTensor_a56a7d097e6584bfca71fcef52e678602}{Tensor<f32>::buildFromVector}}(x);}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<f32>}}\ yTensor\ =\ \mbox{\hyperlink{classTensor_a56a7d097e6584bfca71fcef52e678602}{Tensor<f32>::buildFromVector}}(y);}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<f32>}}\ bias(\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespacehahaha_1_1common_aee7c7d994dc89c4ce16bef208f5ff591}{f32}}\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<f32>}}\ w(1);}
+\DoxyCodeLine{00065\ \ \ \ \ w.\mbox{\hyperlink{classhahaha_1_1Tensor_a2528afb99364fa7db1dc63ae0adf6a14}{setRequiresGrad}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00066\ \ \ \ \ bias.\mbox{\hyperlink{classhahaha_1_1Tensor_a2528afb99364fa7db1dc63ae0adf6a14}{setRequiresGrad}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{//\ y\ =\ w\ *\ x}}
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<f32>}}\ loss(1);}
+\DoxyCodeLine{00069\ \ \ \ \ loss.\mbox{\hyperlink{classhahaha_1_1Tensor_a2528afb99364fa7db1dc63ae0adf6a14}{setRequiresGrad}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1ml_1_1SGDOptimizer}{hahaha::ml::SGDOptimizer<f32>}}\ optimizer(\{w,\ bias\},\ 0.005);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ TrainLoop;\ ++i)\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ optimizer.zeroGrad();}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ loss.\mbox{\hyperlink{classhahaha_1_1Tensor_a3d7a1bdf987014870e26110dbd80f2ec}{clear}}();}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}===================epoch\ "{}}\ +\ std::to\_string(i)}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{stringliteral}{"{}==================="{}});}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}w:\ "{}}\ +\ std::to\_string(w.\mbox{\hyperlink{classhahaha_1_1Tensor_a67cac5fcb3e9c271660547fb87e03d0c}{at}}(\{\})));}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}bias:\ "{}}\ +\ std::to\_string(bias.\mbox{\hyperlink{classhahaha_1_1Tensor_a67cac5fcb3e9c271660547fb87e03d0c}{at}}(\{\})));}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<f32>}}\ yPredict\ =\ w\ *\ xTensor\ +\ bias;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ loss\ =\ (yTensor\ -\/\ yPredict)}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .reshape(\{1,\ 100\})}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .matmul((yTensor\ -\/\ yPredict).reshape(\{100,\ 1\}));}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ loss.\mbox{\hyperlink{classhahaha_1_1Tensor_a68768381ff54a51167a64a05766cf179}{backward}}();}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}grad\ of\ \ \ \ w:\ "{}}\ +\ std::to\_string(w.\mbox{\hyperlink{classhahaha_1_1Tensor_ab20b813e7dc03dcd9a8799b90c78242a}{grad}}()-\/>at(\{\})));}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}grad\ of\ bias:\ "{}}\ +\ std::to\_string(bias.grad()-\/>at(\{\})));}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}grad\ of\ loss:\ "{}}\ +\ std::to\_string(loss.\mbox{\hyperlink{classhahaha_1_1Tensor_ab20b813e7dc03dcd9a8799b90c78242a}{grad}}()-\/>at(\{0,\ 0\})));}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ optimizer.step();}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}loss:\ "{}}\ +\ std::to\_string(loss.\mbox{\hyperlink{classhahaha_1_1Tensor_a67cac5fcb3e9c271660547fb87e03d0c}{at}}(\{0,\ 0\})));}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}}(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \}}
+
+\end{DoxyCode}

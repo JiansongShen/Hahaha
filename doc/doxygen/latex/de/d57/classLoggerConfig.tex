@@ -1,0 +1,233 @@
+\doxysection{Logger\+Config Class Reference}
+\hypertarget{classLoggerConfig}{}\label{classLoggerConfig}\index{LoggerConfig@{LoggerConfig}}
+
+
+Configuration settings for the \doxylink{classLogger}{Logger}.
+
+
+
+
+{\ttfamily \#include $<$Logger\+Config.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classLoggerConfig_a59bbb3ff1bed9a1f8b7e1dbad98e5072}{Logger\+Config}} (Log\+Color color=Default\+Color, Log\+Level level=Default\+Level, std\+::string\+\_\+view file=Default\+File)
+\begin{DoxyCompactList}\small\item\em Construct a \doxylink{classLoggerConfig}{Logger\+Config} with basic settings. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classLoggerConfig_a0550c4388b8e064d20eea4846bd41bf8}{Logger\+Config}} (Log\+Color color, Log\+Level level, std\+::string file, bool write\+To\+File, bool write\+To\+Console, bool time\+Enabled)
+\begin{DoxyCompactList}\small\item\em Construct a full \doxylink{classLoggerConfig}{Logger\+Config}. \end{DoxyCompactList}\item
+\Hypertarget{classLoggerConfig_a040ce1efc2c12d5ad7f94fabd0c692e9}\label{classLoggerConfig_a040ce1efc2c12d5ad7f94fabd0c692e9}
+{\bfseries Logger\+Config} (const \mbox{\hyperlink{classLoggerConfig}{Logger\+Config}} \&)=default
+\item
+\Hypertarget{classLoggerConfig_a69716f31b01af721b05d87fa6f39f254}\label{classLoggerConfig_a69716f31b01af721b05d87fa6f39f254}
+{\bfseries Logger\+Config} (\mbox{\hyperlink{classLoggerConfig}{Logger\+Config}} \&\&)=default
+\item
+\Hypertarget{classLoggerConfig_a8595b9003a569086b75a9c083a6c83ee}\label{classLoggerConfig_a8595b9003a569086b75a9c083a6c83ee}
+\mbox{\hyperlink{classLoggerConfig}{Logger\+Config}} \& {\bfseries operator=} (const \mbox{\hyperlink{classLoggerConfig}{Logger\+Config}} \&)=default
+\item
+\Hypertarget{classLoggerConfig_a943efd4096925fe5ea4ccf51433dcc47}\label{classLoggerConfig_a943efd4096925fe5ea4ccf51433dcc47}
+\mbox{\hyperlink{classLoggerConfig}{Logger\+Config}} \& {\bfseries operator=} (\mbox{\hyperlink{classLoggerConfig}{Logger\+Config}} \&\&)=default
+\item
+Log\+Color \mbox{\hyperlink{classLoggerConfig_ae4e22de93d248658ba76ec1957f25edc}{get\+Color}} () const
+\begin{DoxyCompactList}\small\item\em Get the default text color. \end{DoxyCompactList}\item
+Log\+Level \mbox{\hyperlink{classLoggerConfig_abc5e6c2297bbd951b05ca5bfcf6b3580}{get\+Level}} () const
+\begin{DoxyCompactList}\small\item\em Get the minimum log level. \end{DoxyCompactList}\item
+std\+::string\+\_\+view \mbox{\hyperlink{classLoggerConfig_a1d45e7dcfb26b002289a11cc4dc2ec9f}{get\+File}} () const
+\begin{DoxyCompactList}\small\item\em Get the log file path. \end{DoxyCompactList}\item
+bool \mbox{\hyperlink{classLoggerConfig_ab9d2372c2f72e81138f46e17b6642c5d}{is\+Write\+To\+File}} () const
+\begin{DoxyCompactList}\small\item\em Check if file logging is enabled. \end{DoxyCompactList}\item
+bool \mbox{\hyperlink{classLoggerConfig_a3ec2922c1ded785f4eee82e89eb331d5}{is\+Write\+To\+Console}} () const
+\begin{DoxyCompactList}\small\item\em Check if console logging is enabled. \end{DoxyCompactList}\item
+bool \mbox{\hyperlink{classLoggerConfig_a65ff210037050283e1604859fadd1214}{is\+Enable\+Time}} () const
+\begin{DoxyCompactList}\small\item\em Check if timestamp is enabled. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classLoggerConfig_a5122d03cbbfee5ee0e1c8b4fe66930b8}{set\+Color}} (Log\+Color color)
+\begin{DoxyCompactList}\small\item\em Set the default text color. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classLoggerConfig_ac7ac231fb38c35130539429dfe52f981}{set\+Level}} (Log\+Level level)
+\begin{DoxyCompactList}\small\item\em Set the minimum log level. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classLoggerConfig_aad26d6eb3ec6dcecd039b805b723f324}{set\+File}} (std\+::string\+\_\+view file)
+\begin{DoxyCompactList}\small\item\em Set the log file path. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Configuration settings for the \doxylink{classLogger}{Logger}.
+
+\label{doc-constructors}
+\Hypertarget{classLoggerConfig_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classLoggerConfig_a59bbb3ff1bed9a1f8b7e1dbad98e5072}\index{LoggerConfig@{LoggerConfig}!LoggerConfig@{LoggerConfig}}
+\index{LoggerConfig@{LoggerConfig}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{LoggerConfig()}{LoggerConfig()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classLoggerConfig_a59bbb3ff1bed9a1f8b7e1dbad98e5072}
+\mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_a59bbb3ff1bed9a1f8b7e1dbad98e5072}{hahaha\+::utils\+::\+Logger\+Config\+::\+Logger\+Config}} (\begin{DoxyParamCaption}\item[{Log\+Color}]{color}{ = {\ttfamily DefaultColor}, }\item[{Log\+Level}]{level}{ = {\ttfamily DefaultLevel}, }\item[{std\+::string\+\_\+view}]{file}{ = {\ttfamily DefaultFile}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct a \doxylink{classLoggerConfig}{Logger\+Config} with basic settings.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & Default text color. \\
+\hline
+{\em level} & Minimum log level to display. \\
+\hline
+{\em file} & Output log file path. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classLoggerConfig_a0550c4388b8e064d20eea4846bd41bf8}\index{LoggerConfig@{LoggerConfig}!LoggerConfig@{LoggerConfig}}
+\index{LoggerConfig@{LoggerConfig}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{LoggerConfig()}{LoggerConfig()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classLoggerConfig_a0550c4388b8e064d20eea4846bd41bf8}
+\mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_a59bbb3ff1bed9a1f8b7e1dbad98e5072}{hahaha\+::utils\+::\+Logger\+Config\+::\+Logger\+Config}} (\begin{DoxyParamCaption}\item[{Log\+Color}]{color}{, }\item[{Log\+Level}]{level}{, }\item[{std\+::string}]{file}{, }\item[{bool}]{write\+To\+File}{, }\item[{bool}]{write\+To\+Console}{, }\item[{bool}]{time\+Enabled}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a full \doxylink{classLoggerConfig}{Logger\+Config}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & Default text color. \\
+\hline
+{\em level} & Minimum log level. \\
+\hline
+{\em file} & Log file path. \\
+\hline
+{\em write\+To\+File} & Enable file logging. \\
+\hline
+{\em write\+To\+Console} & Enable console logging. \\
+\hline
+{\em time\+Enabled} & Enable timestamping. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{classLoggerConfig_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classLoggerConfig_ae4e22de93d248658ba76ec1957f25edc}\index{LoggerConfig@{LoggerConfig}!getColor@{getColor}}
+\index{getColor@{getColor}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{getColor()}{getColor()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_ae4e22de93d248658ba76ec1957f25edc}
+Log\+Color \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_ae4e22de93d248658ba76ec1957f25edc}{hahaha\+::utils\+::\+Logger\+Config\+::get\+Color}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the default text color.
+
+\begin{DoxyReturn}{Returns}
+Log\+Color The color setting.
+\end{DoxyReturn}
+\Hypertarget{classLoggerConfig_a1d45e7dcfb26b002289a11cc4dc2ec9f}\index{LoggerConfig@{LoggerConfig}!getFile@{getFile}}
+\index{getFile@{getFile}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{getFile()}{getFile()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_a1d45e7dcfb26b002289a11cc4dc2ec9f}
+std\+::string\+\_\+view \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_a1d45e7dcfb26b002289a11cc4dc2ec9f}{hahaha\+::utils\+::\+Logger\+Config\+::get\+File}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the log file path.
+
+\begin{DoxyReturn}{Returns}
+std\+::string\+\_\+view The file path.
+\end{DoxyReturn}
+\Hypertarget{classLoggerConfig_abc5e6c2297bbd951b05ca5bfcf6b3580}\index{LoggerConfig@{LoggerConfig}!getLevel@{getLevel}}
+\index{getLevel@{getLevel}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{getLevel()}{getLevel()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_abc5e6c2297bbd951b05ca5bfcf6b3580}
+Log\+Level \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_abc5e6c2297bbd951b05ca5bfcf6b3580}{hahaha\+::utils\+::\+Logger\+Config\+::get\+Level}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the minimum log level.
+
+\begin{DoxyReturn}{Returns}
+Log\+Level The log level.
+\end{DoxyReturn}
+\Hypertarget{classLoggerConfig_a65ff210037050283e1604859fadd1214}\index{LoggerConfig@{LoggerConfig}!isEnableTime@{isEnableTime}}
+\index{isEnableTime@{isEnableTime}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{isEnableTime()}{isEnableTime()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_a65ff210037050283e1604859fadd1214}
+bool \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_a65ff210037050283e1604859fadd1214}{hahaha\+::utils\+::\+Logger\+Config\+::is\+Enable\+Time}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Check if timestamp is enabled.
+
+\begin{DoxyReturn}{Returns}
+bool True if timestamp is enabled.
+\end{DoxyReturn}
+\Hypertarget{classLoggerConfig_a3ec2922c1ded785f4eee82e89eb331d5}\index{LoggerConfig@{LoggerConfig}!isWriteToConsole@{isWriteToConsole}}
+\index{isWriteToConsole@{isWriteToConsole}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{isWriteToConsole()}{isWriteToConsole()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_a3ec2922c1ded785f4eee82e89eb331d5}
+bool \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_a3ec2922c1ded785f4eee82e89eb331d5}{hahaha\+::utils\+::\+Logger\+Config\+::is\+Write\+To\+Console}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Check if console logging is enabled.
+
+\begin{DoxyReturn}{Returns}
+bool True if console logging is enabled.
+\end{DoxyReturn}
+\Hypertarget{classLoggerConfig_ab9d2372c2f72e81138f46e17b6642c5d}\index{LoggerConfig@{LoggerConfig}!isWriteToFile@{isWriteToFile}}
+\index{isWriteToFile@{isWriteToFile}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{isWriteToFile()}{isWriteToFile()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_ab9d2372c2f72e81138f46e17b6642c5d}
+bool \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_ab9d2372c2f72e81138f46e17b6642c5d}{hahaha\+::utils\+::\+Logger\+Config\+::is\+Write\+To\+File}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Check if file logging is enabled.
+
+\begin{DoxyReturn}{Returns}
+bool True if file logging is enabled.
+\end{DoxyReturn}
+\Hypertarget{classLoggerConfig_a5122d03cbbfee5ee0e1c8b4fe66930b8}\index{LoggerConfig@{LoggerConfig}!setColor@{setColor}}
+\index{setColor@{setColor}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{setColor()}{setColor()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_a5122d03cbbfee5ee0e1c8b4fe66930b8}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_a5122d03cbbfee5ee0e1c8b4fe66930b8}{hahaha\+::utils\+::\+Logger\+Config\+::set\+Color}} (\begin{DoxyParamCaption}\item[{Log\+Color}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the default text color.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & The new color. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classLoggerConfig_aad26d6eb3ec6dcecd039b805b723f324}\index{LoggerConfig@{LoggerConfig}!setFile@{setFile}}
+\index{setFile@{setFile}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{setFile()}{setFile()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_aad26d6eb3ec6dcecd039b805b723f324}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_aad26d6eb3ec6dcecd039b805b723f324}{hahaha\+::utils\+::\+Logger\+Config\+::set\+File}} (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{file}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the log file path.
+
+
+\begin{DoxyParams}{Parameters}
+{\em file} & The new file path. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classLoggerConfig_ac7ac231fb38c35130539429dfe52f981}\index{LoggerConfig@{LoggerConfig}!setLevel@{setLevel}}
+\index{setLevel@{setLevel}!LoggerConfig@{LoggerConfig}}
+\doxysubsubsection{\texorpdfstring{setLevel()}{setLevel()}}
+{\footnotesize\ttfamily \label{classLoggerConfig_ac7ac231fb38c35130539429dfe52f981}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1LoggerConfig_ac7ac231fb38c35130539429dfe52f981}{hahaha\+::utils\+::\+Logger\+Config\+::set\+Level}} (\begin{DoxyParamCaption}\item[{Log\+Level}]{level}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the minimum log level.
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & The new log level. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/utils/log/Logger\+Config.\+h\end{DoxyCompactItemize}

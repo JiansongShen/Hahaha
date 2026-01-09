@@ -1,0 +1,77 @@
+\doxysection{Device\+Buffer.\+h}
+\hypertarget{DeviceBuffer_8h_source}{}\label{DeviceBuffer_8h_source}\index{core/include/backend/gpu/DeviceBuffer.h@{core/include/backend/gpu/DeviceBuffer.h}}
+\mbox{\hyperlink{DeviceBuffer_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_BACKEND\_GPU\_DEVICE\_BUFFER\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HAHAHA\_BACKEND\_GPU\_DEVICE\_BUFFER\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1backend_1_1gpu}{hahaha::backend::gpu}}\ \{}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ Forward\ declaration}}
+\DoxyCodeLine{00028\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1GpuMemory}{GpuMemory}};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_ae92a98e1e01b35bc0d988176234dd594}{DeviceBuffer}}\ \{}
+\DoxyCodeLine{00038\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_ae92a98e1e01b35bc0d988176234dd594}{DeviceBuffer}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a79947d4ae16cbf266985704496050a90}{DeviceBuffer}}(std::uintptr\_t\ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a0aba7c408d2a4485857818d3521c67ad}{address}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a97da84be6e20dc9ab8f826d75edb5c39}{size}})}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ :\ address\_(\mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a0aba7c408d2a4485857818d3521c67ad}{address}}),\ size\_(\mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a97da84be6e20dc9ab8f826d75edb5c39}{size}})\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a538984186335f089f232405ad2bda8aa}{\string~DeviceBuffer}}()\ noexcept;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00062\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_ae92a98e1e01b35bc0d988176234dd594}{DeviceBuffer}}(const\ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_ae92a98e1e01b35bc0d988176234dd594}{DeviceBuffer}}\&)\ =\ delete;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_ae92a98e1e01b35bc0d988176234dd594}{DeviceBuffer}}\&\ operator=(const\ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_ae92a98e1e01b35bc0d988176234dd594}{DeviceBuffer}}\&)\ =\ delete;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_ae92a98e1e01b35bc0d988176234dd594}{DeviceBuffer}}(\mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_ae92a98e1e01b35bc0d988176234dd594}{DeviceBuffer}}\&\&\ other)\ noexcept}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ :\ address\_(other.address\_),\ size\_(other.size\_)\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ other.address\_\ =\ 0;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ other.size\_\ =\ 0;}
+\DoxyCodeLine{00078\ \ \ \ \ \}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00087\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer}{DeviceBuffer}}\&\ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a1930d901ef258f270870a32b02da2a90}{operator=}}(\mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer}{DeviceBuffer}}\&\&\ other)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00093\ \ \ \ \ [[nodiscard]]\ std::uintptr\_t\ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a0aba7c408d2a4485857818d3521c67ad}{address}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ address\_;}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00101\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a97da84be6e20dc9ab8f826d75edb5c39}{size}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ size\_;}
+\DoxyCodeLine{00103\ \ \ \ \ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00106\ \ \ \ \ std::uintptr\_t\ address\_\ =\ 0;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size\_\ =\ 0;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{//\ GpuMemory\ needs\ to\ be\ able\ to\ create\ DeviceBuffer\ instances\ and\ access}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//\ private\ members}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1DeviceBuffer_a67dd15289b8205268c666bc48b238d03}{GpuMemory}};}
+\DoxyCodeLine{00112\ \};}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \}\ \textcolor{comment}{//\ namespace\ hahaha::backend::gpu}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_BACKEND\_GPU\_DEVICE\_BUFFER\_H}}
+
+\end{DoxyCode}

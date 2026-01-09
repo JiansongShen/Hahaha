@@ -1,0 +1,27 @@
+var HelperStruct_8h =
+[
+    [ "hahaha::utils::isInitList&lt; T &gt;", "db/d8b/structhahaha_1_1utils_1_1isInitList.html", null ],
+    [ "hahaha::utils::isInitList&lt; std::initializer_list&lt; T &gt; &gt;", "d8/da4/structhahaha_1_1utils_1_1isInitList_3_01std_1_1initializer__list_3_01T_01_4_01_4.html", null ],
+    [ "hahaha::utils::isNestedInitList&lt; T &gt;", "db/dcb/structhahaha_1_1utils_1_1isNestedInitList.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; T &gt;", "df/dc9/structhahaha_1_1utils_1_1isLegalDataType.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; u8 &gt;", "d0/d72/structhahaha_1_1utils_1_1isLegalDataType_3_01u8_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; i8 &gt;", "d5/d61/structhahaha_1_1utils_1_1isLegalDataType_3_01i8_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; u16 &gt;", "df/d3d/structhahaha_1_1utils_1_1isLegalDataType_3_01u16_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; i16 &gt;", "df/dd7/structhahaha_1_1utils_1_1isLegalDataType_3_01i16_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; u32 &gt;", "d8/df9/structhahaha_1_1utils_1_1isLegalDataType_3_01u32_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; i32 &gt;", "d0/db3/structhahaha_1_1utils_1_1isLegalDataType_3_01i32_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; i64 &gt;", "d3/dc8/structhahaha_1_1utils_1_1isLegalDataType_3_01i64_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; u64 &gt;", "da/d9f/structhahaha_1_1utils_1_1isLegalDataType_3_01u64_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; f32 &gt;", "dd/d8d/structhahaha_1_1utils_1_1isLegalDataType_3_01f32_01_4.html", null ],
+    [ "hahaha::utils::isLegalDataType&lt; f64 &gt;", "dc/d1d/structhahaha_1_1utils_1_1isLegalDataType_3_01f64_01_4.html", null ],
+    [ "hahaha::utils::f32", "d7/d69/namespacehahaha_1_1utils.html#aee7c7d994dc89c4ce16bef208f5ff591", null ],
+    [ "hahaha::utils::f64", "d7/d69/namespacehahaha_1_1utils.html#ace0bb4b89f09bbade505d8d8220ab13f", null ],
+    [ "hahaha::utils::i16", "d7/d69/namespacehahaha_1_1utils.html#a4d2732cd882b9715b5011b6b2f00de85", null ],
+    [ "hahaha::utils::i32", "d7/d69/namespacehahaha_1_1utils.html#a1856c4297465f2368e62c5575cc176a4", null ],
+    [ "hahaha::utils::i64", "d7/d69/namespacehahaha_1_1utils.html#a2088db6cbdcf20a758d87fb1fff07518", null ],
+    [ "hahaha::utils::i8", "d7/d69/namespacehahaha_1_1utils.html#a0613cbcf9579f3aa6f788cc213db82cc", null ],
+    [ "hahaha::utils::u16", "d7/d69/namespacehahaha_1_1utils.html#a25f9d4e91bfbb2ef0e15d3304559e0e4", null ],
+    [ "hahaha::utils::u32", "d7/d69/namespacehahaha_1_1utils.html#aa5e46aa7bdd79c20560efb51ff87cabf", null ],
+    [ "hahaha::utils::u64", "d7/d69/namespacehahaha_1_1utils.html#a8b6e37d605ca4701c446a9a3d9a4fa83", null ],
+    [ "hahaha::utils::u8", "d7/d69/namespacehahaha_1_1utils.html#a805c4353ad25f3b3393cc81e39c6223c", null ]
+];

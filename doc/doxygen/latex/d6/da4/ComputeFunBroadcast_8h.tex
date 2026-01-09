@@ -1,0 +1,31 @@
+\doxysection{core/include/ml/compute/graph/compute\+\_\+funs/\+Compute\+Fun\+Broadcast.h File Reference}
+\hypertarget{ComputeFunBroadcast_8h}{}\label{ComputeFunBroadcast_8h}\index{core/include/ml/compute/graph/compute\_funs/ComputeFunBroadcast.h@{core/include/ml/compute/graph/compute\_funs/ComputeFunBroadcast.h}}
+{\ttfamily \#include "{}math/\+Tensor\+Wrapper.\+h"{}}\newline
+{\ttfamily \#include "{}ml/compute/graph/\+Compute\+Node.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item
+class \mbox{\hyperlink{classhahaha_1_1compute_1_1TensorShape}{hahaha\+::compute\+::\+Tensor\+Shape}}
+\begin{DoxyCompactList}\small\item\em Represents the shape (dimensions) of a tensor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item
+namespace \mbox{\hyperlink{namespacehahaha}{hahaha}}
+\item
+namespace \mbox{\hyperlink{namespacehahaha_1_1compute}{hahaha\+::compute}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item
+{\footnotesize template$<$typename T$>$ }\\void \mbox{\hyperlink{namespacehahaha_1_1compute_ae0796926bcd32642d21418b6f925231e}{hahaha\+::compute\+::check\+Tensor\+Can\+Broadcast\+To}} (const std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ \&source\+Node, const std\+::vector$<$ size\+\_\+t $>$ \&target\+Tensor\+Shape)
+\begin{DoxyCompactList}\small\item\em Validate that {\ttfamily source\+Node} can be broadcast to {\ttfamily target\+Tensor\+Shape}. \end{DoxyCompactList}\item
+{\footnotesize template$<$typename T$>$ }\\std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ \mbox{\hyperlink{namespacehahaha_1_1compute_a5aaae1e7d55523fa72eb102ff5aba441}{hahaha\+::compute\+::broadcast}} (const std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ \&source\+Node, const std\+::vector$<$ size\+\_\+t $>$ \&target\+Tensor\+Shape)
+\begin{DoxyCompactList}\small\item\em Broadcast a node to a target shape (view semantics). \end{DoxyCompactList}\item
+{\footnotesize template$<$typename T$>$ }\\std\+::pair$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ $>$ \mbox{\hyperlink{namespacehahaha_1_1compute_a5e8e2e590fc634faeb83381fa32b6ed9}{hahaha\+::compute\+::broadcast\+Nodes}} (const std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ \&lhs, const std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ \&rhs)
+\begin{DoxyCompactList}\small\item\em Broadcast two nodes to a common compatible shape if needed. \end{DoxyCompactList}\item
+{\footnotesize template$<$typename T$>$ }\\std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ \mbox{\hyperlink{namespacehahaha_1_1compute_af29c1a118d6177a3de43fcaad5b03b7e}{hahaha\+::compute\+::broadcast}} (const T \&lhs\+Scalar, const std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ \&rhs)
+\item
+{\footnotesize template$<$typename T$>$ }\\void \mbox{\hyperlink{namespacehahaha_1_1compute_ad155ce1e3424413da470b506627acc58}{hahaha\+::compute\+::broadcast\+Node\+Stride\+Rebuild}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{Compute\+Node}}$<$ T $>$ $>$ b\+Lhs, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{math\+::\+Tensor\+Wrapper}}$<$ T $>$ $>$ res\+Data)
+\item
+{\footnotesize template$<$typename T$>$ }\\void \mbox{\hyperlink{namespacehahaha_1_1compute_ac1b085a23104aede460ba4f1d54bd786}{hahaha\+::compute\+::broadcast\+Node\+Stride\+Rebuild}} (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{math\+::\+Tensor\+Wrapper}}$<$ T $>$ \&res\+Data)
+\end{DoxyCompactItemize}

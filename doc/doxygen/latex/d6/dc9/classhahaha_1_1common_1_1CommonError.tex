@@ -1,0 +1,162 @@
+\doxysection{hahaha\+::common\+::Common\+Error Class Reference}
+\hypertarget{classhahaha_1_1common_1_1CommonError}{}\label{classhahaha_1_1common_1_1CommonError}\index{hahaha::common::CommonError@{hahaha::common::CommonError}}
+
+
+Common error type using CRTP pattern.
+
+
+
+
+{\ttfamily \#include $<$Common\+Error.\+h$>$}
+
+Inheritance diagram for hahaha\+::common\+::Common\+Error\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d6/dc9/classhahaha_1_1common_1_1CommonError}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a90f1ddc739936838db5f44bc8f78fb57}{Common\+Error}} ()=default
+\item
+\mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a338e39fac4d0eb25abfba9f0e2bb5360}{Common\+Error}} (std\+::string \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a0f0d41f03cb2a55d59ce62ec384f6b4f}{message}}, const std\+::source\+\_\+location \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a3f6972180809a6d69336917fd3684642}{location}}=std\+::source\+\_\+location\+::current())
+\item
+std\+::string \mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a649480301034897de1824e8d1fec94ae}{get\+Location}} () const
+\begin{DoxyCompactList}\small\item\em Get the location where the error occurred. \end{DoxyCompactList}\item
+std\+::string \mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_af983edc281e5394c777e5dbf45891920}{get\+Message}} () const
+\begin{DoxyCompactList}\small\item\em Get the error message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase}{hahaha\+::common\+::\+Error\+Base$<$ Common\+Error, Error\+Code\+::\+Basic\+Error $>$}}}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a2acab3fea4c41e1a458fe18e01d6caa8}{Error\+Base}} ()=default
+\begin{DoxyCompactList}\small\item\em Default constructor for \doxylink{classhahaha_1_1common_1_1ErrorBase}{Error\+Base}. \end{DoxyCompactList}\item
+std\+::string \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_af983edc281e5394c777e5dbf45891920}{get\+Message}} () const
+\begin{DoxyCompactList}\small\item\em Get the error message. \end{DoxyCompactList}\item
+std\+::string \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a649480301034897de1824e8d1fec94ae}{get\+Location}} () const
+\begin{DoxyCompactList}\small\item\em Get the location where the error occurred. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+static constexpr \mbox{\hyperlink{namespacehahaha_1_1common_a48d69aea52b61b4f9cb027b8eedccd16}{Error\+Code}} \mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_ab650333150f54a812b33a265827545b4}{get\+Code}} ()
+\begin{DoxyCompactList}\small\item\em Get the error code associated with this error type. \end{DoxyCompactList}\item
+static constexpr const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_ae101e71da7cff2c0ce25d886e2a513e2}{get\+Error\+Name}} ()
+\begin{DoxyCompactList}\small\item\em Get the error name from the derived class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions inherited from \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase}{hahaha\+::common\+::\+Error\+Base$<$ Common\+Error, Error\+Code\+::\+Basic\+Error $>$}}}
+\begin{DoxyCompactItemize}
+\item
+static constexpr \mbox{\hyperlink{namespacehahaha_1_1common_a48d69aea52b61b4f9cb027b8eedccd16}{Error\+Code}} \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_ab650333150f54a812b33a265827545b4}{get\+Code}} ()
+\begin{DoxyCompactList}\small\item\em Get the error code associated with this error type. \end{DoxyCompactList}\item
+static constexpr const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_ae101e71da7cff2c0ce25d886e2a513e2}{get\+Error\+Name}} ()
+\begin{DoxyCompactList}\small\item\em Get the error name from the derived class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item
+static constexpr auto \mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a49aa99ea85f4ef80e851347a9fd8550d}{Error\+Name}} = "{}Common\+Error"{}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes inherited from \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase}{hahaha\+::common\+::\+Error\+Base$<$ Common\+Error, Error\+Code\+::\+Basic\+Error $>$}}}
+\begin{DoxyCompactItemize}
+\item
+static constexpr \mbox{\hyperlink{namespacehahaha_1_1common_a48d69aea52b61b4f9cb027b8eedccd16}{Error\+Code}} \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_ad7ad8d756f259d8c41ad993888471030}{Code}}
+\begin{DoxyCompactList}\small\item\em The error code associated with this error type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase}{hahaha\+::common\+::\+Error\+Base$<$ Common\+Error, Error\+Code\+::\+Basic\+Error $>$}}}
+\begin{DoxyCompactItemize}
+\item
+std\+::string \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a0f0d41f03cb2a55d59ce62ec384f6b4f}{message}}
+\begin{DoxyCompactList}\small\item\em The error message. \end{DoxyCompactList}\item
+std\+::source\+\_\+location \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a3f6972180809a6d69336917fd3684642}{location}}
+\begin{DoxyCompactList}\small\item\em The source location where the error occurred. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Common error type using CRTP pattern.
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_a90f1ddc739936838db5f44bc8f78fb57}\index{hahaha::common::CommonError@{hahaha::common::CommonError}!CommonError@{CommonError}}
+\index{CommonError@{CommonError}!hahaha::common::CommonError@{hahaha::common::CommonError}}
+\doxysubsubsection{\texorpdfstring{CommonError()}{CommonError()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1common_1_1CommonError_a90f1ddc739936838db5f44bc8f78fb57}
+hahaha\+::common\+::\+Common\+Error\+::\+Common\+Error (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\Hypertarget{classhahaha_1_1common_1_1CommonError_a338e39fac4d0eb25abfba9f0e2bb5360}\index{hahaha::common::CommonError@{hahaha::common::CommonError}!CommonError@{CommonError}}
+\index{CommonError@{CommonError}!hahaha::common::CommonError@{hahaha::common::CommonError}}
+\doxysubsubsection{\texorpdfstring{CommonError()}{CommonError()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1common_1_1CommonError_a338e39fac4d0eb25abfba9f0e2bb5360}
+hahaha\+::common\+::\+Common\+Error\+::\+Common\+Error (\begin{DoxyParamCaption}\item[{std\+::string}]{message}{, }\item[{const std\+::source\+\_\+location}]{location}{ = {\ttfamily std\+:\+:source\+\_\+location\+:\+:current()}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_ab650333150f54a812b33a265827545b4}\index{hahaha::common::CommonError@{hahaha::common::CommonError}!getCode@{getCode}}
+\index{getCode@{getCode}!hahaha::common::CommonError@{hahaha::common::CommonError}}
+\doxysubsubsection{\texorpdfstring{getCode()}{getCode()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1common_1_1CommonError_ab650333150f54a812b33a265827545b4}
+constexpr \mbox{\hyperlink{namespacehahaha_1_1common_a48d69aea52b61b4f9cb027b8eedccd16}{Error\+Code}} \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase}{hahaha\+::common\+::\+Error\+Base}}$<$ Derived, code $>$\+::get\+Code (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Get the error code associated with this error type.
+
+\begin{DoxyReturn}{Returns}
+constexpr \doxylink{namespacehahaha_1_1common_a48d69aea52b61b4f9cb027b8eedccd16}{Error\+Code} The error code
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_ae101e71da7cff2c0ce25d886e2a513e2}\index{hahaha::common::CommonError@{hahaha::common::CommonError}!getErrorName@{getErrorName}}
+\index{getErrorName@{getErrorName}!hahaha::common::CommonError@{hahaha::common::CommonError}}
+\doxysubsubsection{\texorpdfstring{getErrorName()}{getErrorName()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1common_1_1CommonError_ae101e71da7cff2c0ce25d886e2a513e2}
+constexpr const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase}{hahaha\+::common\+::\+Error\+Base}}$<$ Derived, code $>$\+::get\+Error\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Get the error name from the derived class.
+
+\begin{DoxyReturn}{Returns}
+The error name string
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_a649480301034897de1824e8d1fec94ae}\index{hahaha::common::CommonError@{hahaha::common::CommonError}!getLocation@{getLocation}}
+\index{getLocation@{getLocation}!hahaha::common::CommonError@{hahaha::common::CommonError}}
+\doxysubsubsection{\texorpdfstring{getLocation()}{getLocation()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1common_1_1CommonError_a649480301034897de1824e8d1fec94ae}
+std\+::string \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase}{hahaha\+::common\+::\+Error\+Base}}$<$ Derived, code $>$\+::get\+Location (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the location where the error occurred.
+
+\begin{DoxyReturn}{Returns}
+std\+::string The location in format "{}filename\+:line\+\_\+number"{}
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_af983edc281e5394c777e5dbf45891920}\index{hahaha::common::CommonError@{hahaha::common::CommonError}!getMessage@{getMessage}}
+\index{getMessage@{getMessage}!hahaha::common::CommonError@{hahaha::common::CommonError}}
+\doxysubsubsection{\texorpdfstring{getMessage()}{getMessage()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1common_1_1CommonError_af983edc281e5394c777e5dbf45891920}
+std\+::string \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase}{hahaha\+::common\+::\+Error\+Base}}$<$ Derived, code $>$\+::get\+Message (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the error message.
+
+\begin{DoxyReturn}{Returns}
+std\+::string The error message
+\end{DoxyReturn}
+
+
+\label{doc-variable-members}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classhahaha_1_1common_1_1CommonError_a49aa99ea85f4ef80e851347a9fd8550d}\index{hahaha::common::CommonError@{hahaha::common::CommonError}!ErrorName@{ErrorName}}
+\index{ErrorName@{ErrorName}!hahaha::common::CommonError@{hahaha::common::CommonError}}
+\doxysubsubsection{\texorpdfstring{ErrorName}{ErrorName}}
+{\footnotesize\ttfamily \label{classhahaha_1_1common_1_1CommonError_a49aa99ea85f4ef80e851347a9fd8550d}
+auto hahaha\+::common\+::\+Common\+Error\+::\+Error\+Name = "{}Common\+Error"{}\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/common/errors/\mbox{\hyperlink{CommonError_8h}{Common\+Error.\+h}}\end{DoxyCompactItemize}

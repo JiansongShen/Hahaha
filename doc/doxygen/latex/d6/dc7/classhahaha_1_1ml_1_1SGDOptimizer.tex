@@ -1,0 +1,96 @@
+\doxysection{hahaha\+::ml\+::SGDOptimizer\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classhahaha_1_1ml_1_1SGDOptimizer}{}\label{classhahaha_1_1ml_1_1SGDOptimizer}\index{hahaha::ml::SGDOptimizer$<$ T $>$@{hahaha::ml::SGDOptimizer$<$ T $>$}}
+
+
+{\ttfamily \#include $<$SGDOptimizer.\+h$>$}
+
+Inheritance diagram for hahaha\+::ml\+::SGDOptimizer\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d6/dc7/classhahaha_1_1ml_1_1SGDOptimizer}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1ml_1_1SGDOptimizer_a25dd700ba4ba52c15c49f4077db3e54c}{SGDOptimizer}} (std\+::vector$<$ \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ $>$ parameters, T learning\+Rate)
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{classhahaha_1_1ml_1_1SGDOptimizer}{SGDOptimizer}. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1SGDOptimizer_a8baae90e30cbcbe137a9b4973fd33adf}{step}} () override
+\begin{DoxyCompactList}\small\item\em Performs parameter updates using SGD logic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer}{hahaha\+::ml\+::\+Optimizer$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}} (std\+::vector$<$ \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ $>$ parameters, T learning\+Rate)
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{classhahaha_1_1ml_1_1Optimizer}{Optimizer}. \end{DoxyCompactList}\item
+virtual \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a75d9062e282ea1e6c38920e39ef9b293}{\texorpdfstring{$\sim$}{\string~}\+Optimizer}} ()=default
+\item
+\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_abcee57a4e2e5f7bf5f73e8c46d404170}{Optimizer}} (const Optimizer \&)=default
+\item
+\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}} \& \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a337e199f22a67cfd78927da987037bf8}{operator=}} (const \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}} \&)=default
+\item
+\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a1fcfe42d6301f0e483012ae2f7dffe28}{Optimizer}} (Optimizer \&\&) noexcept=default
+\item
+\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}} \& \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a21ce8f04d531e0a103f958e1efb36ee2}{operator=}} (\mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_ab8906d5e7b126b7db024633d3506e188}{Optimizer}} \&\&) noexcept=default
+\item
+virtual void \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_aebdc0f364dff09b5ade7cdad9ed744e5}{zero\+Grad}} ()
+\begin{DoxyCompactList}\small\item\em Resets the gradients of all optimized parameters to zero. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a17f458080574480c7417335339843593}{set\+Learning\+Rate}} (T learning\+Rate)
+\begin{DoxyCompactList}\small\item\em Sets a new learning rate. \end{DoxyCompactList}\item
+T \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a01b228a6b97ccdd54d897bd1e2921a80}{get\+Learning\+Rate}} () const
+\begin{DoxyCompactList}\small\item\em Gets the current learning rate. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a9eaf941f5ee352d2dfbc9dfd68b90f81}{add\+Parameter}} (const \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ \&param)
+\begin{DoxyCompactList}\small\item\em Adds a parameter to the optimizer\textquotesingle{}s tracking list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer}{hahaha\+::ml\+::\+Optimizer$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item
+std\+::vector$<$ \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ $>$ \& \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a02c1974133e5a901064f9ad4f1aba33a}{get\+Parameters}} ()
+\begin{DoxyCompactList}\small\item\em Gets the list of parameters (for subclasses). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1ml_1_1SGDOptimizer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1ml_1_1SGDOptimizer_a25dd700ba4ba52c15c49f4077db3e54c}\index{hahaha::ml::SGDOptimizer$<$ T $>$@{hahaha::ml::SGDOptimizer$<$ T $>$}!SGDOptimizer@{SGDOptimizer}}
+\index{SGDOptimizer@{SGDOptimizer}!hahaha::ml::SGDOptimizer$<$ T $>$@{hahaha::ml::SGDOptimizer$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{SGDOptimizer()}{SGDOptimizer()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1SGDOptimizer_a25dd700ba4ba52c15c49f4077db3e54c}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1ml_1_1SGDOptimizer}{hahaha\+::ml\+::\+SGDOptimizer}}$<$ T $>$\+::\+SGDOptimizer (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ $>$}]{parameters}{, }\item[{T}]{learning\+Rate}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a new \doxylink{classhahaha_1_1ml_1_1SGDOptimizer}{SGDOptimizer}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & List of tensors to optimize. \\
+\hline
+{\em learning\+Rate} & Learning rate. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1ml_1_1SGDOptimizer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1ml_1_1SGDOptimizer_a8baae90e30cbcbe137a9b4973fd33adf}\index{hahaha::ml::SGDOptimizer$<$ T $>$@{hahaha::ml::SGDOptimizer$<$ T $>$}!step@{step}}
+\index{step@{step}!hahaha::ml::SGDOptimizer$<$ T $>$@{hahaha::ml::SGDOptimizer$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1SGDOptimizer_a8baae90e30cbcbe137a9b4973fd33adf}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1SGDOptimizer}{hahaha\+::ml\+::\+SGDOptimizer}}$<$ T $>$\+::step (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Performs parameter updates using SGD logic.
+
+Iterates through all tracked parameters that require gradients and performs the in-\/place subtraction of the scaled gradient\+: theta = theta -\/ learning\+Rate \texorpdfstring{$\ast$}{*} gradient
+
+Implements \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer_a4e0b41bcdf049ff6bcee9aec6e736987}{hahaha\+::ml\+::\+Optimizer$<$ T $>$}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/ml/optimizer/\mbox{\hyperlink{SGDOptimizer_8h}{SGDOptimizer.\+h}}\end{DoxyCompactItemize}

@@ -1,0 +1,84 @@
+\doxysection{Helper\+Struct.\+h}
+\hypertarget{HelperStruct_8h_source}{}\label{HelperStruct_8h_source}\index{core/include/utils/common/HelperStruct.h@{core/include/utils/common/HelperStruct.h}}
+\mbox{\hyperlink{HelperStruct_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_UTILS\_COMMON\_HELPER\_STRUCT\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HAHAHA\_UTILS\_COMMON\_HELPER\_STRUCT\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <initializer\_list>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <type\_traits>}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{definitions_8h}{common/definitions.h}}"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1utils}{hahaha::utils}}\ \{}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_aee7c7d994dc89c4ce16bef208f5ff591}{hahaha::common::f32}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_ace0bb4b89f09bbade505d8d8220ab13f}{hahaha::common::f64}};}
+\DoxyCodeLine{00031\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_a4d2732cd882b9715b5011b6b2f00de85}{hahaha::common::i16}};}
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_a1856c4297465f2368e62c5575cc176a4}{hahaha::common::i32}};}
+\DoxyCodeLine{00033\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_a2088db6cbdcf20a758d87fb1fff07518}{hahaha::common::i64}};}
+\DoxyCodeLine{00034\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_a0613cbcf9579f3aa6f788cc213db82cc}{hahaha::common::i8}};}
+\DoxyCodeLine{00035\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_a25f9d4e91bfbb2ef0e15d3304559e0e4}{hahaha::common::u16}};}
+\DoxyCodeLine{00036\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_aa5e46aa7bdd79c20560efb51ff87cabf}{hahaha::common::u32}};}
+\DoxyCodeLine{00037\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_a8b6e37d605ca4701c446a9a3d9a4fa83}{hahaha::common::u64}};}
+\DoxyCodeLine{00038\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacehahaha_1_1common_a805c4353ad25f3b3393cc81e39c6223c}{hahaha::common::u8}};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isInitList}{isInitList}}\ :\ std::false\_type\ \{\};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00048\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isInitList}{isInitList}}<std::initializer\_list<T>>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00056\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isNestedInitList}{isNestedInitList}}}
+\DoxyCodeLine{00057\ \ \ \ \ :\ std::integral\_constant<}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ bool,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ isInitList<T>::value\ \&\&\ \textcolor{comment}{//\ is\ an\ initializer\ list}}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isInitList<typename\ T::value\_type>::value>\ \textcolor{comment}{//\ check\ if\ element\ is}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ also\ a\ list}}
+\DoxyCodeLine{00062\ \{\};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}\ :\ std::false\_type\ \{\};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_a805c4353ad25f3b3393cc81e39c6223c}{u8}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_a0613cbcf9579f3aa6f788cc213db82cc}{i8}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00078\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_a25f9d4e91bfbb2ef0e15d3304559e0e4}{u16}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_a4d2732cd882b9715b5011b6b2f00de85}{i16}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_aa5e46aa7bdd79c20560efb51ff87cabf}{u32}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00087\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_a1856c4297465f2368e62c5575cc176a4}{i32}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00090\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_a2088db6cbdcf20a758d87fb1fff07518}{i64}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00093\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_a8b6e37d605ca4701c446a9a3d9a4fa83}{u64}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00096\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_aee7c7d994dc89c4ce16bef208f5ff591}{f32}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{template}\ <>\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{isLegalDataType}}<\mbox{\hyperlink{namespacehahaha_1_1common_ace0bb4b89f09bbade505d8d8220ab13f}{f64}}>\ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \}\ \textcolor{comment}{//\ namespace\ hahaha::utils}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_UTILS\_COMMON\_HELPER\_STRUCT\_H}}
+
+\end{DoxyCode}
