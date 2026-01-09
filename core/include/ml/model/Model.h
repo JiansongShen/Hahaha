@@ -21,7 +21,7 @@
 #define HAHAHA_MODEL_H_CC9C6DBC3C23404399CA13FD2F70E408
 #include <vector>
 
-#include "Tensor.h"
+#include "../../public/Tensor.h"
 #include "ml/Parameters.h"
 
 namespace hahaha::ml {

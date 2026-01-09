@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Tensor.h"
+#include "../../../../core/include/public/Tensor.h"
 
 using namespace hahaha;
 using namespace hahaha::ml;

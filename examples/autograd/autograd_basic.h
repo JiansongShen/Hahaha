@@ -16,10 +16,9 @@
 // jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 
-
 #pragma once
 
-#include "Tensor.h"
+#include "../../core/include/public/Tensor.h"
 
 void auto_grad_add_example() {
 
@@ -59,6 +58,6 @@ void auto_grad_matmul_example() {
     hahaha::Tensor<hahaha::common::u32> t1({{1, 2}, {3, 4}});
     hahaha::Tensor<hahaha::common::u32> t2({{1, 2}, {3, 4}});
 
-    auto t3 = t1 .matmul(t2);
+    auto t3 = t1.matmul(t2);
     t3.backward();
 }
