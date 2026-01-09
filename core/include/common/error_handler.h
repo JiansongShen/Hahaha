@@ -23,8 +23,6 @@
 #include <expected>
 
 // Include all error types
-// ReSharper disable once CppUnusedIncludeDirective
-#include "common/errors/CommonError.h"
 #include "common/errors/Error.h"
 // ReSharper disable once CppUnusedIncludeDirective
 #include "common/errors/ErrorCode.h"

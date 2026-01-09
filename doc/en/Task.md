@@ -98,7 +98,7 @@ Provides computational graph-based automatic differentiation and neural network 
 ## 4. Backend & Optimization
 
 - [x] **Device Framework**
-    - [x] `DeviceComputeDispatcher`: Task dispatcher.
+    - [x] `DeviceComputeDispatcher`: Computation dispatch functions.
     - [x] `Device` object management.
 - [ ] **SIMD Acceleration**
     - [ ] AVX2 / AVX-512 (Intel/AMD).

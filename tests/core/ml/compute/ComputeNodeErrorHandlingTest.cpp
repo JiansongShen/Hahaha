@@ -17,8 +17,8 @@
 
 #include <gtest/gtest.h>
 
-#include "Tensor.h"
 #include "common/definitions.h"
+#include "public/Tensor.h"
 
 using hahaha::Tensor;
 using hahaha::common::f32;
