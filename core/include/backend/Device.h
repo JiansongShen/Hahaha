@@ -28,10 +28,11 @@ namespace hahaha::backend {
  * @brief Types of devices supported for computation.
  */
 enum class DeviceType : std::uint8_t {
-    CPU, /**< Standard Central Processing Unit. */
-    GPU, /**< Graphics Processing Unit. */
-    SIMD /**< Single Instruction, Multiple Data (vectorized CPU instructions).
-          */
+    CPU,  /**< Standard Central Processing Unit. */
+    GPU,  /**< Graphics Processing Unit. */
+    CUDA, /**< NVIDIA CUDA Device. */
+    SIMD  /**< Single Instruction, Multiple Data (vectorized CPU instructions).
+           */
 };
 
 /**
@@ -73,6 +74,9 @@ struct alignas(2) Device {
             break;
         case DeviceType::GPU:
             deviceName = "GPU";
+            break;
+        case DeviceType::CUDA:
+            deviceName = "CUDA";
             break;
         case DeviceType::SIMD:
             deviceName = "SIMD";
