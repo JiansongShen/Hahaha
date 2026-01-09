@@ -21,7 +21,7 @@
 #include <random>
 #include <vector>
 
-#include "Tensor.h"
+#include "../../core/include/public/Tensor.h"
 #include "common/definitions.h"
 #include "ml/optimizer/SGDOptimizer.h"
 #include "utils/log/Logger.h"
