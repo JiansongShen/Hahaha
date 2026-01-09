@@ -24,15 +24,33 @@ loops, together with **visualization tooling** so learners can *see* what happen
 
 ## Build and run
 
-### Prerequisites
+### 1. One-Click Environment Setup (Recommended)
 
-- C++ compiler with C++23 support (GCC/Clang)
-- Meson and Ninja
-- GoogleTest (Meson can find it as a system dependency)
-- Optional for visualization demos: GLFW + OpenGL
-- Optional for container workflow: Docker
+We provide a Python script to automatically set up the complete development environment.
 
-### Build (native)
+```bash
+python3 dev/setup_dev_env.py
+```
+
+**What this script does:**
+- 📦 **Installs System Dependencies**: Automatically detects your package manager (`apt` for Debian/Ubuntu, `pacman` for Arch Linux) and installs compilers, build tools, and graphics libraries.
+- 🔧 **Sets up Build Tools**: Installs or configures **Meson**, **Ninja**, and **Python** tools.
+- ⚓ **Configures Git Hooks**: Sets up **pre-commit** to ensure code quality before you commit.
+- 📥 **Manages Dependencies**: Downloads necessary subprojects like **GoogleTest** and **ImGui**.
+- ✅ **Verifies Installation**: Checks that all required tools are present and correctly configured.
+
+### 2. Manual Prerequisites (If not using the script)
+
+If you prefer to set up manually or use a different OS:
+
+- **Compiler**: C++23 compliant (GCC 13+ or Clang 16+)
+- **Build System**: [Meson](https://mesonbuild.com/) and [Ninja](https://ninja-build.org/)
+- **Libraries**:
+  - `libglfw3-dev`, `libgl1-mesa-dev` (for visualization)
+  - `googletest` (handled by Meson)
+- **Tools**: `git`, `python3`, `pre-commit`
+
+### 3. Build (native)
 
 ```bash
 meson setup builddir --buildtype=debug
@@ -40,7 +58,7 @@ meson compile -C builddir
 meson test -C builddir -v
 ```
 
-### Run examples
+### 4. Run examples
 
 After building, you can run:
 
@@ -97,6 +115,8 @@ Contributions are welcome! Please follow these guidelines:
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a pull request
+
+refer to [how-to-contribute](https://github.com/JiansongShen/HahahaDevDocument/blob/main/src/en/developers/how-to-contribute.md)
 
 Please ensure your code follows the project's coding standards by running `python3 dev/format.py` before submitting.
 
