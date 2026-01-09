@@ -98,7 +98,7 @@ Hahaha 项目旨在构建一个集数学计算（类似 NumPy）、机器学习�
 ## 4. 后端与性能加速 (Backend & Optimization)
 
 - [x] **多设备框架 (Device Framework)**
-    - [x] `DeviceComputeDispatcher`: 任务分发器。
+    - [x] `DeviceComputeDispatcher`: 计算分发函数。
     - [x] `Device` 对象管理。
 - [ ] **SIMD 向量化 (SIMD Acceleration)**
     - [ ] AVX2 / AVX-512 (Intel/AMD)。

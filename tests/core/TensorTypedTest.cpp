@@ -23,9 +23,9 @@
 #include <type_traits>
 #include <typeinfo>
 
-#include "Tensor.h"
 #include "common/definitions.h"
 #include "math/ds/NestedData.h"
+#include "public/Tensor.h"
 
 using hahaha::Tensor;
 using hahaha::common::f32;
