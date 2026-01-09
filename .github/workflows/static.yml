@@ -22,8 +22,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  build:
+    uses: ./.github/workflows/_doxygen_doc_gen.yml
   # Single deploy job since we're just deploying
   deploy:
+    needs:
+      -
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -32,7 +36,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
