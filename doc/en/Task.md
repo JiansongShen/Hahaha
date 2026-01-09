@@ -6,7 +6,7 @@ The Hahaha project aims to build an all-in-one C++ core library that integrates 
 
 ## 1. Math & Numerical Computing - [NumPy Core]
 
-Provides high-performance multi-dimensional tensor operations and mathematical tools.
+Provides high-performance multidimensional tensor operations and mathematical tools.
 
 - [x] **Tensor Core Infrastructure**
     - [x] `TensorShape`: Dimension management.

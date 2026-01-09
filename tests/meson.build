@@ -1,14 +1,14 @@
 # tests/meson.build
 test_include_dir = include_directories('../core/include')
 
-py = import('python').find_installation(required: true)
+py = import('python').find_installation(required : true)
 test_sources = run_command(py,
                            '../dev/meson/list_sources.py',
                            '--base',
                            meson.current_source_dir(),
                            '--glob',
                            '**/*.cpp',
-                           check: true).stdout().strip().split('\n')
+                           check : true).stdout().strip().split('\n')
 
 gtest_dep = dependency('gtest', main : true, required : false)
 if not gtest_dep.found()
@@ -52,10 +52,10 @@ if cpp_compiler.get_id() == 'msvc'
 endif
 
 test_executable = executable('hahaha_tests', test_sources,
-                           include_directories: [test_include_dir, include_dir],
-                           cpp_args: cov_cpp_args + msvc_cpp_args,
-                           link_args: cov_link_args,
-                           link_with: hahaha_lib,
-                           dependencies: [gtest_dep])
+                             include_directories : [test_include_dir, include_dir],
+                             cpp_args : cov_cpp_args + msvc_cpp_args,
+                             link_args : cov_link_args,
+                             link_with : hahaha_lib,
+                             dependencies : [gtest_dep])
 
 test('hahaha_unit_tests', test_executable)
