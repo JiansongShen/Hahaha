@@ -1,7 +1,7 @@
-name: _doxygen_doc_gen.yml
+name: _doxygen_doc_gen
+
 on:
-  push:
-    branches: [ main ]
+  workflow_call:
 
 jobs:
   build:
