@@ -1,0 +1,78 @@
+\doxysection{/home/jiansongshen/\+Projects/\+Hahaha/core/include/common/error\+\_\+handler.\+h}
+\hypertarget{_2home_2jiansongshen_2Projects_2Hahaha_2core_2include_2common_2error_handler_8h-example}{}\label{_2home_2jiansongshen_2Projects_2Hahaha_2core_2include_2common_2error_handler_8h-example}Convenience function for creating an expected value (success case).
+
+Convenience function for creating an expected value (success case). This helper function wraps a value in {\ttfamily std\+::expected\texorpdfstring{$<$}{<}T, E\texorpdfstring{$>$}{>}} to indicate a successful operation result.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The value type (result type when successful). \\
+\hline
+{\em E} & The error type (type of error when operation fails). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em val} & The value to wrap in an expected result. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::expected$<$\+T, E$>$ An expected value containing the moved value.
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ ok<int,\ std::string>(42);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (result.has\_value())\ \{}
+\DoxyCodeLine{\ \ \ \ std::cout\ <<\ *result\ <<\ std::endl;\ \textcolor{comment}{//\ Prints\ 42}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ \ Copyright\ (c)\ 2026\ Contributors\ of\ hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{\textcolor{comment}{//}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{\textcolor{comment}{//}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{\textcolor{comment}{//}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ limitations\ under\ the\ License.}}
+\DoxyCodeLine{\textcolor{comment}{//}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ Contributors:}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ Napbad\ (napbad.sen@gmail.com)\ (https://github.com/Napbad)}}
+\DoxyCodeLine{\textcolor{comment}{//}}
+\DoxyCodeLine{\textcolor{comment}{//}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#ifndef\ HAHAHA\_ERROR\_HANDLER\_H\_053340FD56184B63A68D6CE6E15C8175}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ HAHAHA\_ERROR\_HANDLER\_H\_053340FD56184B63A68D6CE6E15C8175}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <expected>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Include\ all\ error\ types}}
+\DoxyCodeLine{\textcolor{comment}{//\ ReSharper\ disable\ once\ CppUnusedIncludeDirective}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{CommonError_8h}{common/errors/CommonError.h}}"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Error_8h}{common/errors/Error.h}}"{}}}
+\DoxyCodeLine{\textcolor{comment}{//\ ReSharper\ disable\ once\ CppUnusedIncludeDirective}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{ErrorCode_8h}{common/errors/ErrorCode.h}}"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1common}{hahaha::common}}\ \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keyword}{typename}\ E>\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{namespacehahaha_1_1common_acbf08b781dec51355705851e4f7047b8}{ok}}(T\ val)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ std::expected<T,\ E>(std::move(val));}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ E>\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{namespacehahaha_1_1common_a2a672f9ce3f5af7a0eb7ea7965c2053b}{err}}(E\ \mbox{\hyperlink{namespacehahaha_1_1common_a2a672f9ce3f5af7a0eb7ea7965c2053b}{err}})\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ std::unexpected(std::move(\mbox{\hyperlink{namespacehahaha_1_1common_a2a672f9ce3f5af7a0eb7ea7965c2053b}{err}}));}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\}\ \textcolor{comment}{//\ namespace\ hahaha::common}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_ERROR\_HANDLER\_H\_053340FD56184B63A68D6CE6E15C8175}}
+
+\end{DoxyCodeInclude}

@@ -1,0 +1,108 @@
+\doxysection{hahaha\+::backend\+::gpu\+::Gpu\+Kernel Class Reference}
+\hypertarget{classhahaha_1_1backend_1_1gpu_1_1GpuKernel}{}\label{classhahaha_1_1backend_1_1gpu_1_1GpuKernel}\index{hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}}
+
+
+Represents a GPU kernel that can be executed on a device.
+
+
+
+
+{\ttfamily \#include $<$Gpu\+Kernel.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a4ce84832520fa3b9a901bc769705738f}{Gpu\+Kernel}} ()=default
+\item
+virtual \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a7499bb0dd3ecc3dd62b8288113a1de35}{\texorpdfstring{$\sim$}{\string~}\+Gpu\+Kernel}} ()=default
+\item
+virtual bool \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_abf98d0b21308e868028f069b9dfadd7d}{load}} (const std\+::string \&source, const std\+::string \&kernel\+\_\+name)=0
+\begin{DoxyCompactList}\small\item\em Load a kernel from source or binary. \end{DoxyCompactList}\item
+virtual void \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_afcdf06e19587cb5a880048f03efc540d}{launch}} (const std\+::vector$<$ size\+\_\+t $>$ \&grid\+\_\+dims, const std\+::vector$<$ size\+\_\+t $>$ \&block\+\_\+dims, std\+::span$<$ const std\+::uintptr\+\_\+t $>$ args)=0
+\begin{DoxyCompactList}\small\item\em Launch the kernel with specified grid and block dimensions. \end{DoxyCompactList}\item
+virtual std\+::string \mbox{\hyperlink{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a8c9f6ac1c10f7673472de2c03016cf03}{get\+Name}} () const =0
+\begin{DoxyCompactList}\small\item\em Get the kernel name. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a GPU kernel that can be executed on a device.
+
+This class provides an interface for loading and launching kernels.
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a4ce84832520fa3b9a901bc769705738f}\index{hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}!GpuKernel@{GpuKernel}}
+\index{GpuKernel@{GpuKernel}!hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}}
+\doxysubsubsection{\texorpdfstring{GpuKernel()}{GpuKernel()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a4ce84832520fa3b9a901bc769705738f}
+hahaha\+::backend\+::gpu\+::\+Gpu\+Kernel\+::\+Gpu\+Kernel (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\Hypertarget{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a7499bb0dd3ecc3dd62b8288113a1de35}\index{hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}!````~GpuKernel@{\texorpdfstring{$\sim$}{\string~}GpuKernel}}
+\index{````~GpuKernel@{\texorpdfstring{$\sim$}{\string~}GpuKernel}!hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}GpuKernel()}{\string~GpuKernel()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a7499bb0dd3ecc3dd62b8288113a1de35}
+virtual hahaha\+::backend\+::gpu\+::\+Gpu\+Kernel\+::\texorpdfstring{$\sim$}{\string~}\+Gpu\+Kernel (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a8c9f6ac1c10f7673472de2c03016cf03}\index{hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}!getName@{getName}}
+\index{getName@{getName}!hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}}
+\doxysubsubsection{\texorpdfstring{getName()}{getName()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_a8c9f6ac1c10f7673472de2c03016cf03}
+virtual std\+::string hahaha\+::backend\+::gpu\+::\+Gpu\+Kernel\+::get\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Get the kernel name.
+
+\begin{DoxyReturn}{Returns}
+std\+::string The kernel name.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_afcdf06e19587cb5a880048f03efc540d}\index{hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}!launch@{launch}}
+\index{launch@{launch}!hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}}
+\doxysubsubsection{\texorpdfstring{launch()}{launch()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_afcdf06e19587cb5a880048f03efc540d}
+virtual void hahaha\+::backend\+::gpu\+::\+Gpu\+Kernel\+::launch (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{grid\+\_\+dims}{, }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{block\+\_\+dims}{, }\item[{std\+::span$<$ const std\+::uintptr\+\_\+t $>$}]{args}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Launch the kernel with specified grid and block dimensions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em grid\+\_\+dims} & Dimensions of the grid (number of blocks). \\
+\hline
+{\em block\+\_\+dims} & Dimensions of the block (number of threads per block). \\
+\hline
+{\em args} & Addresses of arguments to pass to the kernel. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_abf98d0b21308e868028f069b9dfadd7d}\index{hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}!load@{load}}
+\index{load@{load}!hahaha::backend::gpu::GpuKernel@{hahaha::backend::gpu::GpuKernel}}
+\doxysubsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1gpu_1_1GpuKernel_abf98d0b21308e868028f069b9dfadd7d}
+virtual bool hahaha\+::backend\+::gpu\+::\+Gpu\+Kernel\+::load (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{source}{, }\item[{const std\+::string \&}]{kernel\+\_\+name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Load a kernel from source or binary.
+
+
+\begin{DoxyParams}{Parameters}
+{\em source} & The kernel source code or path to binary. \\
+\hline
+{\em kernel\+\_\+name} & The name of the kernel function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool True if loading was successful.
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/backend/gpu/\mbox{\hyperlink{GpuKernel_8h}{Gpu\+Kernel.\+h}}\end{DoxyCompactItemize}

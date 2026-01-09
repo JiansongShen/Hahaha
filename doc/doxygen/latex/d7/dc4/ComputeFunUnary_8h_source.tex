@@ -1,0 +1,121 @@
+\doxysection{Compute\+Fun\+Unary.\+h}
+\hypertarget{ComputeFunUnary_8h_source}{}\label{ComputeFunUnary_8h_source}\index{core/include/ml/compute/graph/compute\_funs/ComputeFunUnary.h@{core/include/ml/compute/graph/compute\_funs/ComputeFunUnary.h}}
+\mbox{\hyperlink{ComputeFunUnary_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_COMPUTE\_COMPUTE\_FUN\_UNARY\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HAHAHA\_COMPUTE\_COMPUTE\_FUN\_UNARY\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{ComputeFunCommon_8h}{ComputeFunCommon.h}}"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{TensorWrapper_8h}{math/TensorWrapper.h}}"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1compute}{hahaha::compute}}\ \{}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ -\/-\/-\/\ Unary\ Operations\ -\/-\/-\/}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00040\ std::shared\_ptr<ComputeNode<T>>}
+\DoxyCodeLine{00041\ \mbox{\hyperlink{namespacehahaha_1_1compute_aaa3ac26b5d9eb22e54756617e5b85b99}{reshape}}(\textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ parent,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::vector<size\_t>\&\ newShape)\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{auto}\ resData\ =\ std::make\_shared<math::TensorWrapper<T>>(}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ parent-\/>getData()-\/>\mbox{\hyperlink{namespacehahaha_1_1compute_aaa3ac26b5d9eb22e54756617e5b85b99}{reshape}}(newShape));}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ std::shared\_ptr<ComputeNode<T>>\ resNode\ =}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode_a4019a68a3aa787ab98c9d9f63bbc7f0a}{ComputeNode<T>::createUnary}}(parent,\ resData,\ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36aa7c59ccedc6a3bd90c17f3b990afefad}{common::Operator::Reshape}});}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ std::weak\_ptr<ComputeNode<T>>\ weakRes\ =\ resNode;}
+\DoxyCodeLine{00050\ \ \ \ \ std::weak\_ptr<ComputeNode<T>>\ weakParent\ =\ parent;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{auto}\ originalShape\ =\ parent-\/>getData()-\/>getShape();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ resNode-\/>setGradFun([weakParent,\ weakRes,\ originalShape]()\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ res\ =\ weakRes.lock();}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ p\ =\ weakParent.lock();}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ \&\&\ p)\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ gradPtr\ =\ res-\/>getGrad();}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p-\/>getRequiresGrad())\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ reshapedGrad\ =\ std::make\_shared<math::TensorWrapper<T>>(}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gradPtr-\/>reshape(originalShape));}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p-\/>accumulateGrad(reshapedGrad);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ p-\/>backward();}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00065\ \ \ \ \ \});}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{return}\ resNode;}
+\DoxyCodeLine{00067\ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00077\ std::shared\_ptr<ComputeNode<T>>}
+\DoxyCodeLine{00078\ \mbox{\hyperlink{namespacehahaha_1_1compute_a02ae66570377e3bc254ba474629bc2d4}{transpose}}(\textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ parent)\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{auto}\ resData\ =\ std::make\_shared<math::TensorWrapper<T>>(}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ parent-\/>getData()-\/>\mbox{\hyperlink{namespacehahaha_1_1compute_a02ae66570377e3bc254ba474629bc2d4}{transpose}}());}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ std::shared\_ptr<ComputeNode<T>>\ resNode\ =\ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode_a4019a68a3aa787ab98c9d9f63bbc7f0a}{ComputeNode<T>::createUnary}}(}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ parent,\ resData,\ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36aaf70b1ac863830a4e1ce6268c8399f54}{common::Operator::Transpose}});}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ std::weak\_ptr<ComputeNode<T>>\ weakRes\ =\ resNode;}
+\DoxyCodeLine{00086\ \ \ \ \ std::weak\_ptr<ComputeNode<T>>\ weakParent\ =\ parent;}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ resNode-\/>setGradFun([weakParent,\ weakRes]()\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ res\ =\ weakRes.lock();}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ parent\ =\ weakParent.lock();}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ \&\&\ parent)\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ gradPtr\ =\ res-\/>getGrad();}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (parent-\/>getRequiresGrad())\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ transposedGrad\ =\ std::make\_shared<math::TensorWrapper<T>>(}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gradPtr-\/>transpose());}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ parent-\/>accumulateGrad(transposedGrad);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ parent-\/>backward();}}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00100\ \ \ \ \ \});}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordflow}{return}\ resNode;}
+\DoxyCodeLine{00102\ \}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00112\ std::shared\_ptr<ComputeNode<T>>}
+\DoxyCodeLine{00113\ \mbox{\hyperlink{namespacehahaha_1_1compute_a4621ab946ecf0bbd352775b04bc845f4}{neg}}(\textcolor{keyword}{const}\ std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode<T>}}>\&\ parent)\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{auto}\ resData\ =}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ std::make\_shared<math::TensorWrapper<T>>(-\/*parent-\/>getData());}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{auto}\ resNode\ =}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode_a4019a68a3aa787ab98c9d9f63bbc7f0a}{ComputeNode<T>::createUnary}}(parent,\ resData,\ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36afb278fa5defd7e699fcbc930c3e76ccd}{common::Operator::Neg}});}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ std::weak\_ptr<ComputeNode<T>>\ weakRes\ =\ resNode;}
+\DoxyCodeLine{00120\ \ \ \ \ std::weak\_ptr<ComputeNode<T>>\ weakParent\ =\ parent;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ resNode-\/>setGradFun([weakParent,\ weakRes]()\ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ res\ =\ weakRes.lock();}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ parent\ =\ weakParent.lock();}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ gradPtr\ =\ res-\/>getGrad();}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (parent-\/>getRequiresGrad())\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ negatedGrad\ =}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::make\_shared<math::TensorWrapper<T>>(-\/*gradPtr);}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ parent-\/>accumulateGrad(negatedGrad);}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00131\ \ \ \ \ \});}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordflow}{return}\ resNode;}
+\DoxyCodeLine{00133\ \}}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \}\ \textcolor{comment}{//\ namespace\ hahaha::compute}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_COMPUTE\_COMPUTE\_FUN\_UNARY\_H}}
+
+\end{DoxyCode}

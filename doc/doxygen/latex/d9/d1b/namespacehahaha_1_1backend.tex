@@ -1,0 +1,53 @@
+\doxysection{hahaha\+::backend Namespace Reference}
+\hypertarget{namespacehahaha_1_1backend}{}\label{namespacehahaha_1_1backend}\index{hahaha::backend@{hahaha::backend}}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item
+namespace \mbox{\hyperlink{namespacehahaha_1_1backend_1_1gpu}{gpu}}
+\item
+namespace \mbox{\hyperlink{namespacehahaha_1_1backend_1_1vectorize}{vectorize}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item
+struct \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{Device}}
+\begin{DoxyCompactList}\small\item\em Represents a compute device where data resides and operations occur. \end{DoxyCompactList}\item
+class \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher}{Device\+Compute\+Dispatcher}}
+\begin{DoxyCompactList}\small\item\em Top-\/level dispatcher for device-\/specific computations. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item
+enum class \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892d}{Device\+Type}} \+: std\+::uint8\+\_\+t \{ \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da2b55387dd066c5bac646ac61543d152d}{CPU}}
+, \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da52f9ec21735243ad9917cda3ca077d32}{GPU}}
+, \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da8e8f80f69b775a56aad51f74c3ffa73a}{SIMD}}
+ \}
+\begin{DoxyCompactList}\small\item\em Types of devices supported for computation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-enum-members}
+\Hypertarget{namespacehahaha_1_1backend_doc-enum-members}
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892d}\index{hahaha::backend@{hahaha::backend}!DeviceType@{DeviceType}}
+\index{DeviceType@{DeviceType}!hahaha::backend@{hahaha::backend}}
+\doxysubsubsection{\texorpdfstring{DeviceType}{DeviceType}}
+{\footnotesize\ttfamily \label{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892d}
+enum class \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892d}{hahaha\+::backend\+::\+Device\+Type}} \+: std\+::uint8\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Types of devices supported for computation.
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CPU@{CPU}!hahaha::backend@{hahaha::backend}}\index{hahaha::backend@{hahaha::backend}!CPU@{CPU}}}\Hypertarget{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da2b55387dd066c5bac646ac61543d152d}\label{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da2b55387dd066c5bac646ac61543d152d}
+CPU&Standard Central Processing Unit. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GPU@{GPU}!hahaha::backend@{hahaha::backend}}\index{hahaha::backend@{hahaha::backend}!GPU@{GPU}}}\Hypertarget{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da52f9ec21735243ad9917cda3ca077d32}\label{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da52f9ec21735243ad9917cda3ca077d32}
+GPU&Graphics Processing Unit. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SIMD@{SIMD}!hahaha::backend@{hahaha::backend}}\index{hahaha::backend@{hahaha::backend}!SIMD@{SIMD}}}\Hypertarget{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da8e8f80f69b775a56aad51f74c3ffa73a}\label{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da8e8f80f69b775a56aad51f74c3ffa73a}
+SIMD&Single Instruction, Multiple Data (vectorized CPU instructions). \\
+\hline
+
+\end{DoxyEnumFields}

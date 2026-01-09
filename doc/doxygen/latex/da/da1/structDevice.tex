@@ -1,0 +1,88 @@
+\doxysection{Device Struct Reference}
+\hypertarget{structDevice}{}\label{structDevice}\index{Device@{Device}}
+
+
+Represents a compute device where data resides and operations occur.
+
+
+
+
+{\ttfamily \#include $<$Device.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\Hypertarget{structDevice_a4ca1434e9b244809671ef67b1b6e129c}\label{structDevice_a4ca1434e9b244809671ef67b1b6e129c}
+{\bfseries Device} ()=default
+\begin{DoxyCompactList}\small\item\em Default constructor (CPU, ID 0). \end{DoxyCompactList}\item
+\mbox{\hyperlink{structDevice_a596d9c6a67799db1eac90f98bdd743e2}{Device}} (Device\+Type device\+Type, std\+::uint8\+\_\+t device\+Id=0)
+\begin{DoxyCompactList}\small\item\em Construct a \doxylink{structDevice}{Device} with type and ID. \end{DoxyCompactList}\item
+\Hypertarget{structDevice_a82566d20dadae65f705bb1be405a87d8}\label{structDevice_a82566d20dadae65f705bb1be405a87d8}
+bool {\bfseries operator==} (const \mbox{\hyperlink{structDevice}{Device}} \&other) const
+\begin{DoxyCompactList}\small\item\em Check if two devices are identical. \end{DoxyCompactList}\item
+\Hypertarget{structDevice_ade0f60c3dac11669407e317008eb1544}\label{structDevice_ade0f60c3dac11669407e317008eb1544}
+bool {\bfseries operator!=} (const \mbox{\hyperlink{structDevice}{Device}} \&other) const
+\begin{DoxyCompactList}\small\item\em Check if two devices are different. \end{DoxyCompactList}\item
+\Hypertarget{structDevice_a7f9aaa75a1d9246707a586f310f15780}\label{structDevice_a7f9aaa75a1d9246707a586f310f15780}
+std\+::string {\bfseries to\+String} () const
+\begin{DoxyCompactList}\small\item\em Get a string representation of the device. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item
+Device\+Type \mbox{\hyperlink{structDevice_a6c8722219db6ddb0206e4dde1c10d532}{type}} = Device\+Type\+::\+CPU
+\item
+std\+::uint8\+\_\+t \mbox{\hyperlink{structDevice_af2c10a9c4cd4a4c5c1f300233d58f706}{id}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a compute device where data resides and operations occur.
+
+\label{doc-constructors}
+\Hypertarget{structDevice_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structDevice_a596d9c6a67799db1eac90f98bdd743e2}\index{Device@{Device}!Device@{Device}}
+\index{Device@{Device}!Device@{Device}}
+\doxysubsubsection{\texorpdfstring{Device()}{Device()}}
+{\footnotesize\ttfamily \label{structDevice_a596d9c6a67799db1eac90f98bdd743e2}
+\mbox{\hyperlink{structhahaha_1_1backend_1_1Device_a4ca1434e9b244809671ef67b1b6e129c}{hahaha\+::backend\+::\+Device\+::\+Device}} (\begin{DoxyParamCaption}\item[{Device\+Type}]{device\+Type}{, }\item[{std\+::uint8\+\_\+t}]{device\+Id}{ = {\ttfamily 0}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct a \doxylink{structDevice}{Device} with type and ID.
+
+
+\begin{DoxyParams}{Parameters}
+{\em device\+Type} & \doxylink{structDevice}{Device} type. \\
+\hline
+{\em device\+Id} & \doxylink{structDevice}{Device} ID. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-variable-members}
+\Hypertarget{structDevice_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structDevice_af2c10a9c4cd4a4c5c1f300233d58f706}\index{Device@{Device}!id@{id}}
+\index{id@{id}!Device@{Device}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily \label{structDevice_af2c10a9c4cd4a4c5c1f300233d58f706}
+std\+::uint8\+\_\+t \mbox{\hyperlink{structhahaha_1_1backend_1_1Device_af2c10a9c4cd4a4c5c1f300233d58f706}{hahaha\+::backend\+::\+Device\+::id}}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 0}
+
+\end{DoxyCode}
+Unique identifier for multiple devices of the same type. \Hypertarget{structDevice_a6c8722219db6ddb0206e4dde1c10d532}\index{Device@{Device}!type@{type}}
+\index{type@{type}!Device@{Device}}
+\doxysubsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily \label{structDevice_a6c8722219db6ddb0206e4dde1c10d532}
+Device\+Type \mbox{\hyperlink{structhahaha_1_1backend_1_1Device_a6c8722219db6ddb0206e4dde1c10d532}{hahaha\+::backend\+::\+Device\+::type}} = Device\+Type\+::\+CPU}
+
+Type of the device.
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/backend/Device.\+h\end{DoxyCompactItemize}

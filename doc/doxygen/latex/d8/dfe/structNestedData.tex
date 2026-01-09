@@ -1,0 +1,124 @@
+\doxysection{Nested\+Data\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Struct Template Reference}
+\hypertarget{structNestedData}{}\label{structNestedData}\index{NestedData$<$ T $>$@{NestedData$<$ T $>$}}
+
+
+Utility structure for handling nested initializer lists to initialize tensors.
+
+
+
+
+{\ttfamily \#include $<$Nested\+Data.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{structNestedData_a1eb87bf4c6ce0e52a26684feda8ac4c4}{Nested\+Data}} (T data)
+\begin{DoxyCompactList}\small\item\em Construct from a single scalar value. \end{DoxyCompactList}\item
+\mbox{\hyperlink{structNestedData_a3fd60d657ea08b3c88a41dee82d6d3cc}{Nested\+Data}} (std\+::initializer\+\_\+list$<$ \mbox{\hyperlink{structNestedData}{Nested\+Data}} $>$ data)
+\begin{DoxyCompactList}\small\item\em Construct from a nested initializer list. \end{DoxyCompactList}\item
+const std\+::vector$<$ T $>$ \& \mbox{\hyperlink{structNestedData_add0c74a80935d32fb256b559dff9a5e9}{get\+Flat\+Data}} () const
+\begin{DoxyCompactList}\small\item\em Get the flattened 1D data. \end{DoxyCompactList}\item
+const std\+::vector$<$ size\+\_\+t $>$ \& \mbox{\hyperlink{structNestedData_a60ed63d3034ea088db8a5b61508c733f}{get\+Shape}} () const
+\begin{DoxyCompactList}\small\item\em Get the computed shape of the nested data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item
+\Hypertarget{structNestedData_a183fbeeb6d39d444e150d5e982dd8c70}\label{structNestedData_a183fbeeb6d39d444e150d5e982dd8c70}
+class {\bfseries Tensor\+Data$<$ T $>$}
+\item
+\Hypertarget{structNestedData_a4cfd7861ee3c9eb5d4281b42351378ec}\label{structNestedData_a4cfd7861ee3c9eb5d4281b42351378ec}
+class {\bfseries Nested\+Data\+Test}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+struct Nested\+Data$<$ T $>$}
+Utility structure for handling nested initializer lists to initialize tensors.
+
+\doxylink{structNestedData}{Nested\+Data} recursively flattens multi-\/dimensional initializer lists into a 1D vector while keeping track of the tensor\textquotesingle{}s shape.
+
+Example\+: \doxylink{structNestedData}{Nested\+Data$<$float$>$} data = \{\{1, 2\}, \{3, 4\}\}; // flat\+Data\+\_\+ becomes \{1, 2, 3, 4\}, shape\+\_\+ becomes \{2, 2\}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The numeric type of the tensor data. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\label{doc-constructors}
+\Hypertarget{structNestedData_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structNestedData_a1eb87bf4c6ce0e52a26684feda8ac4c4}\index{NestedData$<$ T $>$@{NestedData$<$ T $>$}!NestedData@{NestedData}}
+\index{NestedData@{NestedData}!NestedData$<$ T $>$@{NestedData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{NestedData()}{NestedData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{structNestedData_a1eb87bf4c6ce0e52a26684feda8ac4c4}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{structhahaha_1_1math_1_1NestedData}{hahaha\+::math\+::\+Nested\+Data}}$<$ T $>$\+::\+Nested\+Data (\begin{DoxyParamCaption}\item[{T}]{data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct from a single scalar value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The scalar value. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structNestedData_a3fd60d657ea08b3c88a41dee82d6d3cc}\index{NestedData$<$ T $>$@{NestedData$<$ T $>$}!NestedData@{NestedData}}
+\index{NestedData@{NestedData}!NestedData$<$ T $>$@{NestedData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{NestedData()}{NestedData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{structNestedData_a3fd60d657ea08b3c88a41dee82d6d3cc}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{structhahaha_1_1math_1_1NestedData}{hahaha\+::math\+::\+Nested\+Data}}$<$ T $>$\+::\+Nested\+Data (\begin{DoxyParamCaption}\item[{std\+::initializer\+\_\+list$<$ \mbox{\hyperlink{structNestedData}{Nested\+Data}}$<$ T $>$ $>$}]{data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct from a nested initializer list.
+
+This constructor recursively flattens the list and computes the shape.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The nested initializer list. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{structNestedData_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structNestedData_add0c74a80935d32fb256b559dff9a5e9}\index{NestedData$<$ T $>$@{NestedData$<$ T $>$}!getFlatData@{getFlatData}}
+\index{getFlatData@{getFlatData}!NestedData$<$ T $>$@{NestedData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getFlatData()}{getFlatData()}}
+{\footnotesize\ttfamily \label{structNestedData_add0c74a80935d32fb256b559dff9a5e9}
+template$<$typename T$>$ \\
+const std\+::vector$<$ T $>$ \& \mbox{\hyperlink{structhahaha_1_1math_1_1NestedData}{hahaha\+::math\+::\+Nested\+Data}}$<$ T $>$\+::get\+Flat\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the flattened 1D data.
+
+\begin{DoxyReturn}{Returns}
+const std\+::vector$<$\+T$>$\& reference to flat data.
+\end{DoxyReturn}
+\Hypertarget{structNestedData_a60ed63d3034ea088db8a5b61508c733f}\index{NestedData$<$ T $>$@{NestedData$<$ T $>$}!getShape@{getShape}}
+\index{getShape@{getShape}!NestedData$<$ T $>$@{NestedData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getShape()}{getShape()}}
+{\footnotesize\ttfamily \label{structNestedData_a60ed63d3034ea088db8a5b61508c733f}
+template$<$typename T$>$ \\
+const std\+::vector$<$ size\+\_\+t $>$ \& \mbox{\hyperlink{structhahaha_1_1math_1_1NestedData}{hahaha\+::math\+::\+Nested\+Data}}$<$ T $>$\+::get\+Shape (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the computed shape of the nested data.
+
+\begin{DoxyReturn}{Returns}
+const std\+::vector$<$size\+\_\+t$>$\& reference to shape dimensions.
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/math/ds/Nested\+Data.\+h\end{DoxyCompactItemize}

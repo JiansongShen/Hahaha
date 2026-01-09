@@ -1,0 +1,54 @@
+\doxysection{Simd\+Vector.\+h}
+\hypertarget{SimdVector_8h_source}{}\label{SimdVector_8h_source}\index{core/include/backend/vectorize/SimdVector.h@{core/include/backend/vectorize/SimdVector.h}}
+\mbox{\hyperlink{SimdVector_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_BACKEND\_VECTORIZE\_SIMD\_VECTOR\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HAHAHA\_BACKEND\_VECTORIZE\_SIMD\_VECTOR\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <span>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <type\_traits>}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1backend_1_1vectorize}{hahaha::backend::vectorize}}\ \{}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ W\textcolor{keywordtype}{id}th>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{SimdVector}}\ \{}
+\DoxyCodeLine{00037\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{static\_assert}(std::is\_arithmetic\_v<T>,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SimdVector\ only\ supports\ arithmetic\ types."{}});}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{SimdVector}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a5ed47a49f927c07d49bcf30d8c1202ce}{load}}(std::span<const\ T,\ Width>\ data);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_addbf96fc908e3cb7ed3b30d8e20c2067}{store}}(std::span<T,\ Width>\ out)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00060\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{SimdVector}}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a81cf6656b0bed15d21050a5616485848}{add}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{SimdVector}}\&\ other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{SimdVector}}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a31afc47959becf1c277c719ba919c1a1}{multiply}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{SimdVector}}\&\ other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_accba8e374fddbbcb6ef1f69218e96689}{broadcast}}(T\ value);}
+\DoxyCodeLine{00074\ \};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \}\ \textcolor{comment}{//\ namespace\ hahaha::backend::vectorize}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_BACKEND\_VECTORIZE\_SIMD\_VECTOR\_H}}
+
+\end{DoxyCode}

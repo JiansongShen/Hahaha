@@ -1,0 +1,70 @@
+\doxysection{Log\+Color.\+h}
+\hypertarget{LogColor_8h_source}{}\label{LogColor_8h_source}\index{core/include/utils/log/LogColor.h@{core/include/utils/log/LogColor.h}}
+\mbox{\hyperlink{LogColor_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_UTILS\_LOG\_LOG\_COLOR\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HAHAHA\_UTILS\_LOG\_LOG\_COLOR\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <string\_view>}}
+\DoxyCodeLine{00023\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1utils}{hahaha::utils}}\ \{}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92}{LogColor}}\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a08d0012388564e95c3b4a7407cf04965}{BLACK}},\ \ \ }
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92aa2d9547b5d3dd9f05984475f7c926da0}{RED}},\ \ \ \ \ }
+\DoxyCodeLine{00031\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a9de0e5dd94e861317e74964bed179fa0}{GREEN}},\ \ \ }
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a8a568e5f41b7e4da88fe5c4a00aad34e}{YELLOW}},\ \ }
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a1b3e1ee9bff86431dea6b181365ba65f}{BLUE}},\ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92ac634ffea7195608364671ac52ee59a61}{MAGENTA}},\ }
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a344dd8cd533280795b9db82ef0c92749}{CYAN}},\ \ \ \ }
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92ab5bf627e448384cf3a4c35121ca6008d}{WHITE}},\ \ \ }
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92ab5859d8721cfdc0312b2838b9c985bc1}{RESET}}\ \ \ \ }
+\DoxyCodeLine{00038\ \};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{inline}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_ab9df6ceebb911a474b28add9f87f2c27}{toString}}(\mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92}{LogColor}}\ color)\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordflow}{switch}\ (color)\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a08d0012388564e95c3b4a7407cf04965}{LogColor::BLACK}}:}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[30m"{}};}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92aa2d9547b5d3dd9f05984475f7c926da0}{LogColor::RED}}:}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[31m"{}};}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a9de0e5dd94e861317e74964bed179fa0}{LogColor::GREEN}}:}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[32m"{}};}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a8a568e5f41b7e4da88fe5c4a00aad34e}{LogColor::YELLOW}}:}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[33m"{}};}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a1b3e1ee9bff86431dea6b181365ba65f}{LogColor::BLUE}}:}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[34m"{}};}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92ac634ffea7195608364671ac52ee59a61}{LogColor::MAGENTA}}:}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[35m"{}};}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92a344dd8cd533280795b9db82ef0c92749}{LogColor::CYAN}}:}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[36m"{}};}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92ab5bf627e448384cf3a4c35121ca6008d}{LogColor::WHITE}}:}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[37m"{}};}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a04ab7141bef5510bffb7389b24259e92ab5859d8721cfdc0312b2838b9c985bc1}{LogColor::RESET}}:}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[0m"{}};}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\(\backslash\)033[0m"{}};\ \textcolor{comment}{//\ Default\ to\ reset\ if\ unknown\ color}}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \}\ \textcolor{comment}{//\ namespace\ hahaha::utils}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_UTILS\_LOG\_LOG\_COLOR\_H}}
+
+\end{DoxyCode}

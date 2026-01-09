@@ -1,0 +1,147 @@
+\doxysection{hahaha\+::ml\+::Linear\+Regression\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classhahaha_1_1ml_1_1LinearRegression}{}\label{classhahaha_1_1ml_1_1LinearRegression}\index{hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}}
+
+
+Linear regression model.
+
+
+
+
+{\ttfamily \#include $<$Linear\+Regression.\+h$>$}
+
+Inheritance diagram for hahaha\+::ml\+::Linear\+Regression\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{de/d15/classhahaha_1_1ml_1_1LinearRegression}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression_af44988bdd78f680a84b57577e60a7730}{Linear\+Regression}} ()
+\begin{DoxyCompactList}\small\item\em Construct a \doxylink{classhahaha_1_1ml_1_1LinearRegression}{Linear\+Regression} model with zero-\/initialized weights and bias. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1ml_1_1Parameters}{Parameters}}$<$ T $>$ \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression_a979e1d72fb76b57651c68a1eb07ad419}{get\+Parameters}} () override
+\begin{DoxyCompactList}\small\item\em Get all trainable parameters of the model. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression_aa4d77e429fcf94e1b186b8011ee78493}{set\+Weights}} (std\+::vector$<$ T $>$ weights)
+\begin{DoxyCompactList}\small\item\em Set the weight parameters. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression_aeb217526274159e3b4f0c3a477de7c42}{set\+Bias}} (std\+::vector$<$ T $>$ bias)
+\begin{DoxyCompactList}\small\item\em Set the bias parameters. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression_aac53ceb79b2e6f59c25b3c714818e712}{train}} (\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ x, \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ y) override
+\begin{DoxyCompactList}\small\item\em Train the model on the given data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classhahaha_1_1ml_1_1Model}{hahaha\+::ml\+::\+Model$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item
+virtual \mbox{\hyperlink{classhahaha_1_1ml_1_1Model_ad2d6154ec7ada2cf8bead83f8d15d675}{\texorpdfstring{$\sim$}{\string~}\+Model}} ()=default
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class hahaha\+::ml\+::\+Linear\+Regression$<$ T $>$}
+Linear regression model.
+
+This model implements linear regression\+: y = x \texorpdfstring{$\ast$}{*} weight + bias
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The numeric type. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1ml_1_1LinearRegression_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1ml_1_1LinearRegression_af44988bdd78f680a84b57577e60a7730}\index{hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}!LinearRegression@{LinearRegression}}
+\index{LinearRegression@{LinearRegression}!hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{LinearRegression()}{LinearRegression()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1LinearRegression_af44988bdd78f680a84b57577e60a7730}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression}{hahaha\+::ml\+::\+Linear\+Regression}}$<$ T $>$\+::\+Linear\+Regression (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a \doxylink{classhahaha_1_1ml_1_1LinearRegression}{Linear\+Regression} model with zero-\/initialized weights and bias.
+
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1ml_1_1LinearRegression_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1ml_1_1LinearRegression_a979e1d72fb76b57651c68a1eb07ad419}\index{hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}!getParameters@{getParameters}}
+\index{getParameters@{getParameters}!hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getParameters()}{getParameters()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1LinearRegression_a979e1d72fb76b57651c68a1eb07ad419}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1ml_1_1Parameters}{Parameters}}$<$ T $>$ \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression}{hahaha\+::ml\+::\+Linear\+Regression}}$<$ T $>$\+::get\+Parameters (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Get all trainable parameters of the model.
+
+\begin{DoxyReturn}{Returns}
+\doxylink{classhahaha_1_1ml_1_1Parameters}{Parameters$<$\+T$>$} Container with weight and bias parameters.
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classhahaha_1_1ml_1_1Model_a09fbd9cdd4402201eba269edb006ad70}{hahaha\+::ml\+::\+Model$<$ T $>$}}.
+
+\Hypertarget{classhahaha_1_1ml_1_1LinearRegression_aeb217526274159e3b4f0c3a477de7c42}\index{hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}!setBias@{setBias}}
+\index{setBias@{setBias}!hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{setBias()}{setBias()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1LinearRegression_aeb217526274159e3b4f0c3a477de7c42}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression}{hahaha\+::ml\+::\+Linear\+Regression}}$<$ T $>$\+::set\+Bias (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $>$}]{bias}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the bias parameters.
+
+
+\begin{DoxyParams}{Parameters}
+{\em bias} & Vector of bias values. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1ml_1_1LinearRegression_aa4d77e429fcf94e1b186b8011ee78493}\index{hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}!setWeights@{setWeights}}
+\index{setWeights@{setWeights}!hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{setWeights()}{setWeights()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1LinearRegression_aa4d77e429fcf94e1b186b8011ee78493}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression}{hahaha\+::ml\+::\+Linear\+Regression}}$<$ T $>$\+::set\+Weights (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $>$}]{weights}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the weight parameters.
+
+
+\begin{DoxyParams}{Parameters}
+{\em weights} & Vector of weight values. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1ml_1_1LinearRegression_aac53ceb79b2e6f59c25b3c714818e712}\index{hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}!train@{train}}
+\index{train@{train}!hahaha::ml::LinearRegression$<$ T $>$@{hahaha::ml::LinearRegression$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{train()}{train()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1ml_1_1LinearRegression_aac53ceb79b2e6f59c25b3c714818e712}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression}{hahaha\+::ml\+::\+Linear\+Regression}}$<$ T $>$\+::train (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$}]{x}{, }\item[{\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$}]{y}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Train the model on the given data.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input features. Shape\+: (num\+\_\+samples, num\+\_\+features). \\
+\hline
+{\em y} & Target values. Shape\+: (num\+\_\+samples, num\+\_\+outputs). \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{classhahaha_1_1ml_1_1Model_a49478b4f5813167f6479b46f6fe24833}{hahaha\+::ml\+::\+Model$<$ T $>$}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/ml/model/\mbox{\hyperlink{LinearRegression_8h}{Linear\+Regression.\+h}}\end{DoxyCompactItemize}

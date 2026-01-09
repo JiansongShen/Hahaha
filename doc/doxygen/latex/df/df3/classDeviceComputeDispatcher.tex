@@ -1,0 +1,150 @@
+\doxysection{Device\+Compute\+Dispatcher\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classDeviceComputeDispatcher}{}\label{classDeviceComputeDispatcher}\index{DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}}
+
+
+Top-\/level dispatcher for device-\/specific computations.
+
+
+
+
+{\ttfamily \#include $<$Device\+Compute\+Dispatcher.\+h$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+{\footnotesize template$<$typename Fn$>$ }\\static void \mbox{\hyperlink{classDeviceComputeDispatcher_ade058afe953fab1c110af0b0368aa7c2}{for\+Each\+Element}} (const std\+::vector$<$ size\+\_\+t $>$ \&shape, const std\+::vector$<$ size\+\_\+t $>$ \&lhs\+Stride, const std\+::vector$<$ size\+\_\+t $>$ \&rhs\+Stride, std\+::span$<$ const T $>$ lhs\+Buf, std\+::span$<$ const T $>$ rhs\+Buf, std\+::span$<$ T $>$ out\+Buf, Fn \&\&fn)
+\begin{DoxyCompactList}\small\item\em Stride-\/aware elementwise iterator. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classDeviceComputeDispatcher_a0c8960c5c8e5f882daec4662534c80b0}{dispatch\+Binary}} (common\+::\+Operator op, const math\+::\+Tensor\+Wrapper$<$ T $>$ \&lhs, const math\+::\+Tensor\+Wrapper$<$ T $>$ \&rhs, math\+::\+Tensor\+Wrapper$<$ T $>$ \&res)
+\item
+static void \mbox{\hyperlink{classDeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}{dispatch\+Scalar}} (common\+::\+Operator op, const math\+::\+Tensor\+Wrapper$<$ T $>$ \&lhs, T rhs, math\+::\+Tensor\+Wrapper$<$ T $>$ \&res)
+\item
+static void \mbox{\hyperlink{classDeviceComputeDispatcher_aefd38e89d6e55f7c0565b6f8cfdb44d5}{dispatch\+Scalar}} (common\+::\+Operator op, T lhs, const math\+::\+Tensor\+Wrapper$<$ T $>$ \&rhs, math\+::\+Tensor\+Wrapper$<$ T $>$ \&res)
+\item
+\Hypertarget{classDeviceComputeDispatcher_a3e37b4a20baa0021887421c9d8b34187}\label{classDeviceComputeDispatcher_a3e37b4a20baa0021887421c9d8b34187}
+static void {\bfseries dispatch\+Mat\+Mul} (const math\+::\+Tensor\+Wrapper$<$ T $>$ \&lhs, const math\+::\+Tensor\+Wrapper$<$ T $>$ \&rhs, math\+::\+Tensor\+Wrapper$<$ T $>$ \&res)
+\item
+static void \mbox{\hyperlink{classDeviceComputeDispatcher_a7a88bc4cdcae62c4c1d1e509337225a9}{dispatch\+Axpy}} (T alpha, const math\+::\+Tensor\+Wrapper$<$ T $>$ \&x\+\_\+tensor, math\+::\+Tensor\+Wrapper$<$ T $>$ \&res\+\_\+tensor)
+\begin{DoxyCompactList}\small\item\em Performs res = res + alpha \texorpdfstring{$\ast$}{*} x in-\/place. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class Device\+Compute\+Dispatcher$<$ T $>$}
+Top-\/level dispatcher for device-\/specific computations.
+
+This class serves as a central point to route tensor operations to their respective hardware-\/optimized implementations (CPU, SIMD, GPU, etc.). It decouples math logic in \doxylink{classTensorWrapper}{Tensor\+Wrapper} from device-\/specific kernels.
+
+\label{doc-func-members}
+\Hypertarget{classDeviceComputeDispatcher_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classDeviceComputeDispatcher_a7a88bc4cdcae62c4c1d1e509337225a9}\index{DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}!dispatchAxpy@{dispatchAxpy}}
+\index{dispatchAxpy@{dispatchAxpy}!DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{dispatchAxpy()}{dispatchAxpy()}}
+{\footnotesize\ttfamily \label{classDeviceComputeDispatcher_a7a88bc4cdcae62c4c1d1e509337225a9}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher}{hahaha\+::backend\+::\+Device\+Compute\+Dispatcher}}$<$ T $>$\+::dispatch\+Axpy (\begin{DoxyParamCaption}\item[{T}]{alpha}{, }\item[{const math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{x\+\_\+tensor}{, }\item[{math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{res\+\_\+tensor}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Performs res = res + alpha \texorpdfstring{$\ast$}{*} x in-\/place.
+
+
+\begin{DoxyParams}{Parameters}
+{\em alpha} & Scaling factor. \\
+\hline
+{\em x\+\_\+tensor} & Input tensor. \\
+\hline
+{\em res\+\_\+tensor} & Result tensor (updated in-\/place). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classDeviceComputeDispatcher_a0c8960c5c8e5f882daec4662534c80b0}\index{DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}!dispatchBinary@{dispatchBinary}}
+\index{dispatchBinary@{dispatchBinary}!DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{dispatchBinary()}{dispatchBinary()}}
+{\footnotesize\ttfamily \label{classDeviceComputeDispatcher_a0c8960c5c8e5f882daec4662534c80b0}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher}{hahaha\+::backend\+::\+Device\+Compute\+Dispatcher}}$<$ T $>$\+::dispatch\+Binary (\begin{DoxyParamCaption}\item[{common\+::\+Operator}]{op}{, }\item[{const math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{lhs}{, }\item[{const math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{rhs}{, }\item[{math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{res}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Plain-\/text formulas (elementwise)\+:
+\begin{DoxyItemize}
+\item Add\+: res\mbox{[}i\mbox{]} = lhs\mbox{[}i\mbox{]} + rhs\mbox{[}i\mbox{]}
+\item Sub\+: res\mbox{[}i\mbox{]} = lhs\mbox{[}i\mbox{]} -\/ rhs\mbox{[}i\mbox{]}
+\item Mul\+: res\mbox{[}i\mbox{]} = lhs\mbox{[}i\mbox{]} \texorpdfstring{$\ast$}{*} rhs\mbox{[}i\mbox{]}
+\item Div\+: res\mbox{[}i\mbox{]} = lhs\mbox{[}i\mbox{]} / rhs\mbox{[}i\mbox{]} (rhs\mbox{[}i\mbox{]} != 0)
+\end{DoxyItemize}
+
+Note\+: lhs/rhs may be broadcast views, so indexing uses strides.\Hypertarget{classDeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}\index{DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}!dispatchScalar@{dispatchScalar}}
+\index{dispatchScalar@{dispatchScalar}!DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{dispatchScalar()}{dispatchScalar()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classDeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher}{hahaha\+::backend\+::\+Device\+Compute\+Dispatcher}}$<$ T $>$\+::dispatch\+Scalar (\begin{DoxyParamCaption}\item[{common\+::\+Operator}]{op}{, }\item[{const math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{lhs}{, }\item[{T}]{rhs}{, }\item[{math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{res}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Plain-\/text formulas (scalar on RHS)\+:
+\begin{DoxyItemize}
+\item Add\+: res\mbox{[}i\mbox{]} = lhs\mbox{[}i\mbox{]} + rhs
+\item Sub\+: res\mbox{[}i\mbox{]} = lhs\mbox{[}i\mbox{]} -\/ rhs
+\item Mul\+: res\mbox{[}i\mbox{]} = lhs\mbox{[}i\mbox{]} \texorpdfstring{$\ast$}{*} rhs
+\item Div\+: res\mbox{[}i\mbox{]} = lhs\mbox{[}i\mbox{]} / rhs (rhs != 0)
+\end{DoxyItemize}\Hypertarget{classDeviceComputeDispatcher_aefd38e89d6e55f7c0565b6f8cfdb44d5}\index{DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}!dispatchScalar@{dispatchScalar}}
+\index{dispatchScalar@{dispatchScalar}!DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{dispatchScalar()}{dispatchScalar()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classDeviceComputeDispatcher_aefd38e89d6e55f7c0565b6f8cfdb44d5}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher}{hahaha\+::backend\+::\+Device\+Compute\+Dispatcher}}$<$ T $>$\+::dispatch\+Scalar (\begin{DoxyParamCaption}\item[{common\+::\+Operator}]{op}{, }\item[{T}]{lhs}{, }\item[{const math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{rhs}{, }\item[{math\+::\+Tensor\+Wrapper$<$ T $>$ \&}]{res}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Plain-\/text formulas (scalar on LHS)\+:
+\begin{DoxyItemize}
+\item Add\+: res\mbox{[}i\mbox{]} = lhs + rhs\mbox{[}i\mbox{]}
+\item Sub\+: res\mbox{[}i\mbox{]} = lhs -\/ rhs\mbox{[}i\mbox{]}
+\item Mul\+: res\mbox{[}i\mbox{]} = lhs \texorpdfstring{$\ast$}{*} rhs\mbox{[}i\mbox{]}
+\item Div\+: res\mbox{[}i\mbox{]} = lhs / rhs\mbox{[}i\mbox{]} (rhs\mbox{[}i\mbox{]} != 0)
+\end{DoxyItemize}\Hypertarget{classDeviceComputeDispatcher_ade058afe953fab1c110af0b0368aa7c2}\index{DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}!forEachElement@{forEachElement}}
+\index{forEachElement@{forEachElement}!DeviceComputeDispatcher$<$ T $>$@{DeviceComputeDispatcher$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{forEachElement()}{forEachElement()}}
+{\footnotesize\ttfamily \label{classDeviceComputeDispatcher_ade058afe953fab1c110af0b0368aa7c2}
+template$<$typename T$>$ \\
+template$<$typename Fn$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher}{hahaha\+::backend\+::\+Device\+Compute\+Dispatcher}}$<$ T $>$\+::for\+Each\+Element (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{shape}{, }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{lhs\+Stride}{, }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{rhs\+Stride}{, }\item[{std\+::span$<$ const T $>$}]{lhs\+Buf}{, }\item[{std\+::span$<$ const T $>$}]{rhs\+Buf}{, }\item[{std\+::span$<$ T $>$}]{out\+Buf}{, }\item[{Fn \&\&}]{fn}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Stride-\/aware elementwise iterator.
+
+This supports broadcast views produced by \doxylink{classTensorWrapper_a0e5e6a932f30cf99f4c805239370b63c}{Tensor\+Wrapper\+::broadcast\+To()} (i.\+e. stride can contain 0), without requiring materialization.
+
+The traversal is multidimensional but writes output as a dense row-\/major buffer.
+
+Plain-\/text formulas\+:
+\begin{DoxyItemize}
+\item Linear offset update (row-\/major walk)\+: offset\+\_\+next = offset + stride\mbox{[}dim\mbox{]}
+\item Broadcasted dimension is represented by stride\mbox{[}dim\mbox{]} = 0, so\+: offset\+\_\+next = offset (re-\/uses the same value)
+\item Total elements\+: total = product(shape\mbox{[}d\mbox{]}) for d in \mbox{[}0..rank-\/1\mbox{]}
+\end{DoxyItemize}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Fn} & Callable with signature {\ttfamily T fn(\+T lhs, T rhs)}. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em shape} & Output shape (must match elementwise broadcast result). \\
+\hline
+{\em lhs\+Stride} & LHS strides aligned with {\ttfamily shape} rank. \\
+\hline
+{\em rhs\+Stride} & RHS strides aligned with {\ttfamily shape} rank. \\
+\hline
+{\em lhs\+Buf} & Pointer to LHS base storage (may be shared/broadcast view). \\
+\hline
+{\em rhs\+Buf} & Pointer to RHS base storage (may be shared/broadcast view). \\
+\hline
+{\em out\+Buf} & Pointer to dense output buffer. \\
+\hline
+{\em fn} & Elementwise function. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/backend/Device\+Compute\+Dispatcher.\+h\end{DoxyCompactItemize}
