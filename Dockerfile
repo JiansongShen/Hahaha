@@ -96,7 +96,8 @@ RUN apt-get update && apt-get install -y \
     valgrind \
     && rm -rf /var/lib/apt/lists/*
 
-RUN  pipx ensurepath &&  pipx install pre-commit &&  pre-commit install
+ENV PATH="/root/.local/bin:${PATH}"
+RUN pipx install pre-commit
 
 # Make clang/clang++ the system default C/C++ compilers so tools like Meson
 # which consult `cc`/`c++` or $CC/$CXX will use clang inside the container.
