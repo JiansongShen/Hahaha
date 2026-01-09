@@ -15,61 +15,60 @@
 //  Contributors:
 //  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
-//
 
 #include <expected>
 #include <gtest/gtest.h>
-#include <source_location>
 
 #include "common/error_handler.h"
+
+using hahaha::common::err;
+using hahaha::common::Error;
+using hahaha::common::ErrorCode;
+using hahaha::common::ok;
 
 class ErrorHandlerTest : public ::testing::Test {
   protected:
 };
 
-TEST_F(ErrorHandlerTest, Error_Constructor) {
-    const hahaha::common::CommonError error;
+TEST_F(ErrorHandlerTest, Error_Properties) {
+    Error error_success{ErrorCode::Success};
+    EXPECT_TRUE(error_success.isSuccess());
+    EXPECT_EQ(error_success.code, ErrorCode::Success);
+    EXPECT_STREQ(error_success.message(), "Success");
 
-    ASSERT_EQ(error.getMessage(), "");
-    ASSERT_EQ(error.getLocation(), ":0");
-    ASSERT_EQ(error.getCode(), hahaha::common::ErrorCode::BasicError);
-    ASSERT_STREQ(error.getErrorName(), "CommonError");
+    Error error_invalid{ErrorCode::InvalidArgument};
+    EXPECT_FALSE(error_invalid.isSuccess());
+    EXPECT_EQ(error_invalid.code, ErrorCode::InvalidArgument);
+    EXPECT_STREQ(error_invalid.message(),
+                 "Invalid argument (e.g., shape mismatch)");
+
+    Error error_device{ErrorCode::DeviceNotSupported};
+    EXPECT_FALSE(error_device.isSuccess());
+    EXPECT_EQ(error_device.code, ErrorCode::DeviceNotSupported);
+    EXPECT_STREQ(error_device.message(), "Device unsupported");
 }
 
-TEST_F(ErrorHandlerTest, Error_Constructor_With_Message) {
-    const hahaha::common::CommonError error("Test error message");
+TEST_F(ErrorHandlerTest, Error_Helpers) {
+    auto err_invalid = hahaha::common::InvalidArgumentError();
+    EXPECT_EQ(err_invalid.code, ErrorCode::InvalidArgument);
 
-    ASSERT_EQ(error.getMessage(), "Test error message");
-    ASSERT_NE(error.getLocation(), "");
-    ASSERT_EQ(error.getCode(), hahaha::common::ErrorCode::BasicError);
-    ASSERT_STREQ(hahaha::common::CommonError::ErrorName, "CommonError");
+    auto err_device = hahaha::common::DeviceNotSupportedError();
+    EXPECT_EQ(err_device.code, ErrorCode::DeviceNotSupported);
 }
 
-TEST_F(ErrorHandlerTest, Error_Constructor_With_Location_And_Message) {
-    const std::source_location loc = std::source_location::current();
-    const hahaha::common::CommonError error("Test error message", loc);
-
-    ASSERT_EQ(error.getMessage(), "Test error message");
-    ASSERT_EQ(error.getLocation(),
-              std::string(loc.file_name()) + ":" + std::to_string(loc.line()));
-    ASSERT_EQ(error.getCode(), hahaha::common::ErrorCode::BasicError);
-    ASSERT_STREQ(hahaha::common::CommonError::ErrorName, "CommonError");
+std::expected<int, Error> testReturnSuccess() {
+    return ok<int, Error>(42);
 }
 
-std::expected<int, hahaha::common::CommonError> testReturnSuccess() {
-    return hahaha::common::ok<int, hahaha::common::CommonError>(42);
-}
-
-std::expected<int, hahaha::common::CommonError> testReturnSuccessQuickly() {
+std::expected<int, Error> testReturnSuccessQuickly() {
     return 1;
 }
 
-std::expected<int, hahaha::common::CommonError> testReturnFailed() {
-    return hahaha::common::err(hahaha::common::CommonError());
+std::expected<int, Error> testReturnFailed() {
+    return err(Error{ErrorCode::InvalidArgument});
 }
 
 TEST_F(ErrorHandlerTest, OkWithValue) {
-
     const auto val1 = testReturnSuccess();
     ASSERT_TRUE(val1.has_value());
     ASSERT_EQ(42, val1.value());
@@ -82,15 +81,14 @@ TEST_F(ErrorHandlerTest, OkWithValue) {
 TEST_F(ErrorHandlerTest, FailedWithError) {
     const auto e = testReturnFailed();
     ASSERT_FALSE(e.has_value());
-    ASSERT_EQ(e.error().getCode(), hahaha::common::ErrorCode::BasicError);
-    ASSERT_STREQ(hahaha::common::CommonError::ErrorName, "CommonError");
+    ASSERT_EQ(e.error().code, ErrorCode::InvalidArgument);
+    ASSERT_STREQ(e.error().message(),
+                 "Invalid argument (e.g., shape mismatch)");
 }
 
-TEST_F(ErrorHandlerTest, FailedWithError_WithMessage) {
-    std::expected<int, hahaha::common::CommonError> e =
-        hahaha::common::err(hahaha::common::CommonError("Operation failed"));
+TEST_F(ErrorHandlerTest, FailedWithError_Manual) {
+    std::expected<int, Error> e = err(Error{ErrorCode::DeviceNotSupported});
     ASSERT_FALSE(e.has_value());
-    ASSERT_EQ(e.error().getCode(), hahaha::common::ErrorCode::BasicError);
-    ASSERT_EQ(e.error().getMessage(), "Operation failed");
-    ASSERT_STREQ(hahaha::common::CommonError::ErrorName, "CommonError");
+    ASSERT_EQ(e.error().code, ErrorCode::DeviceNotSupported);
+    ASSERT_STREQ(e.error().message(), "Device unsupported");
 }
