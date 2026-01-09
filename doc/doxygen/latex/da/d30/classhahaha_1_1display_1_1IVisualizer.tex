@@ -1,0 +1,255 @@
+\doxysection{hahaha\+::display\+::IVisualizer Class Reference}
+\hypertarget{classhahaha_1_1display_1_1IVisualizer}{}\label{classhahaha_1_1display_1_1IVisualizer}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+
+
+Top-\/level interface for visualizing Machine Learning models and training progress.
+
+
+
+
+{\ttfamily \#include $<$Visualizer.\+h$>$}
+
+Inheritance diagram for hahaha\+::display\+::IVisualizer\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{da/d30/classhahaha_1_1display_1_1IVisualizer}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+virtual \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a1e330b452d4cc54dfbf34649a5899cfb}{\texorpdfstring{$\sim$}{\string~}\+IVisualizer}} ()=default
+\item
+virtual void \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_aac869a49b8bfcc542b53a5b3d97963f3}{init}} (const std\+::string \&title, int width=1280, int height=720)=0
+\begin{DoxyCompactList}\small\item\em Initialize the visualization window/context. \end{DoxyCompactList}\item
+virtual void \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a81cd6ed5d67c9c0587ddde878c8627dc}{clear\+Model}} ()=0
+\begin{DoxyCompactList}\small\item\em Clear the current model structure visualization. \end{DoxyCompactList}\item
+virtual void \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_ad214a1d1aec5bd241a3d8edfb563c6e0}{add\+Layer}} (const \mbox{\hyperlink{structhahaha_1_1display_1_1LayerInfo}{Layer\+Info}} \&\mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}})=0
+\begin{DoxyCompactList}\small\item\em Add a layer to the model visualization. \end{DoxyCompactList}\item
+virtual void \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a7715871ed827ae9a022f0258fe6166c2}{record\+Metrics}} (int epoch, float loss, float accuracy=0.\+0f)=0
+\begin{DoxyCompactList}\small\item\em Record training metrics for a single step/epoch. \end{DoxyCompactList}\item
+virtual void \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a3c48c6e70d4f6ab6685eae838fa46b69}{visualize\+Tensor}} (const std\+::string \&name, const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ float $>$ \&data)=0
+\begin{DoxyCompactList}\small\item\em Visualize a tensor as an image/heatmap. \end{DoxyCompactList}\item
+virtual bool \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a3f0aad13e40c64c9cba3f373401b48ec}{render\+Frame}} ()=0
+\begin{DoxyCompactList}\small\item\em Render the current frame of the visualization. This should be called in the main application loop. \end{DoxyCompactList}\item
+virtual void \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a23277728348edf775c14473c4b580b2f}{set\+Status}} (const std\+::string \&status)=0
+\begin{DoxyCompactList}\small\item\em Set a status message to be displayed. \end{DoxyCompactList}\item
+virtual void \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_af4852b6fde2b1299bed53de63cc92c17}{show\+Control\+Panel}} (bool show)=0
+\begin{DoxyCompactList}\small\item\em Show/\+Hide the control panel. \end{DoxyCompactList}\item
+virtual \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8f}{Control\+Action}} \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_aac803c08992e47b8575561e446cd9850}{get\+Control\+Action}} () const =0
+\begin{DoxyCompactList}\small\item\em Get the last action requested by the user from the control panel. \end{DoxyCompactList}\item
+virtual bool \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_acae00dffa6bd96194edb84214e11790b}{requested\+Stop}} () const =0
+\begin{DoxyCompactList}\small\item\em Check if the user has requested to stop training via the UI. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Top-\/level interface for visualizing Machine Learning models and training progress.
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_a1e330b452d4cc54dfbf34649a5899cfb}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!````~IVisualizer@{\texorpdfstring{$\sim$}{\string~}IVisualizer}}
+\index{````~IVisualizer@{\texorpdfstring{$\sim$}{\string~}IVisualizer}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}IVisualizer()}{\string~IVisualizer()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_a1e330b452d4cc54dfbf34649a5899cfb}
+virtual hahaha\+::display\+::\+IVisualizer\+::\texorpdfstring{$\sim$}{\string~}\+IVisualizer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_ad214a1d1aec5bd241a3d8edfb563c6e0}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!addLayer@{addLayer}}
+\index{addLayer@{addLayer}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{addLayer()}{addLayer()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_ad214a1d1aec5bd241a3d8edfb563c6e0}
+virtual void hahaha\+::display\+::\+IVisualizer\+::add\+Layer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structhahaha_1_1display_1_1LayerInfo}{Layer\+Info}} \&}]{info}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Add a layer to the model visualization.
+
+
+\begin{DoxyParams}{Parameters}
+{\em info} & Information about the layer. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_a00217a6ce68ca4b2661ef272cbd4da82}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_a81cd6ed5d67c9c0587ddde878c8627dc}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!clearModel@{clearModel}}
+\index{clearModel@{clearModel}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{clearModel()}{clearModel()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_a81cd6ed5d67c9c0587ddde878c8627dc}
+virtual void hahaha\+::display\+::\+IVisualizer\+::clear\+Model (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Clear the current model structure visualization.
+
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_ab8cf2f8904211c1405dc92453e82534a}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_aac803c08992e47b8575561e446cd9850}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!getControlAction@{getControlAction}}
+\index{getControlAction@{getControlAction}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{getControlAction()}{getControlAction()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_aac803c08992e47b8575561e446cd9850}
+virtual \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8f}{Control\+Action}} hahaha\+::display\+::\+IVisualizer\+::get\+Control\+Action (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Get the last action requested by the user from the control panel.
+
+\begin{DoxyReturn}{Returns}
+\doxylink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8f}{Control\+Action}
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_abc99300d4a22da5eb03b6ffac991f5b9}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_aac869a49b8bfcc542b53a5b3d97963f3}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!init@{init}}
+\index{init@{init}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_aac869a49b8bfcc542b53a5b3d97963f3}
+virtual void hahaha\+::display\+::\+IVisualizer\+::init (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{title}{, }\item[{int}]{width}{ = {\ttfamily 1280}, }\item[{int}]{height}{ = {\ttfamily 720}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Initialize the visualization window/context.
+
+
+\begin{DoxyParams}{Parameters}
+{\em title} & Title of the visualization window. \\
+\hline
+{\em width} & Width of the window. \\
+\hline
+{\em height} & Height of the window. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_a68f105f9ccba154de27f0520cb1cfc49}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_a7715871ed827ae9a022f0258fe6166c2}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!recordMetrics@{recordMetrics}}
+\index{recordMetrics@{recordMetrics}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{recordMetrics()}{recordMetrics()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_a7715871ed827ae9a022f0258fe6166c2}
+virtual void hahaha\+::display\+::\+IVisualizer\+::record\+Metrics (\begin{DoxyParamCaption}\item[{int}]{epoch}{, }\item[{float}]{loss}{, }\item[{float}]{accuracy}{ = {\ttfamily 0.0f}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Record training metrics for a single step/epoch.
+
+
+\begin{DoxyParams}{Parameters}
+{\em epoch} & Current epoch index. \\
+\hline
+{\em loss} & Current loss value. \\
+\hline
+{\em accuracy} & Current accuracy value (optional). \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_a28fe176810646067a653ee3714f367f2}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_a3f0aad13e40c64c9cba3f373401b48ec}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!renderFrame@{renderFrame}}
+\index{renderFrame@{renderFrame}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{renderFrame()}{renderFrame()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_a3f0aad13e40c64c9cba3f373401b48ec}
+virtual bool hahaha\+::display\+::\+IVisualizer\+::render\+Frame (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Render the current frame of the visualization. This should be called in the main application loop.
+
+\begin{DoxyReturn}{Returns}
+bool True if the visualization should continue, false if it should close.
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_aebb27529596734530f9223fb091199fd}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_acae00dffa6bd96194edb84214e11790b}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!requestedStop@{requestedStop}}
+\index{requestedStop@{requestedStop}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{requestedStop()}{requestedStop()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_acae00dffa6bd96194edb84214e11790b}
+virtual bool hahaha\+::display\+::\+IVisualizer\+::requested\+Stop (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Check if the user has requested to stop training via the UI.
+
+\begin{DoxyReturn}{Returns}
+true If training should stop.
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_a799ea59bb6e10eb10955331ab874fed6}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_a23277728348edf775c14473c4b580b2f}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!setStatus@{setStatus}}
+\index{setStatus@{setStatus}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{setStatus()}{setStatus()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_a23277728348edf775c14473c4b580b2f}
+virtual void hahaha\+::display\+::\+IVisualizer\+::set\+Status (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{status}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Set a status message to be displayed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em status} & Status string (e.\+g., "{}\+Training..."{}, "{}\+Paused"{}). \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_a779f4b49f475e67d7eb631e14b498c6c}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_af4852b6fde2b1299bed53de63cc92c17}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!showControlPanel@{showControlPanel}}
+\index{showControlPanel@{showControlPanel}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{showControlPanel()}{showControlPanel()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_af4852b6fde2b1299bed53de63cc92c17}
+virtual void hahaha\+::display\+::\+IVisualizer\+::show\+Control\+Panel (\begin{DoxyParamCaption}\item[{bool}]{show}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Show/\+Hide the control panel.
+
+
+\begin{DoxyParams}{Parameters}
+{\em show} & Boolean flag. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_a8ff5456135695babafc01f2110286b03}{hahaha\+::display\+::\+MLVisualizer}}.
+
+\Hypertarget{classhahaha_1_1display_1_1IVisualizer_a3c48c6e70d4f6ab6685eae838fa46b69}\index{hahaha::display::IVisualizer@{hahaha::display::IVisualizer}!visualizeTensor@{visualizeTensor}}
+\index{visualizeTensor@{visualizeTensor}!hahaha::display::IVisualizer@{hahaha::display::IVisualizer}}
+\doxysubsubsection{\texorpdfstring{visualizeTensor()}{visualizeTensor()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1display_1_1IVisualizer_a3c48c6e70d4f6ab6685eae838fa46b69}
+virtual void hahaha\+::display\+::\+IVisualizer\+::visualize\+Tensor (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha\+::math\+::\+Tensor\+Wrapper}}$<$ float $>$ \&}]{data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Visualize a tensor as an image/heatmap.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of the visualization window. \\
+\hline
+{\em data} & \doxylink{classhahaha_1_1Tensor}{Tensor} data to visualize. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classhahaha_1_1display_1_1MLVisualizer_a64d62f494a64bb26faf48cc4b1692759}{hahaha\+::display\+::\+MLVisualizer}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/display/\mbox{\hyperlink{Visualizer_8h}{Visualizer.\+h}}\end{DoxyCompactItemize}

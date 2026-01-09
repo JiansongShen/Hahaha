@@ -1,0 +1,206 @@
+\doxysection{Tensor\+Shape Class Reference}
+\hypertarget{classTensorShape}{}\label{classTensorShape}\index{TensorShape@{TensorShape}}
+
+
+Represents the shape (dimensions) of a tensor.
+
+
+
+
+{\ttfamily \#include $<$Tensor\+Shape.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\Hypertarget{classTensorShape_ad876948ac482a9d32cd3b38d8a88ae63}\label{classTensorShape_ad876948ac482a9d32cd3b38d8a88ae63}
+{\bfseries Tensor\+Shape} ()=default
+\begin{DoxyCompactList}\small\item\em Construct an empty shape. \end{DoxyCompactList}\item
+\Hypertarget{classTensorShape_a4d0b9d667b2febe6809eac5c9a7ab24d}\label{classTensorShape_a4d0b9d667b2febe6809eac5c9a7ab24d}
+{\bfseries Tensor\+Shape} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&)=default
+\begin{DoxyCompactList}\small\item\em Copy-\/construct a \doxylink{classTensorShape}{Tensor\+Shape}. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorShape_aa31d38e5c9c1768d114468e655e3ad54}{Tensor\+Shape}} (\mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&\&other) noexcept
+\begin{DoxyCompactList}\small\item\em Move-\/construct a \doxylink{classTensorShape}{Tensor\+Shape}. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorShape_a29f9d33ebf298e598c12dc653a7540d4}{Tensor\+Shape}} (const std\+::initializer\+\_\+list$<$ size\+\_\+t $>$ dims)
+\begin{DoxyCompactList}\small\item\em Construct from an initializer list of dimensions. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classTensorShape_a94859dac3233f92195403ba0bb946d3d}{Tensor\+Shape}} (const std\+::vector$<$ size\+\_\+t $>$ \&dims)
+\begin{DoxyCompactList}\small\item\em Construct from a vector of dimensions. \end{DoxyCompactList}\item
+\Hypertarget{classTensorShape_af3d8312f9225439640d0b333e4e22d49}\label{classTensorShape_af3d8312f9225439640d0b333e4e22d49}
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+Tensor\+Shape} ()=default
+\begin{DoxyCompactList}\small\item\em Default destructor. \end{DoxyCompactList}\item
+\Hypertarget{classTensorShape_a5dcf87083f9af5cd41d6b03987e5e6eb}\label{classTensorShape_a5dcf87083f9af5cd41d6b03987e5e6eb}
+\mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \& {\bfseries operator=} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&)=default
+\begin{DoxyCompactList}\small\item\em Copy assignment operator. \end{DoxyCompactList}\item
+\Hypertarget{classTensorShape_ad50a29d28ec192157a618689033ccf91}\label{classTensorShape_ad50a29d28ec192157a618689033ccf91}
+\mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \& {\bfseries operator=} (\mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&\&other) noexcept=default
+\begin{DoxyCompactList}\small\item\em Move assignment operator. \end{DoxyCompactList}\item
+const std\+::vector$<$ size\+\_\+t $>$ \& \mbox{\hyperlink{classTensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}{get\+Dims}} () const
+\begin{DoxyCompactList}\small\item\em Get the dimensions vector. \end{DoxyCompactList}\item
+std\+::vector$<$ size\+\_\+t $>$ \& \mbox{\hyperlink{classTensorShape_a67687e34bc98a694bf4b7005dfe94640}{get\+Dims}} ()
+\begin{DoxyCompactList}\small\item\em Get the dimensions vector (non-\/const version). \end{DoxyCompactList}\item
+size\+\_\+t \mbox{\hyperlink{classTensorShape_aaa6d0208edf47d2b0f1e328e7601118d}{get\+Total\+Size}} () const
+\begin{DoxyCompactList}\small\item\em Compute the total number of elements for this shape. \end{DoxyCompactList}\item
+\Hypertarget{classTensorShape_adf174feee3a24f72980ecb752e823675}\label{classTensorShape_adf174feee3a24f72980ecb752e823675}
+void {\bfseries reverse} ()
+\begin{DoxyCompactList}\small\item\em Reverse the dimensions (e.\+g., for converting layout). \end{DoxyCompactList}\item
+std\+::string \mbox{\hyperlink{classTensorShape_a75900710f0b9e476ba15e5ca1f12d00d}{to\+String}} () const
+\begin{DoxyCompactList}\small\item\em Return a string representation of the shape. \end{DoxyCompactList}\item
+\Hypertarget{classTensorShape_a250fadad8d16b3fe144d69aa45835a61}\label{classTensorShape_a250fadad8d16b3fe144d69aa45835a61}
+bool {\bfseries operator==} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&other) const
+\begin{DoxyCompactList}\small\item\em Equality operator. \end{DoxyCompactList}\item
+\Hypertarget{classTensorShape_af08b63fbffecbe8521a93f9f9a55df50}\label{classTensorShape_af08b63fbffecbe8521a93f9f9a55df50}
+bool {\bfseries operator!=} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&other) const
+\begin{DoxyCompactList}\small\item\em Inequality operator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+static std\+::optional$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \mbox{\hyperlink{classTensorShape_a98a4fcd569b8e68e0c94521efe4cd333}{broadcast\+Shape}} (const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&shape1, const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&shape2)
+\begin{DoxyCompactList}\small\item\em Compute the broadcast-\/compatible shape for two tensor shapes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item
+\Hypertarget{classTensorShape_aba3e291283720835d2b2fcc0d3726021}\label{classTensorShape_aba3e291283720835d2b2fcc0d3726021}
+class {\bfseries \+::\+Tensor\+Shape\+Test}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents the shape (dimensions) of a tensor.
+
+\doxylink{classTensorShape}{Tensor\+Shape} stores a vector of integers representing the size of each dimension. For example, a 2x3 matrix has dimensions \{2, 3\}.
+
+This class provides utilities to compute the total number of elements and format the shape as a string.
+
+\label{doc-constructors}
+\Hypertarget{classTensorShape_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classTensorShape_aa31d38e5c9c1768d114468e655e3ad54}\index{TensorShape@{TensorShape}!TensorShape@{TensorShape}}
+\index{TensorShape@{TensorShape}!TensorShape@{TensorShape}}
+\doxysubsubsection{\texorpdfstring{TensorShape()}{TensorShape()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{classTensorShape_aa31d38e5c9c1768d114468e655e3ad54}
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ad876948ac482a9d32cd3b38d8a88ae63}{hahaha\+::math\+::\+Tensor\+Shape\+::\+Tensor\+Shape}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move-\/construct a \doxylink{classTensorShape}{Tensor\+Shape}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Source to move from. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorShape_a29f9d33ebf298e598c12dc653a7540d4}\index{TensorShape@{TensorShape}!TensorShape@{TensorShape}}
+\index{TensorShape@{TensorShape}!TensorShape@{TensorShape}}
+\doxysubsubsection{\texorpdfstring{TensorShape()}{TensorShape()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{classTensorShape_a29f9d33ebf298e598c12dc653a7540d4}
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ad876948ac482a9d32cd3b38d8a88ae63}{hahaha\+::math\+::\+Tensor\+Shape\+::\+Tensor\+Shape}} (\begin{DoxyParamCaption}\item[{const std\+::initializer\+\_\+list$<$ size\+\_\+t $>$}]{dims}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct from an initializer list of dimensions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dims} & List of dimension sizes (e.\+g., \{2, 3, 4\}). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classTensorShape_a94859dac3233f92195403ba0bb946d3d}\index{TensorShape@{TensorShape}!TensorShape@{TensorShape}}
+\index{TensorShape@{TensorShape}!TensorShape@{TensorShape}}
+\doxysubsubsection{\texorpdfstring{TensorShape()}{TensorShape()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{classTensorShape_a94859dac3233f92195403ba0bb946d3d}
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ad876948ac482a9d32cd3b38d8a88ae63}{hahaha\+::math\+::\+Tensor\+Shape\+::\+Tensor\+Shape}} (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{dims}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct from a vector of dimensions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dims} & Vector of dimension sizes. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{classTensorShape_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classTensorShape_a98a4fcd569b8e68e0c94521efe4cd333}\index{TensorShape@{TensorShape}!broadcastShape@{broadcastShape}}
+\index{broadcastShape@{broadcastShape}!TensorShape@{TensorShape}}
+\doxysubsubsection{\texorpdfstring{broadcastShape()}{broadcastShape()}}
+{\footnotesize\ttfamily \label{classTensorShape_a98a4fcd569b8e68e0c94521efe4cd333}
+std\+::optional$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_a98a4fcd569b8e68e0c94521efe4cd333}{hahaha\+::math\+::\+Tensor\+Shape\+::broadcast\+Shape}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&}]{shape1}{, }\item[{const \mbox{\hyperlink{classTensorShape}{Tensor\+Shape}} \&}]{shape2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [nodiscard]}}
+
+
+
+Compute the broadcast-\/compatible shape for two tensor shapes.
+
+Two shapes are broadcast-\/compatible if, for each dimension, they are either equal or one of them is 1. The result shape has the maximum size in each dimension.
+
+
+\begin{DoxyParams}{Parameters}
+{\em shape1} & First tensor shape. \\
+\hline
+{\em shape2} & Second tensor shape. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::optional$<$std\+::vector$<$size\+\_\+t$>$$>$ The broadcast-\/compatible shape, or std\+::nullopt if the shapes are not compatible.
+\end{DoxyReturn}
+\Hypertarget{classTensorShape_a67687e34bc98a694bf4b7005dfe94640}\index{TensorShape@{TensorShape}!getDims@{getDims}}
+\index{getDims@{getDims}!TensorShape@{TensorShape}}
+\doxysubsubsection{\texorpdfstring{getDims()}{getDims()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classTensorShape_a67687e34bc98a694bf4b7005dfe94640}
+std\+::vector$<$ size\+\_\+t $>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}{hahaha\+::math\+::\+Tensor\+Shape\+::get\+Dims}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the dimensions vector (non-\/const version).
+
+\begin{DoxyReturn}{Returns}
+std\+::vector$<$size\+\_\+t$>$\& Mutable reference to the dimensions.
+\end{DoxyReturn}
+\Hypertarget{classTensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}\index{TensorShape@{TensorShape}!getDims@{getDims}}
+\index{getDims@{getDims}!TensorShape@{TensorShape}}
+\doxysubsubsection{\texorpdfstring{getDims()}{getDims()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classTensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}
+const std\+::vector$<$ size\+\_\+t $>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}{hahaha\+::math\+::\+Tensor\+Shape\+::get\+Dims}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the dimensions vector.
+
+\begin{DoxyReturn}{Returns}
+const std\+::vector$<$size\+\_\+t$>$\& dimensions.
+\end{DoxyReturn}
+\Hypertarget{classTensorShape_aaa6d0208edf47d2b0f1e328e7601118d}\index{TensorShape@{TensorShape}!getTotalSize@{getTotalSize}}
+\index{getTotalSize@{getTotalSize}!TensorShape@{TensorShape}}
+\doxysubsubsection{\texorpdfstring{getTotalSize()}{getTotalSize()}}
+{\footnotesize\ttfamily \label{classTensorShape_aaa6d0208edf47d2b0f1e328e7601118d}
+size\+\_\+t \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_aaa6d0208edf47d2b0f1e328e7601118d}{hahaha\+::math\+::\+Tensor\+Shape\+::get\+Total\+Size}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Compute the total number of elements for this shape.
+
+Total size is the product of all dimension sizes. Formula\+: size = product(dims\mbox{[}i\mbox{]}) for i in 0..N-\/1
+
+\begin{DoxyReturn}{Returns}
+product of all dimensions (1 for empty shape).
+\end{DoxyReturn}
+\Hypertarget{classTensorShape_a75900710f0b9e476ba15e5ca1f12d00d}\index{TensorShape@{TensorShape}!toString@{toString}}
+\index{toString@{toString}!TensorShape@{TensorShape}}
+\doxysubsubsection{\texorpdfstring{toString()}{toString()}}
+{\footnotesize\ttfamily \label{classTensorShape_a75900710f0b9e476ba15e5ca1f12d00d}
+std\+::string \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_a75900710f0b9e476ba15e5ca1f12d00d}{hahaha\+::math\+::\+Tensor\+Shape\+::to\+String}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Return a string representation of the shape.
+
+\begin{DoxyReturn}{Returns}
+std\+::string formatted as "{}(d1, d2, ...)"{}.
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/math/ds/Tensor\+Shape.\+h\end{DoxyCompactItemize}

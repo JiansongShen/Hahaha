@@ -1,0 +1,207 @@
+\doxysection{Logger Class Reference}
+\hypertarget{classLogger}{}\label{classLogger}\index{Logger@{Logger}}
+
+
+Thread-\/safe asynchronous logging system.
+
+
+
+
+{\ttfamily \#include $<$Logger.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\Hypertarget{classLogger_af71d6be67d901947d5c8a998de503502}\label{classLogger_af71d6be67d901947d5c8a998de503502}
+{\bfseries Logger} (const \mbox{\hyperlink{classLogger}{Logger}} \&)=delete
+\item
+\Hypertarget{classLogger_a1c4113dc05031dcb2fd010d46a907704}\label{classLogger_a1c4113dc05031dcb2fd010d46a907704}
+{\bfseries Logger} (\mbox{\hyperlink{classLogger}{Logger}} \&\&)=delete
+\item
+\mbox{\hyperlink{classLogger_af7ce299fbe0e8a6e93a4ae87fe05dcb2}{Logger}} (\mbox{\hyperlink{classLoggerConfig}{Logger\+Config}} config)
+\begin{DoxyCompactList}\small\item\em Construct a \doxylink{classLogger}{Logger} with specific configuration. \end{DoxyCompactList}\item
+\Hypertarget{classLogger_abfe8fd5b6fd50f2028a4c630293e7048}\label{classLogger_abfe8fd5b6fd50f2028a4c630293e7048}
+\mbox{\hyperlink{classLogger}{Logger}} \& {\bfseries operator=} (const \mbox{\hyperlink{classLogger}{Logger}} \&)=delete
+\item
+\Hypertarget{classLogger_a8d6789a46b59b9b57b80b450b85c44b5}\label{classLogger_a8d6789a46b59b9b57b80b450b85c44b5}
+\mbox{\hyperlink{classLogger}{Logger}} \& {\bfseries operator=} (\mbox{\hyperlink{classLogger}{Logger}} \&\&)=delete
+\item
+\Hypertarget{classLogger_a84c4902d1b4558ed7a7b5edb51a85152}\label{classLogger_a84c4902d1b4558ed7a7b5edb51a85152}
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+Logger} ()
+\begin{DoxyCompactList}\small\item\em Destructor\+: flushes the queue and joins the worker thread. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+static \mbox{\hyperlink{classLogger}{Logger}} \& \mbox{\hyperlink{classLogger_a38776bfe090d7cd4f7855b5ac56d7d8e}{instance}} ()
+\begin{DoxyCompactList}\small\item\em Get the singleton \doxylink{classLogger}{Logger} instance. \end{DoxyCompactList}\item
+\Hypertarget{classLogger_adb973e4816747e5a8c6d1b09bdf9cf22}\label{classLogger_adb973e4816747e5a8c6d1b09bdf9cf22}
+static void {\bfseries shutdown} ()
+\begin{DoxyCompactList}\small\item\em Shutdown the logger\+: flushes the queue and joins the worker thread. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classLogger_afac61f7cd727c17240ba99c09bdd5c80}{log}} (const std\+::string \&msg, Log\+Level level)
+\begin{DoxyCompactList}\small\item\em Log a message with current stacktrace. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classLogger_a4f6fa6a33259ae1ebaf8878eb589a8d5}{log}} (const char \texorpdfstring{$\ast$}{*}msg, Log\+Level level)
+\item
+static void \mbox{\hyperlink{classLogger_aeb343474175f8f3bf7bd087a3f83b46b}{fatal}} (const std\+::string \&msg)
+\begin{DoxyCompactList}\small\item\em Log a message with specified stacktrace. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classLogger_af2a24d8da6c57cf59e21adc513511bda}{fatal}} (const char \texorpdfstring{$\ast$}{*}msg)
+\item
+\Hypertarget{classLogger_aa5ff89ff7d04237cda6d47942b1d7c22}\label{classLogger_aa5ff89ff7d04237cda6d47942b1d7c22}
+static void {\bfseries error} (const std\+::string \&msg)
+\begin{DoxyCompactList}\small\item\em Log an ERROR level message. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classLogger_a228c22bc0b8add926e34ef75c44ca923}{error}} (const char \texorpdfstring{$\ast$}{*}msg)
+\item
+\Hypertarget{classLogger_af1553f9f44e8c3ae8b205ff2d3bd5b0e}\label{classLogger_af1553f9f44e8c3ae8b205ff2d3bd5b0e}
+static void {\bfseries warn} (const std\+::string \&msg)
+\begin{DoxyCompactList}\small\item\em Log a WARN level message. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classLogger_ac2cf9c965f830b5297f28eef8cdbb174}{warn}} (const char \texorpdfstring{$\ast$}{*}msg)
+\item
+\Hypertarget{classLogger_a87ee1b6b49af15a0971cd8fdc2644d74}\label{classLogger_a87ee1b6b49af15a0971cd8fdc2644d74}
+static void {\bfseries info} (const std\+::string \&msg)
+\begin{DoxyCompactList}\small\item\em Log an INFO level message. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classLogger_af5ca2f863988f885f8d86931819f76b8}{info}} (const char \texorpdfstring{$\ast$}{*}msg)
+\item
+\Hypertarget{classLogger_aa92a64faa68302c481665cdbf52fc20b}\label{classLogger_aa92a64faa68302c481665cdbf52fc20b}
+static void {\bfseries debug} (const std\+::string \&msg)
+\begin{DoxyCompactList}\small\item\em Log a DEBUG level message. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classLogger_a510f17e1c19231ad60257dac2a0c130c}{debug}} (const char \texorpdfstring{$\ast$}{*}msg)
+\item
+\Hypertarget{classLogger_a5673735deb0454f5154b7bd123001e12}\label{classLogger_a5673735deb0454f5154b7bd123001e12}
+static void {\bfseries trace} (const std\+::string \&msg)
+\begin{DoxyCompactList}\small\item\em Log a TRACE level message. \end{DoxyCompactList}\item
+static void \mbox{\hyperlink{classLogger_afe200ad8b889844386c149aa5f7762ee}{trace}} (const char \texorpdfstring{$\ast$}{*}msg)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Thread-\/safe asynchronous logging system.
+
+\doxylink{classLogger}{Logger} uses a background worker thread and a message queue to ensure that logging calls do not block the main execution thread. It supports both console and file output with configurable levels and formatting.
+
+Use the static methods (info, warn, error, etc.) for convenient logging.
+
+\label{doc-constructors}
+\Hypertarget{classLogger_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classLogger_af7ce299fbe0e8a6e93a4ae87fe05dcb2}\index{Logger@{Logger}!Logger@{Logger}}
+\index{Logger@{Logger}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{Logger()}{Logger()}}
+{\footnotesize\ttfamily \label{classLogger_af7ce299fbe0e8a6e93a4ae87fe05dcb2}
+hahaha\+::utils\+::\+Logger\+::\+Logger (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classLoggerConfig}{Logger\+Config}}}]{config}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct a \doxylink{classLogger}{Logger} with specific configuration.
+
+
+\begin{DoxyParams}{Parameters}
+{\em config} & The configuration to use. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{classLogger_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classLogger_a510f17e1c19231ad60257dac2a0c130c}\index{Logger@{Logger}!debug@{debug}}
+\index{debug@{debug}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{debug()}{debug()}}
+{\footnotesize\ttfamily \label{classLogger_a510f17e1c19231ad60257dac2a0c130c}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_aa92a64faa68302c481665cdbf52fc20b}{hahaha\+::utils\+::\+Logger\+::debug}} (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.\Hypertarget{classLogger_a228c22bc0b8add926e34ef75c44ca923}\index{Logger@{Logger}!error@{error}}
+\index{error@{error}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{error()}{error()}}
+{\footnotesize\ttfamily \label{classLogger_a228c22bc0b8add926e34ef75c44ca923}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_aa5ff89ff7d04237cda6d47942b1d7c22}{hahaha\+::utils\+::\+Logger\+::error}} (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.\Hypertarget{classLogger_af2a24d8da6c57cf59e21adc513511bda}\index{Logger@{Logger}!fatal@{fatal}}
+\index{fatal@{fatal}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{fatal()}{fatal()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classLogger_af2a24d8da6c57cf59e21adc513511bda}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_aeb343474175f8f3bf7bd087a3f83b46b}{hahaha\+::utils\+::\+Logger\+::fatal}} (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.\Hypertarget{classLogger_aeb343474175f8f3bf7bd087a3f83b46b}\index{Logger@{Logger}!fatal@{fatal}}
+\index{fatal@{fatal}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{fatal()}{fatal()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classLogger_aeb343474175f8f3bf7bd087a3f83b46b}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_aeb343474175f8f3bf7bd087a3f83b46b}{hahaha\+::utils\+::\+Logger\+::fatal}} (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Log a message with specified stacktrace.
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & The message string. \\
+\hline
+{\em level} & Severity level. \\
+\hline
+{\em trace} & Stacktrace to include in the log.\\
+\hline
+\end{DoxyParams}
+Log a FATAL level message. \Hypertarget{classLogger_af5ca2f863988f885f8d86931819f76b8}\index{Logger@{Logger}!info@{info}}
+\index{info@{info}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{info()}{info()}}
+{\footnotesize\ttfamily \label{classLogger_af5ca2f863988f885f8d86931819f76b8}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_a87ee1b6b49af15a0971cd8fdc2644d74}{hahaha\+::utils\+::\+Logger\+::info}} (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.\Hypertarget{classLogger_a38776bfe090d7cd4f7855b5ac56d7d8e}\index{Logger@{Logger}!instance@{instance}}
+\index{instance@{instance}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{instance()}{instance()}}
+{\footnotesize\ttfamily \label{classLogger_a38776bfe090d7cd4f7855b5ac56d7d8e}
+\mbox{\hyperlink{classLogger}{Logger}} \& \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_a38776bfe090d7cd4f7855b5ac56d7d8e}{hahaha\+::utils\+::\+Logger\+::instance}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Get the singleton \doxylink{classLogger}{Logger} instance.
+
+\begin{DoxyReturn}{Returns}
+\doxylink{classLogger}{Logger}\& reference to the singleton.
+\end{DoxyReturn}
+\Hypertarget{classLogger_a4f6fa6a33259ae1ebaf8878eb589a8d5}\index{Logger@{Logger}!log@{log}}
+\index{log@{log}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{log()}{log()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classLogger_a4f6fa6a33259ae1ebaf8878eb589a8d5}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_afac61f7cd727c17240ba99c09bdd5c80}{hahaha\+::utils\+::\+Logger\+::log}} (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{, }\item[{Log\+Level}]{level}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.\Hypertarget{classLogger_afac61f7cd727c17240ba99c09bdd5c80}\index{Logger@{Logger}!log@{log}}
+\index{log@{log}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{log()}{log()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classLogger_afac61f7cd727c17240ba99c09bdd5c80}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_afac61f7cd727c17240ba99c09bdd5c80}{hahaha\+::utils\+::\+Logger\+::log}} (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{msg}{, }\item[{Log\+Level}]{level}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Log a message with current stacktrace.
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & The message string. \\
+\hline
+{\em level} & Severity level.\\
+\hline
+\end{DoxyParams}
+Log a message with a specific level.
+\begin{DoxyParams}{Parameters}
+{\em msg} & The message string. \\
+\hline
+{\em level} & Severity level. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classLogger_afe200ad8b889844386c149aa5f7762ee}\index{Logger@{Logger}!trace@{trace}}
+\index{trace@{trace}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{trace()}{trace()}}
+{\footnotesize\ttfamily \label{classLogger_afe200ad8b889844386c149aa5f7762ee}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_a5673735deb0454f5154b7bd123001e12}{hahaha\+::utils\+::\+Logger\+::trace}} (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.\Hypertarget{classLogger_ac2cf9c965f830b5297f28eef8cdbb174}\index{Logger@{Logger}!warn@{warn}}
+\index{warn@{warn}!Logger@{Logger}}
+\doxysubsubsection{\texorpdfstring{warn()}{warn()}}
+{\footnotesize\ttfamily \label{classLogger_ac2cf9c965f830b5297f28eef8cdbb174}
+void \mbox{\hyperlink{classhahaha_1_1utils_1_1Logger_af1553f9f44e8c3ae8b205ff2d3bd5b0e}{hahaha\+::utils\+::\+Logger\+::warn}} (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/utils/log/Logger.\+h\end{DoxyCompactItemize}

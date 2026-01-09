@@ -1,0 +1,428 @@
+\doxysection{hahaha\+::math\+::Tensor\+Data\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classhahaha_1_1math_1_1TensorData}{}\label{classhahaha_1_1math_1_1TensorData}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+
+
+Internal storage class for tensor data and metadata.
+
+
+
+
+{\ttfamily \#include $<$Tensor\+Data.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} ()=default
+\begin{DoxyCompactList}\small\item\em Default constructor for an empty storage. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a9ec3571d47f419d90b49ace8c5f2a86d}{Tensor\+Data}} (const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{Tensor\+Shape}} \&shape, T init\+Value, const \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}} device=\mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}}())
+\begin{DoxyCompactList}\small\item\em Construct with given shape and initial value on a specific device. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a687eafbf965c1d0718aa6dda8fef670c}{Tensor\+Data}} (const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{Tensor\+Shape}} \&shape, const \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}} device=\mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}}())
+\begin{DoxyCompactList}\small\item\em Construct with given shape and initial value on a specific device. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afe1b71c0f52e0d81c0bb1b90ef38b661}{Tensor\+Data}} (const Tensor\+Data \&other)
+\begin{DoxyCompactList}\small\item\em Copy constructor. Performs a deep copy of the underlying array. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_acdac82b1354a1ae87b0961b9202a7a6d}{Tensor\+Data}} (Tensor\+Data \&\&other) noexcept
+\begin{DoxyCompactList}\small\item\em Move constructor. Efficiently transfers ownership of the array. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a2ec24d7aa0563922987f1d3af42fb966}{Tensor\+Data}} (const std\+::vector$<$ T $>$ \&init\+Vec)
+\begin{DoxyCompactList}\small\item\em Construct from a vector of values. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a18763c9300e5047e8dc3f33243350d6d}{operator=}} (const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} \&)=delete
+\begin{DoxyCompactList}\small\item\em Copy assignment is deleted. Use constructor for copying. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a3fe2b364de048d6e1ecf60dffc4457cb}{operator=}} (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} \&\&other) noexcept
+\begin{DoxyCompactList}\small\item\em Move assignment operator. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_ab6c0c01287e776fa5c5478996de183d2}{share}} () const
+\begin{DoxyCompactList}\small\item\em Create a shared view of the tensor data. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_add26bb800f55c6fc1f4e86a66bda0740}{\texorpdfstring{$\sim$}{\string~}\+Tensor\+Data}} ()=default
+\begin{DoxyCompactList}\small\item\em Destructor. Automatically releases the shared\+\_\+ptr. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a52fe7c7c6317f51dbab3cff4f5b9e86d}{Tensor\+Data}} (\mbox{\hyperlink{structhahaha_1_1math_1_1NestedData}{Nested\+Data}}$<$ T $>$ \&\&data)
+\begin{DoxyCompactList}\small\item\em Construct from flattened nested data (e.\+g., from initializer lists). \end{DoxyCompactList}\item
+std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_aa394b3ecbbfe9575892e978f7ff7bbb2}{get\+Data}} ()
+\begin{DoxyCompactList}\small\item\em Get the raw data pointer. \end{DoxyCompactList}\item
+const std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_abfe6fac7ae91986578fc2a2751983b7d}{get\+Data}} () const
+\begin{DoxyCompactList}\small\item\em Const version of data pointer access. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_adb79e68bfc44f7bb24f61c7b1cc8ff7b}{set\+Data}} (std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ data)
+\begin{DoxyCompactList}\small\item\em Replace the current data array. \end{DoxyCompactList}\item
+T \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a9a98952d5f4dd50af4781f132bb9f986}{operator\mbox{[}$\,$\mbox{]}}} (size\+\_\+t idx) const
+\begin{DoxyCompactList}\small\item\em Access element at the given flat index. \end{DoxyCompactList}\item
+const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{Tensor\+Shape}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a53963a85dd2477e47377dd9b039c4e6b}{get\+Shape}} () const
+\begin{DoxyCompactList}\small\item\em Get the tensor shape. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a19f283e7b2287c6228c4e6a73543c204}{set\+Shape}} (const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{Tensor\+Shape}} \&shape)
+\begin{DoxyCompactList}\small\item\em Update the tensor shape. \end{DoxyCompactList}\item
+const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{Tensor\+Stride}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a62e0faa47ca24a8838edac7b1b9b3cc7}{get\+Stride}} () const
+\begin{DoxyCompactList}\small\item\em Get the memory strides. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a80f5eb2354153b43ec23b14fd89585a0}{set\+Stride}} (const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{Tensor\+Stride}} \&stride)
+\begin{DoxyCompactList}\small\item\em Update the memory strides. \end{DoxyCompactList}\item
+const \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a39481fa7ec51bfdb86ec65701e1c651c}{get\+Device}} () const
+\begin{DoxyCompactList}\small\item\em Get the device where the data is stored. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a972a360dbd946784f570e1ee5451ed5c}{set\+Device}} (const \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}} \&device)
+\begin{DoxyCompactList}\small\item\em Set the device for this tensor data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item
+class \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_a724559fb0502c5e0b2c85d6a7c7ee087}{Tensor\+Wrapper$<$ T $>$}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class hahaha\+::math\+::\+Tensor\+Data$<$ T $>$}
+Internal storage class for tensor data and metadata.
+
+\doxylink{classhahaha_1_1math_1_1TensorData}{Tensor\+Data} manages the raw memory allocation, the shape of the tensor, and the memory strides. It uses std\+::shared\+\_\+ptr for automatic memory management on the CPU. For GPU, a separate memory management strategy would be needed.
+
+This class is designed to be wrapped by \doxylink{classhahaha_1_1math_1_1TensorWrapper}{Tensor\+Wrapper}, which provides the high-\/level API.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The numeric type of the tensor elements. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!TensorData@{TensorData}}
+\index{TensorData@{TensorData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorData()}{TensorData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::\+Tensor\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Default constructor for an empty storage.
+
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a9ec3571d47f419d90b49ace8c5f2a86d}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!TensorData@{TensorData}}
+\index{TensorData@{TensorData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorData()}{TensorData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a9ec3571d47f419d90b49ace8c5f2a86d}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::\+Tensor\+Data (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{Tensor\+Shape}} \&}]{shape}{, }\item[{T}]{init\+Value}{, }\item[{const \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}}}]{device}{ = {\ttfamily \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}}()}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct with given shape and initial value on a specific device.
+
+
+\begin{DoxyParams}{Parameters}
+{\em shape} & The shape of the tensor. \\
+\hline
+{\em init\+Value} & Initial value for all elements. \\
+\hline
+{\em device} & The device where the data should reside. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a687eafbf965c1d0718aa6dda8fef670c}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!TensorData@{TensorData}}
+\index{TensorData@{TensorData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorData()}{TensorData()}\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a687eafbf965c1d0718aa6dda8fef670c}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::\+Tensor\+Data (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{Tensor\+Shape}} \&}]{shape}{, }\item[{const \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}}}]{device}{ = {\ttfamily \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}}()}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct with given shape and initial value on a specific device.
+
+
+\begin{DoxyParams}{Parameters}
+{\em shape} & The shape of the tensor. \\
+\hline
+{\em device} & The device where the data should reside. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_afe1b71c0f52e0d81c0bb1b90ef38b661}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!TensorData@{TensorData}}
+\index{TensorData@{TensorData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorData()}{TensorData()}\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_afe1b71c0f52e0d81c0bb1b90ef38b661}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::\+Tensor\+Data (\begin{DoxyParamCaption}\item[{const Tensor\+Data$<$ T $>$ \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy constructor. Performs a deep copy of the underlying array.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The \doxylink{classhahaha_1_1math_1_1TensorData}{Tensor\+Data} to copy from. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_acdac82b1354a1ae87b0961b9202a7a6d}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!TensorData@{TensorData}}
+\index{TensorData@{TensorData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorData()}{TensorData()}\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_acdac82b1354a1ae87b0961b9202a7a6d}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::\+Tensor\+Data (\begin{DoxyParamCaption}\item[{Tensor\+Data$<$ T $>$ \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move constructor. Efficiently transfers ownership of the array.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The source \doxylink{classhahaha_1_1math_1_1TensorData}{Tensor\+Data} to move from. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a2ec24d7aa0563922987f1d3af42fb966}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!TensorData@{TensorData}}
+\index{TensorData@{TensorData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorData()}{TensorData()}\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a2ec24d7aa0563922987f1d3af42fb966}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::\+Tensor\+Data (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ T $>$ \&}]{init\+Vec}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct from a vector of values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em init\+Vec} & Vector of values to initialize the tensor with. Creates a 1D tensor with the same size as the vector. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_add26bb800f55c6fc1f4e86a66bda0740}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!````~TensorData@{\texorpdfstring{$\sim$}{\string~}TensorData}}
+\index{````~TensorData@{\texorpdfstring{$\sim$}{\string~}TensorData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}TensorData()}{\string~TensorData()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_add26bb800f55c6fc1f4e86a66bda0740}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::\texorpdfstring{$\sim$}{\string~}\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Destructor. Automatically releases the shared\+\_\+ptr.
+
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a52fe7c7c6317f51dbab3cff4f5b9e86d}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!TensorData@{TensorData}}
+\index{TensorData@{TensorData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorData()}{TensorData()}\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a52fe7c7c6317f51dbab3cff4f5b9e86d}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::\+Tensor\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structhahaha_1_1math_1_1NestedData}{Nested\+Data}}$<$ T $>$ \&\&}]{data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct from flattened nested data (e.\+g., from initializer lists).
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The \doxylink{structhahaha_1_1math_1_1NestedData}{Nested\+Data} object containing flattened data and shape. \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_aa394b3ecbbfe9575892e978f7ff7bbb2}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!getData@{getData}}
+\index{getData@{getData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getData()}{getData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_aa394b3ecbbfe9575892e978f7ff7bbb2}
+template$<$typename T$>$ \\
+std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::get\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the raw data pointer.
+
+\begin{DoxyReturn}{Returns}
+Reference to the shared\+\_\+ptr holding the data.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_abfe6fac7ae91986578fc2a2751983b7d}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!getData@{getData}}
+\index{getData@{getData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getData()}{getData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_abfe6fac7ae91986578fc2a2751983b7d}
+template$<$typename T$>$ \\
+const std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$ \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::get\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Const version of data pointer access.
+
+\begin{DoxyReturn}{Returns}
+Const reference to the shared\+\_\+ptr.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a39481fa7ec51bfdb86ec65701e1c651c}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!getDevice@{getDevice}}
+\index{getDevice@{getDevice}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getDevice()}{getDevice()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a39481fa7ec51bfdb86ec65701e1c651c}
+template$<$typename T$>$ \\
+const \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::get\+Device (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the device where the data is stored.
+
+\begin{DoxyReturn}{Returns}
+Const reference to the device.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a53963a85dd2477e47377dd9b039c4e6b}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!getShape@{getShape}}
+\index{getShape@{getShape}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getShape()}{getShape()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a53963a85dd2477e47377dd9b039c4e6b}
+template$<$typename T$>$ \\
+const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{Tensor\+Shape}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::get\+Shape (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the tensor shape.
+
+\begin{DoxyReturn}{Returns}
+Const reference to the shape.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a62e0faa47ca24a8838edac7b1b9b3cc7}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!getStride@{getStride}}
+\index{getStride@{getStride}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getStride()}{getStride()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a62e0faa47ca24a8838edac7b1b9b3cc7}
+template$<$typename T$>$ \\
+const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{Tensor\+Stride}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::get\+Stride (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Get the memory strides.
+
+\begin{DoxyReturn}{Returns}
+Const reference to the strides.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a18763c9300e5047e8dc3f33243350d6d}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a18763c9300e5047e8dc3f33243350d6d}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}}$<$ T $>$ \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Copy assignment is deleted. Use constructor for copying.
+
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a3fe2b364de048d6e1ecf60dffc4457cb}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a3fe2b364de048d6e1ecf60dffc4457cb}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}}$<$ T $>$ \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move assignment operator.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The source \doxylink{classhahaha_1_1math_1_1TensorData}{Tensor\+Data} to move from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference to this.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a9a98952d5f4dd50af4781f132bb9f986}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a9a98952d5f4dd50af4781f132bb9f986}
+template$<$typename T$>$ \\
+T \& \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Access element at the given flat index.
+
+
+\begin{DoxyParams}{Parameters}
+{\em idx} & The linear index into the flattened data array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+T\& Reference to the element at the given index.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_adb79e68bfc44f7bb24f61c7b1cc8ff7b}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!setData@{setData}}
+\index{setData@{setData}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{setData()}{setData()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_adb79e68bfc44f7bb24f61c7b1cc8ff7b}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::set\+Data (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ T\mbox{[}$\,$\mbox{]}$>$}]{data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Replace the current data array.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & New data array as shared\+\_\+ptr. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a972a360dbd946784f570e1ee5451ed5c}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!setDevice@{setDevice}}
+\index{setDevice@{setDevice}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{setDevice()}{setDevice()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a972a360dbd946784f570e1ee5451ed5c}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::set\+Device (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend\+::\+Device}} \&}]{device}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the device for this tensor data.
+
+
+\begin{DoxyParams}{Parameters}
+{\em device} & New device. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a19f283e7b2287c6228c4e6a73543c204}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!setShape@{setShape}}
+\index{setShape@{setShape}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{setShape()}{setShape()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a19f283e7b2287c6228c4e6a73543c204}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::set\+Shape (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{Tensor\+Shape}} \&}]{shape}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Update the tensor shape.
+
+
+\begin{DoxyParams}{Parameters}
+{\em shape} & New shape. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a80f5eb2354153b43ec23b14fd89585a0}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!setStride@{setStride}}
+\index{setStride@{setStride}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{setStride()}{setStride()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a80f5eb2354153b43ec23b14fd89585a0}
+template$<$typename T$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::set\+Stride (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{Tensor\+Stride}} \&}]{stride}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Update the memory strides.
+
+
+\begin{DoxyParams}{Parameters}
+{\em stride} & New strides. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_ab6c0c01287e776fa5c5478996de183d2}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!share@{share}}
+\index{share@{share}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_ab6c0c01287e776fa5c5478996de183d2}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData_afacb5179bddc09eef8c11488cc30f9aa}{Tensor\+Data}} \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{hahaha\+::math\+::\+Tensor\+Data}}$<$ T $>$\+::share (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create a shared view of the tensor data.
+
+This creates a new \doxylink{classhahaha_1_1math_1_1TensorData}{Tensor\+Data} instance that shares the underlying data array with the current instance. Both instances will point to the same memory.
+
+\begin{DoxyReturn}{Returns}
+\doxylink{classhahaha_1_1math_1_1TensorData}{Tensor\+Data} A new \doxylink{classhahaha_1_1math_1_1TensorData}{Tensor\+Data} instance sharing the same data.
+\end{DoxyReturn}
+
+
+\label{doc-related-members}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{classhahaha_1_1math_1_1TensorData_a724559fb0502c5e0b2c85d6a7c7ee087}\index{hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}!TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}}
+\index{TensorWrapper$<$ T $>$@{TensorWrapper$<$ T $>$}!hahaha::math::TensorData$<$ T $>$@{hahaha::math::TensorData$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{TensorWrapper$<$ T $>$}{TensorWrapper< T >}}
+{\footnotesize\ttfamily \label{classhahaha_1_1math_1_1TensorData_a724559fb0502c5e0b2c85d6a7c7ee087}
+template$<$typename T$>$ \\
+friend class \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{Tensor\+Wrapper}}$<$ T $>$\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item
+core/include/math/ds/\mbox{\hyperlink{NestedData_8h}{Nested\+Data.\+h}}\item
+core/include/math/ds/\mbox{\hyperlink{TensorData_8h}{Tensor\+Data.\+h}}\end{DoxyCompactItemize}

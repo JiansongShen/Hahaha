@@ -1,0 +1,55 @@
+\doxysection{Common\+Error.\+h}
+\hypertarget{CommonError_8h_source}{}\label{CommonError_8h_source}\index{core/include/common/errors/CommonError.h@{core/include/common/errors/CommonError.h}}
+\mbox{\hyperlink{CommonError_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ \ Copyright\ (c)\ 2026\ Contributors\ of\ hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ \ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ \ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ \ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ \ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ \ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ \ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ \ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ \ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ \ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ \ Napbad\ (napbad.sen@gmail.com)\ (https://github.com/Napbad)}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_COMMON\_ERROR\_H\_053340FD56184B63A68D6CE6E15C8175}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ HAHAHA\_COMMON\_ERROR\_H\_053340FD56184B63A68D6CE6E15C8175}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Error_8h}{common/errors/Error.h}}"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1common}{hahaha::common}}\ \{}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a90f1ddc739936838db5f44bc8f78fb57}{CommonError}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a2acab3fea4c41e1a458fe18e01d6caa8}{ErrorBase}}<CommonError,\ ErrorCode::BasicError>\ \{}
+\DoxyCodeLine{00031\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a49aa99ea85f4ef80e851347a9fd8550d}{ErrorName}}\ =\ \textcolor{stringliteral}{"{}CommonError"{}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ Inherit\ base\ class\ methods}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_ab650333150f54a812b33a265827545b4}{ErrorBase::getCode}};}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_ae101e71da7cff2c0ce25d886e2a513e2}{ErrorBase::getErrorName}};}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a649480301034897de1824e8d1fec94ae}{ErrorBase::getLocation}};}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_af983edc281e5394c777e5dbf45891920}{ErrorBase::getMessage}};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a90f1ddc739936838db5f44bc8f78fb57}{CommonError}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a338e39fac4d0eb25abfba9f0e2bb5360}{CommonError}}(}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a0f0d41f03cb2a55d59ce62ec384f6b4f}{message}},}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::source\_location\ \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a3f6972180809a6d69336917fd3684642}{location}}\ =\ std::source\_location::current())}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a2acab3fea4c41e1a458fe18e01d6caa8}{ErrorBase}}<\mbox{\hyperlink{classhahaha_1_1common_1_1CommonError_a90f1ddc739936838db5f44bc8f78fb57}{CommonError}},\ \mbox{\hyperlink{namespacehahaha_1_1common_a48d69aea52b61b4f9cb027b8eedccd16}{ErrorCode}}::\mbox{\hyperlink{namespacehahaha_1_1common_a48d69aea52b61b4f9cb027b8eedccd16a6454b2bfb879767746c92758949a79b0}{BasicError}}>(std::move(\mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a0f0d41f03cb2a55d59ce62ec384f6b4f}{message}}),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1common_1_1ErrorBase_a3f6972180809a6d69336917fd3684642}{location}})\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \}\ \textcolor{comment}{//\ namespace\ hahaha::common}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_COMMON\_ERROR\_H\_053340FD56184B63A68D6CE6E15C8175}}
+
+\end{DoxyCode}

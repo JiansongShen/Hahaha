@@ -1,0 +1,88 @@
+\doxysection{Log\+Level.\+h}
+\hypertarget{LogLevel_8h_source}{}\label{LogLevel_8h_source}\index{core/include/utils/log/LogLevel.h@{core/include/utils/log/LogLevel.h}}
+\mbox{\hyperlink{LogLevel_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_UTILS\_LOG\_LOGGER\_LEVEL\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HAHAHA\_UTILS\_LOG\_LOGGER\_LEVEL\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <string\_view>}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{LogColor_8h}{utils/log/LogColor.h}}"{}}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1utils}{hahaha::utils}}\ \{}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{LogLevel}}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a2d3e4144aa384b18849ab9a8abad74d6}{TRACE}},\ }
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645adc30ec20708ef7b0f641ef78b7880a15}{DEBUG}},\ }
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a551b723eafd6a31d444fcb2f5920fbd3}{INFO}},\ \ }
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a32bd8a1db2275458673903bdb84cb277}{WARN}},\ \ }
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645abb1ca97ec761fc37101737ba0aa2e7c5}{ERROR}},\ }
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a19da7170bea36556dde582519795f3fc}{FATAL}}\ \ }
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{inline}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_ab9df6ceebb911a474b28add9f87f2c27}{toString}}(\mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{LogLevel}}\ level)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{switch}\ (level)\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a2d3e4144aa384b18849ab9a8abad74d6}{LogLevel::TRACE}}:}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}TRACE"{}};}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645adc30ec20708ef7b0f641ef78b7880a15}{LogLevel::DEBUG}}:}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}DEBUG"{}};}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a551b723eafd6a31d444fcb2f5920fbd3}{LogLevel::INFO}}:}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}INFO\ "{}};}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a32bd8a1db2275458673903bdb84cb277}{LogLevel::WARN}}:}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}WARN\ "{}};}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645abb1ca97ec761fc37101737ba0aa2e7c5}{LogLevel::ERROR}}:}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ERROR"{}};}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a19da7170bea36556dde582519795f3fc}{LogLevel::FATAL}}:}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}FATAL"{}};}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}UNKNOWN"{}};}
+\DoxyCodeLine{00065\ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{const}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_a1e3b98c4a39e90f851d330118d60f7e4}{DefaultColoredDebug}}\ =\ \textcolor{stringliteral}{"{}\(\backslash\)033[0;36mDEBUG\(\backslash\)033[0m"{}};\ \textcolor{comment}{//\ CYAN}}
+\DoxyCodeLine{00069\ \textcolor{keyword}{const}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_a2a041e173ed595ae11e5058e5ab2419b}{DefaultColoredInfo}}\ =\ \textcolor{stringliteral}{"{}\(\backslash\)033[0;32mINFO\ \(\backslash\)033[0m"{}};\ \ \textcolor{comment}{//\ GREEN}}
+\DoxyCodeLine{00070\ \textcolor{keyword}{const}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_a3dd26c83faba4688c791cb7159158d0b}{DefaultColoredWarn}}\ =\ \textcolor{stringliteral}{"{}\(\backslash\)033[0;33mWARN\ \(\backslash\)033[0m"{}};\ \ \textcolor{comment}{//\ YELLOW}}
+\DoxyCodeLine{00071\ \textcolor{keyword}{const}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_a6d95d9eca0d8fc0ebb0d629e515cd30a}{DefaultColoredError}}\ =\ \textcolor{stringliteral}{"{}\(\backslash\)033[0;31mERROR\(\backslash\)033[0m"{}};\ \textcolor{comment}{//\ RED}}
+\DoxyCodeLine{00072\ \textcolor{keyword}{const}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_a9ed594390a50b6547f0d5b66d5dcca28}{DefaultColoredFatal}}\ =}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{stringliteral}{"{}\(\backslash\)033[0;35mFATAL\(\backslash\)033[0m"{}};\ \textcolor{comment}{//\ MAGENTA}}
+\DoxyCodeLine{00074\ \textcolor{keyword}{const}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_a1583522c2f6b1a0bd42cc526543583fb}{DefaultColoredTrace}}\ =\ \textcolor{stringliteral}{"{}\(\backslash\)033[0;34mTRACE\(\backslash\)033[0m"{}};\ \textcolor{comment}{//\ BLUE}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{inline}\ std::string\_view\ \mbox{\hyperlink{namespacehahaha_1_1utils_a0a81b2f121f6c1f74b200e850d737ad4}{toColoredString}}(\mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645}{LogLevel}}\ level)\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordflow}{switch}\ (level)\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a2d3e4144aa384b18849ab9a8abad74d6}{LogLevel::TRACE}}:}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a1583522c2f6b1a0bd42cc526543583fb}{DefaultColoredTrace}};}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645adc30ec20708ef7b0f641ef78b7880a15}{LogLevel::DEBUG}}:}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a1e3b98c4a39e90f851d330118d60f7e4}{DefaultColoredDebug}};}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a551b723eafd6a31d444fcb2f5920fbd3}{LogLevel::INFO}}:}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a2a041e173ed595ae11e5058e5ab2419b}{DefaultColoredInfo}};}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a32bd8a1db2275458673903bdb84cb277}{LogLevel::WARN}}:}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a3dd26c83faba4688c791cb7159158d0b}{DefaultColoredWarn}};}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645abb1ca97ec761fc37101737ba0aa2e7c5}{LogLevel::ERROR}}:}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a6d95d9eca0d8fc0ebb0d629e515cd30a}{DefaultColoredError}};}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a27874ad4a832b0bbd747419b9392e645a19da7170bea36556dde582519795f3fc}{LogLevel::FATAL}}:}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespacehahaha_1_1utils_a9ed594390a50b6547f0d5b66d5dcca28}{DefaultColoredFatal}};}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}UNKNOWN"{}};}
+\DoxyCodeLine{00097\ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \}\ \textcolor{comment}{//\ namespace\ hahaha::utils}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_UTILS\_LOG\_LOGGER\_LEVEL\_H}}
+
+\end{DoxyCode}

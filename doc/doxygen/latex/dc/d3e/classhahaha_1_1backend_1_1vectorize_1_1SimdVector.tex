@@ -1,0 +1,150 @@
+\doxysection{hahaha\+::backend\+::vectorize\+::Simd\+Vector\texorpdfstring{$<$}{<} T, Width \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{}\label{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}\index{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}}
+
+
+Represents a fixed-\/size vector for SIMD operations.
+
+
+
+
+{\ttfamily \#include $<$Simd\+Vector.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}} ()=default
+\item
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a5ed47a49f927c07d49bcf30d8c1202ce}{load}} (std\+::span$<$ const T, Width $>$ data)
+\begin{DoxyCompactList}\small\item\em Load data from a memory location into the SIMD vector. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_addbf96fc908e3cb7ed3b30d8e20c2067}{store}} (std\+::span$<$ T, Width $>$ out) const
+\begin{DoxyCompactList}\small\item\em Store the SIMD vector data to a memory location. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}} \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a81cf6656b0bed15d21050a5616485848}{add}} (const \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}} \&other) const
+\begin{DoxyCompactList}\small\item\em Perform element-\/wise addition with another SIMD vector. \end{DoxyCompactList}\item
+\mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}} \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a31afc47959becf1c277c719ba919c1a1}{multiply}} (const \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}} \&other) const
+\begin{DoxyCompactList}\small\item\em Perform element-\/wise multiplication with another SIMD vector. \end{DoxyCompactList}\item
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_accba8e374fddbbcb6ef1f69218e96689}{broadcast}} (T value)
+\begin{DoxyCompactList}\small\item\em Broadcast a single value to all elements of the SIMD vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T, size\+\_\+t Width$>$\newline
+class hahaha\+::backend\+::vectorize\+::\+Simd\+Vector$<$ T, Width $>$}
+Represents a fixed-\/size vector for SIMD operations.
+
+This class abstracts away architecture-\/specific SIMD types and operations.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The numeric type of elements. \\
+\hline
+{\em Width} & The number of elements in the SIMD vector. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\label{doc-constructors}
+\Hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}\index{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}!SimdVector@{SimdVector}}
+\index{SimdVector@{SimdVector}!hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}}
+\doxysubsubsection{\texorpdfstring{SimdVector()}{SimdVector()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}
+template$<$typename T, size\+\_\+t Width$>$ \\
+\mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{hahaha\+::backend\+::vectorize\+::\+Simd\+Vector}}$<$ T, Width $>$\+::\+Simd\+Vector (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a81cf6656b0bed15d21050a5616485848}\index{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}!add@{add}}
+\index{add@{add}!hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a81cf6656b0bed15d21050a5616485848}
+template$<$typename T, size\+\_\+t Width$>$ \\
+\mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}} \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{hahaha\+::backend\+::vectorize\+::\+Simd\+Vector}}$<$ T, Width $>$\+::add (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}}$<$ T, Width $>$ \&}]{other}{}\end{DoxyParamCaption}) const}
+
+
+
+Perform element-\/wise addition with another SIMD vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The other SIMD vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{Simd\+Vector} result of the addition.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_accba8e374fddbbcb6ef1f69218e96689}\index{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}!broadcast@{broadcast}}
+\index{broadcast@{broadcast}!hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}}
+\doxysubsubsection{\texorpdfstring{broadcast()}{broadcast()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_accba8e374fddbbcb6ef1f69218e96689}
+template$<$typename T, size\+\_\+t Width$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{hahaha\+::backend\+::vectorize\+::\+Simd\+Vector}}$<$ T, Width $>$\+::broadcast (\begin{DoxyParamCaption}\item[{T}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Broadcast a single value to all elements of the SIMD vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The value to broadcast. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a5ed47a49f927c07d49bcf30d8c1202ce}\index{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}!load@{load}}
+\index{load@{load}!hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}}
+\doxysubsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a5ed47a49f927c07d49bcf30d8c1202ce}
+template$<$typename T, size\+\_\+t Width$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{hahaha\+::backend\+::vectorize\+::\+Simd\+Vector}}$<$ T, Width $>$\+::load (\begin{DoxyParamCaption}\item[{std\+::span$<$ const T, Width $>$}]{data}{}\end{DoxyParamCaption})}
+
+
+
+Load data from a memory location into the SIMD vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Non-\/owning view of exactly Width elements. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a31afc47959becf1c277c719ba919c1a1}\index{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}!multiply@{multiply}}
+\index{multiply@{multiply}!hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}}
+\doxysubsubsection{\texorpdfstring{multiply()}{multiply()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_a31afc47959becf1c277c719ba919c1a1}
+template$<$typename T, size\+\_\+t Width$>$ \\
+\mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}} \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{hahaha\+::backend\+::vectorize\+::\+Simd\+Vector}}$<$ T, Width $>$\+::multiply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_ae2da1311940104104e92761166c6976d}{Simd\+Vector}}$<$ T, Width $>$ \&}]{other}{}\end{DoxyParamCaption}) const}
+
+
+
+Perform element-\/wise multiplication with another SIMD vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The other SIMD vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{Simd\+Vector} result of the multiplication.
+\end{DoxyReturn}
+\Hypertarget{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_addbf96fc908e3cb7ed3b30d8e20c2067}\index{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}!store@{store}}
+\index{store@{store}!hahaha::backend::vectorize::SimdVector$<$ T, Width $>$@{hahaha::backend::vectorize::SimdVector$<$ T, Width $>$}}
+\doxysubsubsection{\texorpdfstring{store()}{store()}}
+{\footnotesize\ttfamily \label{classhahaha_1_1backend_1_1vectorize_1_1SimdVector_addbf96fc908e3cb7ed3b30d8e20c2067}
+template$<$typename T, size\+\_\+t Width$>$ \\
+void \mbox{\hyperlink{classhahaha_1_1backend_1_1vectorize_1_1SimdVector}{hahaha\+::backend\+::vectorize\+::\+Simd\+Vector}}$<$ T, Width $>$\+::store (\begin{DoxyParamCaption}\item[{std\+::span$<$ T, Width $>$}]{out}{}\end{DoxyParamCaption}) const}
+
+
+
+Store the SIMD vector data to a memory location.
+
+
+\begin{DoxyParams}{Parameters}
+{\em out} & Non-\/owning view of exactly Width elements. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+core/include/backend/vectorize/\mbox{\hyperlink{SimdVector_8h}{Simd\+Vector.\+h}}\end{DoxyCompactItemize}

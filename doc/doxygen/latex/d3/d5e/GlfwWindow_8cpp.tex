@@ -1,0 +1,67 @@
+\doxysection{core/src/display/\+Glfw\+Window.cpp File Reference}
+\hypertarget{GlfwWindow_8cpp}{}\label{GlfwWindow_8cpp}\index{core/src/display/GlfwWindow.cpp@{core/src/display/GlfwWindow.cpp}}
+{\ttfamily \#include "{}display/\+Glfw\+Window.\+h"{}}\newline
+{\ttfamily \#include $<$stdexcept$>$}\newline
+{\ttfamily \#include "{}imgui.\+h"{}}\newline
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item
+namespace \mbox{\hyperlink{namespacehahaha}{hahaha}}
+\item
+namespace \mbox{\hyperlink{namespacehahaha_1_1display}{hahaha\+::display}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item
+bool \mbox{\hyperlink{GlfwWindow_8cpp_a3d472e598f8e218a0bd994e840b865ab}{Im\+Gui\+\_\+\+Impl\+Glfw\+\_\+\+Init\+For\+Open\+GL}} (GLFWwindow \texorpdfstring{$\ast$}{*}window, bool install\+\_\+callbacks)
+\item
+void \mbox{\hyperlink{GlfwWindow_8cpp_a206e99434f63c4b8e24e8a4208c11b65}{Im\+Gui\+\_\+\+Impl\+Glfw\+\_\+\+New\+Frame}} ()
+\item
+void \mbox{\hyperlink{GlfwWindow_8cpp_a983c2903ccb938fea5ecdd4d53e54704}{Im\+Gui\+\_\+\+Impl\+Glfw\+\_\+\+Shutdown}} ()
+\item
+bool \mbox{\hyperlink{GlfwWindow_8cpp_a0475f257dc97d1daceee89cb4b19744d}{Im\+Gui\+\_\+\+Impl\+Open\+GL3\+\_\+\+Init}} (const char \texorpdfstring{$\ast$}{*}glsl\+\_\+version)
+\item
+void \mbox{\hyperlink{GlfwWindow_8cpp_a900e74add4e56e74f97a210eb329aa91}{Im\+Gui\+\_\+\+Impl\+Open\+GL3\+\_\+\+New\+Frame}} ()
+\item
+void \mbox{\hyperlink{GlfwWindow_8cpp_acbd53376e6135ad71e7bcd9879278e37}{Im\+Gui\+\_\+\+Impl\+Open\+GL3\+\_\+\+Shutdown}} ()
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{GlfwWindow_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{GlfwWindow_8cpp_a3d472e598f8e218a0bd994e840b865ab}\index{GlfwWindow.cpp@{GlfwWindow.cpp}!ImGui\_ImplGlfw\_InitForOpenGL@{ImGui\_ImplGlfw\_InitForOpenGL}}
+\index{ImGui\_ImplGlfw\_InitForOpenGL@{ImGui\_ImplGlfw\_InitForOpenGL}!GlfwWindow.cpp@{GlfwWindow.cpp}}
+\doxysubsubsection{\texorpdfstring{ImGui\_ImplGlfw\_InitForOpenGL()}{ImGui\_ImplGlfw\_InitForOpenGL()}}
+{\footnotesize\ttfamily \label{GlfwWindow_8cpp_a3d472e598f8e218a0bd994e840b865ab}
+bool Im\+Gui\+\_\+\+Impl\+Glfw\+\_\+\+Init\+For\+Open\+GL (\begin{DoxyParamCaption}\item[{GLFWwindow \texorpdfstring{$\ast$}{*}}]{window}{, }\item[{bool}]{install\+\_\+callbacks}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{GlfwWindow_8cpp_a206e99434f63c4b8e24e8a4208c11b65}\index{GlfwWindow.cpp@{GlfwWindow.cpp}!ImGui\_ImplGlfw\_NewFrame@{ImGui\_ImplGlfw\_NewFrame}}
+\index{ImGui\_ImplGlfw\_NewFrame@{ImGui\_ImplGlfw\_NewFrame}!GlfwWindow.cpp@{GlfwWindow.cpp}}
+\doxysubsubsection{\texorpdfstring{ImGui\_ImplGlfw\_NewFrame()}{ImGui\_ImplGlfw\_NewFrame()}}
+{\footnotesize\ttfamily \label{GlfwWindow_8cpp_a206e99434f63c4b8e24e8a4208c11b65}
+void Im\+Gui\+\_\+\+Impl\+Glfw\+\_\+\+New\+Frame (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{GlfwWindow_8cpp_a983c2903ccb938fea5ecdd4d53e54704}\index{GlfwWindow.cpp@{GlfwWindow.cpp}!ImGui\_ImplGlfw\_Shutdown@{ImGui\_ImplGlfw\_Shutdown}}
+\index{ImGui\_ImplGlfw\_Shutdown@{ImGui\_ImplGlfw\_Shutdown}!GlfwWindow.cpp@{GlfwWindow.cpp}}
+\doxysubsubsection{\texorpdfstring{ImGui\_ImplGlfw\_Shutdown()}{ImGui\_ImplGlfw\_Shutdown()}}
+{\footnotesize\ttfamily \label{GlfwWindow_8cpp_a983c2903ccb938fea5ecdd4d53e54704}
+void Im\+Gui\+\_\+\+Impl\+Glfw\+\_\+\+Shutdown (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{GlfwWindow_8cpp_a0475f257dc97d1daceee89cb4b19744d}\index{GlfwWindow.cpp@{GlfwWindow.cpp}!ImGui\_ImplOpenGL3\_Init@{ImGui\_ImplOpenGL3\_Init}}
+\index{ImGui\_ImplOpenGL3\_Init@{ImGui\_ImplOpenGL3\_Init}!GlfwWindow.cpp@{GlfwWindow.cpp}}
+\doxysubsubsection{\texorpdfstring{ImGui\_ImplOpenGL3\_Init()}{ImGui\_ImplOpenGL3\_Init()}}
+{\footnotesize\ttfamily \label{GlfwWindow_8cpp_a0475f257dc97d1daceee89cb4b19744d}
+bool Im\+Gui\+\_\+\+Impl\+Open\+GL3\+\_\+\+Init (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{glsl\+\_\+version}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{GlfwWindow_8cpp_a900e74add4e56e74f97a210eb329aa91}\index{GlfwWindow.cpp@{GlfwWindow.cpp}!ImGui\_ImplOpenGL3\_NewFrame@{ImGui\_ImplOpenGL3\_NewFrame}}
+\index{ImGui\_ImplOpenGL3\_NewFrame@{ImGui\_ImplOpenGL3\_NewFrame}!GlfwWindow.cpp@{GlfwWindow.cpp}}
+\doxysubsubsection{\texorpdfstring{ImGui\_ImplOpenGL3\_NewFrame()}{ImGui\_ImplOpenGL3\_NewFrame()}}
+{\footnotesize\ttfamily \label{GlfwWindow_8cpp_a900e74add4e56e74f97a210eb329aa91}
+void Im\+Gui\+\_\+\+Impl\+Open\+GL3\+\_\+\+New\+Frame (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{GlfwWindow_8cpp_acbd53376e6135ad71e7bcd9879278e37}\index{GlfwWindow.cpp@{GlfwWindow.cpp}!ImGui\_ImplOpenGL3\_Shutdown@{ImGui\_ImplOpenGL3\_Shutdown}}
+\index{ImGui\_ImplOpenGL3\_Shutdown@{ImGui\_ImplOpenGL3\_Shutdown}!GlfwWindow.cpp@{GlfwWindow.cpp}}
+\doxysubsubsection{\texorpdfstring{ImGui\_ImplOpenGL3\_Shutdown()}{ImGui\_ImplOpenGL3\_Shutdown()}}
+{\footnotesize\ttfamily \label{GlfwWindow_8cpp_acbd53376e6135ad71e7bcd9879278e37}
+void Im\+Gui\+\_\+\+Impl\+Open\+GL3\+\_\+\+Shutdown (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [extern]}}

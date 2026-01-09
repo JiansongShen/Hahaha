@@ -1,0 +1,37 @@
+\doxysection{core/include/display/\+Visualizer.h File Reference}
+\hypertarget{Visualizer_8h}{}\label{Visualizer_8h}\index{core/include/display/Visualizer.h@{core/include/display/Visualizer.h}}
+{\ttfamily \#include $<$memory$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include "{}math/\+Tensor\+Wrapper.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item
+struct \mbox{\hyperlink{structhahaha_1_1display_1_1LayerInfo}{hahaha\+::display\+::\+Layer\+Info}}
+\begin{DoxyCompactList}\small\item\em Represents a layer in the visual graph. \end{DoxyCompactList}\item
+class \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer}{hahaha\+::display\+::\+IVisualizer}}
+\begin{DoxyCompactList}\small\item\em Top-\/level interface for visualizing Machine Learning models and training progress. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item
+namespace \mbox{\hyperlink{namespacehahaha}{hahaha}}
+\item
+namespace \mbox{\hyperlink{namespacehahaha_1_1display}{hahaha\+::display}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item
+enum class \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8f}{hahaha\+::display\+::\+Control\+Action}} \{ \newline
+\mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa6adf97f83acf6453d4a6a4b1070f3754}{hahaha\+::display\+::\+None}}
+, \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8faa6122a65eaa676f700ae68d393054a37}{hahaha\+::display\+::\+Start}}
+, \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa105b296a83f9c105355403f3332af50f}{hahaha\+::display\+::\+Pause}}
+, \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa11a755d598c0c417f9a36758c3da7481}{hahaha\+::display\+::\+Stop}}
+, \newline
+\mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa526d688f37a86d3c3f27d0c5016eb71d}{hahaha\+::display\+::\+Reset}}
+ \}
+\begin{DoxyCompactList}\small\item\em User actions from the control panel. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer}{IVisualizer}} $>$ \mbox{\hyperlink{namespacehahaha_1_1display_a6c35b9a1c45eacb4b6f0c116f76037f5}{hahaha\+::display\+::create\+MLVisualizer}} ()
+\begin{DoxyCompactList}\small\item\em Factory function to create a concrete Visualizer instance using Im\+Gui. \end{DoxyCompactList}\end{DoxyCompactItemize}

@@ -1,0 +1,57 @@
+\doxysection{hahaha\+::ml Namespace Reference}
+\hypertarget{namespacehahaha_1_1ml}{}\label{namespacehahaha_1_1ml}\index{hahaha::ml@{hahaha::ml}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item
+class \mbox{\hyperlink{classhahaha_1_1ml_1_1Dataset}{Dataset}}
+\item
+class \mbox{\hyperlink{classhahaha_1_1ml_1_1Loss}{Loss}}
+\begin{DoxyCompactList}\small\item\em Base class for all loss functions. \end{DoxyCompactList}\item
+class \mbox{\hyperlink{classhahaha_1_1ml_1_1MSELoss}{MSELoss}}
+\begin{DoxyCompactList}\small\item\em Mean Squared Error (MSE) loss function. \end{DoxyCompactList}\item
+class \mbox{\hyperlink{classhahaha_1_1ml_1_1LinearRegression}{Linear\+Regression}}
+\begin{DoxyCompactList}\small\item\em Linear regression model. \end{DoxyCompactList}\item
+class \mbox{\hyperlink{classhahaha_1_1ml_1_1Model}{Model}}
+\item
+class \mbox{\hyperlink{classhahaha_1_1ml_1_1Optimizer}{Optimizer}}
+\begin{DoxyCompactList}\small\item\em Base class for all optimizers. \end{DoxyCompactList}\item
+class \mbox{\hyperlink{classhahaha_1_1ml_1_1SGDOptimizer}{SGDOptimizer}}
+\item
+class \mbox{\hyperlink{classhahaha_1_1ml_1_1Parameters}{Parameters}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item
+{\footnotesize template$<$typename T$>$ }\\\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ \mbox{\hyperlink{namespacehahaha_1_1ml_aceaa57f08572077c0349a5017ee65317}{compute\+MSELoss}} (\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ y\+True, \mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ y\+Predict)
+\begin{DoxyCompactList}\small\item\em Convenience function to compute MSE loss. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{namespacehahaha_1_1ml_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacehahaha_1_1ml_aceaa57f08572077c0349a5017ee65317}\index{hahaha::ml@{hahaha::ml}!computeMSELoss@{computeMSELoss}}
+\index{computeMSELoss@{computeMSELoss}!hahaha::ml@{hahaha::ml}}
+\doxysubsubsection{\texorpdfstring{computeMSELoss()}{computeMSELoss()}}
+{\footnotesize\ttfamily \label{namespacehahaha_1_1ml_aceaa57f08572077c0349a5017ee65317}
+template$<$typename T$>$ \\
+\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$ hahaha\+::ml\+::compute\+MSELoss (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$}]{y\+True}{, }\item[{\mbox{\hyperlink{classTensor}{Tensor}}$<$ T $>$}]{y\+Predict}{}\end{DoxyParamCaption})}
+
+
+
+Convenience function to compute MSE loss.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The numeric type. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em y\+True} & The true (target) values. \\
+\hline
+{\em y\+Predict} & The predicted values. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classhahaha_1_1Tensor}{Tensor$<$\+T$>$} The computed MSE loss value.
+\end{DoxyReturn}

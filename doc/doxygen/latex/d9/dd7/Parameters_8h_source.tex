@@ -1,0 +1,51 @@
+\doxysection{Parameters.\+h}
+\hypertarget{Parameters_8h_source}{}\label{Parameters_8h_source}\index{core/include/ml/Parameters.h@{core/include/ml/Parameters.h}}
+\mbox{\hyperlink{Parameters_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ \ Copyright\ (c)\ 2026\ Contributors\ of\ hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ \ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ \ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ \ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ \ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ \ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ \ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ \ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ \ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ \ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ \ jiansongshen\ (jason.shen111@outlook.com)\ (https://github.com/jiansongshen)}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_PARAMETERS\_H\_0562A02563D046C99A4827535147DD6E}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ HAHAHA\_PARAMETERS\_H\_0562A02563D046C99A4827535147DD6E}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Tensor_8h}{Tensor.h}}"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1ml}{hahaha::ml}}\ \{}
+\DoxyCodeLine{00027\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1ml_1_1Parameters}{Parameters}}\ \{}
+\DoxyCodeLine{00028\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Parameters_adae206aeccf8e3cb5882e21427f011aa}{addParameter}}(\mbox{\hyperlink{classhahaha_1_1Tensor}{Tensor<T>}}\ parameter)\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ parameters.push\_back(parameter);}
+\DoxyCodeLine{00031\ \ \ \ \ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00038\ \ \ \ \ std::vector<Tensor<T>>\&\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Parameters_aca0b4d9e5de2b2b859a90701e94c8d4d}{getParameters}}()\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ parameters;}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00047\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ std::vector<Tensor<T>>\&\ \mbox{\hyperlink{classhahaha_1_1ml_1_1Parameters_af65f96973f34f213a7750896b6f0f8be}{getParameters}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ parameters;}
+\DoxyCodeLine{00049\ \ \ \ \ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00052\ \ \ \ \ std::vector<Tensor<T>>\ parameters;}
+\DoxyCodeLine{00053\ \};}
+\DoxyCodeLine{00054\ \}\ \textcolor{comment}{//\ namespace\ hahaha::ml}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_PARAMETERS\_H\_0562A02563D046C99A4827535147DD6E}}
+
+\end{DoxyCode}

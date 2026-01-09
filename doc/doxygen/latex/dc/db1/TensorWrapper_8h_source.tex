@@ -1,0 +1,878 @@
+\doxysection{Tensor\+Wrapper.\+h}
+\hypertarget{TensorWrapper_8h_source}{}\label{TensorWrapper_8h_source}\index{core/include/math/TensorWrapper.h@{core/include/math/TensorWrapper.h}}
+\mbox{\hyperlink{TensorWrapper_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_MATH\_TENSOR\_WRAPPER\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ HAHAHA\_MATH\_TENSOR\_WRAPPER\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <iterator>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <numeric>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Device_8h}{backend/Device.h}}"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{DeviceComputeDispatcher_8h}{backend/DeviceComputeDispatcher.h}}"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Operator_8h}{common/Operator.h}}"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{TensorData_8h}{math/ds/TensorData.h}}"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{TensorShape_8h}{math/ds/TensorShape.h}}"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{class\ }TensorWrapperTest;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1compute}{hahaha::compute}}\ \{}
+\DoxyCodeLine{00021\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{ComputeNode}};}
+\DoxyCodeLine{00022\ \}\ \textcolor{comment}{//\ namespace\ hahaha::compute}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1math}{hahaha::math}}\ \{}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \{}
+\DoxyCodeLine{00037\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa7ca248ac43d0a1d735a594648f80a8e}{TensorWrapper}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}\&\ shape,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ T\ initValue,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend::Device}}\ device\ =\ \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend::Device}}())}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ :\ data\_(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{TensorData}}<T>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(shape),\ initValue,\ device))\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ac7de7b892966bb4e4d45561136eb38f8}{TensorWrapper}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}\&\ shape,\ \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend::Device}}\ device)}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ :\ data\_(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{TensorData}}<T>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(shape),\ T(0),\ device))\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa6a7375db1c176c0436ec6e9de57637c}{TensorWrapper}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}\&\ shape)}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ :\ data\_(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{TensorData}}<T>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(shape),\ T(0),\ \mbox{\hyperlink{namespacehahaha_1_1backend}{backend}}::Device()))\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a7b08ea3aee30a9aa65f92f4443e2ec5e}{TensorWrapper}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\ :\ data\_(other.data\_)\ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ad9915ae689686dbd3ac7bcbd2fcf4c75}{TensorWrapper}}(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\&\ other)\ noexcept}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ :\ data\_(std::move(other.data\_))\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00093\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a11fb7632330dbbd70836ad902423de5c}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00100\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a60e521822a77f2048835a1edf5ef37ef}{operator=}}(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\&\ other)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{this}\ !=\ \&other)\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ data\_\ =\ std::move(other.data\_);}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_afa30a6c9b6a19483d80072ad2ba88f11}{TensorWrapper}}(\mbox{\hyperlink{structhahaha_1_1math_1_1NestedData}{NestedData<T>}}\&\&\ data)\ :\ data\_(std::move(data))\ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a266e41357bd5fcc83d98bea204f94393}{TensorWrapper}}(\textcolor{keyword}{const}\ std::vector<T>\&\ initVec)}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ :\ data\_(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{TensorData}}<T>(initVec))\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00125\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_af18b29784111f48f269391afbfd91313}{\string~TensorWrapper}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00131\ \ \ \ \ std::shared\_ptr<T[]>\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa748eca2d67670eb4c63a731252dc92e}{getRawData}}()\ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getData();}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{const}\ std::shared\_ptr<T[]>\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa5becf01ad4ecce3b91eb27040454576}{getRawData}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getData();}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00147\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ std::vector<size\_t>\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getShape().getDims();}
+\DoxyCodeLine{00149\ \ \ \ \ \}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00155\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data\_.getData()\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getShape().getTotalSize();}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00166\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{TensorStride}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ad2496190561b964827889484eb003d}{getStride}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getStride();}
+\DoxyCodeLine{00168\ \ \ \ \ \}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aba99297665176a173cebd388d186fa30}{setStride}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{TensorStride}}\&\ stride)\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ data\_.setStride(stride);}
+\DoxyCodeLine{00176\ \ \ \ \ \}}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00182\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend::Device}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a32418318e144a50ba2d16eef90c46099}{getDevice}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getDevice();}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ad3509b42c9934c96cfca848c09dbe924}{to}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend::Device}}\&\ device)\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data\_.getDevice()\ ==\ device)\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Logic\ for\ moving\ data\ between\ devices}}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (device.\mbox{\hyperlink{structhahaha_1_1backend_1_1Device_a6c8722219db6ddb0206e4dde1c10d532}{type}}\ ==\ \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da2b55387dd066c5bac646ac61543d152d}{backend::DeviceType::CPU}}}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ ||\ device.\mbox{\hyperlink{structhahaha_1_1backend_1_1Device_a6c8722219db6ddb0206e4dde1c10d532}{type}}\ ==\ \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da8e8f80f69b775a56aad51f74c3ffa73a}{backend::DeviceType::SIMD}})\ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data\_.getDevice().type\ ==\ \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da52f9ec21735243ad9917cda3ca077d32}{backend::DeviceType::GPU}})\ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO(jiansongshen):\ Implement\ GPU\ to\ CPU\ transfer}}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}GPU\ to\ CPU\ transfer\ not\ yet\ implemented"{}});}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (device.\mbox{\hyperlink{structhahaha_1_1backend_1_1Device_a6c8722219db6ddb0206e4dde1c10d532}{type}}\ ==\ \mbox{\hyperlink{namespacehahaha_1_1backend_a450ee4028843459feeda0d2a6a4c892da52f9ec21735243ad9917cda3ca077d32}{backend::DeviceType::GPU}})\ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO(jiansongshen):\ Implement\ CPU\ to\ GPU\ transfer}}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}CPU\ to\ GPU\ transfer\ not\ yet\ implemented"{}});}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ data\_.setDevice(device);}
+\DoxyCodeLine{00209\ \ \ \ \ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00220\ \ \ \ \ T\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa92da87432758b6d17a1f61a759dea15}{at}}(\textcolor{keyword}{const}\ std::initializer\_list<size\_t>\&\ indices)\ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ shapeDims\ =\ data\_.getShape().getDims();}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (indices.size()\ !=\ shapeDims.size())\ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::out\_of\_range(\textcolor{stringliteral}{"{}Dimension\ mismatch:\ expected\ "{}}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(shapeDims.size())}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{stringliteral}{"{}\ indices,\ got\ "{}}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(indices.size()));}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ linearIdx\ =\ 0;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}*\ idxIt\ =\ indices.begin();}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ strideDims\ =\ data\_.getStride().getStrides();}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ dimsSize\ =\ shapeDims.size();}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ dimsSize;\ ++i)\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dimIdx\ =\ *idxIt;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dimIdx\ >=\ shapeDims[i])\ \{}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::out\_of\_range(\textcolor{stringliteral}{"{}Index\ out\ of\ bounds\ at\ dimension\ "{}}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(i));}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ linearIdx\ +=\ dimIdx\ *\ strideDims[i];}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ std::advance(idxIt,\ 1);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getData()[linearIdx];}
+\DoxyCodeLine{00244\ \ \ \ \ \}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keyword}{const}\ T\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a65e967926cfaaca8debce6dc72de3309}{at}}(\textcolor{keyword}{const}\ std::initializer\_list<size\_t>\&\ indices)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ shapeDims\ =\ data\_.getShape().getDims();}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (indices.size()\ !=\ shapeDims.size())\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::out\_of\_range(\textcolor{stringliteral}{"{}Dimension\ mismatch"{}});}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ linearIdx\ =\ 0;}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}*\ idxIt\ =\ indices.begin();}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ strideDims\ =\ data\_.getStride().getStrides();}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ shapeDims.size();\ ++i)\ \{}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dimIdx\ =\ *idxIt;}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dimIdx\ >=\ shapeDims[i])\ \{}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::out\_of\_range(\textcolor{stringliteral}{"{}Index\ out\ of\ bounds"{}});}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ linearIdx\ +=\ dimIdx\ *\ strideDims[i];}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ std::advance(idxIt,\ 1);}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getData()[linearIdx];}
+\DoxyCodeLine{00270\ \ \ \ \ \}}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00280\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a7212eb02f9d72d022681a7043b08a10f}{reshape}}(\textcolor{keyword}{const}\ std::vector<size\_t>\&\ newShape)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ totalSize\ =\ std::accumulate(}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ newShape.begin(),\ newShape.end(),\ 1ULL,\ std::multiplies());}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (totalSize\ !=\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}())\ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}New\ shape\ total\ size\ ("{}}}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(totalSize)}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{stringliteral}{"{})\ must\ match\ current\ size\ ("{}}}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}())\ +\ \textcolor{stringliteral}{"{})"{}});}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ result.data\_.setShape(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(newShape));}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ result.data\_.setStride(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{TensorStride}}(result.data\_.getShape()));}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ currentSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(currentSize));}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ std::copy(data\_.getData().get(),}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData().get()\ +\ currentSize,}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.getData().get());}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00301\ \ \ \ \ \}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00307\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ab062a1dd9043d2fa175b2d08fe432c9e}{getDimensions}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data\_.getShape().getDims().size();}
+\DoxyCodeLine{00309\ \ \ \ \ \}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00328\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}{add}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ >\ 1)\ \{}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}{add}}(data\_.getData()[0]);}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ >\ 1)\ \{}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}{add}}(other.data\_.getData()[0]);}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1)\ \{}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(1));}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.getData()[0]\ =}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[0]\ +\ other.data\_.getData()[0];}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ have\ the\ same\ shape\ for\ addition"{}});}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a0c8960c5c8e5f882daec4662534c80b0}{backend::DeviceComputeDispatcher<T>::dispatchBinary}}(}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36aec211f7c20af43e742bf2570c3cb84f9}{common::Operator::Add}},\ *\textcolor{keyword}{this},\ other,\ result);}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00364\ \ \ \ \ \}}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00379\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ffb4beea3a34d2019c1e5d4ca8d6720}{subtract}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{00382\ }
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ >\ 1)\ \{}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_acc8604d33da71edf35906738a570c15a}{subtractFrom}}(data\_.getData()[0]);}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ >\ 1)\ \{}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ffb4beea3a34d2019c1e5d4ca8d6720}{subtract}}(other.data\_.getData()[0]);}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1)\ \{}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(1));}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.getData()[0]\ =}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[0]\ -\/\ other.data\_.getData()[0];}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ have\ the\ same\ shape\ for\ subtraction"{}});}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a0c8960c5c8e5f882daec4662534c80b0}{backend::DeviceComputeDispatcher<T>::dispatchBinary}}(}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36ae80155eceb940c89e2de63ad05868db2}{common::Operator::Sub}},\ *\textcolor{keyword}{this},\ other,\ result);}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00415\ \ \ \ \ \}}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00429\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}{multiply}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00430\ }
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ >\ 1)\ \{}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}{multiply}}(data\_.getData()[0]);}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ >\ 1)\ \{}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}{multiply}}(other.data\_.getData()[0]);}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1)\ \{}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(1));}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.getData()[0]\ =}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[0]\ *\ other.data\_.getData()[0];}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00448\ }
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ have\ the\ same\ shape\ for\ multiplication"{}});}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00453\ }
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00459\ }
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a0c8960c5c8e5f882daec4662534c80b0}{backend::DeviceComputeDispatcher<T>::dispatchBinary}}(}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36a62b6d55816cf737bfc6f42e60df1a3f2}{common::Operator::Mul}},\ *\textcolor{keyword}{this},\ other,\ result);}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00464\ \ \ \ \ \}}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00479\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a9eabad273324f711918e3b23550b0c2b}{divide}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ >\ 1)\ \{}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a9375873343ddd46ff96d4feff379720b}{divideInto}}(data\_.getData()[0]);}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ >\ 1)\ \{}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a9eabad273324f711918e3b23550b0c2b}{divide}}(other.data\_.getData()[0]);}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1\ \&\&\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1)\ \{}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.data\_.getData()[0]\ ==\ T(0))\ \{}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Division\ by\ zero"{}});}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(1));}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.getData()[0]\ =}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[0]\ /\ other.data\_.getData()[0];}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00502\ }
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ have\ the\ same\ shape\ for\ division"{}});}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00507\ }
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00513\ }
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a0c8960c5c8e5f882daec4662534c80b0}{backend::DeviceComputeDispatcher<T>::dispatchBinary}}(}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36a43d11850893d2fe84a1e618121c1cc0a}{common::Operator::Div}},\ *\textcolor{keyword}{this},\ other,\ result);}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00518\ \ \ \ \ \}}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00525\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a392743921d9b1638711bea10788a8269}{add}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}{backend::DeviceComputeDispatcher<T>::dispatchScalar}}(}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36aec211f7c20af43e742bf2570c3cb84f9}{common::Operator::Add}},\ *\textcolor{keyword}{this},\ scalar,\ result);}
+\DoxyCodeLine{00534\ }
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00536\ \ \ \ \ \}}
+\DoxyCodeLine{00537\ }
+\DoxyCodeLine{00543\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ae8469e071e030c57d1986a29e11b3581}{subtract}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00549\ }
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}{backend::DeviceComputeDispatcher<T>::dispatchScalar}}(}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36ae80155eceb940c89e2de63ad05868db2}{common::Operator::Sub}},\ *\textcolor{keyword}{this},\ scalar,\ result);}
+\DoxyCodeLine{00552\ }
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00554\ \ \ \ \ \}}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00561\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a1d8f50572e3b37e656342b1f923e6ce2}{multiply}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00567\ }
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}{backend::DeviceComputeDispatcher<T>::dispatchScalar}}(}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36a62b6d55816cf737bfc6f42e60df1a3f2}{common::Operator::Mul}},\ *\textcolor{keyword}{this},\ scalar,\ result);}
+\DoxyCodeLine{00570\ }
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00572\ \ \ \ \ \}}
+\DoxyCodeLine{00573\ }
+\DoxyCodeLine{00581\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a41617131febf160c2439c807647a5590}{divide}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00587\ }
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}{backend::DeviceComputeDispatcher<T>::dispatchScalar}}(}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36a43d11850893d2fe84a1e618121c1cc0a}{common::Operator::Div}},\ *\textcolor{keyword}{this},\ scalar,\ result);}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00592\ \ \ \ \ \}}
+\DoxyCodeLine{00593\ }
+\DoxyCodeLine{00599\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_acc8604d33da71edf35906738a570c15a}{subtractFrom}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00605\ }
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}{backend::DeviceComputeDispatcher<T>::dispatchScalar}}(}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36ae80155eceb940c89e2de63ad05868db2}{common::Operator::Sub}},\ scalar,\ *\textcolor{keyword}{this},\ result);}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00610\ \ \ \ \ \}}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00618\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a9375873343ddd46ff96d4feff379720b}{divideInto}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00624\ }
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a7e7127f5e5b5969371f3f7ac9535598e}{backend::DeviceComputeDispatcher<T>::dispatchScalar}}(}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacehahaha_1_1common_aac33879898e5ce7a44f2dd0cd8382a36a43d11850893d2fe84a1e618121c1cc0a}{common::Operator::Div}},\ scalar,\ *\textcolor{keyword}{this},\ result);}
+\DoxyCodeLine{00627\ }
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00629\ \ \ \ \ \}}
+\DoxyCodeLine{00630\ }
+\DoxyCodeLine{00640\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a1c042962f1850f335a219544aa0c9887}{matmul}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ab062a1dd9043d2fa175b2d08fe432c9e}{getDimensions}}()\ !=\ 2\ ||\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ab062a1dd9043d2fa175b2d08fe432c9e}{getDimensions}}()\ !=\ 2)\ \{}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}matmul\ is\ only\ implemented\ for\ 2D\ tensors"{}});}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00645\ }
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{00647\ }
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ thisDims\ =\ data\_.getShape().getDims();}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ otherDims\ =\ other.data\_.getShape().getDims();}
+\DoxyCodeLine{00650\ }
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (thisDims[1]\ !=\ otherDims[0])\ \{}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Matrix\ dimensions\ mismatch\ for\ matmul:\ ("{}}}
+\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(thisDims[0])\ +\ \textcolor{stringliteral}{"{}x"{}}}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(thisDims[1])\ +\ \textcolor{stringliteral}{"{})\ and\ ("{}}}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(otherDims[0])\ +\ \textcolor{stringliteral}{"{}x"{}}}
+\DoxyCodeLine{00657\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ std::to\_string(otherDims[1])\ +\ \textcolor{stringliteral}{"{})"{}});}
+\DoxyCodeLine{00658\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00659\ }
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ rows\ =\ thisDims[0];}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ cols\ =\ otherDims[1];}
+\DoxyCodeLine{00662\ }
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ result.data\_.setShape(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(\{rows,\ cols\}));}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ result.data\_.setStride(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{TensorStride}}(result.data\_.getShape()));}
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(rows\ *\ cols));}
+\DoxyCodeLine{00668\ }
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a3e37b4a20baa0021887421c9d8b34187}{backend::DeviceComputeDispatcher<T>::dispatchMatMul}}(}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \ \ \ \ *\textcolor{keyword}{this},\ other,\ result);}
+\DoxyCodeLine{00671\ }
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00673\ \ \ \ \ \}}
+\DoxyCodeLine{00674\ }
+\DoxyCodeLine{00682\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a81d9f5aed779ff67cf06dd70fda6aa35}{transpose}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ab062a1dd9043d2fa175b2d08fe432c9e}{getDimensions}}()\ !=\ 2)\ \{}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{00685\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}transpose\ is\ only\ implemented\ for\ 2D\ tensors\ for\ now"{}});}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00687\ }
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ shapeDims\ =\ data\_.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}().getDims();}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ rows\ =\ shapeDims[0];}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ cols\ =\ shapeDims[1];}
+\DoxyCodeLine{00691\ }
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ result.data\_.setShape(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(\{cols,\ rows\}));}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ result.data\_.setStride(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{TensorStride}}(result.data\_.getShape()));}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00696\ }
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ rows;\ ++i)\ \{}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j\ =\ 0;\ j\ <\ cols;\ ++j)\ \{}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.getData()[j\ *\ rows\ +\ i]\ =}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i\ *\ cols\ +\ j];}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00703\ }
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00705\ \ \ \ \ \}}
+\DoxyCodeLine{00706\ }
+\DoxyCodeLine{00711\ \ \ \ \ T\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a2e36cee5ce7a0eb6efb1a8514cdbcc59}{sum}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ T\ result\ =\ T(0);}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ totalSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ totalSize;\ ++i)\ \{}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \ \ \ \ result\ +=\ data\_[i];}
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00718\ \ \ \ \ \}}
+\DoxyCodeLine{00719\ }
+\DoxyCodeLine{00724\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a2f4399df11a8a817a2c7806dc42e210c}{clone}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ result.data\_.setDevice(data\_.getDevice());}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_shared<T[]>(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()));}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();\ ++i)\ \{}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.getData()[i]\ =\ data\_[i];}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00734\ \ \ \ \ \}}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00744\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a328ad673ab84fbbf1031dda750d4bd10}{sum}}(std::vector<size\_t>\ axes,}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ keepDims\ =\ \textcolor{keyword}{false})\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (axes.empty())\ \{}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a2f4399df11a8a817a2c7806dc42e210c}{clone}}();}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00749\ }
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ std::ranges::sort(axes);}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ axes.erase(std::ranges::unique(axes).begin(),\ axes.end());}
+\DoxyCodeLine{00752\ }
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1.\ get\ target\ shape}}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ std::vector<bool>\ isReduced;}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::vector<size\_t>\&\ srcShape\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}();}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ std::vector<size\_t>\ resShape;}
+\DoxyCodeLine{00757\ }
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ isReduced.resize(srcShape.size(),\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ axe\ :\ axes)\ \{}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\textcolor{keyword}{>}(axe)}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ >\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\textcolor{keyword}{>}(isReduced.size())\ -\/\ 1)\ \{}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}axis\ is\ too\ big!"{}});}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ isReduced[axe]\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00766\ }
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (axes.size()\ ==\ this-\/>getShape().size())\ \{}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setShape(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(\{\}));}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setStride(\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{TensorStride}}(result.data\_.getShape()));}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_shared<T[]>(1));}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \ \ \ \ result.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa748eca2d67670eb4c63a731252dc92e}{getRawData}}().get()[0]\ =\ this-\/>\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a2e36cee5ce7a0eb6efb1a8514cdbcc59}{sum}}();}
+\DoxyCodeLine{00773\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00775\ }
+\DoxyCodeLine{00776\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (this-\/>\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}().size()\ ==\ 0)\ \{}
+\DoxyCodeLine{00777\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a2f4399df11a8a817a2c7806dc42e210c}{clone}}();}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00779\ }
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ srcShape.size();\ ++i)\ \{}
+\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ sum\ for\ this\ dim,\ then\ remove\ it\ or\ set\ 1\ in\ resShape}}
+\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isReduced[i])\ \{}
+\DoxyCodeLine{00783\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (keepDims)\ \{}
+\DoxyCodeLine{00784\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resShape.push\_back(1);}
+\DoxyCodeLine{00785\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ not\ then\ just\ add\ dim}}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resShape.push\_back(srcShape[i]);}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00791\ }
+\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2.\ calculate\ necessary\ datas}}
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ need\ to\ calculate}}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ a.\ how\ many\ should\ dstIdx\ reduce\ when\ it\ needs\ to\ reduce}}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ when\ coord\ carries\ at\ a\ position(current\ value\ on\ position\ is\ a)}}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ if\ this\ pos\ is\ not\ reduced,\ then\ dstIdx\ should\ minus}}
+\DoxyCodeLine{00797\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ a\ *\ correspondStride}}
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ if\ this\ pos\ is\ reduced,\ then\ do\ nothing,}}
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ b.\ how\ many\ value\ should\ dstIdx\ add\ when\ it\ needs\ to\ add}}
+\DoxyCodeLine{00800\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ when\ coord\ increases\ at\ a\ position,}}
+\DoxyCodeLine{00801\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ if\ this\ pos\ is\ not\ reduced,\ then\ dstIdx\ should\ add\ a\ value}}
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ equals\ to\ the\ stride}}
+\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ if\ this\ pos\ is\ reduced,\ then\ dstIdx\ will\ add\ nothing}}
+\DoxyCodeLine{00804\ \ \ \ \ \ \ \ \ std::vector<size\_t>\ resStride(srcShape.size(),\ 0);}
+\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result((\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(resShape)));}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ resultStride\ =\ result.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ad2496190561b964827889484eb003d}{getStride}}().\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride_ad3dfa2b0d2634b0f266fa3baa9d2a235}{getStrides}}();}
+\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ resultStrideIdx\ =\ 0;}
+\DoxyCodeLine{00808\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ srcShape.size();\ ++i)\ \{}
+\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isReduced[i])\ \{}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (keepDims)\ \{}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultStrideIdx++;}
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resStride[i]\ =\ resultStride[resultStrideIdx++];}
+\DoxyCodeLine{00815\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00817\ }
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 3.\ calculate\ data\ to\ result}}
+\DoxyCodeLine{00819\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::shared\_ptr<T[]>\ srcPtr\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa748eca2d67670eb4c63a731252dc92e}{getRawData}}();}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ std::shared\_ptr<T[]>\ resPtr\ =\ result.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa748eca2d67670eb4c63a731252dc92e}{getRawData}}();}
+\DoxyCodeLine{00821\ \ \ \ \ \ \ \ \ std::vector<size\_t>\ coord(srcShape.size(),\ 0);}
+\DoxyCodeLine{00822\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dstIdx\ =\ 0;}
+\DoxyCodeLine{00823\ }
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ srcIdx\ =\ 0;\ srcIdx\ <\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();\ ++srcIdx)\ \{}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ \ \ \ \ resPtr[dstIdx]\ +=\ srcPtr[srcIdx];}
+\DoxyCodeLine{00826\ }
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{long}\ i\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\textcolor{keyword}{>}(coord.size()\ -\/\ 1);\ i\ >=\ 0;\ -\/-\/i)\ \{}
+\DoxyCodeLine{00828\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ++coord[i];}
+\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ need\ to\ carry,\ next\ value\ on\ position\ will\ add\ one}}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (coord[i]\ ==\ srcShape[i])\ \{}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ coord[i]\ =\ 0;}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dstIdx\ -\/=\ resStride[i]\ *\ (srcShape[i]\ -\/\ 1);}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dstIdx\ +=\ resStride[i];}
+\DoxyCodeLine{00836\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00839\ }
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00841\ \ \ \ \ \}}
+\DoxyCodeLine{00842\ }
+\DoxyCodeLine{00847\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_adc1d5fd41da7955e2c08899e0c2c6872}{clear}}()\ \{}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data\_.getData()\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ totalSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{00852\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ totalSize;\ ++i)\ \{}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \ \ \ \ data\_[i]\ =\ T();}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00855\ \ \ \ \ \}}
+\DoxyCodeLine{00856\ }
+\DoxyCodeLine{00878\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a0e5e6a932f30cf99f4c805239370b63c}{broadcastTo}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}\&\ newShape)\ \{}
+\DoxyCodeLine{00879\ }
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ broadcasted\ =}
+\DoxyCodeLine{00881\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_a98a4fcd569b8e68e0c94521efe4cd333}{TensorShape::broadcastShape}}(this-\/>data\_.getShape(),\ newShape);}
+\DoxyCodeLine{00882\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!broadcasted.has\_value()\ ||\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape}{TensorShape}}(*broadcasted)\ !=\ newShape)\ \{}
+\DoxyCodeLine{00883\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Cannot\ broadcast\ shape\ "{}}}
+\DoxyCodeLine{00884\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ this-\/>data\_.getShape().toString()}
+\DoxyCodeLine{00885\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{stringliteral}{"{}\ to\ "{}}\ +\ newShape.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_a75900710f0b9e476ba15e5ca1f12d00d}{toString}}());}
+\DoxyCodeLine{00886\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00887\ }
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{00889\ \ \ \ \ \ \ \ \ result.data\_\ =\ this-\/>data\_.share();}
+\DoxyCodeLine{00890\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newShape.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}{getDims}}().size()\ <\ this-\/>getShape().size())\ \{}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}invalid\ argument\ of\ broadcastTo(),\ the\ target\ shape\ is\ "{}}}
+\DoxyCodeLine{00893\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ newShape.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_a75900710f0b9e476ba15e5ca1f12d00d}{toString}}()\ +\ \textcolor{stringliteral}{"{}\ but\ current\ shape\ is\ "{}}}
+\DoxyCodeLine{00894\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ this-\/>data\_.getShape().toString());}
+\DoxyCodeLine{00895\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00896\ }
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride}{TensorStride}}\ newStride\ =\ this-\/>data\_.getStride();}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ shapeDiff\ =\ newShape.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}{getDims}}().size()\ -\/\ this-\/>\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}().size();}
+\DoxyCodeLine{00899\ \ \ \ \ \ \ \ \ newStride.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride_ad3dfa2b0d2634b0f266fa3baa9d2a235}{getStrides}}().insert(}
+\DoxyCodeLine{00900\ \ \ \ \ \ \ \ \ \ \ \ \ newStride.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride_ad3dfa2b0d2634b0f266fa3baa9d2a235}{getStrides}}().begin(),\ shapeDiff,\ 0);}
+\DoxyCodeLine{00901\ }
+\DoxyCodeLine{00902\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ newShapeIdx\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\textcolor{keyword}{>}(newShape.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}{getDims}}().size()\ -\/\ 1);}
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ selfShapeIdx\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\textcolor{keyword}{>}(this-\/>\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}().size()\ -\/\ 1);}
+\DoxyCodeLine{00904\ }
+\DoxyCodeLine{00905\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (selfShapeIdx\ >=\ 0)\ \{}
+\DoxyCodeLine{00906\ }
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newShape.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorShape_ae1bd2cc2dfe425f6072afdda74bcd4dc}{getDims}}()[newShapeIdx]\ !=\ 1}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()[selfShapeIdx]\ ==\ 1)\ \{}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ newStride.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorStride_ad3dfa2b0d2634b0f266fa3baa9d2a235}{getStrides}}()[newShapeIdx]\ =\ 0;}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00911\ }
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/newShapeIdx;}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/selfShapeIdx;}
+\DoxyCodeLine{00914\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00915\ }
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ result.data\_.setShape(newShape);}
+\DoxyCodeLine{00917\ \ \ \ \ \ \ \ \ result.data\_.setStride(newStride);}
+\DoxyCodeLine{00918\ }
+\DoxyCodeLine{00919\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00920\ \ \ \ \ \}}
+\DoxyCodeLine{00921\ }
+\DoxyCodeLine{00927\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a672ada83ffcf1aceddd4d0dd93e8fe62}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00928\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}{add}}(other);}
+\DoxyCodeLine{00929\ \ \ \ \ \}}
+\DoxyCodeLine{00930\ }
+\DoxyCodeLine{00936\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ad62ab52415934c01843f0d20b668bfce}{operator-\/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00937\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ffb4beea3a34d2019c1e5d4ca8d6720}{subtract}}(other);}
+\DoxyCodeLine{00938\ \ \ \ \ \}}
+\DoxyCodeLine{00939\ }
+\DoxyCodeLine{00945\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ab53cb86b513b6d5d6acd8a8f06cd9363}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00946\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}{multiply}}(other);}
+\DoxyCodeLine{00947\ \ \ \ \ \}}
+\DoxyCodeLine{00948\ }
+\DoxyCodeLine{00954\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a6529f9cc4d85310638c3ebcd70393e07}{operator/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00955\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a9eabad273324f711918e3b23550b0c2b}{divide}}(other);}
+\DoxyCodeLine{00956\ \ \ \ \ \}}
+\DoxyCodeLine{00957\ }
+\DoxyCodeLine{00963\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a2d9820c9f9404b6c718490c85c37ee18}{operator+}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00964\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}{add}}(scalar);}
+\DoxyCodeLine{00965\ \ \ \ \ \}}
+\DoxyCodeLine{00966\ }
+\DoxyCodeLine{00972\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_aa700e6f429c0a3dcb948c5dcab63f1a6}{operator-\/}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00973\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ffb4beea3a34d2019c1e5d4ca8d6720}{subtract}}(scalar);}
+\DoxyCodeLine{00974\ \ \ \ \ \}}
+\DoxyCodeLine{00975\ }
+\DoxyCodeLine{00981\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a0741daeb0419cdc13987231c203d4eef}{operator*}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}{multiply}}(scalar);}
+\DoxyCodeLine{00983\ \ \ \ \ \}}
+\DoxyCodeLine{00984\ }
+\DoxyCodeLine{00990\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ad11bf9254e9ee2bc684a7408fd799587}{operator/}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00991\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a9eabad273324f711918e3b23550b0c2b}{divide}}(scalar);}
+\DoxyCodeLine{00992\ \ \ \ \ \}}
+\DoxyCodeLine{00993\ }
+\DoxyCodeLine{00998\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_adc24e2b61e37c310b86a897abf743a40}{operator-\/}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00999\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\ result;}
+\DoxyCodeLine{01000\ \ \ \ \ \ \ \ \ result.data\_.setShape(data\_.getShape());}
+\DoxyCodeLine{01001\ \ \ \ \ \ \ \ \ result.data\_.setStride(data\_.getStride());}
+\DoxyCodeLine{01002\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01003\ \ \ \ \ \ \ \ \ result.data\_.setData(std::make\_unique<T[]>(tensorSize));}
+\DoxyCodeLine{01004\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01005\ \ \ \ \ \ \ \ \ \ \ \ \ result.data\_.getData()[i]\ =\ -\/data\_.getData()[i];}
+\DoxyCodeLine{01006\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01007\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{01008\ \ \ \ \ \}}
+\DoxyCodeLine{01009\ }
+\DoxyCodeLine{01015\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_afbc4218ac6137eadd10b8b1b796fdb53}{operator+=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\ \{}
+\DoxyCodeLine{01016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1)\ \{}
+\DoxyCodeLine{01017\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this}\ +=\ other.data\_.getData()[0];}
+\DoxyCodeLine{01018\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{01020\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{01021\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ have\ the\ same\ shape\ for\ addition"{}});}
+\DoxyCodeLine{01022\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01023\ }
+\DoxyCodeLine{01024\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{01025\ }
+\DoxyCodeLine{01026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01027\ }
+\DoxyCodeLine{01028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01029\ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i]\ =\ data\_.getData()[i]\ +\ other.data\_.getData()[i];}
+\DoxyCodeLine{01030\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01031\ }
+\DoxyCodeLine{01032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{01033\ \ \ \ \ \}}
+\DoxyCodeLine{01034\ }
+\DoxyCodeLine{01040\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a6b22cc7c2389d9b70153c279354235da}{operator-\/=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\ \{}
+\DoxyCodeLine{01041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1)\ \{}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this}\ -\/=\ other.data\_.getData()[0];}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{01045\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{01046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ have\ the\ same\ shape\ for\ subtraction"{}});}
+\DoxyCodeLine{01047\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01048\ }
+\DoxyCodeLine{01049\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{01050\ }
+\DoxyCodeLine{01051\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01052\ }
+\DoxyCodeLine{01053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01054\ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i]\ =\ data\_.getData()[i]\ -\/\ other.data\_.getData()[i];}
+\DoxyCodeLine{01055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01056\ }
+\DoxyCodeLine{01057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{01058\ \ \ \ \ \}}
+\DoxyCodeLine{01059\ }
+\DoxyCodeLine{01065\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a6e0251a36b93c1d883fd3a4d09e0e652}{operator*=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\ \{}
+\DoxyCodeLine{01066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1)\ \{}
+\DoxyCodeLine{01067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this}\ *=\ other.data\_.getData()[0];}
+\DoxyCodeLine{01068\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01069\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{01070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{01071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ have\ the\ same\ shape\ for\ multiplication"{}});}
+\DoxyCodeLine{01072\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01073\ }
+\DoxyCodeLine{01074\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{01075\ }
+\DoxyCodeLine{01076\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01077\ }
+\DoxyCodeLine{01078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01079\ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i]\ =\ data\_.getData()[i]\ *\ other.data\_.getData()[i];}
+\DoxyCodeLine{01080\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01081\ }
+\DoxyCodeLine{01082\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{01083\ \ \ \ \ \}}
+\DoxyCodeLine{01084\ }
+\DoxyCodeLine{01090\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a522fc4388eec187e9fb8b68019864ecc}{operator/=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\ \{}
+\DoxyCodeLine{01091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}()\ ==\ 1)\ \{}
+\DoxyCodeLine{01092\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this}\ /=\ other.data\_.getData()[0];}
+\DoxyCodeLine{01093\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{01095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{01096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ have\ the\ same\ shape\ for\ division"{}});}
+\DoxyCodeLine{01097\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01098\ }
+\DoxyCodeLine{01099\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{01100\ }
+\DoxyCodeLine{01101\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01102\ }
+\DoxyCodeLine{01103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (other.data\_.getData()[i]\ ==\ T(0))\ \{}
+\DoxyCodeLine{01105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Division\ by\ zero"{}});}
+\DoxyCodeLine{01106\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01107\ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i]\ =\ data\_.getData()[i]\ /\ other.data\_.getData()[i];}
+\DoxyCodeLine{01108\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01109\ }
+\DoxyCodeLine{01110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{01111\ \ \ \ \ \}}
+\DoxyCodeLine{01112\ }
+\DoxyCodeLine{01118\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_ab781e9c3146d476167cf4c12fd9dec63}{operator+=}}(T\ scalar)\ \{}
+\DoxyCodeLine{01119\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01120\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01121\ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i]\ +=\ scalar;}
+\DoxyCodeLine{01122\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{01124\ \ \ \ \ \}}
+\DoxyCodeLine{01125\ }
+\DoxyCodeLine{01131\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a12aa8c9dd35b2df1bf2b222dc34142a3}{operator-\/=}}(T\ scalar)\ \{}
+\DoxyCodeLine{01132\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01134\ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i]\ -\/=\ scalar;}
+\DoxyCodeLine{01135\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{01137\ \ \ \ \ \}}
+\DoxyCodeLine{01138\ }
+\DoxyCodeLine{01144\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a5b8cabc34b49798b448d0c6389bd5038}{operator*=}}(T\ scalar)\ \{}
+\DoxyCodeLine{01145\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01146\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01147\ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i]\ *=\ scalar;}
+\DoxyCodeLine{01148\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{01150\ \ \ \ \ \}}
+\DoxyCodeLine{01151\ }
+\DoxyCodeLine{01158\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a4752b08848d798caff356fac3a1eb60b}{operator/=}}(T\ scalar)\ \{}
+\DoxyCodeLine{01159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (scalar\ ==\ T(0))\ \{}
+\DoxyCodeLine{01160\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Division\ by\ zero"{}});}
+\DoxyCodeLine{01161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01162\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ tensorSize\ =\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a75c901e7bacfab5202d9ee952e2bd076}{getTotalSize}}();}
+\DoxyCodeLine{01163\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ tensorSize;\ ++i)\ \{}
+\DoxyCodeLine{01164\ \ \ \ \ \ \ \ \ \ \ \ \ data\_.getData()[i]\ /=\ scalar;}
+\DoxyCodeLine{01165\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{01167\ \ \ \ \ \}}
+\DoxyCodeLine{01168\ }
+\DoxyCodeLine{01175\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a62e9e053c8941383447ff11da5b0f9b6}{axpy}}(T\ alpha,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ec36ae4755e438bad7773314c7295af}{TensorWrapper}}\&\ other)\ \{}
+\DoxyCodeLine{01176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a17425c033fc32ea2c08f5ddc5ecd3044}{getShape}}())\ \{}
+\DoxyCodeLine{01177\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Shape\ mismatch\ in\ axpy"{}});}
+\DoxyCodeLine{01178\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01179\ \ \ \ \ \ \ \ \ checkSameDevice(other);}
+\DoxyCodeLine{01180\ }
+\DoxyCodeLine{01181\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Dispatch\ to\ backend\ for\ hardware-\/specific\ optimization}}
+\DoxyCodeLine{01182\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher_a7a88bc4cdcae62c4c1d1e509337225a9}{backend::DeviceComputeDispatcher<T>::dispatchAxpy}}(alpha,\ other,\ *\textcolor{keyword}{this});}
+\DoxyCodeLine{01183\ \ \ \ \ \}}
+\DoxyCodeLine{01184\ }
+\DoxyCodeLine{01185\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{01186\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorData}{TensorData<T>}}\ data\_;\ }
+\DoxyCodeLine{01187\ }
+\DoxyCodeLine{01192\ \ \ \ \ \textcolor{keywordtype}{void}\ checkSameDevice(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{01193\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a32418318e144a50ba2d16eef90c46099}{getDevice}}()\ !=\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a32418318e144a50ba2d16eef90c46099}{getDevice}}())\ \{}
+\DoxyCodeLine{01194\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(}
+\DoxyCodeLine{01195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Tensors\ must\ be\ on\ the\ same\ device\ for\ this\ operation\ (found\ "{}}}
+\DoxyCodeLine{01196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a32418318e144a50ba2d16eef90c46099}{getDevice}}().toString()\ +\ \textcolor{stringliteral}{"{}\ and\ "{}}}
+\DoxyCodeLine{01197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ other.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a32418318e144a50ba2d16eef90c46099}{getDevice}}().\mbox{\hyperlink{structhahaha_1_1backend_1_1Device_a7f9aaa75a1d9246707a586f310f15780}{toString}}()\ +\ \textcolor{stringliteral}{"{})"{}});}
+\DoxyCodeLine{01198\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01199\ \ \ \ \ \}}
+\DoxyCodeLine{01200\ }
+\DoxyCodeLine{01201\ \ \ \ \ \textcolor{comment}{//\ Friend\ classes\ for\ internal\ access}}
+\DoxyCodeLine{01202\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a3ffafb7e173b1d19446307b2bbfa62e6}{TensorWrapperTest}};}
+\DoxyCodeLine{01203\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{compute::ComputeNode}}<T>;}
+\DoxyCodeLine{01204\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1backend_1_1DeviceComputeDispatcher}{backend::DeviceComputeDispatcher}}<T>;}
+\DoxyCodeLine{01205\ \};}
+\DoxyCodeLine{01206\ }
+\DoxyCodeLine{01214\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01215\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper<T>}}\ \mbox{\hyperlink{namespacehahaha_1_1math_abd9282285326b171ad140da8b11b36c9}{operator+}}(T\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper<T>}}\&\ tensor)\ \{}
+\DoxyCodeLine{01216\ \ \ \ \ \textcolor{keywordflow}{return}\ tensor.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a654cb03a31db1d1b1c4f687c1ea84211}{add}}(scalar);}
+\DoxyCodeLine{01217\ \}}
+\DoxyCodeLine{01218\ }
+\DoxyCodeLine{01226\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01227\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper<T>}}\ \mbox{\hyperlink{namespacehahaha_1_1math_a5ca3e072d19b357a28a254bb0ad4fde3}{operator-\/}}(T\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper<T>}}\&\ tensor)\ \{}
+\DoxyCodeLine{01228\ \ \ \ \ \textcolor{keywordflow}{return}\ tensor.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_acc8604d33da71edf35906738a570c15a}{subtractFrom}}(scalar);}
+\DoxyCodeLine{01229\ \}}
+\DoxyCodeLine{01230\ }
+\DoxyCodeLine{01238\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01239\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper<T>}}\ \mbox{\hyperlink{namespacehahaha_1_1math_af4c8a30e888d51be09a618b5559ea665}{operator*}}(T\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper<T>}}\&\ tensor)\ \{}
+\DoxyCodeLine{01240\ \ \ \ \ \textcolor{keywordflow}{return}\ tensor.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a71b57be9c94274c5b4e4e7c5bed34a47}{multiply}}(scalar);}
+\DoxyCodeLine{01241\ \}}
+\DoxyCodeLine{01242\ }
+\DoxyCodeLine{01250\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01251\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper<T>}}\ \mbox{\hyperlink{namespacehahaha_1_1math_acbee68d7d0e4fb4c7877600561a11a98}{operator/}}(T\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{TensorWrapper<T>}}\&\ tensor)\ \{}
+\DoxyCodeLine{01252\ \ \ \ \ \textcolor{keywordflow}{return}\ tensor.\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper_a9375873343ddd46ff96d4feff379720b}{divideInto}}(scalar);}
+\DoxyCodeLine{01253\ \}}
+\DoxyCodeLine{01254\ }
+\DoxyCodeLine{01255\ \}\ \textcolor{comment}{//\ namespace\ hahaha::math}}
+\DoxyCodeLine{01256\ }
+\DoxyCodeLine{01257\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_MATH\_TENSOR\_WRAPPER\_H}}
+
+\end{DoxyCode}

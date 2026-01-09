@@ -1,0 +1,78 @@
+\doxysection{Visualizer.\+h}
+\hypertarget{Visualizer_8h_source}{}\label{Visualizer_8h_source}\index{core/include/display/Visualizer.h@{core/include/display/Visualizer.h}}
+\mbox{\hyperlink{Visualizer_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_DISPLAY\_VISUALIZER\_H}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ HAHAHA\_DISPLAY\_VISUALIZER\_H}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{TensorWrapper_8h}{math/TensorWrapper.h}}"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha_1_1display}{hahaha::display}}\ \{}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhahaha_1_1display_1_1LayerInfo}{LayerInfo}}\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ std::string\ \mbox{\hyperlink{structhahaha_1_1display_1_1LayerInfo_a3cdc288b4dce1bb950643f8317c04bf3}{name}};}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structhahaha_1_1display_1_1LayerInfo_af144b4e979fc6087f4873e51440d499f}{inputSize}};}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structhahaha_1_1display_1_1LayerInfo_af929be35d32227723af47cd6709fbfa0}{outputSize}};}
+\DoxyCodeLine{00038\ \};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8f}{ControlAction}}\ \{\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa6adf97f83acf6453d4a6a4b1070f3754}{None}},\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8faa6122a65eaa676f700ae68d393054a37}{Start}},\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa105b296a83f9c105355403f3332af50f}{Pause}},\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa11a755d598c0c417f9a36758c3da7481}{Stop}},\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8fa526d688f37a86d3c3f27d0c5016eb71d}{Reset}}\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer}{IVisualizer}}\ \{}
+\DoxyCodeLine{00050\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a1e330b452d4cc54dfbf34649a5899cfb}{\string~IVisualizer}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00060\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_aac869a49b8bfcc542b53a5b3d97963f3}{init}}(\textcolor{keyword}{const}\ std::string\&\ title,\ \textcolor{keywordtype}{int}\ width\ =\ 1280,\ \textcolor{keywordtype}{int}\ height\ =\ 720)\ =\ 0;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a81cd6ed5d67c9c0587ddde878c8627dc}{clearModel}}()\ =\ 0;}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_ad214a1d1aec5bd241a3d8edfb563c6e0}{addLayer}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structhahaha_1_1display_1_1LayerInfo}{LayerInfo}}\&\ \mbox{\hyperlink{Logger_8h_ab37e478a47c05251698aa35023c6fdf9}{info}})\ =\ 0;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a7715871ed827ae9a022f0258fe6166c2}{recordMetrics}}(\textcolor{keywordtype}{int}\ epoch,\ \textcolor{keywordtype}{float}\ loss,\ \textcolor{keywordtype}{float}\ accuracy\ =\ 0.0f)\ =\ 0;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a3c48c6e70d4f6ab6685eae838fa46b69}{visualizeTensor}}(\textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{hahaha::math::TensorWrapper<float>}}\&\ data)\ =\ 0;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a3f0aad13e40c64c9cba3f373401b48ec}{renderFrame}}()\ =\ 0;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_a23277728348edf775c14473c4b580b2f}{setStatus}}(\textcolor{keyword}{const}\ std::string\&\ status)\ =\ 0;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_af4852b6fde2b1299bed53de63cc92c17}{showControlPanel}}(\textcolor{keywordtype}{bool}\ show)\ =\ 0;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00115\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{namespacehahaha_1_1display_a849278eae7fc08bb887b9d6e4ea31e8f}{ControlAction}}\ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_aac803c08992e47b8575561e446cd9850}{getControlAction}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classhahaha_1_1display_1_1IVisualizer_acae00dffa6bd96194edb84214e11790b}{requestedStop}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00122\ \};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00128\ std::unique\_ptr<IVisualizer>\ \mbox{\hyperlink{namespacehahaha_1_1display_a6c35b9a1c45eacb4b6f0c116f76037f5}{createMLVisualizer}}();}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \}\ \textcolor{comment}{//\ namespace\ hahaha::display}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_DISPLAY\_VISUALIZER\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,209 @@
+\doxysection{Tensor.\+h}
+\hypertarget{Tensor_8h_source}{}\label{Tensor_8h_source}\index{core/include/Tensor.h@{core/include/Tensor.h}}
+\mbox{\hyperlink{Tensor_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ 2025\ Contributors\ of\ Hahaha(https://github.com/Napbad/Hahaha)}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ \ \ \ \ \ https://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ WITHOUT\ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Contributors:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Napbad\ (napbad.sen@gmail.com\ )\ (https://github.com/Napbad\ )}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ jiansongshen\ (jason.shen111@outlook.com)\ (https://github.com/jiansongshen)}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#ifndef\ HAHAHA\_TENSOR\_H}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ HAHAHA\_TENSOR\_H}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{Device_8h}{backend/Device.h}}"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{TensorWrapper_8h}{math/TensorWrapper.h}}"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{TensorData_8h}{math/ds/TensorData.h}}"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{ComputeFun_8h}{ml/compute/graph/ComputeFun.h}}"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{ComputeNode_8h}{ml/compute/graph/ComputeNode.h}}"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{HelperStruct_8h}{utils/common/HelperStruct.h}}"{}}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacehahaha}{hahaha}}\ \{}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{static\_assert}(\mbox{\hyperlink{structhahaha_1_1utils_1_1isLegalDataType}{utils::isLegalDataType<T>::value}},}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}T\ must\ be\ a\ legal\ data\ type"{}});}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{math::TensorWrapper<T>}}\&\ \mbox{\hyperlink{classhahaha_1_1Tensor_a33d70962acf433d0513aa26c1bba24a9}{data}})}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ :\ computeNode\_(std::make\_shared<\mbox{\hyperlink{namespacehahaha_1_1compute}{compute}}::ComputeNode<T>>(}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::make\_shared<\mbox{\hyperlink{namespacehahaha_1_1math}{math}}::TensorWrapper<T>>(\mbox{\hyperlink{classhahaha_1_1Tensor_a33d70962acf433d0513aa26c1bba24a9}{data}})))\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ NOLINTNEXTLINE}}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_abf54a8bbe16b8823fce41609d056115d}{Tensor}}(\mbox{\hyperlink{structhahaha_1_1math_1_1NestedData}{math::NestedData<T>}}\&\&\ \mbox{\hyperlink{classhahaha_1_1Tensor_a33d70962acf433d0513aa26c1bba24a9}{data}})}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ :\ computeNode\_(std::make\_shared<\mbox{\hyperlink{namespacehahaha_1_1compute}{compute}}::ComputeNode<T>>(}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::make\_shared<\mbox{\hyperlink{namespacehahaha_1_1math}{math}}::TensorWrapper<T>>(std::move(\mbox{\hyperlink{classhahaha_1_1Tensor_a33d70962acf433d0513aa26c1bba24a9}{data}}))))\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1Tensor_aeee8558034967924948108678574c2e3}{Tensor}}(std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1math_1_1TensorWrapper}{math::TensorWrapper<T>}}>\ dataPtr)}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ :\ computeNode\_(std::make\_shared<\mbox{\hyperlink{namespacehahaha_1_1compute}{compute}}::ComputeNode<T>>(dataPtr))\ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classhahaha_1_1Tensor_ae2b3074b511f06c866fd7e899c3077ee}{Tensor}}(std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{compute::ComputeNode<T>}}>\ computeNode)}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ :\ computeNode\_(computeNode)\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a56a7d097e6584bfca71fcef52e678602}{buildFromVector}}(\textcolor{keyword}{const}\ std::vector<T>\&\ vec)\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ computeNode\ =\ std::make\_shared<compute::ComputeNode<T>>(}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ std::make\_shared<math::TensorWrapper<T>>(vec));}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(computeNode);}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00098\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a06f7ff736f5d682e50e223fc36e45c92}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a908ac95babe6ff6d645ad84154a10087}{compute::add}}(this-\/>computeNode\_,\ other.computeNode\_));}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00103\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a79da597d19a51cce64eff5cd3478b556}{operator-\/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a237b51d29aea262b37410a3b0d535d13}{compute::sub}}(this-\/>computeNode\_,\ other.computeNode\_));}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a3dd8845a8ed50aa736bb9e06981d8301}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_af3d4719c80ba8ae27556136907f3fcd2}{compute::mul}}(this-\/>computeNode\_,\ other.computeNode\_));}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00113\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a80601aed47c7f7b7affd3f7c47090f6f}{operator/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_ac7f8ac3fdaaff28fbf6716fea33a47ca}{compute::div}}(this-\/>computeNode\_,\ other.computeNode\_));}
+\DoxyCodeLine{00115\ \ \ \ \ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00118\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a0efd213545b8a027f28760eaf39df671}{operator*}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_af3d4719c80ba8ae27556136907f3fcd2}{compute::mul}}(this-\/>computeNode\_,\ scalar));}
+\DoxyCodeLine{00120\ \ \ \ \ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00123\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_aa39781c0dc5da4bb5745d3d7289709ee}{operator+}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a908ac95babe6ff6d645ad84154a10087}{compute::add}}(this-\/>computeNode\_,\ scalar));}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00128\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a54af284eae19a9a4c94963de311c04bd}{operator-\/}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a237b51d29aea262b37410a3b0d535d13}{compute::sub}}(this-\/>computeNode\_,\ scalar));}
+\DoxyCodeLine{00130\ \ \ \ \ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00133\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_aa55e36a24edf7b8e21ff3b3a25b84f4d}{operator/}}(T\ scalar)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_ac7f8ac3fdaaff28fbf6716fea33a47ca}{compute::div}}(this-\/>computeNode\_,\ scalar));}
+\DoxyCodeLine{00135\ \ \ \ \ \}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a947eb3ce7fd88d300c3f32dfc68a77d0}{operator-\/}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a4621ab946ecf0bbd352775b04bc845f4}{compute::neg}}(this-\/>computeNode\_));}
+\DoxyCodeLine{00140\ \ \ \ \ \}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00143\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_aa8f81800741088704e86cfbfaad19c64}{matmul}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ other)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a5e1efb91d018c844fdfc26acb1d7ec84}{compute::matmul}}(this-\/>computeNode\_,\ other.computeNode\_));}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00155\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_ae04876ec4a0d977d8240482e6c494ed8}{reshape}}(\textcolor{keyword}{const}\ std::vector<size\_t>\&\ newShape)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_aaa3ac26b5d9eb22e54756617e5b85b99}{compute::reshape}}(this-\/>computeNode\_,\ newShape));}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00166\ \ \ \ \ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6028a5e4becd8a8bf804de16a3856aca}{transpose}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a02ae66570377e3bc254ba474629bc2d4}{compute::transpose}}(this-\/>computeNode\_));}
+\DoxyCodeLine{00168\ \ \ \ \ \}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{comment}{//\ Friend\ functions\ for\ scalar-\/tensor\ operations\ (scalar\ op\ Tensor)}}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_ac6426dd732f8c51d28f178a7a441650a}{operator*}}(T\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ tensor)\ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_af3d4719c80ba8ae27556136907f3fcd2}{compute::mul}}(scalar,\ tensor.computeNode\_));}
+\DoxyCodeLine{00173\ \ \ \ \ \}}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_ad4e72cbdbf3346cff8425481eb6888ec}{operator+}}(T\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ tensor)\ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a908ac95babe6ff6d645ad84154a10087}{compute::add}}(scalar,\ tensor.computeNode\_));}
+\DoxyCodeLine{00177\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_acaaa5ed33a285bb890ab2683415ff901}{operator-\/}}(T\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ tensor)\ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_a237b51d29aea262b37410a3b0d535d13}{compute::sub}}(scalar,\ tensor.computeNode\_));}
+\DoxyCodeLine{00181\ \ \ \ \ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}\ \mbox{\hyperlink{classhahaha_1_1Tensor_aff9e18e89b4ad3f8102b4845816af7d6}{operator/}}(T\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor<T>}}\&\ tensor)\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a6c08d828def8356589aa095c2e6f5e32}{Tensor}}(\mbox{\hyperlink{namespacehahaha_1_1compute_ac7f8ac3fdaaff28fbf6716fea33a47ca}{compute::div}}(scalar,\ tensor.computeNode\_));}
+\DoxyCodeLine{00185\ \ \ \ \ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a68768381ff54a51167a64a05766cf179}{backward}}()\ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ computeNode\_-\/>backward();}
+\DoxyCodeLine{00195\ \ \ \ \ \}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00201\ \ \ \ \ [[nodiscard]]\ std::shared\_ptr<Tensor<T>>\ \mbox{\hyperlink{classhahaha_1_1Tensor_ab20b813e7dc03dcd9a8799b90c78242a}{grad}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (computeNode\_-\/>getGrad())\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::make\_shared<Tensor<T>>(computeNode\_-\/>getGrad());}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00206\ \ \ \ \ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a3d7a1bdf987014870e26110dbd80f2ec}{clear}}()\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ computeNode\_-\/>getData()-\/>clear();}
+\DoxyCodeLine{00213\ \ \ \ \ \}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a0be78f8f19ba2d28f0e7f9b32cb1ed99}{clearGrad}}()\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ computeNode\_-\/>clearGrad();}
+\DoxyCodeLine{00220\ \ \ \ \ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00223\ \ \ \ \ [[nodiscard]]\ std::shared\_ptr<math::TensorWrapper<T>>\ \mbox{\hyperlink{classhahaha_1_1Tensor_a33d70962acf433d0513aa26c1bba24a9}{data}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_-\/>getData();}
+\DoxyCodeLine{00225\ \ \ \ \ \}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a84f8eb6d730fd1446ae12c6ea575a810}{to}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend::Device}}\&\ device)\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ computeNode\_-\/>getData()-\/>to(device);}
+\DoxyCodeLine{00233\ \ \ \ \ \}}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ std::vector<size\_t>\&\ \mbox{\hyperlink{classhahaha_1_1Tensor_a07d19512d26cf9bad82bf91e1eb6b76b}{getShape}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_-\/>getData()-\/>getShape();}
+\DoxyCodeLine{00237\ \ \ \ \ \}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00240\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structhahaha_1_1backend_1_1Device}{backend::Device}}\&\ \mbox{\hyperlink{classhahaha_1_1Tensor_a1aa1e6af749c9cc0fbc64bc9489091ac}{getDevice}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_-\/>getData()-\/>getDevice();}
+\DoxyCodeLine{00242\ \ \ \ \ \}}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a2528afb99364fa7db1dc63ae0adf6a14}{setRequiresGrad}}(\textcolor{keywordtype}{bool}\ req)\ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ computeNode\_-\/>setRequiresGrad(req);}
+\DoxyCodeLine{00247\ \ \ \ \ \}}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00250\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a9785fbd0ef0ba01fa25e58bfc0174cf2}{getRequiresGrad}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_-\/>getRequiresGrad();}
+\DoxyCodeLine{00252\ \ \ \ \ \}}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00255\ \ \ \ \ T\&\ \mbox{\hyperlink{classhahaha_1_1Tensor_a67cac5fcb3e9c271660547fb87e03d0c}{at}}(\textcolor{keyword}{const}\ std::initializer\_list<size\_t>\&\ indices)\ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_-\/>getData()-\/>at(indices);}
+\DoxyCodeLine{00257\ \ \ \ \ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{keyword}{const}\ T\&\ \mbox{\hyperlink{classhahaha_1_1Tensor_ab3be7dcce3cc42b4fb2cbf2161cde22b}{at}}(\textcolor{keyword}{const}\ std::initializer\_list<size\_t>\&\ indices)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_-\/>getData()-\/>at(indices);}
+\DoxyCodeLine{00262\ \ \ \ \ \}}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00268\ \ \ \ \ std::shared\_ptr<compute::ComputeNode<T>>\ \mbox{\hyperlink{classhahaha_1_1Tensor_a3e2551f13a60f213e764b85debcc84ae}{getComputeNode}}()\ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_;}
+\DoxyCodeLine{00270\ \ \ \ \ \}}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classhahaha_1_1Tensor_a41958cb5807ae4a67c4575cf81a28ba0}{setComputeNode}}(std::shared\_ptr<\mbox{\hyperlink{classhahaha_1_1compute_1_1ComputeNode}{compute::ComputeNode<T>}}>\ node)\ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ computeNode\_\ =\ node;}
+\DoxyCodeLine{00278\ \ \ \ \ \}}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00284\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classhahaha_1_1Tensor_af0ef17f1e46124556d1c553a9dd133f0}{getTotalSize}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_-\/>getData()-\/>getTotalSize();}
+\DoxyCodeLine{00286\ \ \ \ \ \}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ T\ \mbox{\hyperlink{classhahaha_1_1Tensor_aa8db58e724e99ea19442b05d96659783}{sum}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ computeNode\_-\/>getData()-\/>sum();}
+\DoxyCodeLine{00290\ \ \ \ \ \}}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00292\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00293\ \ \ \ \ std::shared\_ptr<compute::ComputeNode<T>>\ computeNode\_;\ }
+\DoxyCodeLine{00294\ \};}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \}\ \textcolor{comment}{//\ namespace\ hahaha}}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HAHAHA\_TENSOR\_H}}
+
+\end{DoxyCode}
