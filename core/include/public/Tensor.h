@@ -1,20 +1,20 @@
-// Copyright (c) 2025 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
+//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//      https://www.apache.org/licenses/LICENSE-2.0
+//       https://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 //
-// Contributors:
-// Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
-// jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
+//  Contributors:
+//  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
+//
 //
 
 #ifndef HAHAHA_TENSOR_H
@@ -95,52 +95,52 @@ template <typename T> class Tensor {
     }
 
     /** @brief Addition operator. Builds an 'Add' node. */
-    Tensor<T> operator+(const Tensor<T>& other) const {
+    Tensor operator+(const Tensor& other) const {
         return Tensor(compute::add(this->computeNode_, other.computeNode_));
     }
 
     /** @brief Subtraction operator. Builds a 'Sub' node. */
-    Tensor<T> operator-(const Tensor<T>& other) const {
+    Tensor operator-(const Tensor& other) const {
         return Tensor(compute::sub(this->computeNode_, other.computeNode_));
     }
 
     /** @brief Multiplication operator. Builds a 'Mul' node. */
-    Tensor<T> operator*(const Tensor<T>& other) const {
+    Tensor operator*(const Tensor& other) const {
         return Tensor(compute::mul(this->computeNode_, other.computeNode_));
     }
 
     /** @brief Division operator. Builds a 'Div' node. */
-    Tensor<T> operator/(const Tensor<T>& other) const {
+    Tensor operator/(const Tensor& other) const {
         return Tensor(compute::div(this->computeNode_, other.computeNode_));
     }
 
     /** @brief Scalar multiplication operator (Tensor * scalar). */
-    Tensor<T> operator*(T scalar) const {
+    Tensor operator*(T scalar) const {
         return Tensor(compute::mul(this->computeNode_, scalar));
     }
 
     /** @brief Scalar addition operator (Tensor + scalar). */
-    Tensor<T> operator+(T scalar) const {
+    Tensor operator+(T scalar) const {
         return Tensor(compute::add(this->computeNode_, scalar));
     }
 
     /** @brief Scalar subtraction operator (Tensor - scalar). */
-    Tensor<T> operator-(T scalar) const {
+    Tensor operator-(T scalar) const {
         return Tensor(compute::sub(this->computeNode_, scalar));
     }
 
     /** @brief Scalar division operator (Tensor / scalar). */
-    Tensor<T> operator/(T scalar) const {
+    Tensor operator/(T scalar) const {
         return Tensor(compute::div(this->computeNode_, scalar));
     }
 
     /** @brief Unary negation operator. */
-    Tensor<T> operator-() const {
+    Tensor operator-() const {
         return Tensor(compute::neg(this->computeNode_));
     }
 
     /** @brief Matrix multiplication. */
-    Tensor<T> matmul(const Tensor<T>& other) const {
+    Tensor matmul(const Tensor& other) const {
         return Tensor(compute::matmul(this->computeNode_, other.computeNode_));
     }
 
@@ -152,7 +152,7 @@ template <typename T> class Tensor {
      * @param newShape Vector of new dimension sizes.
      * @return TensorWrapper<T> A new tensor with reshaped dimensions.
      */
-    Tensor<T> reshape(const std::vector<size_t>& newShape) const {
+    Tensor reshape(const std::vector<size_t>& newShape) const {
         return Tensor(compute::reshape(this->computeNode_, newShape));
     }
 
@@ -163,24 +163,24 @@ template <typename T> class Tensor {
      *
      * @return TensorWrapper<T> transposed tensor.
      */
-    Tensor<T> transpose() const {
+    Tensor transpose() const {
         return Tensor(compute::transpose(this->computeNode_));
     }
 
     // Friend functions for scalar-tensor operations (scalar op Tensor)
-    friend Tensor operator*(T scalar, const Tensor<T>& tensor) {
+    friend Tensor operator*(T scalar, const Tensor& tensor) {
         return Tensor(compute::mul(scalar, tensor.computeNode_));
     }
 
-    friend Tensor operator+(T scalar, const Tensor<T>& tensor) {
+    friend Tensor operator+(T scalar, const Tensor& tensor) {
         return Tensor(compute::add(scalar, tensor.computeNode_));
     }
 
-    friend Tensor operator-(T scalar, const Tensor<T>& tensor) {
+    friend Tensor operator-(T scalar, const Tensor& tensor) {
         return Tensor(compute::sub(scalar, tensor.computeNode_));
     }
 
-    friend Tensor operator/(T scalar, const Tensor<T>& tensor) {
+    friend Tensor operator/(T scalar, const Tensor& tensor) {
         return Tensor(compute::div(scalar, tensor.computeNode_));
     }
 
@@ -198,9 +198,9 @@ template <typename T> class Tensor {
      * @brief Get the managed gradient as a Tensor.
      * @return Tensor containing the accumulated gradients.
      */
-    [[nodiscard]] std::shared_ptr<Tensor<T>> grad() const {
+    [[nodiscard]] std::shared_ptr<Tensor> grad() const {
         if (computeNode_->getGrad()) {
-            return std::make_shared<Tensor<T>>(computeNode_->getGrad());
+            return std::make_shared<Tensor>(computeNode_->getGrad());
         }
         return nullptr;
     }
