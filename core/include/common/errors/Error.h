@@ -15,91 +15,51 @@
 //  Contributors:
 //  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
 //
-//
 
 #ifndef HAHAHA_ERROR_H_053340FD56184B63A68D6CE6E15C8175
 #define HAHAHA_ERROR_H_053340FD56184B63A68D6CE6E15C8175
-
-#include <source_location>
-#include <string>
 
 #include "common/errors/ErrorCode.h"
 
 namespace hahaha::common {
 
 /**
- * @brief CRTP base class for all error types.
- *
- * @tparam Derived The derived error class (CRTP pattern)
- * @tparam code The error code associated with this error type
+ * @brief Simple error structure for static error handling without dynamic
+ * allocation.
  */
-template <typename Derived, ErrorCode code> class ErrorBase {
-  public:
-  public:
-    /**
-     * @brief The error code associated with this error type.
-     */
-    static constexpr ErrorCode Code = code;
+struct Error {
+    ErrorCode code = ErrorCode::Success;
 
     /**
-     * @brief Default constructor for ErrorBase.
+     * @brief Returns the error message associated with the current error code.
+     * @return A static string representing the error.
      */
-    ErrorBase() = default;
-
-    /**
-     * @brief Constructor for ErrorBase with message and optional location.
-     *
-     * @param message The error message string
-     * @param location The source location where the error occurred (defaults to
-     * current location)
-     */
-    explicit ErrorBase(
-        std::string message,
-        const std::source_location location = std::source_location::current())
-        : message(std::move(message)), location(location) {
+    [[nodiscard]] constexpr const char* message() const {
+        return ErrorMessages[static_cast<std::size_t>(code)];
     }
 
     /**
-     * @brief Get the error code associated with this error type.
-     *
-     * @return constexpr ErrorCode The error code
+     * @brief Helper to check if the error code indicates success.
+     * @return True if code is Success, false otherwise.
      */
-    static constexpr ErrorCode getCode() {
-        return Code;
+    [[nodiscard]] constexpr bool isSuccess() const {
+        return code == ErrorCode::Success;
     }
-
-    /**
-     * @brief Get the error message.
-     *
-     * @return std::string The error message
-     */
-    std::string getMessage() const {
-        return message;
-    }
-
-    /**
-     * @brief Get the location where the error occurred.
-     *
-     * @return std::string The location in format "filename:line_number"
-     */
-    std::string getLocation() const {
-        return std::string(location.file_name()) + ":"
-            + std::to_string(location.line());
-    }
-
-    /**
-     * @brief Get the error name from the derived class.
-     * @return The error name string
-     */
-    static constexpr const char* getErrorName() {
-        return Derived::ErrorName;
-    }
-
-  protected:
-    std::string message; ///< The error message
-    std::source_location
-        location; ///< The source location where the error occurred
 };
+
+/**
+ * @brief Helper function to create an InvalidArgument error.
+ */
+inline constexpr Error InvalidArgumentError() {
+    return Error{ErrorCode::InvalidArgument};
+}
+
+/**
+ * @brief Helper function to create a DeviceNotSupported error.
+ */
+inline constexpr Error DeviceNotSupportedError() {
+    return Error{ErrorCode::DeviceNotSupported};
+}
 
 } // namespace hahaha::common
 

@@ -21,7 +21,7 @@
 #define HAHAHA_PARAMETERS_H_0562A02563D046C99A4827535147DD6E
 #include <vector>
 
-#include "Tensor.h"
+#include "public/Tensor.h"
 
 namespace hahaha::ml {
 template <typename T> class Parameters {

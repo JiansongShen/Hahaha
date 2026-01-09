@@ -18,12 +18,10 @@
 
 #pragma once
 
-#include <cstdio>
-
-#include "Tensor.h"
 #include "common/definitions.h"
+#include "public/Tensor.h"
 
-void tensor_basic_init_example() {
+inline void tensor_basic_init_example() {
     hahaha::Tensor<hahaha::common::u32> t1({1, 2});
 
     hahaha::Tensor<hahaha::common::u32> t2({{1, 2}, {3, 4}});
@@ -32,7 +30,7 @@ void tensor_basic_init_example() {
         {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
 }
 
-void tensor_basic_add_example() {
+inline void tensor_basic_add_example() {
 
     hahaha::Tensor<hahaha::common::u32> t1 = {{1, 2}};
 
@@ -40,7 +38,7 @@ void tensor_basic_add_example() {
     auto t3 = t1 + t2;
 }
 
-void tensor_basic_sub_example() {
+inline void tensor_basic_sub_example() {
 
     hahaha::Tensor<hahaha::common::u32> t1 = {{1, 2}};
 
@@ -48,27 +46,24 @@ void tensor_basic_sub_example() {
     auto t3 = t1 - t2;
 }
 
-void tensor_basic_mul_example() {
+inline void tensor_basic_mul_example() {
     hahaha::Tensor<hahaha::common::u32> t1 = {{1, 2}};
 
     hahaha::Tensor<hahaha::common::u32> t2({3, 4});
     auto t3 = t1 * t2;
 }
 
-void tensor_basic_div_example() {
+inline void tensor_basic_div_example() {
     hahaha::Tensor<hahaha::common::u32> t1 = {{1, 2}};
 
     hahaha::Tensor<hahaha::common::u32> t2({3, 4});
     auto t3 = t1 / t2;
 }
 
-void tensor_basic_matmul_example() {
+inline void tensor_basic_matmul_example() {
 
     hahaha::Tensor<hahaha::common::u32> t1({{1, 2}, {3, 4}});
     hahaha::Tensor<hahaha::common::u32> t2({{1, 2}, {3, 4}});
 
-    auto  t3 = t1.matmul(t2);
+    auto t3 = t1.matmul(t2);
 }
-
-
-

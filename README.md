@@ -61,7 +61,7 @@ After building, you can run:
 ## Minimal usage example
 
 ```cpp
-#include "Tensor.h"
+#include "public/Tensor.h"
 
 using hahaha::Tensor;
 using hahaha::math::NestedData;

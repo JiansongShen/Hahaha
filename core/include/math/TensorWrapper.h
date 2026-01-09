@@ -357,8 +357,12 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchBinary(
-            common::Operator::Add, *this, other, result);
+        auto res = backend::dispatchAdd<T>(
+            data_.getDevice().type, *this, other, result);
+
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -408,8 +412,12 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchBinary(
-            common::Operator::Sub, *this, other, result);
+        auto res = backend::dispatchSub<T>(
+            data_.getDevice().type, *this, other, result);
+
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -457,8 +465,12 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchBinary(
-            common::Operator::Mul, *this, other, result);
+        auto res = backend::dispatchMul<T>(
+            data_.getDevice().type, *this, other, result);
+
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -511,8 +523,12 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchBinary(
-            common::Operator::Div, *this, other, result);
+        auto res = backend::dispatchDiv<T>(
+            data_.getDevice().type, *this, other, result);
+
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -529,8 +545,11 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchScalar(
-            common::Operator::Add, *this, scalar, result);
+        auto res =
+            backend::dispatchAdd(data_.getDevice().type, *this, scalar, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -547,8 +566,11 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchScalar(
-            common::Operator::Sub, *this, scalar, result);
+        auto res =
+            backend::dispatchSub(data_.getDevice().type, *this, scalar, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -565,8 +587,11 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchScalar(
-            common::Operator::Mul, *this, scalar, result);
+        auto res =
+            backend::dispatchMul(data_.getDevice().type, *this, scalar, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -585,8 +610,11 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchScalar(
-            common::Operator::Div, *this, scalar, result);
+        auto res =
+            backend::dispatchDiv(data_.getDevice().type, *this, scalar, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -603,8 +631,11 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchScalar(
-            common::Operator::Sub, scalar, *this, result);
+        auto res =
+            backend::dispatchSub(data_.getDevice().type, scalar, *this, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -622,8 +653,11 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        backend::DeviceComputeDispatcher<T>::dispatchScalar(
-            common::Operator::Div, scalar, *this, result);
+        auto res =
+            backend::dispatchDiv(data_.getDevice().type, scalar, *this, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
 
         return result;
     }
@@ -666,8 +700,11 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(rows * cols));
 
-        backend::DeviceComputeDispatcher<T>::dispatchMatMul(
-            *this, other, result);
+        auto result_val = backend::dispatchMatMul(
+            data_.getDevice().type, *this, other, result);
+        if (!result_val) {
+            throw std::runtime_error(result_val.error().message());
+        }
 
         return result;
     }
@@ -1179,7 +1216,11 @@ template <typename T> class TensorWrapper {
         checkSameDevice(other);
 
         // Dispatch to backend for hardware-specific optimization
-        backend::DeviceComputeDispatcher<T>::dispatchAxpy(alpha, other, *this);
+        auto res =
+            backend::dispatchAxpy(data_.getDevice().type, alpha, other, *this);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
     }
 
   private:
@@ -1201,7 +1242,6 @@ template <typename T> class TensorWrapper {
     // Friend classes for internal access
     friend class TensorWrapperTest;
     friend class compute::ComputeNode<T>;
-    friend class backend::DeviceComputeDispatcher<T>;
 };
 
 /**
