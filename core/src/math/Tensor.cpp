@@ -16,8 +16,7 @@
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
-#include "math/TensorWrapper.h"
-#include "Tensor.h"
+#include "public/Tensor.h"
 
 namespace hahaha::math {
 

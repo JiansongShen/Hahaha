@@ -23,7 +23,7 @@
 #include <random>
 #include <vector>
 
-#include "Tensor.h"
+#include "../../core/include/public/Tensor.h"
 #include "common/definitions.h"
 #include "ml/optimizer/SGDOptimizer.h"
 
@@ -75,14 +75,14 @@ inline void nn_train_example() {
         auto tmp = yTensorM - w * xTensorM;
 
         loss = (yTensorM - w * xTensorM)
-                  .transpose()
-                  .matmul(yTensorM - w * xTensorM);
+                   .transpose()
+                   .matmul(yTensorM - w * xTensorM);
 
         loss.backward();
         optimizer.step();
 
         std::cout << "epoch: " << 1 + i << std::endl;
         std::cout << "  w: " << w.at({}) << std::endl;
-        std::cout << "  loss: " << loss.data()->at({0,0}) << std::endl;
+        std::cout << "  loss: " << loss.data()->at({0, 0}) << std::endl;
     }
 }
