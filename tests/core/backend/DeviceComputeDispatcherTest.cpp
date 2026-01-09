@@ -25,7 +25,6 @@
 #include "math/TensorWrapper.h"
 
 using hahaha::backend::Device;
-using hahaha::backend::DeviceComputeDispatcher;
 using hahaha::backend::DeviceType;
 using hahaha::common::Operator;
 using hahaha::math::NestedData;
@@ -55,19 +54,23 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_AllOps_WorkForDenseTensors) {
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
 
-    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Add, a, b, res);
+    auto res1 = hahaha::backend::dispatchAdd(DeviceType::CPU, a, b, res);
+    EXPECT_TRUE(res1.has_value());
     EXPECT_FLOAT_EQ(res.at({0, 0}), 11.0f);
     EXPECT_FLOAT_EQ(res.at({1, 1}), 44.0f);
 
-    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Sub, b, a, res);
+    auto res2 = hahaha::backend::dispatchSub(DeviceType::CPU, b, a, res);
+    EXPECT_TRUE(res2.has_value());
     EXPECT_FLOAT_EQ(res.at({0, 0}), 9.0f);
     EXPECT_FLOAT_EQ(res.at({1, 1}), 36.0f);
 
-    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Mul, a, b, res);
+    auto res3 = hahaha::backend::dispatchMul(DeviceType::CPU, a, b, res);
+    EXPECT_TRUE(res3.has_value());
     EXPECT_FLOAT_EQ(res.at({0, 0}), 10.0f);
     EXPECT_FLOAT_EQ(res.at({1, 1}), 160.0f);
 
-    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Div, b, a, res);
+    auto res4 = hahaha::backend::dispatchDiv(DeviceType::CPU, b, a, res);
+    EXPECT_TRUE(res4.has_value());
     EXPECT_FLOAT_EQ(res.at({0, 0}), 10.0f);
     EXPECT_FLOAT_EQ(res.at({1, 1}), 10.0f);
 }
@@ -77,7 +80,8 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_ScalarRank0_PathWorks) {
     TensorWrapper<float> b(3.0f);
     TensorWrapper<float> res(0.0f);
 
-    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Add, a, b, res);
+    auto result = hahaha::backend::dispatchAdd(DeviceType::CPU, a, b, res);
+    EXPECT_TRUE(result.has_value());
     EXPECT_FLOAT_EQ(res.at({}), 5.0f);
 }
 
@@ -86,9 +90,9 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_ShapeMismatch_Throws) {
     TensorWrapper<float> b(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}});
     TensorWrapper<float> badRes(
         TensorShape({4}), 0.0f, Device(DeviceType::CPU, 0));
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchBinary(
-                     Operator::Add, a, b, badRes),
-                 std::invalid_argument);
+    auto result = hahaha::backend::dispatchAdd(DeviceType::CPU, a, b, badRes);
+    EXPECT_FALSE(result.has_value());
+    EXPECT_EQ(result.error().code, hahaha::common::ErrorCode::InvalidArgument);
 }
 
 TEST(DeviceComputeDispatcherTest, DispatchBinary_DivisionByZero_Throws) {
@@ -96,8 +100,10 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_DivisionByZero_Throws) {
     TensorWrapper<float> b(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}});
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchBinary(
-                     Operator::Div, b, a, res),
+
+    // Note: cpu_div still throws runtime_error currently, but we catch it or
+    // expect it
+    EXPECT_THROW(hahaha::backend::dispatchDiv(DeviceType::CPU, b, a, res),
                  std::runtime_error);
 }
 
@@ -107,21 +113,24 @@ TEST(DeviceComputeDispatcherTest,
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
 
-    DeviceComputeDispatcher<float>::dispatchScalar(Operator::Add, a, 1.0f, res);
+    EXPECT_TRUE(hahaha::backend::dispatchAdd(DeviceType::CPU, a, 1.0f, res)
+                    .has_value());
     EXPECT_FLOAT_EQ(res.at({1, 1}), 5.0f);
 
-    DeviceComputeDispatcher<float>::dispatchScalar(Operator::Sub, a, 1.0f, res);
+    EXPECT_TRUE(hahaha::backend::dispatchSub(DeviceType::CPU, a, 1.0f, res)
+                    .has_value());
     EXPECT_FLOAT_EQ(res.at({1, 1}), 3.0f);
 
-    DeviceComputeDispatcher<float>::dispatchScalar(Operator::Mul, a, 2.0f, res);
+    EXPECT_TRUE(hahaha::backend::dispatchMul(DeviceType::CPU, a, 2.0f, res)
+                    .has_value());
     EXPECT_FLOAT_EQ(res.at({1, 1}), 8.0f);
 
-    DeviceComputeDispatcher<float>::dispatchScalar(Operator::Div, a, 2.0f, res);
+    EXPECT_TRUE(hahaha::backend::dispatchDiv(DeviceType::CPU, a, 2.0f, res)
+                    .has_value());
     EXPECT_FLOAT_EQ(res.at({1, 1}), 2.0f);
 
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::Div, a, 0.0f, res),
-                 std::runtime_error);
+    EXPECT_FALSE(hahaha::backend::dispatchDiv(DeviceType::CPU, a, 0.0f, res)
+                     .has_value());
 }
 
 TEST(DeviceComputeDispatcherTest,
@@ -130,18 +139,19 @@ TEST(DeviceComputeDispatcherTest,
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
 
-    DeviceComputeDispatcher<float>::dispatchScalar(Operator::Add, 1.0f, a, res);
+    EXPECT_TRUE(hahaha::backend::dispatchAdd(DeviceType::CPU, 1.0f, a, res)
+                    .has_value());
     EXPECT_FLOAT_EQ(res.at({1, 1}), 5.0f);
 
-    DeviceComputeDispatcher<float>::dispatchScalar(
-        Operator::Sub, 10.0f, a, res);
+    EXPECT_TRUE(hahaha::backend::dispatchSub(DeviceType::CPU, 10.0f, a, res)
+                    .has_value());
     EXPECT_FLOAT_EQ(res.at({1, 1}), 6.0f);
 
-    DeviceComputeDispatcher<float>::dispatchScalar(Operator::Mul, 2.0f, a, res);
+    EXPECT_TRUE(hahaha::backend::dispatchMul(DeviceType::CPU, 2.0f, a, res)
+                    .has_value());
     EXPECT_FLOAT_EQ(res.at({1, 1}), 8.0f);
 
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::Div, 1.0f, a, res),
+    EXPECT_THROW(hahaha::backend::dispatchDiv(DeviceType::CPU, 1.0f, a, res),
                  std::runtime_error);
 }
 
@@ -149,9 +159,9 @@ TEST(DeviceComputeDispatcherTest, DispatchScalar_ShapeMismatch_Throws) {
     TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
     TensorWrapper<float> badRes(
         TensorShape({4}), 0.0f, Device(DeviceType::CPU, 0));
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::Add, a, 1.0f, badRes),
-                 std::invalid_argument);
+
+    EXPECT_FALSE(hahaha::backend::dispatchAdd(DeviceType::CPU, a, 1.0f, badRes)
+                     .has_value());
 }
 
 TEST(DeviceComputeDispatcherTest, DispatchMatMul_WorksFor2D) {
@@ -162,7 +172,8 @@ TEST(DeviceComputeDispatcherTest, DispatchMatMul_WorksFor2D) {
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
 
-    DeviceComputeDispatcher<float>::dispatchMatMul(a, b, res);
+    auto res_val = hahaha::backend::dispatchMatMul(DeviceType::CPU, a, b, res);
+    EXPECT_TRUE(res_val.has_value());
     // [[1,2],[3,4]] @ [[5,6],[7,8]] = [[19,22],[43,50]]
     EXPECT_FLOAT_EQ(res.at({0, 0}), 19.0f);
     EXPECT_FLOAT_EQ(res.at({0, 1}), 22.0f);
@@ -175,21 +186,12 @@ TEST(DeviceComputeDispatcherTest, DispatchAxpy_UpdatesInPlace) {
     TensorWrapper<float> res(NestedData<float>{10.0f, 20.0f, 30.0f});
 
     // res = res + alpha * x, alpha = -2
-    DeviceComputeDispatcher<float>::dispatchAxpy(-2.0f, x, res);
+    auto res_val =
+        hahaha::backend::dispatchAxpy(DeviceType::CPU, -2.0f, x, res);
+    EXPECT_TRUE(res_val.has_value());
     EXPECT_FLOAT_EQ(res.at({0}), 8.0f);
     EXPECT_FLOAT_EQ(res.at({1}), 16.0f);
     EXPECT_FLOAT_EQ(res.at({2}), 24.0f);
-}
-
-TEST(DeviceComputeDispatcherTest, DispatchBinary_UnsupportedOp_Throws) {
-    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
-    TensorWrapper<float> b(NestedData<float>{{10.0f, 20.0f}, {30.0f, 40.0f}});
-    TensorWrapper<float> res(
-        TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
-
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchBinary(
-                     Operator::MatMul, a, b, res),
-                 std::runtime_error);
 }
 
 TEST(DeviceComputeDispatcherTest, DispatchBinary_UnsupportedDevice_Throws) {
@@ -198,9 +200,10 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_UnsupportedDevice_Throws) {
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::SIMD));
 
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchBinary(
-                     Operator::Add, a, b, res),
-                 std::runtime_error);
+    auto result = hahaha::backend::dispatchAdd(DeviceType::SIMD, a, b, res);
+    EXPECT_FALSE(result.has_value());
+    EXPECT_EQ(result.error().code,
+              hahaha::common::ErrorCode::DeviceNotSupported);
 }
 
 TEST(DeviceComputeDispatcherTest, DispatchScalar_LhsScalar_Div_Succeeds) {
@@ -208,25 +211,12 @@ TEST(DeviceComputeDispatcherTest, DispatchScalar_LhsScalar_Div_Succeeds) {
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
 
-    DeviceComputeDispatcher<float>::dispatchScalar(
-        Operator::Div, 12.0f, a, res);
+    EXPECT_TRUE(hahaha::backend::dispatchDiv(DeviceType::CPU, 12.0f, a, res)
+                    .has_value());
     EXPECT_FLOAT_EQ(res.at({0, 0}), 12.0f);
     EXPECT_FLOAT_EQ(res.at({0, 1}), 6.0f);
     EXPECT_FLOAT_EQ(res.at({1, 0}), 4.0f);
     EXPECT_FLOAT_EQ(res.at({1, 1}), 3.0f);
-}
-
-TEST(DeviceComputeDispatcherTest, DispatchScalar_UnsupportedOp_Throws) {
-    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
-    TensorWrapper<float> res(
-        TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
-
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::MatMul, a, 1.0f, res),
-                 std::runtime_error);
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::MatMul, 1.0f, a, res),
-                 std::runtime_error);
 }
 
 TEST(DeviceComputeDispatcherTest, DispatchMatMul_UnsupportedDevice_Throws) {
@@ -235,8 +225,10 @@ TEST(DeviceComputeDispatcherTest, DispatchMatMul_UnsupportedDevice_Throws) {
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::SIMD));
 
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchMatMul(a, b, res),
-                 std::runtime_error);
+    auto res_val = hahaha::backend::dispatchMatMul(DeviceType::SIMD, a, b, res);
+    EXPECT_FALSE(res_val.has_value());
+    EXPECT_EQ(res_val.error().code,
+              hahaha::common::ErrorCode::DeviceNotSupported);
 }
 
 TEST(DeviceComputeDispatcherTest, DispatchScalar_UnsupportedDevice_Throws) {
@@ -244,12 +236,10 @@ TEST(DeviceComputeDispatcherTest, DispatchScalar_UnsupportedDevice_Throws) {
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::SIMD));
 
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::Add, a, 1.0f, res),
-                 std::runtime_error);
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::Add, 1.0f, a, res),
-                 std::runtime_error);
+    EXPECT_FALSE(hahaha::backend::dispatchAdd(DeviceType::SIMD, a, 1.0f, res)
+                     .has_value());
+    EXPECT_FALSE(hahaha::backend::dispatchAdd(DeviceType::SIMD, 1.0f, a, res)
+                     .has_value());
 }
 
 TEST(DeviceComputeDispatcherTest, DispatchBinary_Broadcasting_Works) {
@@ -262,8 +252,9 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_Broadcasting_Works) {
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
 
-    DeviceComputeDispatcher<float>::dispatchBinary(
-        Operator::Add, a, b_broadcasted, res);
+    auto result =
+        hahaha::backend::dispatchAdd(DeviceType::CPU, a, b_broadcasted, res);
+    EXPECT_TRUE(result.has_value());
 
     // res[0,0] = 1 + 10 = 11
     // res[0,1] = 2 + 10 = 12
@@ -284,8 +275,9 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_Broadcasting_Lhs_Works) {
     TensorWrapper<float> res(
         TensorShape({2, 2}), 0.0f, Device(DeviceType::CPU, 0));
 
-    DeviceComputeDispatcher<float>::dispatchBinary(
-        Operator::Add, a_broadcasted, b, res);
+    auto result =
+        hahaha::backend::dispatchAdd(DeviceType::CPU, a_broadcasted, b, res);
+    EXPECT_TRUE(result.has_value());
 
     // res[0,0] = 1 + 10 = 11
     // res[0,1] = 2 + 20 = 22
@@ -307,7 +299,8 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_Broadcasting_Deep_Works) {
     auto bb = b.broadcastTo(TensorShape({2, 2, 2}));
 
     TensorWrapper<float> res(TensorShape({2, 2, 2}), 0.0f);
-    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Add, ab, bb, res);
+    auto result = hahaha::backend::dispatchAdd(DeviceType::CPU, ab, bb, res);
+    EXPECT_TRUE(result.has_value());
 
     // a[0,0,0]=1, a[0,1,0]=2
     // b[0,0,0]=10, b[0,0,1]=20, b[1,0,0]=30, b[1,0,1]=40
@@ -330,24 +323,9 @@ TEST(DeviceComputeDispatcherTest, ForEachElement_CoordinateCarry_Coverage) {
 
     // We already have DispatchBinary tests, but let's make sure we hit the
     // inner loop multiple times
-    DeviceComputeDispatcher<float>::dispatchBinary(Operator::Add, a, a, res);
+    auto result = hahaha::backend::dispatchAdd(DeviceType::CPU, a, a, res);
+    EXPECT_TRUE(result.has_value());
     EXPECT_FLOAT_EQ(res.at({1, 1}), 8.0f);
-}
-
-TEST(DeviceComputeDispatcherTest, DispatchScalar_Rhs_DivZero_Throws) {
-    TensorWrapper<float> a(NestedData<float>{1.0f, 2.0f});
-    TensorWrapper<float> res(TensorShape({2}), 0.0f);
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::Div, a, 0.0f, res),
-                 std::runtime_error);
-}
-
-TEST(DeviceComputeDispatcherTest, DispatchScalar_Lhs_DivZero_Throws) {
-    TensorWrapper<float> a(NestedData<float>{1.0f, 0.0f});
-    TensorWrapper<float> res(TensorShape({2}), 0.0f);
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchScalar(
-                     Operator::Div, 1.0f, a, res),
-                 std::runtime_error);
 }
 
 TEST(DeviceComputeDispatcherTest,
@@ -357,7 +335,8 @@ TEST(DeviceComputeDispatcherTest,
     TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}});   // 1x2
     TensorWrapper<float> b(NestedData<float>{{3.0f}, {4.0f}}); // 2x1
     TensorWrapper<float> res(TensorShape({1, 1}), 0.0f);
-    DeviceComputeDispatcher<float>::dispatchMatMul(a, b, res);
+    auto res_val = hahaha::backend::dispatchMatMul(DeviceType::CPU, a, b, res);
+    EXPECT_TRUE(res_val.has_value());
     EXPECT_FLOAT_EQ(res.at({0, 0}), 11.0f);
 }
 
@@ -365,6 +344,9 @@ TEST(DeviceComputeDispatcherTest, DispatchAxpy_UnsupportedDevice_Throws) {
     TensorWrapper<float> x(TensorShape({3}), 1.0f, Device(DeviceType::SIMD));
     TensorWrapper<float> res(TensorShape({3}), 2.0f, Device(DeviceType::SIMD));
 
-    EXPECT_THROW(DeviceComputeDispatcher<float>::dispatchAxpy(1.0f, x, res),
-                 std::runtime_error);
+    auto res_val =
+        hahaha::backend::dispatchAxpy(DeviceType::SIMD, 1.0f, x, res);
+    EXPECT_FALSE(res_val.has_value());
+    EXPECT_EQ(res_val.error().code,
+              hahaha::common::ErrorCode::DeviceNotSupported);
 }

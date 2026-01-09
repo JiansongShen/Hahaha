@@ -18,7 +18,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Tensor.h"
+#include "../../../../core/include/public/Tensor.h"
 
 using hahaha::Tensor;
 using hahaha::math::NestedData;
