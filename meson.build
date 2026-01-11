@@ -198,22 +198,13 @@ endif
 if not gtest_dep.found() and not force_vcpkg_gtest
     # CI compatibility:
     # - Linux: system GTest (libgtest-dev, then build/install libs)
-    # - Other OSes: may be absent, so we also allow wrap fallback below.
+    # - Other OSes: expected to use vcpkg.
     gtest_dep = dependency('gtest', main : true, required : false)
 endif
 
 if not gtest_dep.found()
-    # Pure Meson fallback (subproject)
-    gtest_wrap_file = join_paths(meson.project_source_root(), 'subprojects', 'gtest.wrap')
-    gtest_subproject_dir = join_paths(meson.project_source_root(), 'subprojects', 'gtest')
-    have_gtest_wrap = fs.is_file(gtest_wrap_file)
-    have_gtest_subproject = fs.is_dir(gtest_subproject_dir)
-
-    if have_gtest_wrap or have_gtest_subproject
-        gtest_dep = dependency('gtest_',
-                               fallback : ['gtest', 'gtest_main_dep'],
-                               default_options : ['default_library=static'])
-    endif
+    error('GTest dependency not found. ' +
+          'Install GTest via repo-local vcpkg (preferred) or provide system GTest.')
 endif
 
 hahaha_lib = static_library('hahaha', sources,

@@ -26,17 +26,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake pkg-config \
-            libgtest-dev gcovr \
+            gcovr \
             libgl1-mesa-dev libglfw3-dev
-          # Ubuntu ships googletest sources via libgtest-dev; build & install libs.
-          if [ -d "/usr/src/googletest" ]; then
-            GTEST_SRC="/usr/src/googletest"
-          else
-            GTEST_SRC="/usr/src/gtest"
-          fi
-          sudo cmake -S "$GTEST_SRC" -B /tmp/gtest-build -DCMAKE_INSTALL_PREFIX=/usr/local
-          sudo cmake --build /tmp/gtest-build --target install -j2
-          sudo ldconfig
+
+      - name: Bootstrap vcpkg + install googletest (Linux)
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh -disableMetrics
+          ./vcpkg/vcpkg_root/vcpkg install gtest --triplet x64-linux
 
       - name: Run coverage gates
         run: bash dev/coverage.sh builddir-coverage
