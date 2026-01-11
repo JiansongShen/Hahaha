@@ -16,30 +16,30 @@
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
-#include "backend/gpu/DeviceBuffer.h"
+// #include "backend/gpu/DeviceBuffer.h"
 
-#include "backend/gpu/GpuMemory.h"
+// #include "backend/gpu/GpuMemory.h"
 
-namespace hahaha::backend::gpu {
+// namespace hahaha::backend {
 
-DeviceBuffer::~DeviceBuffer() noexcept {
-    if (address_ != 0) {
-        GpuMemory::deallocate(address_);
-    }
-}
+// DeviceBuffer::~DeviceBuffer() noexcept {
+//     if (address_ != 0) {
+//         GpuMemory::deallocate(address_);
+//     }
+// }
 
-DeviceBuffer& DeviceBuffer::operator=(DeviceBuffer&& other) noexcept {
-    if (this == &other) {
-        return *this;
-    }
-    if (address_ != 0) {
-        GpuMemory::deallocate(address_);
-    }
-    address_ = other.address_;
-    size_ = other.size_;
-    other.address_ = 0;
-    other.size_ = 0;
-    return *this;
-}
+// DeviceBuffer& DeviceBuffer::operator=(DeviceBuffer&& other) noexcept {
+//     if (this == &other) {
+//         return *this;
+//     }
+//     if (address_ != 0) {
+//         GpuMemory::deallocate(address_);
+//     }
+//     address_ = other.address_;
+//     size_ = other.size_;
+//     other.address_ = 0;
+//     other.size_ = 0;
+//     return *this;
+// }
 
-} // namespace hahaha::backend::gpu
+// } // namespace hahaha::backend

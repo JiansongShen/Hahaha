@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-namespace hahaha::backend::gpu {
+namespace hahaha::backend {
 
 /**
  * @brief Represents a GPU kernel that can be executed on a device.
@@ -62,6 +62,6 @@ class GpuKernel {
     [[nodiscard]] virtual std::string getName() const = 0;
 };
 
-} // namespace hahaha::backend::gpu
+} // namespace hahaha::backend
 
 #endif // HAHAHA_BACKEND_GPU_GPU_KERNEL_H
