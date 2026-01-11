@@ -121,17 +121,20 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake pkg-config \
-            libgtest-dev \
             libgl1-mesa-dev libglfw3-dev
-          # Ubuntu ships googletest sources via libgtest-dev; build & install libs.
-          if [ -d "/usr/src/googletest" ]; then
-            GTEST_SRC="/usr/src/googletest"
+
+      - name: Bootstrap vcpkg + install googletest (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh -disableMetrics
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            TRIPLET="arm64-linux"
           else
-            GTEST_SRC="/usr/src/gtest"
+            TRIPLET="x64-linux"
           fi
-          sudo cmake -S "$GTEST_SRC" -B /tmp/gtest-build -DCMAKE_INSTALL_PREFIX=/usr/local
-          sudo cmake --build /tmp/gtest-build --target install -j2
-          sudo ldconfig
+          ./vcpkg/vcpkg_root/vcpkg install gtest --triplet "${TRIPLET}"
 
       - name: Install Clang (Linux, clang builds)
         if: runner.os == 'Linux' && matrix.compiler == 'clang'
@@ -229,7 +232,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          meson subprojects download gtest
+          echo "WrapDB disabled: using repo-local vcpkg for googletest."
+
+      - name: Bootstrap vcpkg + install googletest (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh -disableMetrics
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            TRIPLET="arm64-osx"
+          else
+            TRIPLET="x64-osx"
+          fi
+          ./vcpkg/vcpkg_root/vcpkg install gtest --triplet "${TRIPLET}"
 
       - name: Install LLVM (Windows, clang-cl builds)
         if: runner.os == 'Windows' && matrix.compiler == 'clang-cl'
@@ -240,6 +256,16 @@ jobs:
       - name: Set up MSVC (Windows)
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1.13.0
+
+      - name: Bootstrap vcpkg + install googletest (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          .\vcpkg\vcpkg_root\bootstrap-vcpkg.bat -disableMetrics
+          $triplet = "x64-windows"
+          if ("${{ matrix.arch }}" -eq "arm64") { $triplet = "arm64-windows" }
+          .\vcpkg\vcpkg_root\vcpkg.exe install gtest --triplet $triplet
 
       - name: Configure Meson (non-Windows)
         if: runner.os != 'Windows'

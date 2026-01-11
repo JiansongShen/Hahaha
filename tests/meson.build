@@ -15,7 +15,6 @@ if not gtest_dep.found()
     error('GTest dependency not found. Supported providers:\n' +
           '- repo-local vcpkg: vcpkg/vcpkg_root/installed/<triplet>\n' +
           '- system GTest (commonly used on Linux CI)\n' +
-          '- Meson wrap: run `meson subprojects download gtest` (commonly used on macOS/Windows CI)\n' +
           'If multiple vcpkg triplets exist, pass -Dvcpkg_triplet=<triplet>.')
 endif
 

@@ -13,4 +13,4 @@ option('vcpkg_triplet',
 option('force_vcpkg_gtest',
        type: 'boolean',
        value: false,
-       description: 'Force using the repo-local vcpkg GTest under vcpkg/ (fail if not available). Default is auto (prefer vcpkg if matching triplet exists, otherwise system/wrap).')
+       description: 'Force using the repo-local vcpkg GTest under vcpkg/ (fail if not available). If false, Meson may fallback to system GTest.')
