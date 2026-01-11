@@ -15,9 +15,50 @@ option(HAHAHA_ENABLE_COVERAGE "Enable coverage flags for tests (gcc/clang)." OFF
 set(HAHAHA_IMGUI_DIR "" CACHE PATH "Path to ImGui source directory (e.g. a git submodule at subprojects/imgui). If empty, CMake will auto-detect.")
 set(HAHAHA_GOOGLETEST_DIR "" CACHE PATH "Path to GoogleTest source directory (e.g. a git submodule at subprojects/googletest). If empty, CMake will auto-detect.")
 
+# ---- vcpkg (repo-local) helper ----
+# Prefer passing the vcpkg toolchain on the CLI:
+#   -DCMAKE_TOOLCHAIN_FILE=<repo>/vcpkg/vcpkg_root/scripts/buildsystems/vcpkg.cmake
+# But for convenience (and to mirror Meson's behavior), we also auto-hint CMAKE_PREFIX_PATH.
+set(HAHAHA_VCPKG_TRIPLET "auto" CACHE STRING "vcpkg triplet under vcpkg/vcpkg_root/installed/<triplet> (auto/x64-linux/arm64-linux/x64-osx/arm64-osx/x64-windows/...).")
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(_HAHAHA_VCPKG_ROOT "${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root")
+set(_HAHAHA_VCPKG_INSTALLED "${_HAHAHA_VCPKG_ROOT}/installed")
+if(EXISTS "${_HAHAHA_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" AND EXISTS "${_HAHAHA_VCPKG_INSTALLED}")
+  set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "${HAHAHA_VCPKG_TRIPLET}")
+  if(_HAHAHA_VCPKG_TRIPLET_RESOLVED STREQUAL "auto" OR _HAHAHA_VCPKG_TRIPLET_RESOLVED STREQUAL "")
+    # Host-based heuristic (works for native CI runners).
+    if(WIN32)
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64|arm64")
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-windows")
+      else()
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-windows")
+      endif()
+    elseif(APPLE)
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-osx")
+      else()
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-osx")
+      endif()
+    else()
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64|arm64")
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-linux")
+      else()
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-linux")
+      endif()
+    endif()
+  endif()
+
+  if(EXISTS "${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
+    list(PREPEND CMAKE_PREFIX_PATH "${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
+    message(STATUS "Using repo-local vcpkg prefix: ${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
+  else()
+    message(STATUS "Repo-local vcpkg detected but triplet '${_HAHAHA_VCPKG_TRIPLET_RESOLVED}' not found under ${_HAHAHA_VCPKG_INSTALLED}. Pass -DHAHAHA_VCPKG_TRIPLET=<triplet> or install it via vcpkg.")
+  endif()
+endif()
 
 # ---- core library ----
 
@@ -106,23 +147,7 @@ if(HAHAHA_DISPLAY)
   # ---- ImGui ----
   set(_imgui_target "")
 
-  # Try finding via Config (e.g. Vcpkg)
-  # Automatically setup vcpkg toolchain if not provided and local vcpkg exists
-  # Note: CMAKE_TOOLCHAIN_FILE must be set *before* the first project() call to take effect properly.
-  # However, if user didn't provide it, we can try to hint it here for subsequent checks, but standard practice is passing it via CLI.
-  # If we are here, project() is already called.
-  # But we can try to include the vcpkg toolchain manually if we are desperate, though it's risky.
-  # A better approach is to rely on user passing the toolchain file, or setting CMAKE_PREFIX_PATH.
-
-  # Check if vcpkg toolchain was used
-  if(NOT DEFINED VCPKG_TARGET_TRIPLET)
-      if(EXISTS "${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root/scripts/buildsystems/vcpkg.cmake")
-        message(STATUS "Vcpkg detected at ${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root. Attempting to use it.")
-        list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root/installed/x64-linux")
-        # Note: Triplet is hardcoded here as fallback, which is not ideal but solves the 'automatic' requirement for this specific env.
-      endif()
-  endif()
-
+  # Try finding via Config (e.g. vcpkg/Homebrew). Repo-local vcpkg prefix is hinted above.
   find_package(imgui CONFIG REQUIRED)
   target_link_libraries(hahaha PUBLIC imgui::imgui)
 
