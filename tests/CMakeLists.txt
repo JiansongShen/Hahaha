@@ -5,7 +5,10 @@ file(GLOB_RECURSE HAHAHA_TEST_SOURCES CONFIGURE_DEPENDS
 # ---- GoogleTest dependency ----
 set(_gtest_main_target "")
 
-find_package(GTest QUIET)
+find_package(GTest CONFIG QUIET) # vcpkg/homebrew usually provide CONFIG packages
+if(NOT GTest_FOUND)
+  find_package(GTest QUIET)      # fallback to CMake's FindGTest module (system installs)
+endif()
 if(TARGET GTest::gtest_main)
   set(_gtest_main_target GTest::gtest_main)
 elseif(TARGET GTest::gtest)
