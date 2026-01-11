@@ -29,10 +29,13 @@ jobs:
             gcovr \
             libgl1-mesa-dev libglfw3-dev
 
-      - name: Bootstrap vcpkg + install googletest (Linux)
+      - name: Setup vcpkg + install googletest (Linux)
         shell: bash
         run: |
           set -euo pipefail
+          if [ ! -d "vcpkg/vcpkg_root" ]; then
+            git clone https://github.com/microsoft/vcpkg.git vcpkg/vcpkg_root
+          fi
           ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh -disableMetrics
           ./vcpkg/vcpkg_root/vcpkg install gtest --triplet x64-linux
 
