@@ -94,31 +94,38 @@ RUN apt-get update && apt-get install -y \
     pipx \
     gcovr \
     valgrind \
+    zip \
+    unzip \
+    tar \
+    libxinerama-dev \
+    libxcursor-dev \
+    xorg-dev \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/root/.local/bin:${PATH}"
 RUN pipx install pre-commit
 
+
 # Make clang/clang++ the system default C/C++ compilers so tools like Meson
 # which consult `cc`/`c++` or $CC/$CXX will use clang inside the container.
 # We register both clang and gcc with update-alternatives and set clang as the
 # higher-priority choice.
-RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100 \
- && update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 50 \
- && update-alternatives --set cc /usr/bin/clang \
- && update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100 \
- && update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 50 \
- && update-alternatives --set c++ /usr/bin/clang++ || true
+# RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100 \
+#  && update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 50 \
+#  && update-alternatives --set cc /usr/bin/clang \
+#  && update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100 \
+#  && update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 50 \
+#  && update-alternatives --set c++ /usr/bin/clang++ || true
 
 # Also set environment variables so build systems that respect CC/CXX prefer
 # clang/clang++ by default. Project-level settings or Meson env overrides
 # can still override these.
-ENV CC=clang
-ENV CXX=clang++
+# ENV CC=clang
+# ENV CXX=clang++
 
 # NOTE:
-# Project test dependencies (e.g. googletest) are provided via Meson WrapDB
-# (subprojects/*.wrap) instead of system packages.
+# Project test dependencies (e.g. googletest) are provided via vcpkg
+# instead of system packages.
 
 # RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 

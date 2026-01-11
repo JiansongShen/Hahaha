@@ -276,3 +276,5 @@ subprojects/*
 !subprojects/packagefiles/
 !subprojects/packagefiles/**
 subprojects/packagecache/
+
+vcpkg/

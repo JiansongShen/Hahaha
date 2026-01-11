@@ -4,3 +4,13 @@ option('display',
        type: 'boolean',
        value: true,
        description: 'Build visualization/display components (GLFW/OpenGL/ImGui). Disable for headless CI.')
+
+option('vcpkg_triplet',
+       type: 'string',
+       value: 'auto',
+       description: 'vcpkg triplet under vcpkg/vcpkg_root/installed/<triplet>. Use "auto" to detect (recommended). Examples: x64-linux, x64-linux-dynamic, x64-windows, arm64-osx.')
+
+option('force_vcpkg_gtest',
+       type: 'boolean',
+       value: false,
+       description: 'Force using the repo-local vcpkg GTest under vcpkg/ (fail if not available). Default is auto (prefer vcpkg if matching triplet exists, otherwise system/wrap).')

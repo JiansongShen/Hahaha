@@ -1,17 +1,80 @@
-    project('hahaha', 'cpp',
+project('hahaha', 'cpp',
         version : '0.0.1',
         default_options : [
-                'warning_level=3', 
-'cpp_std=c++23'
-                ])
+            'warning_level=3',
+            'cpp_std=c++23'
+        ])
 
 # Include directories
 include_dirs = [
     'core/include',
 ]
+
 include_dir = include_directories(include_dirs)
 fs = import('fs')
-py = import('python').find_installation(required: true)
+py = import('python').find_installation(required : true)
+
+# vcpkg (vendored in this repo)
+vcpkg_triplet_opt = get_option('vcpkg_triplet')
+vcpkg_installed_abs = meson.project_source_root() / 'vcpkg/vcpkg_root/installed'
+
+vcpkg_triplet = vcpkg_triplet_opt
+if vcpkg_triplet_opt == 'auto' or vcpkg_triplet_opt == ''
+    vcpkg_triplet = ''
+
+    sys = host_machine.system()
+    cpu = host_machine.cpu_family()
+
+    # Prefer likely vcpkg triplets for the current host.
+    candidates = []
+    if sys == 'linux'
+        candidates += ['x64-linux', 'x64-linux-dynamic', 'arm64-linux', 'arm64-linux-dynamic']
+    elif sys == 'windows'
+        candidates += ['x64-windows', 'x64-windows-static', 'x64-windows-static-md', 'arm64-windows', 'arm64-windows-static', 'arm64-windows-static-md']
+    elif sys == 'darwin'
+        candidates += ['arm64-osx', 'x64-osx']
+    endif
+
+    # Heuristic: if CPU suggests 64-bit x86, keep x64 first; if arm64, prefer arm64.
+    if cpu.contains('aarch64') or cpu.contains('arm')
+        candidates = ['arm64-osx', 'arm64-linux', 'arm64-windows'] + candidates
+    endif
+
+    foreach c : candidates
+        if fs.is_dir(vcpkg_installed_abs / c)
+            vcpkg_triplet = c
+            break
+        endif
+    endforeach
+
+    # Fallback: if installed/ contains exactly one triplet directory *compatible with this host*, use it.
+    # (Repo may carry artifacts for other OSes; never pick those.)
+    if vcpkg_triplet == '' and fs.is_dir(vcpkg_installed_abs)
+        triplet_guess = run_command(py, '-c',
+            'import os,sys\n' +
+            'p=sys.argv[1]\n' +
+            'sysname=sys.argv[2]\n' +
+            'c=[d for d in os.listdir(p) if os.path.isdir(os.path.join(p,d))]\n' +
+            'def ok(d):\n' +
+            '  if sysname=="linux": return "-linux" in d\n' +
+            '  if sysname=="windows": return "-windows" in d\n' +
+            '  if sysname=="darwin": return "-osx" in d\n' +
+            '  return False\n' +
+            'm=[d for d in c if ok(d)]\n' +
+            'print(m[0] if len(m)==1 else "")\n',
+            vcpkg_installed_abs,
+            sys,
+            check : false).stdout().strip()
+        if triplet_guess != ''
+            vcpkg_triplet = triplet_guess
+        endif
+    endif
+endif
+
+vcpkg_prefix_rel = join_paths('vcpkg', 'vcpkg_root', 'installed', vcpkg_triplet)
+vcpkg_prefix_abs = meson.project_source_root() / vcpkg_prefix_rel
+vcpkg_prefix_found = (vcpkg_triplet != '') and fs.is_dir(vcpkg_prefix_abs)
+force_vcpkg_gtest = get_option('force_vcpkg_gtest')
 
 # Dependencies
 glfw_dep = dependency('glfw3', required : false)
@@ -48,61 +111,105 @@ lib_args = ['-DBUILDING_MESON_LIBRARY']
 
 sources = run_command(py, '-c',
                       'import glob; import os; print("\\n".join(os.path.normpath(f).replace("\\\\", "/") for f in glob.glob("core/src/**/*.cpp", recursive=True)))',
-                      check: true).stdout().strip().split('\n')
+                      check : true).stdout().strip().split('\n')
 
 display_enabled = get_option('display')
 
 if not display_enabled
-  # Headless build: drop display sources that depend on GLFW/OpenGL/X11.
-  filtered_sources = []
-  foreach s : sources
-    if s != '' and not s.startswith('core/src/display/') and not s.startswith('core/include/display/')
-      filtered_sources += s
-    endif
-  endforeach
-  sources = filtered_sources
+    # Headless build: drop display sources that depend on GLFW/OpenGL/X11.
+    filtered_sources = []
+    foreach s : sources
+        if s != '' and not s.startswith('core/src/display/') and not s.startswith('core/include/display/')
+            filtered_sources += s
+        endif
+    endforeach
+    sources = filtered_sources
 endif
 
 
+hahaha_deps = stacktrace_dep
 
 imgui_dep = []
 if display_enabled
-  # Use Meson wrap subproject for ImGui (no vendored extern/ tree).
-  #
-  # IMPORTANT:
-  # The WrapDB ImGui subproject defaults many backends to 'auto'. If Vulkan is
-  # detected (even partially), it may try to compile imgui_impl_vulkan.cpp,
-  # which requires <vulkan/vulkan.h>. To keep display builds lightweight and
-  # CI-friendly, we only enable the backends we actually use (GLFW + OpenGL3).
-  imgui_sp = subproject('imgui',
-                        default_options: [
-                          'opengl=enabled',
-                          'glfw=enabled',
+    # Try finding ImGui via system/vcpkg first
+    # Note: Meson finds vcpkg packages automatically if you use the vcpkg toolchain file
+    # or if pkg-config/cmake can find them.
 
-                          'vulkan=disabled',
-                          'webgpu=disabled',
+    # Check for local vcpkg path to help CMake find it without env vars
+    imgui_cmake_args = []
+    if vcpkg_prefix_found
+        imgui_cmake_args += ['-DCMAKE_PREFIX_PATH=' + vcpkg_prefix_abs]
+    endif
 
-                          'dx9=disabled',
-                          'dx10=disabled',
-                          'dx11=disabled',
-                          'dx12=disabled',
-                          'metal=disabled',
+    # First try: explicit CMake lookup with local vcpkg path if available
+    imgui_dep = dependency('imgui',
+        required : true,
+        method : 'cmake',
+        modules : ['imgui::imgui'],
+        cmake_args : imgui_cmake_args
+    )
 
-                          'sdl2_renderer=disabled',
-                          'sdl3_renderer=disabled',
-                          'sdl2=disabled',
-                          'sdl3=disabled',
+    # Second try: generic lookup (system paths, pkg-config, or standard cmake search)
+    if not imgui_dep.found()
+        imgui_dep = dependency('imgui', required : false)
+    endif
 
-                          'osx=disabled',
-                          'win=disabled',
-                          'allegro5=disabled',
-                        ])
-  imgui_dep = imgui_sp.get_variable('imgui_dep')
+    hahaha_deps += imgui_dep
 endif
 
-hahaha_deps = [dl_dep] + stacktrace_dep
-if display_enabled
-  hahaha_deps += [glfw_dep, gl_dep, imgui_dep]
+
+# GTest dependency (needed for tests)
+gtest_dep = disabler()
+
+if vcpkg_prefix_found
+    # vcpkg puts gtest_main under lib/manual-link (see gtest_main.pc)
+    vcpkg_inc = include_directories(join_paths(vcpkg_prefix_rel, 'include'))
+    buildtype = get_option('buildtype')
+    vcpkg_libdirs = []
+    if ['debug', 'debugoptimized'].contains(buildtype)
+        vcpkg_libdirs += [vcpkg_prefix_abs / 'debug/lib', vcpkg_prefix_abs / 'debug/lib/manual-link']
+    endif
+    vcpkg_libdirs += [vcpkg_prefix_abs / 'lib', vcpkg_prefix_abs / 'lib/manual-link']
+
+    lib_gtest = disabler()
+    foreach n : ['gtest', 'gtestd']
+        lib_gtest = cpp_compiler.find_library(n, dirs : vcpkg_libdirs, required : false)
+        if lib_gtest.found()
+            break
+        endif
+    endforeach
+
+    lib_gtest_main = disabler()
+    foreach n : ['gtest_main', 'gtest_maind']
+        lib_gtest_main = cpp_compiler.find_library(n, dirs : vcpkg_libdirs, required : false)
+        if lib_gtest_main.found()
+            break
+        endif
+    endforeach
+
+    if lib_gtest.found() and lib_gtest_main.found()
+        gtest_dep = declare_dependency(
+            dependencies : [lib_gtest, lib_gtest_main, dependency('threads')],
+            include_directories : vcpkg_inc
+        )
+    endif
+endif
+
+if not gtest_dep.found() and not force_vcpkg_gtest
+    # CI compatibility:
+    # - Linux: system GTest (libgtest-dev, then build/install libs)
+    # - Other OSes: may be absent, so we also allow wrap fallback below.
+    gtest_dep = dependency('gtest', main : true, required : false)
+endif
+
+if not gtest_dep.found()
+    # Pure Meson fallback (subproject)
+    if fs.exists(join_paths(meson.project_source_root(), 'subprojects', 'gtest.wrap')) or
+       fs.is_dir(join_paths(meson.project_source_root(), 'subprojects', 'gtest'))
+        gtest_dep = dependency('gtest_',
+                               fallback : ['gtest', 'gtest_main_dep'],
+                               default_options : ['default_library=static'])
+    endif
 endif
 
 hahaha_lib = static_library('hahaha', sources,
@@ -112,9 +219,9 @@ hahaha_lib = static_library('hahaha', sources,
                             dependencies : hahaha_deps
 )
 
-hahaha = declare_dependency(link_with: hahaha_lib,
-                            include_directories: include_dir,
-                            dependencies: hahaha_deps)
+hahaha = declare_dependency(link_with : hahaha_lib,
+                            include_directories : include_dir,
+                            dependencies : hahaha_deps)
 
 subdir('tests')
 subdir('examples')
