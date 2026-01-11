@@ -17,12 +17,18 @@ BUILD_DIR="${1:-builddir}"
 cd "${ROOT_DIR}"
 
 if [ -d "${BUILD_DIR}" ]; then
-  meson setup --reconfigure "${BUILD_DIR}" -Db_coverage=true -Ddisplay=false
-else
-  meson setup "${BUILD_DIR}" --buildtype=debug -Db_coverage=true -Ddisplay=false
+  rm -rf "${BUILD_DIR}"
 fi
-meson compile -C "${BUILD_DIR}" tests/hahaha_tests
-meson test -C "${BUILD_DIR}" -v --no-rebuild
+
+cmake -S . -B "${BUILD_DIR}" -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DHAHAHA_DISPLAY=OFF \
+  -DHAHAHA_BUILD_TESTS=ON \
+  -DHAHAHA_BUILD_EXAMPLES=OFF \
+  -DHAHAHA_ENABLE_COVERAGE=ON
+
+cmake --build "${BUILD_DIR}" --parallel 2
+ctest --test-dir "${BUILD_DIR}" --output-on-failure
 
 GCOVR_COMMON_ARGS=(
   -r .
