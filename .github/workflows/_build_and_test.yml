@@ -231,18 +231,6 @@ jobs:
           set -euo pipefail
           meson subprojects download gtest
 
-      - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          echo "Using Meson WrapDB to provide googletest."
-
-      - name: Install googletest (Meson wrap, Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          meson subprojects download gtest
-
       - name: Install LLVM (Windows, clang-cl builds)
         if: runner.os == 'Windows' && matrix.compiler == 'clang-cl'
         run: |
@@ -438,20 +426,6 @@ jobs:
       - name: Set up MSVC (Windows)
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1.13.0
-
-      - name: Download wrap dependencies (no Meson) (Linux/macOS)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 dev/fetch_wrap_deps.py --all
-
-      - name: Download wrap dependencies (no Meson) (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          python dev/fetch_wrap_deps.py --all
 
       - name: Configure CMake (headless) (Linux/macOS)
         if: runner.os != 'Windows'
