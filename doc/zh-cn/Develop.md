@@ -1,6 +1,6 @@
 ## 纯开发规范文档（Core Development Guidelines）
 
-欢迎参与 hahaha 项目！这是一个教育优先的深度学习框架，使用 C++23 和 Meson 构建。本规范确保代码一致性、可维护性和教育价值。
+欢迎参与 hahaha 项目！这是一个教育优先的深度学习框架，使用 C++23 和 CMake 构建。本规范确保代码一致性、可维护性和教育价值。
 
 ### 1. 关键仓库结构
 - `core/include/`：公共头文件（按模块划分，如 `core/include/math/`）。
@@ -13,17 +13,18 @@
 ### 2. 总体开发原则
 - **教育优先**：代码必须简洁、易读。每个模块/函数应有清晰意图；优先现代 C++23 特性，但避免复杂性。
 - **性能与可读平衡**：核心运算（如 matmul）需优化，但必须有注释解释算法/权衡。
-- **工具强制执行**：clang-format（格式）、clang-tidy（静态分析）、Meson（构建）、Valgrind/ASan（内存检查）。
+- **工具强制执行**：clang-format（格式）、clang-tidy（静态分析）、CMake+vcpkg（构建）、Valgrind/ASan（内存检查）。
 - **环境要求**：GCC/Clang 支持 C++23；NVIDIA GPU 用于后期 CUDA。
 
 ### 3. 工程化命令
 ```bash
 # 初始化并构建 (Debug)
-meson setup builddir --buildtype=debug
+cmake -S . -B builddir -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake --build builddir
 ninja -C builddir
 
 # 运行测试
-meson test -C builddir -v
+ctest --test-dir builddir --output-on-failure
 
 # 格式化代码
 python3 dev/format.py
@@ -132,7 +133,7 @@ SpaceBeforeRangeBasedForLoopColon: true
 - **兼容性**：代码必须在 GCC/Clang 上编译；无 MSVC 特定。
 
 ### 7. 测试与基准规范
-- **单元测试**：GoogleTest（Meson 集成）；文件名 `SomeClassTest.cpp`；测试类 `MatrixTest`。
+- **单元测试**：GoogleTest（CMake 通过 vcpkg 集成）；文件名 `SomeClassTest.cpp`；测试类 `MatrixTest`。
   示例：`TEST_F(MatrixTest, MatmulBasic) { ... EXPECT_EQ(result(0,0), expected); }`
 - **覆盖率**：目标 90%；用 gcov/lcov 生成报告（CI 运行）。
 - **基准测试**：Google Benchmark；文件名 `bench_matrix.cpp`。
@@ -142,17 +143,19 @@ SpaceBeforeRangeBasedForLoopColon: true
 - **可视化测试**：ImGui 相关用 mock 数据测试渲染（e.g., 模拟 loss 曲线）。
 
 ### 8. 构建与依赖规范
-- **Meson 配置**（项目根目录 `meson.build`）：
-  ```meson
-  project('hahaha', 'cpp', version: '0.1.0', default_options: ['cpp_std=c++23'])
+- **CMake 配置**（项目根目录 `CMakeLists.txt`）：
+  ```cmake
+  cmake_minimum_required(VERSION 3.20)
+  project(hahaha VERSION 0.0.1 LANGUAGES CXX)
+  set(CMAKE_CXX_STANDARD 23)
 
   # 包含子目录
   subdir('core')
   subdir('tests')
   subdir('sample')
   ```
-- **模块化构建**：每个模块（如 `core`）都有自己的 `meson.build`，定义静态库并导出依赖。
-- **依赖管理**：目前主要依赖通过 `extern/externlibs` 管理（如 ImGui, GLFW）或作为 Meson 依赖（如 GTest）。
+- **模块化构建**：每个模块（如 `core`、`tests`、`examples`）都有自己的 `CMakeLists.txt`，定义静态库和目标。
+- **依赖管理**：依赖通过仓库本地 vcpkg（`vcpkg/vcpkg_root/`）管理，包括 GTest、GLFW、ImGui 等。
 - **第三方集成**：
   - GoogleTest: 用于单元测试。
   - GLFW/ImGui: 位于 `extern/externlibs`，用于可视化。
@@ -168,7 +171,7 @@ SpaceBeforeRangeBasedForLoopColon: true
 
 ### 10. PR 提交清单
 - [ ] 代码通过 `ninja -C builddir` 编译。
-- [ ] 所有单元测试通过 `meson test -C builddir`。
+- [ ] 所有单元测试通过 `ctest --test-dir builddir`。
 - [ ] 已运行 `python3 dev/format.py` 确保风格一致。
 - [ ] 关键逻辑附带教育性注释。
 - [ ] 新增公开接口已添加 Doxygen 注释。

@@ -20,7 +20,7 @@ loops, together with **visualization tooling** so learners can *see* what happen
 - **Visualization + educational UX**:
   - ImGui-based visualizer and demos under `examples/` to show training dynamics.
   - Code is intentionally written to be readable and traceable, with tests as executable documentation.
-- **Tooling**: Meson + Ninja build, GoogleTest, formatting script `python3 dev/format.py`.
+- **Tooling**: CMake + vcpkg build, GoogleTest, formatting script `python3 dev/format.py`.
 
 ## Build and run
 
@@ -34,9 +34,9 @@ python3 dev/setup_dev_env.py
 
 **What this script does:**
 - 📦 **Installs System Dependencies**: Automatically detects your package manager (`apt` for Debian/Ubuntu, `pacman` for Arch Linux) and installs compilers, build tools, and graphics libraries.
-- 🔧 **Sets up Build Tools**: Installs or configures **Meson**, **Ninja**, and **Python** tools.
+- 🔧 **Sets up Build Tools**: Installs or configures **CMake**, **Ninja**, and **Python** tools.
 - ⚓ **Configures Git Hooks**: Sets up **pre-commit** to ensure code quality before you commit.
-- 📥 **Manages Dependencies**: Downloads necessary subprojects like **GoogleTest** and **ImGui**.
+- 📥 **Manages Dependencies**: Bootstraps **vcpkg** and installs dependencies like **GoogleTest**, **GLFW**, and **ImGui**.
 - ✅ **Verifies Installation**: Checks that all required tools are present and correctly configured.
 
 ### 2. Manual Prerequisites (If not using the script)
@@ -44,18 +44,23 @@ python3 dev/setup_dev_env.py
 If you prefer to set up manually or use a different OS:
 
 - **Compiler**: C++23 compliant (GCC 13+ or Clang 16+)
-- **Build System**: [Meson](https://mesonbuild.com/) and [Ninja](https://ninja-build.org/)
-- **Libraries**:
-  - `libglfw3-dev`, `libgl1-mesa-dev` (for visualization)
-  - `googletest` (handled by Meson)
+- **Build System**: [CMake](https://cmake.org/) 3.20+ and [Ninja](https://ninja-build.org/)
+- **Package Manager**: [vcpkg](https://vcpkg.io/) (repo-local at `vcpkg/vcpkg_root/`)
+- **Libraries** (installed via vcpkg):
+  - `gtest`, `glfw3`, `imgui` (for visualization)
 - **Tools**: `git`, `python3`, `pre-commit`
 
 ### 3. Build (native)
 
 ```bash
-meson setup builddir --buildtype=debug
-meson compile -C builddir
-meson test -C builddir -v
+# Bootstrap vcpkg and install dependencies (first time only)
+./vcpkg/vcpkg_root/bootstrap-vcpkg.sh  # or .bat on Windows
+./vcpkg/vcpkg_root/vcpkg install gtest glfw3 imgui
+
+# Configure and build
+cmake -S . -B builddir -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake --build builddir --parallel
+ctest --test-dir builddir --output-on-failure
 ```
 
 ### 4. Run examples
@@ -64,16 +69,16 @@ After building, you can run:
 
 ```bash
 # Basic tensor usage
-./builddir/examples/basic_usage/hahaha_example_tensor_basic_usage
+./builddir/examples/hahaha_example_tensor_basic_usage
 
 # Autograd demo
-./builddir/examples/autograd/hahaha_example_autograd
+./builddir/examples/hahaha_example_autograd
 
 # ML training demo (CLI)
-./builddir/examples/ml_basic_usage/hahaha_example_ml_basic_usage
+./builddir/examples/hahaha_example_ml_basic_usage
 
 # Visualization demo (requires GLFW/OpenGL but not very nice)
-./builddir/examples/ml_visualizer/hahaha_example_ml_visualizer
+./builddir/examples/hahaha_example_ml_visualizer
 ```
 
 ## Minimal usage example
