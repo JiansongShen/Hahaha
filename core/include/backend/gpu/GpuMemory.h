@@ -22,9 +22,9 @@
 #include <cstddef>
 #include <span>
 
-#include "backend/gpu/DeviceBuffer.h"
+#include "backend/DeviceBuffer.h"
 
-namespace hahaha::backend::gpu {
+namespace hahaha::backend {
 
 /**
  * @brief Utilities for GPU memory allocation and data transfer.
@@ -82,6 +82,6 @@ class GpuMemory {
     friend class DeviceBuffer;
 };
 
-} // namespace hahaha::backend::gpu
+} // namespace hahaha::backend
 
 #endif // HAHAHA_BACKEND_GPU_GPU_MEMORY_H

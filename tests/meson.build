@@ -10,23 +10,13 @@ test_sources = run_command(py,
                            '**/*.cpp',
                            check : true).stdout().strip().split('\n')
 
-gtest_dep = dependency('gtest', main : true, required : false)
-if not gtest_dep.found()
-    # Pure Meson fallback:
-    # Prefer a Meson subproject. In CI, install it via:
-    #   meson subprojects download gtest
-    fs = import('fs')
-    if fs.is_dir(join_paths(meson.project_source_root(), 'subprojects'))
-        # WrapDB project name is "gtest" (directory may be googletest-<ver>).
-        # Force static library to avoid macOS-LLVM linkage issues.
-        gtest_dep = dependency('gtest',
-                               fallback : ['gtest', 'gtest_main_dep'],
-                               default_options : ['default_library=static'])
-    endif
 
-    if not gtest_dep.found()
-        error('GTest dependency not found. Install system gtest, or run `meson subprojects download gtest` to enable the Meson subproject fallback.')
-    endif
+if not gtest_dep.found()
+    error('GTest dependency not found. Supported providers:\n' +
+          '- repo-local vcpkg: vcpkg/vcpkg_root/installed/<triplet>\n' +
+          '- system GTest (commonly used on Linux CI)\n' +
+          '- Meson wrap: run `meson subprojects download gtest` (commonly used on macOS/Windows CI)\n' +
+          'If multiple vcpkg triplets exist, pass -Dvcpkg_triplet=<triplet>.')
 endif
 
 # Optional coverage support:
@@ -55,7 +45,6 @@ test_executable = executable('hahaha_tests', test_sources,
                              include_directories : [test_include_dir, include_dir],
                              cpp_args : cov_cpp_args + msvc_cpp_args,
                              link_args : cov_link_args,
-                             link_with : hahaha_lib,
-                             dependencies : [gtest_dep])
+                             dependencies : [gtest_dep, hahaha])
 
 test('hahaha_unit_tests', test_executable)

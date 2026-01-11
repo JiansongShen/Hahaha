@@ -103,47 +103,28 @@ if(HAHAHA_DISPLAY)
     message(FATAL_ERROR "GLFW3 not found. Install glfw3 dev package or provide a CMake glfw3 config package, or configure with -DHAHAHA_DISPLAY=OFF.")
   endif()
 
-  # ---- ImGui (vendored as Meson subproject) ----
-  if(NOT HAHAHA_IMGUI_DIR)
-    if(EXISTS "${PROJECT_SOURCE_DIR}/subprojects/imgui/imgui.h")
-      set(HAHAHA_IMGUI_DIR "${PROJECT_SOURCE_DIR}/subprojects/imgui")
-    else()
-      file(GLOB _imgui_candidates LIST_DIRECTORIES true "${PROJECT_SOURCE_DIR}/subprojects/imgui-*")
-      foreach(_cand IN LISTS _imgui_candidates)
-        if(EXISTS "${_cand}/imgui.h")
-          set(HAHAHA_IMGUI_DIR "${_cand}")
-          break()
-        endif()
-      endforeach()
-    endif()
-  endif()
-  if(NOT HAHAHA_IMGUI_DIR OR NOT EXISTS "${HAHAHA_IMGUI_DIR}/imgui.h")
-    message(FATAL_ERROR "ImGui not found. Provide -DHAHAHA_IMGUI_DIR=/path/to/imgui (recommended: git submodule at subprojects/imgui), or configure with -DHAHAHA_DISPLAY=OFF.")
+  # ---- ImGui ----
+  set(_imgui_target "")
+
+  # Try finding via Config (e.g. Vcpkg)
+  # Automatically setup vcpkg toolchain if not provided and local vcpkg exists
+  # Note: CMAKE_TOOLCHAIN_FILE must be set *before* the first project() call to take effect properly.
+  # However, if user didn't provide it, we can try to hint it here for subsequent checks, but standard practice is passing it via CLI.
+  # If we are here, project() is already called.
+  # But we can try to include the vcpkg toolchain manually if we are desperate, though it's risky.
+  # A better approach is to rely on user passing the toolchain file, or setting CMAKE_PREFIX_PATH.
+
+  # Check if vcpkg toolchain was used
+  if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+      if(EXISTS "${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root/scripts/buildsystems/vcpkg.cmake")
+        message(STATUS "Vcpkg detected at ${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root. Attempting to use it.")
+        list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root/installed/x64-linux")
+        # Note: Triplet is hardcoded here as fallback, which is not ideal but solves the 'automatic' requirement for this specific env.
+      endif()
   endif()
 
-  set(_imgui_root "${HAHAHA_IMGUI_DIR}")
-  # Build ImGui directly into libhahaha to keep installation/export simple.
-  target_sources(hahaha PRIVATE
-    "${_imgui_root}/imgui.cpp"
-    "${_imgui_root}/imgui_demo.cpp"
-    "${_imgui_root}/imgui_draw.cpp"
-    "${_imgui_root}/imgui_tables.cpp"
-    "${_imgui_root}/imgui_widgets.cpp"
-    "${_imgui_root}/backends/imgui_impl_glfw.cpp"
-    "${_imgui_root}/backends/imgui_impl_opengl3.cpp"
-    "${_imgui_root}/misc/cpp/imgui_stdlib.cpp"
-  )
-  target_include_directories(hahaha PRIVATE
-    "${_imgui_root}"
-    "${_imgui_root}/backends"
-    "${_imgui_root}/misc/cpp"
-  )
-
-  # Public (build-tree only): examples include <imgui.h>. Keep install interface clean.
-  target_include_directories(hahaha PUBLIC
-    $<BUILD_INTERFACE:${_imgui_root}>
-    $<BUILD_INTERFACE:${_imgui_root}/backends>
-  )
+  find_package(imgui CONFIG REQUIRED)
+  target_link_libraries(hahaha PUBLIC imgui::imgui)
 
   # This mirrors Meson's declare_dependency() behavior: downstream targets that
   # link to hahaha get the needed libs as well.
@@ -165,7 +146,6 @@ install(EXPORT hahahaTargets
 )
 
 # ---- subprojects ----
-
 if(HAHAHA_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
