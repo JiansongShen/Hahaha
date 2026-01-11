@@ -168,7 +168,7 @@ jobs:
             git clone https://github.com/microsoft/vcpkg.git vcpkg\vcpkg_root
           }
           .\vcpkg\vcpkg_root\bootstrap-vcpkg.bat -disableMetrics
-          .\vcpkg\vcpkg_root\vcpkg.exe install gtest --triplet x64-windows
+          .\vcpkg\vcpkg_root\vcpkg.exe install gtest --triplet x64-windows-static
 
       - name: Configure CMake (headless) (Linux/macOS)
         if: runner.os != 'Windows'

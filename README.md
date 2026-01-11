@@ -33,6 +33,7 @@ python3 dev/setup_dev_env.py
 ```
 
 **What this script does:**
+
 - 📦 **Installs System Dependencies**: Automatically detects your package manager (`apt` for Debian/Ubuntu, `pacman` for Arch Linux) and installs compilers, build tools, and graphics libraries.
 - 🔧 **Sets up Build Tools**: Installs or configures **CMake**, **Ninja**, and **Python** tools.
 - ⚓ **Configures Git Hooks**: Sets up **pre-commit** to ensure code quality before you commit.
@@ -61,7 +62,13 @@ fi
 
 # Bootstrap vcpkg and install dependencies
 ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh  # or bootstrap-vcpkg.bat on Windows
+
+# Install dependencies
+# Linux/macOS:
 ./vcpkg/vcpkg_root/vcpkg install gtest glfw3 imgui
+
+# Windows (use static triplet to avoid DLL issues):
+# .\vcpkg\vcpkg_root\vcpkg.exe install gtest glfw3 imgui --triplet x64-windows-static
 
 # Configure and build
 cmake -S . -B builddir -G Ninja -DCMAKE_BUILD_TYPE=Debug
