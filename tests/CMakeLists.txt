@@ -40,6 +40,18 @@ if(NOT _gtest_main_target)
       "${CMAKE_BINARY_DIR}/_deps/googletest"
       EXCLUDE_FROM_ALL
     )
+  else()
+    # Last resort: FetchContent (CI-friendly on macOS/Windows when system gtest is absent).
+    include(FetchContent)
+    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+    set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+    # MSVC: prefer matching CRT to avoid LNK2038 mismatch.
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_Declare(
+      googletest
+      URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.tar.gz
+    )
+    FetchContent_MakeAvailable(googletest)
   endif()
 
   if(TARGET gtest_main)
