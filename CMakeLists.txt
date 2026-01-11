@@ -31,11 +31,12 @@ if(EXISTS "${_HAHAHA_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" AND EXISTS "$
   set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "${HAHAHA_VCPKG_TRIPLET}")
   if(_HAHAHA_VCPKG_TRIPLET_RESOLVED STREQUAL "auto" OR _HAHAHA_VCPKG_TRIPLET_RESOLVED STREQUAL "")
     # Host-based heuristic (works for native CI runners).
+    # Windows: prefer static triplet to avoid DLL PATH issues in CI/tests
     if(WIN32)
       if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64|arm64")
-        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-windows")
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-windows-static")
       else()
-        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-windows")
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-windows-static")
       endif()
     elseif(APPLE)
       if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
