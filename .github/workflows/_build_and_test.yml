@@ -133,19 +133,25 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1.13.0
 
-      - name: Bootstrap vcpkg + install dependencies (Linux)
+      - name: Setup vcpkg + install dependencies (Linux)
         if: runner.os == 'Linux'
         shell: bash
         run: |
           set -euo pipefail
+          if [ ! -d "vcpkg/vcpkg_root" ]; then
+            git clone https://github.com/microsoft/vcpkg.git vcpkg/vcpkg_root
+          fi
           ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh -disableMetrics
           ./vcpkg/vcpkg_root/vcpkg install gtest --triplet x64-linux
 
-      - name: Bootstrap vcpkg + install dependencies (macOS)
+      - name: Setup vcpkg + install dependencies (macOS)
         if: runner.os == 'macOS'
         shell: bash
         run: |
           set -euo pipefail
+          if [ ! -d "vcpkg/vcpkg_root" ]; then
+            git clone https://github.com/microsoft/vcpkg.git vcpkg/vcpkg_root
+          fi
           ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh -disableMetrics
           TRIPLET="arm64-osx"
           if [ "$(uname -m)" = "x86_64" ]; then
@@ -153,11 +159,14 @@ jobs:
           fi
           ./vcpkg/vcpkg_root/vcpkg install gtest --triplet $TRIPLET
 
-      - name: Bootstrap vcpkg + install dependencies (Windows)
+      - name: Setup vcpkg + install dependencies (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          if (-Not (Test-Path "vcpkg\vcpkg_root")) {
+            git clone https://github.com/microsoft/vcpkg.git vcpkg\vcpkg_root
+          }
           .\vcpkg\vcpkg_root\bootstrap-vcpkg.bat -disableMetrics
           .\vcpkg\vcpkg_root\vcpkg.exe install gtest --triplet x64-windows
 

@@ -53,8 +53,14 @@ If you prefer to set up manually or use a different OS:
 ### 3. Build (native)
 
 ```bash
-# Bootstrap vcpkg and install dependencies (first time only)
-./vcpkg/vcpkg_root/bootstrap-vcpkg.sh  # or .bat on Windows
+# Setup vcpkg (first time only)
+# If vcpkg/vcpkg_root doesn't exist, clone it:
+if [ ! -d "vcpkg/vcpkg_root" ]; then
+  git clone https://github.com/microsoft/vcpkg.git vcpkg/vcpkg_root
+fi
+
+# Bootstrap vcpkg and install dependencies
+./vcpkg/vcpkg_root/bootstrap-vcpkg.sh  # or bootstrap-vcpkg.bat on Windows
 ./vcpkg/vcpkg_root/vcpkg install gtest glfw3 imgui
 
 # Configure and build
