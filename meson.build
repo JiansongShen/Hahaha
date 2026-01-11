@@ -204,8 +204,12 @@ endif
 
 if not gtest_dep.found()
     # Pure Meson fallback (subproject)
-    if fs.exists(join_paths(meson.project_source_root(), 'subprojects', 'gtest.wrap')) or
-       fs.is_dir(join_paths(meson.project_source_root(), 'subprojects', 'gtest'))
+    gtest_wrap_file = join_paths(meson.project_source_root(), 'subprojects', 'gtest.wrap')
+    gtest_subproject_dir = join_paths(meson.project_source_root(), 'subprojects', 'gtest')
+    have_gtest_wrap = fs.is_file(gtest_wrap_file)
+    have_gtest_subproject = fs.is_dir(gtest_subproject_dir)
+
+    if have_gtest_wrap or have_gtest_subproject
         gtest_dep = dependency('gtest_',
                                fallback : ['gtest', 'gtest_main_dep'],
                                default_options : ['default_library=static'])
