@@ -64,17 +64,40 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
     static constexpr T DefaultEpsilon = 1e-8;
     static constexpr T DefaultWeightDecay = 1e-6;
   public:
+    /**
+     * @brief Construct a new AdamW Optimizer with default hyperparameters.
+     * @param parameters A vector of Tensors to be optimized.
+     * @param learningRate The step size used for each iteration.
+     */
     AdamWOptimizer(const std::vector<Tensor<T>>& parameters,
                   const T learningRate)
         : Optimizer<T>(parameters, learningRate) {
     }
+
+    /**
+     * @brief Copy constructor from a base Optimizer.
+     * @param optimizer The optimizer instance to copy from.
+     */
     explicit AdamWOptimizer(const Optimizer<T>& optimizer)
         : Optimizer<T>(optimizer) {
     }
 
+    /**
+     * @brief Move constructor from a base Optimizer.
+     * @param optimizer The optimizer instance to move from.
+     */
     explicit AdamWOptimizer(Optimizer<T>&& optimizer) : Optimizer<T>(optimizer) {
     }
 
+    /**
+     * @brief Construct a new AdamW Optimizer with custom hyperparameters.
+     * @param parameters A vector of Tensors to be optimized.
+     * @param learningRate The step size used for each iteration.
+     * @param beta1 Exponential decay rate for the first moment estimates.
+     * @param beta2 Exponential decay rate for the second-moment estimates.
+     * @param epsilon A small constant for numerical stability.
+     * @param weightDecay The decoupled weight decay coefficient ($\lambda$).
+     */
     AdamWOptimizer(const std::vector<Tensor<T>>& parameters,
                   const T& learningRate,
                   T beta1,
@@ -85,6 +108,10 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
           epsilon_(epsilon), weightDecay_(weightDecay){
     }
 
+    /**
+     * @brief Adds a parameter to the optimizer and initializes its moment buffers if training has started.
+     * @param param The Tensor parameter to track.
+     */
     void addParameter(const Tensor<T>& param) override {
         if (trainPrepared_) {
             parametersM_.push_back(param.getComputeNode()->getData()->zeros());
@@ -93,12 +120,17 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
         this->parameters_.push_back(param);
     }
 
+    /**
+     * @brief Performs a single AdamW optimization step.
+     * @details Updates moments, calculates bias corrections, applies decoupled weight 
+     * decay to the parameter data, and finally applies the gradient-based update.
+     */
     void step() override {
         preTrainIfNeed();
         ++turn_;
         beta1PowT_ *= beta1_;
         beta2PowT_ *= beta2_;
-        
+
         // Bias correction terms
         T biasCorrection1 = 1.0 / (1.0 - beta1PowT_);
         T biasCorrection2 = 1.0 / (1.0 - beta2PowT_);
@@ -137,13 +169,11 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
             // Apply update: θ = θ - lr * update
             paramNode->getData()->axpy(-lr, update);
         }
-
     }
 
   private:
     /**
-     * @brief before the optimize process, firstly, set the optimizer inner
-     *      parameters
+     * @brief Initializes moment buffers (M and V) for all parameters before optimization begins.
      */
     void preTrainIfNeed() {
         if (trainPrepared_) {
