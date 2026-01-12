@@ -13,7 +13,9 @@ target_link_libraries(hahaha_example_tensor_basic_usage PRIVATE hahaha::hahaha)
 file(GLOB_RECURSE HAHAHA_EXAMPLE_ML_BASIC_SOURCES CONFIGURE_DEPENDS
   "${CMAKE_CURRENT_SOURCE_DIR}/ml_basic_usage/*.cpp"
 )
-add_executable(hahaha_example_ml_basic_usage ${HAHAHA_EXAMPLE_ML_BASIC_SOURCES})
+add_executable(hahaha_example_ml_basic_usage ${HAHAHA_EXAMPLE_ML_BASIC_SOURCES}
+        ml_basic_usage/basic_adam_optimizer_example.h
+        ml_basic_usage/basic_adam_optimizer_example.h)
 target_link_libraries(hahaha_example_ml_basic_usage PRIVATE hahaha::hahaha)
 
 if(HAHAHA_DISPLAY)
