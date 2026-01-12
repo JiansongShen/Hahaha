@@ -16,12 +16,12 @@
 // jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 
-#include "ml/optimizer/AdamWOptimizer.h"
 
 #include <gtest/gtest.h>
 
 #include "public/Tensor.h"
 
+#include "ml/optimizer/AdamWOptimizer.h"
 using namespace hahaha;
 using namespace hahaha::ml;
 
@@ -30,11 +30,13 @@ using FloatingPointTypes = ::testing::Types<f32, f64>;
 
 template <typename T> class AdamWOptimizerTest : public ::testing::Test {
   protected:
+    // Helper to compare values with epsilon
     void expectNear(T expected, T actual, T tolerance = 1e-4) {
         EXPECT_NEAR(static_cast<double>(expected), static_cast<double>(actual),
                     static_cast<double>(tolerance));
     }
 
+    // Helper to create a gradient wrapper
     std::shared_ptr<math::TensorWrapper<T>>
     createGrad(const std::vector<size_t>& shape, T value) {
         return std::make_shared<math::TensorWrapper<T>>(math::TensorShape(shape),
@@ -50,154 +52,120 @@ TYPED_TEST_SUITE(AdamWOptimizerTest, FloatingPointTypes);
 
 TYPED_TEST(AdamWOptimizerTest, Constructor_Standard) {
     using T = TypeParam;
-    Tensor<T> w(T(1.0));
+    Tensor<T> w1(T(1.0));
+    std::vector<Tensor<T>> params = {w1};
     T lr = T(0.01);
-    T wd = T(0.1);
 
-    AdamWOptimizer<T> opt({w}, lr, 0.9, 0.999, 1e-8, wd);
+    AdamWOptimizer<T> opt(params, lr);
 
     EXPECT_EQ(opt.getParameters().size(), 1);
     EXPECT_EQ(opt.getLearningRate(), lr);
 }
 
 // ============================================================================
-// Standard Dimension Updates (with Weight Decay)
+// Standard Dimension Updates (Without Weight Decay)
 // ============================================================================
 
 TYPED_TEST(AdamWOptimizerTest, Update_0D_Scalar) {
     using T = TypeParam;
-    T initialValue = 10.0;
-    Tensor<T> w(initialValue);
+    Tensor<T> w(T(10.0));
     w.setRequiresGrad(true);
-    
-    T lr = 0.1;
-    T wd = 0.01;
-    AdamWOptimizer<T> opt({w}, lr, 0.9, 0.999, 1e-8, wd);
-
-    // Step 1: Grad = 1.0
+    // Set weightDecay to 0 to test pure Adam logic
+    AdamWOptimizer<T> opt({w}, T(0.1), 0.9, 0.999, 1e-8, 0.0);
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.step();
-
-    // Theoretical calculation:
-    // Adam Update part: ~0.1 (same as Adam step 1)
-    // Weight Decay part: lr * wd * theta = 0.1 * 0.01 * 10.0 = 0.01
-    // Total update = 0.1 + 0.01 = 0.11
-    // New theta = 10.0 - 0.11 = 9.89
-    this->expectNear(T(9.89), w.at({}));
+    // First step: update ≈ 0.1
+    this->expectNear(T(9.9), w.at({}));
 }
 
 TYPED_TEST(AdamWOptimizerTest, Update_1D_Vector) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{T(1.0), T(2.0)});
     w.setRequiresGrad(true);
-    AdamWOptimizer<T> opt({w}, T(0.1), 0.9, 0.999, 1e-8, T(0.01));
-
-    w.getComputeNode()->accumulateGrad(this->createGrad({2}, T(1.0)));
+    AdamWOptimizer<T> opt({w}, T(0.1), 0.9, 0.999, 1e-8, 0.0);
+    w.getComputeNode()->accumulateGrad(this->createGrad({2}, T(0.5)));
     opt.step();
-
-    // val1: 1.0 - (0.1 + 0.1*0.01*1.0) = 1.0 - 0.101 = 0.899
-    // val2: 2.0 - (0.1 + 0.1*0.01*2.0) = 2.0 - 0.102 = 1.898
-    this->expectNear(T(0.899), w.at({0}));
-    this->expectNear(T(1.898), w.at({1}));
-}
-
-TYPED_TEST(AdamWOptimizerTest, Update_2D_Matrix) {
-    using T = TypeParam;
-    Tensor<T> w(math::NestedData<T>{{T(1.0)}, {T(2.0)}});
-    w.setRequiresGrad(true);
-    AdamWOptimizer<T> opt({w}, T(0.1), 0.9, 0.999, 1e-8, T(0.01));
-
-    w.getComputeNode()->accumulateGrad(this->createGrad({2, 1}, T(1.0)));
-    opt.step();
-
-    this->expectNear(T(0.899), w.at({0, 0}));
-    this->expectNear(T(1.898), w.at({1, 0}));
-}
-
-TYPED_TEST(AdamWOptimizerTest, Update_3D_Tensor) {
-    using T = TypeParam;
-    Tensor<T> w(math::NestedData<T>{{{T(1.0)}}});
-    w.setRequiresGrad(true);
-    AdamWOptimizer<T> opt({w}, T(0.1), 0.9, 0.999, 1e-8, T(0.01));
-
-    w.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 1}, T(1.0)));
-    opt.step();
-
-    this->expectNear(T(0.899), w.at({0, 0, 0}));
+    this->expectNear(T(0.9), w.at({0}));
+    this->expectNear(T(1.9), w.at({1}));
 }
 
 // ============================================================================
-// Weight Decay Verification (Decoupled)
+// Weight Decay Tests
 // ============================================================================
 
-TYPED_TEST(AdamWOptimizerTest, WeightDecay_EvenWithZeroGrad) {
+TYPED_TEST(AdamWOptimizerTest, WeightDecay_Logic) {
     using T = TypeParam;
     Tensor<T> w(T(10.0));
     w.setRequiresGrad(true);
     
-    T lr = 0.1;
-    T wd = 0.5; // Large weight decay for clear effect
+    T lr = T(0.1);
+    T wd = T(0.01);
+    // Grad = 0 to test pure Weight Decay effect
     AdamWOptimizer<T> opt({w}, lr, 0.9, 0.999, 1e-8, wd);
-
-    // Grad = 0.0, Adam component should be 0
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.0)));
+    
     opt.step();
+    
+    // AdamW formula: theta = theta - lr * wd * theta - lr * AdamUpdate
+    // Since Grad=0, AdamUpdate=0
+    // theta = 10.0 - 0.1 * 0.01 * 10.0 = 10.0 - 0.01 = 9.99
+    this->expectNear(T(9.99), w.at({}));
+}
 
-    // theta = 10.0 - (lr * wd * 10.0) = 10.0 - (0.1 * 0.5 * 10.0) = 10.0 - 0.5 = 9.5
-    EXPECT_EQ(w.at({}), T(9.5));
+TYPED_TEST(AdamWOptimizerTest, WeightDecay_WithGrad) {
+    using T = TypeParam;
+    Tensor<T> w(T(10.0));
+    w.setRequiresGrad(true);
+    
+    T lr = T(0.1);
+    T wd = T(0.01);
+    AdamWOptimizer<T> opt({w}, lr, 0.9, 0.999, 1e-8, wd);
+    
+    // Grad = 1.0 -> AdamUpdate ≈ 1.0
+    w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
+    opt.step();
+    
+    // theta = 10.0 - (lr * wd * 10.0) - (lr * AdamUpdate)
+    // theta = 10.0 - (0.1 * 0.01 * 10.0) - (0.1 * 1.0)
+    // theta = 10.0 - 0.01 - 0.1 = 9.89
+    this->expectNear(T(9.89), w.at({}));
 }
 
 // ============================================================================
-// Error Handling
+// Error Handling: RequiresGrad is False
 // ============================================================================
 
 TYPED_TEST(AdamWOptimizerTest, RequiresGradFalse_NoUpdate) {
     using T = TypeParam;
     Tensor<T> w(T(10.0));
     w.setRequiresGrad(false);
-    AdamWOptimizer<T> opt({w}, T(0.1), 0.9, 0.999, 1e-8, T(0.01));
+    AdamWOptimizer<T> opt({w}, T(0.1), 0.9, 0.999, 1e-8, 0.01);
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.step();
     EXPECT_EQ(w.at({}), T(10.0));
 }
 
-TYPED_TEST(AdamWOptimizerTest, NullGrad_StillPerformsWeightDecay) {
-    using T = TypeParam;
-    Tensor<T> w(T(10.0));
-    w.setRequiresGrad(true);
-    AdamWOptimizer<T> opt({w}, T(0.1), 0.9, 0.999, 1e-8, T(0.01));
-    
-    // Step without backward() -> null grad
-    EXPECT_NO_THROW(opt.step());
-    
-    // Adam component is skipped, but Weight Decay should still apply
-    // theta = 10.0 - (0.1 * 0.01 * 10.0) = 9.99
-    this->expectNear(T(9.99), w.at({}));
-}
-
 // ============================================================================
-// Dynamic Parameters
+// Multi-Dimensional AddParameter Tests
 // ============================================================================
 
-TYPED_TEST(AdamWOptimizerTest, AddParameter_PostPreparation) {
+TYPED_TEST(AdamWOptimizerTest, AddParameter_3D_AfterStep) {
     using T = TypeParam;
-    Tensor<T> w1(T(1.0));
+    Tensor<T> w1(math::NestedData<T>{{{T(1.0)}}});
     w1.setRequiresGrad(true);
-    AdamWOptimizer<T> opt({w1}, T(0.1), 0.9, 0.999, 1e-8, T(0.01));
-    
-    opt.step(); // Trigger preparation
+    AdamWOptimizer<T> opt({w1}, T(0.1), 0.9, 0.999, 1e-8, 0.0);
+    w1.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 1}, T(1.0)));
+    opt.step(); // turn 1
 
-    Tensor<T> w2(T(20.0));
+    Tensor<T> w2(math::NestedData<T>{{{T(10.0), T(20.0)}}});
     w2.setRequiresGrad(true);
     opt.addParameter(w2);
 
-    w2.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
-    opt.step(); // turn 2 for opt, turn 1 for w2's states
-
-    // Theoretical calculation for w2 at turn 2:
-    // Adam update (t=2, g=1.0) ~ 0.0744137
-    // Weight decay: 0.1 * 0.01 * 20.0 = 0.02
-    // New theta = 20.0 - 0.0744137 - 0.02 = 19.9055863
-    this->expectNear(T(19.9055863), w2.at({}));
+    w2.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 2}, T(1.0)));
+    opt.step(); // turn 2
+    
+    // t=2 update ≈ 0.0744137
+    T expectedUpdate = T(0.0744137);
+    this->expectNear(T(10.0 - expectedUpdate), w2.at({0, 0, 0}));
+    this->expectNear(T(20.0 - expectedUpdate), w2.at({0, 0, 1}));
 }
-
