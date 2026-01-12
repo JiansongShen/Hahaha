@@ -25,6 +25,12 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# MSVC: Use static runtime library to match vcpkg x64-windows-static triplet
+# This avoids LNK2038 "RuntimeLibrary mismatch" errors
+if(MSVC)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 set(_HAHAHA_VCPKG_ROOT "${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root")
 set(_HAHAHA_VCPKG_INSTALLED "${_HAHAHA_VCPKG_ROOT}/installed")
 if(EXISTS "${_HAHAHA_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" AND EXISTS "${_HAHAHA_VCPKG_INSTALLED}")
