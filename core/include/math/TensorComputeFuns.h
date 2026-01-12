@@ -39,8 +39,22 @@ class TensorComputeFun {
     }
 
     template <typename T>
+        static TensorWrapper<T> sqrtInPlace(TensorWrapper<T>& input) {
+        for (size_t i = 0; i < input.getTotalSize(); ++i) {
+            input.getRawData()[i] = std::sqrt(input.getRawData()[i]);
+        }
+        return input;
+    }
+
+    template <typename T>
     static TensorWrapper<T> square(TensorWrapper<T>& input) {
         return input * input;
+    }
+
+    template <typename T>
+    static TensorWrapper<T> squareInPlace(TensorWrapper<T>& input) {
+        input *= input;
+        return input;
     }
 };
 } // namespace hahaha::math

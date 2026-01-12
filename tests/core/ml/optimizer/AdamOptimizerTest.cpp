@@ -46,6 +46,49 @@ template <typename T> class AdamOptimizerTest : public ::testing::Test {
 
 TYPED_TEST_SUITE(AdamOptimizerTest, FloatingPointTypes);
 
+
+// ============================================================================
+// Constructor Tests
+// ============================================================================
+
+TYPED_TEST(AdamOptimizerTest, Constructor_Standard) {
+    using T = TypeParam;
+    Tensor<T> w1(T(1.0));
+    Tensor<T> w2(T(2.0));
+    std::vector<Tensor<T>> params = {w1, w2};
+    T lr = T(0.01);
+
+    AdamOptimizer<T> opt(params, lr);
+
+    EXPECT_EQ(opt.getParameters().size(), 2);
+    EXPECT_EQ(opt.getLearningRate(), lr);
+}
+
+TYPED_TEST(AdamOptimizerTest, Constructor_Copy) {
+    using T = TypeParam;
+    Tensor<T> w(T(1.0));
+    AdamOptimizer<T> opt1({w}, T(0.1));
+    
+    // Copy using the explicit Optimizer constructor
+    AdamOptimizer<T> opt2(static_cast<const Optimizer<T>&>(opt1));
+
+    EXPECT_EQ(opt2.getParameters().size(), 1);
+    EXPECT_EQ(opt2.getLearningRate(), T(0.1));
+}
+
+TYPED_TEST(AdamOptimizerTest, Constructor_Move) {
+    using T = TypeParam;
+    Tensor<T> w(T(1.0));
+    AdamOptimizer<T> opt1({w}, T(0.1));
+    
+    // Move using the explicit Optimizer constructor
+    AdamOptimizer<T> opt2(std::move(opt1));
+
+    EXPECT_EQ(opt2.getParameters().size(), 1);
+    EXPECT_EQ(opt2.getLearningRate(), T(0.1));
+}
+
+
 // ============================================================================
 // Standard Dimension Updates
 // ============================================================================
@@ -184,6 +227,21 @@ TYPED_TEST(AdamOptimizerTest, NullGrad_3D) {
 // Other Functionality
 // ============================================================================
 
+TYPED_TEST(AdamOptimizerTest, LearningRateChange) {
+    using T = TypeParam;
+    Tensor<T> w(T(10.0));
+    w.setRequiresGrad(true);
+    AdamOptimizer<T> opt({w}, T(0.1));
+    w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
+    opt.step(); // turn 1 -> w ≈ 9.9
+
+    opt.setLearningRate(T(0.5));
+    w.clearGrad();
+    w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
+    opt.step(); // turn 2 -> mHat=1, vHat=1 -> w = 9.9 - 0.5 = 9.4
+    this->expectNear(T(9.4), w.at({}));
+}
+
 TYPED_TEST(AdamOptimizerTest, ZeroGrad_Functionality) {
     using T = TypeParam;
     Tensor<T> w(T(1.0));
@@ -194,17 +252,124 @@ TYPED_TEST(AdamOptimizerTest, ZeroGrad_Functionality) {
     EXPECT_EQ(w.grad()->at({}), T(0.0));
 }
 
-TYPED_TEST(AdamOptimizerTest, LearningRateChange) {
+TYPED_TEST(AdamOptimizerTest, AddParameter_0D_BeforeStep) {
     using T = TypeParam;
-    Tensor<T> w(T(10.0));
-    w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
-    w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
-    opt.step(); // turn 1 -> w ≈ 9.9
-    
-    opt.setLearningRate(T(0.5));
-    w.clearGrad();
-    w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
-    opt.step(); // turn 2 -> mHat=1, vHat=1 -> w = 9.9 - 0.5 = 9.4
-    this->expectNear(T(9.4), w.at({}));
+    Tensor<T> w1(T(10.0));
+    AdamOptimizer<T> opt({w1}, T(0.1));
+    Tensor<T> w2(T(20.0));
+    opt.addParameter(w2);
+    EXPECT_EQ(opt.getParameters().size(), 2);
+    EXPECT_EQ(opt.getParameters()[1].at({}), T(20.0));
+}
+
+TYPED_TEST(AdamOptimizerTest, AddParameter_1D_BeforeStep) {
+    using T = TypeParam;
+    Tensor<T> w1(math::NestedData<T>{T(1.0)});
+    AdamOptimizer<T> opt({w1}, T(0.1));
+    Tensor<T> w2(math::NestedData<T>{T(2.0), T(3.0)});
+    opt.addParameter(w2);
+    EXPECT_EQ(opt.getParameters().size(), 2);
+    EXPECT_EQ(opt.getParameters()[1].at({0}), T(2.0));
+}
+
+TYPED_TEST(AdamOptimizerTest, AddParameter_2D_BeforeStep) {
+    using T = TypeParam;
+    Tensor<T> w1(math::NestedData<T>{{T(1.0)}});
+    AdamOptimizer<T> opt({w1}, T(0.1));
+    Tensor<T> w2(math::NestedData<T>{{T(2.0), T(3.0)}, {T(4.0), T(5.0)}});
+    opt.addParameter(w2);
+    EXPECT_EQ(opt.getParameters().size(), 2);
+    EXPECT_EQ(opt.getParameters()[1].at({1, 1}), T(5.0));
+}
+
+TYPED_TEST(AdamOptimizerTest, AddParameter_3D_BeforeStep) {
+    using T = TypeParam;
+    Tensor<T> w1(math::NestedData<T>{{{T(1.0)}}});
+    AdamOptimizer<T> opt({w1}, T(0.1));
+    Tensor<T> w2(math::NestedData<T>{{{T(1.0), T(2.0)}}, {{T(3.0), T(4.0)}}});
+    opt.addParameter(w2);
+    EXPECT_EQ(opt.getParameters().size(), 2);
+    EXPECT_EQ(opt.getParameters()[1].at({1, 0, 1}), T(4.0));
+}
+
+
+TYPED_TEST(AdamOptimizerTest, AddParameter_0D_AfterStep) {
+    using T = TypeParam;
+    Tensor<T> w1(T(10.0));
+    w1.setRequiresGrad(true);
+    AdamOptimizer<T> opt({w1}, T(0.1));
+    w1.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
+    opt.step(); // turn 变为 1
+
+    Tensor<T> w2(T(20.0));
+    w2.setRequiresGrad(true);
+    opt.addParameter(w2);
+
+    w2.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
+    opt.step(); // turn 变为 2
+
+    // t=2 时的更新量约为 0.0744137 (计算见上)
+    T expectedT2 = T(20.0 - 0.0744137);
+    this->expectNear(expectedT2, w2.at({}));
+}
+
+TYPED_TEST(AdamOptimizerTest, AddParameter_1D_AfterStep) {
+    using T = TypeParam;
+    Tensor<T> w1(math::NestedData<T>{T(1.0)});
+    w1.setRequiresGrad(true);
+    AdamOptimizer<T> opt({w1}, T(0.1));
+    w1.getComputeNode()->accumulateGrad(this->createGrad({1}, T(1.0)));
+    opt.step();
+
+    Tensor<T> w2(math::NestedData<T>{T(10.0), T(20.0)});
+    w2.setRequiresGrad(true);
+    opt.addParameter(w2);
+
+    w2.getComputeNode()->accumulateGrad(this->createGrad({2}, T(1.0)));
+    opt.step();
+
+    T val1 = T(10.0 - 0.0744137);
+    T val2 = T(20.0 - 0.0744137);
+    this->expectNear(val1, w2.at({0}));
+    this->expectNear(val2, w2.at({1}));
+}
+
+TYPED_TEST(AdamOptimizerTest, AddParameter_2D_AfterStep) {
+    using T = TypeParam;
+    Tensor<T> w1(math::NestedData<T>{{T(1.0)}});
+    w1.setRequiresGrad(true);
+    AdamOptimizer<T> opt({w1}, T(0.1));
+    w1.getComputeNode()->accumulateGrad(this->createGrad({1, 1}, T(1.0)));
+    opt.step();
+
+    Tensor<T> w2(math::NestedData<T>{{T(10.0), T(20.0)}, {T(30.0), T(40.0)}});
+    w2.setRequiresGrad(true);
+    opt.addParameter(w2);
+
+    w2.getComputeNode()->accumulateGrad(this->createGrad({2, 2}, T(1.0)));
+    opt.step();
+
+    T expectedUpdate = T(0.0744137);
+    this->expectNear(T(10.0 - expectedUpdate), w2.at({0, 0}));
+    this->expectNear(T(40.0 - expectedUpdate), w2.at({1, 1}));
+}
+
+TYPED_TEST(AdamOptimizerTest, AddParameter_3D_AfterStep) {
+    using T = TypeParam;
+    Tensor<T> w1(math::NestedData<T>{{{T(1.0)}}});
+    w1.setRequiresGrad(true);
+    AdamOptimizer<T> opt({w1}, T(0.1));
+    w1.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 1}, T(1.0)));
+    opt.step();
+
+    Tensor<T> w2(math::NestedData<T>{{{T(10.0), T(20.0)}}});
+    w2.setRequiresGrad(true);
+    opt.addParameter(w2);
+
+    w2.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 2}, T(1.0)));
+    opt.step();
+
+    T expectedUpdate = T(0.0744137);
+    this->expectNear(T(10.0 - expectedUpdate), w2.at({0, 0, 0}));
+    this->expectNear(T(20.0 - expectedUpdate), w2.at({0, 0, 1}));
 }

@@ -14,9 +14,10 @@
 //
 // Contributors:
 // jiansongshen (jason.shen111@outlook.com ) (https://github.com/jiansongshen )
+//
 
-#ifndef HAHAHA_ADAMOPTIMIZER_H
-#define HAHAHA_ADAMOPTIMIZER_H
+#ifndef HAHAHA_ML_OPTIMIZER_ADAMW_OPTIMIZER_H
+#define HAHAHA_ML_OPTIMIZER_ADAMW_OPTIMIZER_H
 
 #include <cmath>
 
@@ -44,12 +45,13 @@ While not converged:
     v_hat = v / (1 - β2 ** t)
     θ = θ - η * m_hat / (sqrt(v_hat) + ε)
 */
-template <typename T> class AdamOptimizer : public Optimizer<T> {
+template <typename T> class AdamWOptimizer : public Optimizer<T> {
     static_assert(utils::isLegalFloatType<T>::value,
                   "AdamOptimizer just supports float values");
     static constexpr T DefaultBeta1 = 0.9;
     static constexpr T DefaultBeta2 = 0.999;
     static constexpr T DefaultEpsilon = 1e-8;
+    static constexpr T DefaultWeightDecay = 1e-6;
   public:
     AdamOptimizer(const std::vector<Tensor<T>>& parameters,
                   const T learningRate)
@@ -66,9 +68,10 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
                   const T& learningRate,
                   T beta1,
                   T beta2,
-                  T epsilon)
+                  T epsilon,
+                  T weightDecay)
         : Optimizer<T>(parameters, learningRate), beta1_(beta1), beta2_(beta2),
-          epsilon_(epsilon) {
+          epsilon_(epsilon), weightDecay_(weightDecay){
     }
 
     void addParameter(const Tensor<T>& param) override {
@@ -84,30 +87,37 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
         ++turn_;
         beta1PowT_ *= beta1_;
         beta2PowT_ *= beta2_;
+        T mCorr = 1.0 / (1.0 - beta1PowT_);
+        T vCorr = 1.0 / (1.0 - beta2PowT_);
+        T invSqrtVCorr = 1.0 / std::sqrt(vCorr);
+        T lr = this->learningRate_;
+
         for (size_t i = 0; i < parametersM_.size(); ++i) {
-            auto param = this->parameters_[i].getComputeNode();
+            auto paramNode = this->parameters_[i].getComputeNode();
             auto& paramM = this->parametersM_[i];
             auto& paramV = this->parametersV_[i];
 
-            if (!param->getRequiresGrad()) {
-                continue;
-            }
-            auto grad = param->getGrad();
-            if (grad == nullptr) {
-                warn("there is a tensor requires grad but has no real grad");
-                continue;
-            }
+            if (!paramNode->getRequiresGrad()) continue;
+            auto grad = paramNode->getGrad();
+            if (grad == nullptr) continue;
 
-            (paramM *= beta1_).axpy((1 - beta1_), *grad);
-            (paramV *= beta2_)
-                .axpy((1 - beta2_), math::TensorComputeFun::square(*grad));
+            paramM *= beta1_;
+            paramM.axpy(1.0 - beta1_, *grad);
 
-            auto mHat = paramM / (1 - beta1PowT_);
-            auto vHat = paramV / (1 - beta2PowT_);
+            paramV *= beta2_;
+            paramV.axpy(1.0 - beta2_, math::TensorComputeFun::square(*grad));
 
-            param->getData()->axpy(
-                -this->learningRate_,
-                (mHat /= (epsilon_ + math::TensorComputeFun::sqrt(vHat))));
+            auto denom = math::TensorComputeFun::sqrt(paramV);
+            denom *= invSqrtVCorr;
+            denom += epsilon_;
+
+            auto update = (paramM * mCorr);
+            update /= denom;
+
+            // theta = theta - lr * weight_decay * theta
+            paramNode->getData()->axpy(-lr * weightDecay_, *paramNode->getData());
+
+            paramNode->getData()->axpy(-lr, update);
         }
 
     }
@@ -144,6 +154,8 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
     T beta1PowT_ = 1;
     T beta2PowT_ = 1;
 
+    T weightDecay_ = DefaultWeightDecay;
+
     std::vector<math::TensorWrapper<T>> parametersM_{};
     std::vector<math::TensorWrapper<T>> parametersV_{};
     size_t turn_ = 0;
@@ -151,5 +163,4 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
     bool trainPrepared_ = false;
 };
 } // namespace hahaha::ml
-
-#endif // HAHAHA_ADAMOPTIMIZER_H
+#endif // HAHAHA_ML_OPTIMIZER_ADAMW_OPTIMIZER_H

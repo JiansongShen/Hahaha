@@ -32,6 +32,8 @@ using namespace hahaha::common;
 
 inline void basic_adam_optimizer_example() {
 
+    constexpr int SmallestX = 0;
+    constexpr int BiggestX = 100;
 
     std::mt19937 engine;
 
@@ -42,10 +44,10 @@ inline void basic_adam_optimizer_example() {
             std::chrono::steady_clock::now().time_since_epoch().count())};
     engine.seed(seed);
 
-    std::uniform_real_distribution<float> dist(0, 100);
+    std::uniform_real_distribution<float> dist(SmallestX, BiggestX);
 
     constexpr int DataSize = 100;
-    constexpr int TrainLoop = 10;
+    constexpr int TrainLoop = 100;
 
     std::vector<f32> x;
     std::vector<f32> y;
@@ -54,9 +56,9 @@ inline void basic_adam_optimizer_example() {
 
     // y = 2 * x
     for (int i = 0; i < DataSize; ++i) {
-        auto val = dist(engine);
-        x[i] = val;
-        y[i] = val * 2;
+        const auto val = dist(engine);
+        x[i] = val / (BiggestX - SmallestX);
+        y[i] = x[i] * 2;
     }
 
     Tensor<f32> const xTensor1 = Tensor<f32>::buildFromVector(x);
@@ -69,7 +71,7 @@ inline void basic_adam_optimizer_example() {
     Tensor<f32> loss(1);
     loss.setRequiresGrad(true);
 
-    auto optimizer = hahaha::ml::AdamOptimizer<f32>({w}, 0.000001);
+    auto optimizer = hahaha::ml::AdamOptimizer<f32>({w}, 0.1);
 
     for (int i = 0; i < TrainLoop; ++i) {
         optimizer.zeroGrad();
