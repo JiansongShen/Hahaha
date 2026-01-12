@@ -25,5 +25,5 @@ int main() {
     // auto_grad_div_example();
     // auto_grad_matmul_example();
     //
-    nn_train_example();
+    basic_linear_regression_example();
 }

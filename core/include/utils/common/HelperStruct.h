@@ -98,6 +98,15 @@ template <> struct isLegalDataType<f32> : std::true_type {};
 /** @brief Specialization for double. */
 template <> struct isLegalDataType<f64> : std::true_type {};
 
+/** @brief Template struct for check a type is a floating value or not*/
+template <typename T> struct isLegalFloatType : std::false_type {};
+
+/** @bried Specialization template struct for check a type is a floating value */
+template <> struct isLegalFloatType<f32> : std::true_type {};
+
+/** @bried Specialization template struct for check a type is a floating value */
+template <> struct isLegalFloatType<f64> : std::true_type {};
+
 } // namespace hahaha::utils
 
 #endif // HAHAHA_UTILS_COMMON_HELPER_STRUCT_H

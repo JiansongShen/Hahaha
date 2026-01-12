@@ -23,14 +23,14 @@
 #include <random>
 #include <vector>
 
-#include "../../core/include/public/Tensor.h"
+#include "public/Tensor.h"
 #include "common/definitions.h"
 #include "ml/optimizer/SGDOptimizer.h"
 
 using hahaha::Tensor;
 using namespace hahaha::common;
 
-inline void nn_train_example() {
+inline void basic_linear_regression_example() {
 
     std::mt19937 engine;
 
