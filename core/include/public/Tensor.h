@@ -265,7 +265,7 @@ template <typename T> class Tensor {
      * @brief Get the underlying compute node.
      * @return shared_ptr to the node.
      */
-    std::shared_ptr<compute::ComputeNode<T>> getComputeNode() {
+    std::shared_ptr<compute::ComputeNode<T>> getComputeNode() const {
         return computeNode_;
     }
 
@@ -285,8 +285,52 @@ template <typename T> class Tensor {
         return computeNode_->getData()->getTotalSize();
     }
 
+    /**
+     * @brief sum the elements those the tensor holds
+     * @return T the sum of all elements.
+     */
     T sum() const {
         return computeNode_->getData()->sum();
+    }
+
+    /**
+     * @brief Creates a new Tensor of the same shape, initialized with zeros.
+     * * This method requests a zero-filled data container from the current 
+     * device and wraps it in a new @ref compute::ComputeNode.
+     * * @return Tensor A new tensor instance with all elements set to 0.
+     */
+    Tensor zeros() const {
+        Tensor newTensor;
+        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+            computeNode_->getData()->zeros()
+        );
+        return newTensor;
+    }
+
+    /**
+     * @brief Creates a new Tensor of the same shape, initialized with ones.
+     * * This method requests a ones-filled data container from the current 
+     * device and wraps it in a new @ref compute::ComputeNode.
+     * * @return Tensor A new tensor instance with all elements set to 1.
+     */
+    Tensor ones() const {
+        Tensor newTensor;
+        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+            computeNode_->getData()->ones());
+        return newTensor;
+    }
+
+    /**
+     * @brief Creates a new Tensor of the same shape, initialized with a specific value.
+     * * @param initValue The value to fill the new tensor with.
+     * @return Tensor A new tensor instance where every element is @p initValue.
+     */
+    Tensor sameShapeWithValue(T initValue) {
+        Tensor newTensor;
+        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+            computeNode_->getData()->sameShapeWithValue(initValue)
+        );
+        return newTensor;
     }
 
   private:

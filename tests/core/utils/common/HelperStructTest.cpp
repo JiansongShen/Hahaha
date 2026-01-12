@@ -16,10 +16,11 @@
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
-#include "utils/common/HelperStruct.h"
 
 #include <gtest/gtest.h>
 #include <initializer_list>
+
+#include "utils/common/HelperStruct.h"
 
 using namespace hahaha::utils;
 
@@ -41,4 +42,12 @@ TEST(HelperStructTest, IsLegalDataType) {
     EXPECT_TRUE(isLegalDataType<float>::value);
     EXPECT_TRUE(isLegalDataType<double>::value);
     EXPECT_FALSE(isLegalDataType<std::string>::value);
+}
+
+TEST(HelperStructTest, IsLegalFloatType) {
+    EXPECT_TRUE(isLegalFloatType<float>::value);
+    EXPECT_TRUE(isLegalFloatType<double>::value);
+    EXPECT_FALSE(isLegalFloatType<std::string>::value);
+    EXPECT_TRUE(isLegalDataType<f32>::value);
+    EXPECT_TRUE(isLegalDataType<f64>::value);
 }
