@@ -265,7 +265,7 @@ template <typename T> class Tensor {
      * @brief Get the underlying compute node.
      * @return shared_ptr to the node.
      */
-    std::shared_ptr<compute::ComputeNode<T>> getComputeNode() {
+    std::shared_ptr<compute::ComputeNode<T>> getComputeNode() const {
         return computeNode_;
     }
 
@@ -287,6 +287,31 @@ template <typename T> class Tensor {
 
     T sum() const {
         return computeNode_->getData()->sum();
+    }
+
+    Tensor zeros() const {
+        Tensor newTensor;
+
+        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+            computeNode_->getData()->zeros()
+        );
+
+        return newTensor;
+    }
+
+    Tensor ones() const {
+        Tensor newTensor;
+        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+            computeNode_->getData()->ones());
+        return newTensor;
+    }
+
+    Tensor sameShapeWithValue(T initValue) {
+        Tensor newTensor;
+        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+            computeNode_->getData()->sameShapeWithValue(initValue)
+        );
+        return newTensor;
     }
 
   private:

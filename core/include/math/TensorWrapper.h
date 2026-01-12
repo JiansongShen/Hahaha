@@ -1223,6 +1223,23 @@ template <typename T> class TensorWrapper {
         }
     }
 
+    TensorWrapper ones() const {
+        TensorWrapper res(TensorShape(this->getShape()), T(1), this->getDevice());
+        return res;
+    }
+
+    TensorWrapper zeros() const {
+        TensorWrapper res(
+            TensorShape(this->getShape()), T(0), this->getDevice());
+        return res;
+    }
+
+    TensorWrapper sameShapeWithValue (T initValue) const {
+        TensorWrapper res(
+            TensorShape(this->getShape()), T(initValue), this->getDevice());
+        return res;
+    }
+
   private:
     TensorData<T> data_; /**< Managed tensor data and metadata. */
 

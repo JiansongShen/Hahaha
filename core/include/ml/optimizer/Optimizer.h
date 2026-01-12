@@ -94,11 +94,10 @@ template <typename T> class Optimizer {
      * @brief Adds a parameter to the optimizer's tracking list.
      * @param param The tensor to be optimized.
      */
-    void addParameter(const Tensor<T>& param) {
+    virtual void addParameter(const Tensor<T>& param) {
         parameters_.push_back(param);
     }
 
-  protected:
     /**
      * @brief Gets the list of parameters (for subclasses).
      * @return std::vector<Tensor<T>>& Reference to parameters.
@@ -107,7 +106,7 @@ template <typename T> class Optimizer {
         return parameters_;
     }
 
-  private:
+  protected:
     std::vector<Tensor<T>> parameters_; /**< List of parameters to optimize. */
     T learningRate_;                    /**< Learning rate. */
 };

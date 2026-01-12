@@ -16,7 +16,9 @@
 // jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 
-#include "basic_linear_regression_train.h"
+#include "basic_adam_optimizer_example.h"
+#include "basic_sgd_optimizer_example.h"
 int main() {
-    nn_train_example();
+    basic_linear_regression_example();
+    basic_adam_optimizer_example();
 }
