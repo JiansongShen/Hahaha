@@ -61,17 +61,39 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
     static constexpr T DefaultBeta2 = 0.999;
     static constexpr T DefaultEpsilon = 1e-8;
   public:
+/**
+     * @brief Construct a new Adam Optimizer with default hyperparameters.
+     * @param parameters A vector of Tensors to be optimized.
+     * @param learningRate The step size used for each iteration.
+     */
     AdamOptimizer(const std::vector<Tensor<T>>& parameters,
                   const T learningRate)
         : Optimizer<T>(parameters, learningRate) {
     }
+
+    /**
+     * @brief Copy constructor from a base Optimizer.
+     * @param optimizer The optimizer instance to copy from.
+     */
     explicit AdamOptimizer(const Optimizer<T>& optimizer)
         : Optimizer<T>(optimizer) {
     }
 
+    /**
+     * @brief Move constructor from a base Optimizer.
+     * @param optimizer The optimizer instance to move from.
+     */
     explicit AdamOptimizer(Optimizer<T>&& optimizer) : Optimizer<T>(optimizer) {
     }
 
+    /**
+     * @brief Construct a new Adam Optimizer with custom hyperparameters.
+     * @param parameters A vector of Tensors to be optimized.
+     * @param learningRate The step size used for each iteration.
+     * @param beta1 Exponential decay rate for the first moment estimates.
+     * @param beta2 Exponential decay rate for the second-moment estimates.
+     * @param epsilon A small constant for numerical stability.
+     */
     AdamOptimizer(const std::vector<Tensor<T>>& parameters,
                   const T& learningRate,
                   T beta1,
@@ -81,6 +103,12 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
           epsilon_(epsilon) {
     }
 
+    /**
+     * @brief Adds a parameter to the optimizer's watch list.
+     * @details If the optimizer has already been prepared/initialized, this also 
+     * initializes the moment vectors (M and V) for the new parameter.
+     * @param param The Tensor parameter to add.
+     */
     void addParameter(const Tensor<T>& param) override {
         if (trainPrepared_) {
             parametersM_.push_back(param.getComputeNode()->getData()->zeros());
@@ -89,6 +117,11 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
         this->parameters_.push_back(param);
     }
 
+    /**
+     * @brief Performs a single optimization step (parameter update).
+     * @details This method calculates the bias-corrected first and second moment 
+     * estimates and updates the data of each parameter that requires gradients.
+     */
     void step() override {
         preTrainIfNeed();
         ++turn_;
@@ -119,13 +152,13 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
                 -this->learningRate_,
                 (mHat /= (epsilon_ + math::TensorComputeFun::sqrt(vHat))));
         }
-
     }
 
   private:
     /**
-     * @brief before the optimize process, firstly, set the optimizer inner
-     *      parameters
+     * @brief Initializes internal state (moment buffers) before the first training step.
+     * @details Allocates and zeros out the `parametersM_` and `parametersV_` vectors 
+     * based on the current parameters registered in the optimizer.
      */
     void preTrainIfNeed() {
         if (trainPrepared_) {
