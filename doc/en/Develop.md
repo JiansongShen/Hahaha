@@ -1,6 +1,6 @@
 ## Core Development Guidelines
 
-Welcome to the Hahaha project! This is an education-first deep learning framework built with C++23 and Meson. These guidelines ensure code consistency, maintainability, and educational value.
+Welcome to the Hahaha project! This is an education-first deep learning framework built with C++23 and CMake. These guidelines ensure code consistency, maintainability, and educational value.
 
 ### 1. Repository Structure
 - `core/include/`: Public headers (organized by module, e.g., `core/include/math/`).
@@ -13,17 +13,18 @@ Welcome to the Hahaha project! This is an education-first deep learning framewor
 ### 2. General Principles
 - **Education First**: Code must be concise and readable. Every module/function should have a clear intent. Use modern C++23 features but avoid unnecessary complexity.
 - **Balance Performance and Readability**: Core operations (like matmul) should be optimized but must include comments explaining the algorithm and trade-offs.
-- **Tooling Enforcement**: Use `clang-format` (formatting), `clang-tidy` (static analysis), Meson (build), and Valgrind/ASan (memory checks).
+- **Tooling Enforcement**: Use `clang-format` (formatting), `clang-tidy` (static analysis), CMake+vcpkg (build), and Valgrind/ASan (memory checks).
 - **Environment**: GCC/Clang with C++23 support; NVIDIA GPU for later CUDA stages.
 
 ### 3. Engineering Commands
 ```bash
 # Initialize and build (Debug)
-meson setup builddir --buildtype=debug
+cmake -S . -B builddir -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake --build builddir
 ninja -C builddir
 
 # Run tests
-meson test -C builddir -v
+ctest --test-dir builddir --output-on-failure
 
 # Format code
 python3 dev/format.py
@@ -96,24 +97,26 @@ All code must pass `clang-format` and `clang-tidy`.
 - **Prohibited**: Macro functions (use constexpr); Global variables (use class static); C-style arrays (use std::vector/span).
 
 ### 7. Testing and Benchmarking
-- **Unit Tests**: GoogleTest (Meson integrated); e.g., `TensorWrapperTest.cpp`.
+- **Unit Tests**: GoogleTest (CMake integrated via vcpkg); e.g., `TensorWrapperTest.cpp`.
 - **Coverage**: Target 90%; generated using `gcov/lcov`.
 - **Benchmarks**: Google Benchmark; e.g., `bench_matrix.cpp`.
 - **Integration Tests**: End-to-end (e.g., MLP training loops).
 - **Memory Checks**: Run ASan/Valgrind in CI.
 
 ### 8. Build and Dependencies
-- **Meson Configuration** (`meson.build` in project root):
-  ```meson
-  project('hahaha', 'cpp', version: '0.1.0', default_options: ['cpp_std=c++23'])
+- **CMake Configuration** (`CMakeLists.txt` in project root):
+  ```cmake
+  cmake_minimum_required(VERSION 3.20)
+  project(hahaha VERSION 0.0.1 LANGUAGES CXX)
+  set(CMAKE_CXX_STANDARD 23)
 
   # Include subdirectories
   subdir('core')
   subdir('tests')
   subdir('sample')
   ```
-- **Modular Build**: Each module (e.g., `core`) has its own `meson.build` defining static libraries and exporting dependencies.
-- **Dependency Management**: Dependencies are managed via `extern/externlibs` (e.g., ImGui, GLFW) or as Meson dependencies (e.g., GTest).
+- **Modular Build**: Each module (e.g., `core`, `tests`, `examples`) has its own `CMakeLists.txt` defining static libraries and targets.
+- **Dependency Management**: Dependencies are managed via repo-local vcpkg (`vcpkg/vcpkg_root/`) for GTest, GLFW, ImGui, etc.
 - **Third-party Integration**:
   - GoogleTest: For unit testing.
   - GLFW/ImGui: Located in `extern/externlibs`, used for visualization.
@@ -126,7 +129,7 @@ All code must pass `clang-format` and `clang-tidy`.
 
 ### 10. PR Checklist
 - [ ] Code compiles via `ninja -C builddir`.
-- [ ] All unit tests pass via `meson test -C builddir`.
+- [ ] All unit tests pass via `ctest --test-dir builddir`.
 - [ ] `python3 dev/format.py` has been run for consistent styling.
 - [ ] Key logic includes educational comments.
 - [ ] Doxygen comments added for new public APIs.

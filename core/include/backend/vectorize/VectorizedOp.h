@@ -21,9 +21,8 @@
 
 #include <cstddef>
 #include <span>
-#include <vector>
 
-namespace hahaha::backend::vectorize {
+namespace hahaha::backend {
 
 /**
  * @brief Base class for vectorized operations on large data sets.
@@ -57,6 +56,6 @@ class VectorizedOp {
     virtual size_t getPreferredWidth() const = 0;
 };
 
-} // namespace hahaha::backend::vectorize
+} // namespace hahaha::backend
 
 #endif // HAHAHA_BACKEND_VECTORIZE_VECTORIZED_OP_H

@@ -22,6 +22,8 @@
 #include <cstdint>
 #include <string>
 
+#include "DeviceBuffer.h"
+
 namespace hahaha::backend {
 
 /**
@@ -38,7 +40,8 @@ enum class DeviceType : std::uint8_t {
 /**
  * @brief Represents a compute device where data resides and operations occur.
  */
-struct alignas(2) Device {
+class alignas(8) Device {
+  public:
     DeviceType type = DeviceType::CPU; /**< Type of the device. */
     std::uint8_t id =
         0; /**< Unique identifier for multiple devices of the same type. */
@@ -51,7 +54,8 @@ struct alignas(2) Device {
      * @param deviceType Device type.
      * @param deviceId Device ID.
      */
-    explicit Device(DeviceType deviceType, std::uint8_t deviceId = 0)
+    explicit Device(const DeviceType deviceType,
+                    const std::uint8_t deviceId = 0)
         : type(deviceType), id(deviceId) {
     }
 
@@ -83,6 +87,13 @@ struct alignas(2) Device {
             break;
         }
         return deviceName + ":" + std::to_string(id);
+    }
+
+    DeviceBuffer allocate(size_t size) {
+        return DeviceBuffer();
+    }
+    DeviceBuffer deallocate(DeviceBuffer buffer) {
+        return DeviceBuffer();
     }
 };
 
