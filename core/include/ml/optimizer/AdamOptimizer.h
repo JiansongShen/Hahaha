@@ -31,19 +31,29 @@ using common::f64;
 using common::u64;
 
 /**
+ * @brief Adam Optimizer implementation.
  *
- * @tparam T /
-Initialize parameters θ
-Initialize m = 0, v = 0, t = 0
-While not converged:
-    t = t + 1
-    g = compute_gradient(θ)
-    m = β1 * m + (1 - β1) * g
-    v = β2 * v + (1 - β2) * (g ** 2)
-    m_hat = m / (1 - β1 ** t)
-    v_hat = v / (1 - β2 ** t)
-    θ = θ - η * m_hat / (sqrt(v_hat) + ε)
-*/
+ * Adam (Adaptive Moment Estimation) is an algorithm for first-order gradient-based
+ * optimization of stochastic objective functions, based on adaptive estimates of
+ * lower-order moments.
+ *
+ * The update rule is defined as:
+ *
+ *     t = t + 1
+ *     g_t = grad(theta_{t-1})
+ *     m_t = beta1 * m_{t-1} + (1 - beta1) * g_t
+ *     v_t = beta2 * v_{t-1} + (1 - beta2) * g_t^2
+ *     m_hat = m_t / (1 - beta1^t)
+ *     v_hat = v_t / (1 - beta2^t)
+ *     theta_t = theta_{t-1} - eta * m_hat / (sqrt(v_hat) + epsilon)
+ *
+ * Where:
+ * - eta: learning rate
+ * - beta1, beta2: coefficients for computing running averages of gradient and its square
+ * - epsilon: term added to the denominator to improve numerical stability
+ *
+ * @tparam T The numeric type (must be float or double).
+ */
 template <typename T> class AdamOptimizer : public Optimizer<T> {
     static_assert(utils::isLegalFloatType<T>::value,
                   "AdamOptimizer just supports float values");
