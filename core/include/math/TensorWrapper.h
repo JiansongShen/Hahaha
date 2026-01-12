@@ -1237,23 +1237,35 @@ template <typename T> class TensorWrapper {
         }
     }
 
+    /**
+     * @brief Creates a new tensor of the same shape and device filled with ones.
+     * @return TensorWrapper A new tensor where every element is initialized to 1.
+     */
     TensorWrapper ones() const {
         TensorWrapper res(TensorShape(this->getShape()), T(1), this->getDevice());
         return res;
     }
 
+    /**
+     * @brief Creates a new tensor of the same shape and device filled with zeros.
+     * @return TensorWrapper A new tensor where every element is initialized to 0.
+     */
     TensorWrapper zeros() const {
         TensorWrapper res(
             TensorShape(this->getShape()), T(0), this->getDevice());
         return res;
     }
 
-    TensorWrapper sameShapeWithValue (T initValue) const {
+    /**
+     * @brief Creates a new tensor of the same shape and device filled with a specific value.
+     * @param initValue The value to initialize all elements of the new tensor with.
+     * @return TensorWrapper A new tensor where every element is initialized to @p initValue.
+     */
+    TensorWrapper sameShapeWithValue(T initValue) const {
         TensorWrapper res(
             TensorShape(this->getShape()), T(initValue), this->getDevice());
         return res;
     }
-
   private:
     TensorData<T> data_; /**< Managed tensor data and metadata. */
 
