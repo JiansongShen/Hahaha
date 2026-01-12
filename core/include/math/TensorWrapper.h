@@ -311,19 +311,21 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise addition.
      *
-     * Plain-text formula:
-     * - res[i] = a[i] + b[i]
+     * Computes C = A + B element-wise.
      *
-     * Scalar behavior (plain text):
-     * - If one operand has totalSize == 1, it is treated as a scalar:
-     *   res[i] = tensor[i] + scalar
+     * Formula:
+     *     res[i] = a[i] + b[i]
+     *
+     * Scalar behavior:
+     * - If one operand is a scalar (totalSize == 1):
+     *     res[i] = tensor[i] + scalar
      *
      * Constraints:
-     * - For non-scalar case, shapes must match exactly (TensorWrapper-level).
-     * - For device execution, both tensors must be on the same device.
+     * - For non-scalar case, shapes must match exactly.
+     * - Both tensors must be on the same device.
      *
-     * @param other The tensor to add.
-     * @return TensorWrapper result tensor.
+     * @param other The tensor to add (B).
+     * @return TensorWrapper Result tensor (C).
      */
     TensorWrapper add(const TensorWrapper& other) const {
         checkSameDevice(other);
@@ -370,15 +372,17 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise subtraction.
      *
-     * Plain-text formula:
-     * - res[i] = a[i] - b[i]
+     * Computes C = A - B element-wise.
      *
-     * Scalar behavior (plain text):
-     * - tensor - scalar: res[i] = tensor[i] - scalar
-     * - scalar - tensor: res[i] = scalar - tensor[i]  (see subtractFrom)
+     * Formula:
+     *     res[i] = a[i] - b[i]
      *
-     * @param other The tensor to subtract.
-     * @return TensorWrapper result tensor.
+     * Scalar behavior:
+     * - Tensor - Scalar: res[i] = tensor[i] - scalar
+     * - Scalar - Tensor: res[i] = scalar - tensor[i] (see subtractFrom)
+     *
+     * @param other The tensor to subtract (B).
+     * @return TensorWrapper Result tensor (C).
      */
     TensorWrapper subtract(const TensorWrapper& other) const {
 
@@ -425,14 +429,16 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise multiplication.
      *
-     * Plain-text formula:
-     * - res[i] = a[i] * b[i]
+     * Computes C = A * B (Hadamard product).
      *
-     * Scalar behavior (plain text):
-     * - res[i] = tensor[i] * scalar
+     * Formula:
+     *     res[i] = a[i] * b[i]
      *
-     * @param other The tensor to multiply.
-     * @return TensorWrapper result tensor.
+     * Scalar behavior:
+     *     res[i] = tensor[i] * scalar
+     *
+     * @param other The tensor to multiply (B).
+     * @return TensorWrapper Result tensor (C).
      */
     TensorWrapper multiply(const TensorWrapper& other) const {
 
@@ -478,15 +484,17 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Element-wise division.
      *
-     * Plain-text formula:
-     * - res[i] = a[i] / b[i]  (b[i] != 0)
+     * Computes C = A / B element-wise.
      *
-     * Scalar behavior (plain text):
-     * - tensor / scalar: res[i] = tensor[i] / scalar  (scalar != 0)
-     * - scalar / tensor: res[i] = scalar / tensor[i]  (tensor[i] != 0)
+     * Formula:
+     *     res[i] = a[i] / b[i]   (b[i] != 0)
      *
-     * @param other The tensor to divide.
-     * @return TensorWrapper result tensor.
+     * Scalar behavior:
+     * - Tensor / Scalar: res[i] = tensor[i] / scalar   (scalar != 0)
+     * - Scalar / Tensor: res[i] = scalar / tensor[i]   (tensor[i] != 0)
+     *
+     * @param other The tensor to divide (B).
+     * @return TensorWrapper Result tensor (C).
      */
     TensorWrapper divide(const TensorWrapper& other) const {
 
@@ -665,11 +673,15 @@ template <typename T> class TensorWrapper {
     /**
      * @brief Matrix multiplication (for 2D tensors).
      *
-     * Formula: C[i, j] = sum(A[i, k] * B[k, j]) for k in 0..K-1
-     * where A is (M x K) and B is (K x N).
+     * Computes C = A * B.
      *
-     * @param other The tensor to multiply with.
-     * @return TensorWrapper result tensor.
+     * Formula:
+     *     C[i, j] = sum(A[i, k] * B[k, j])
+     *
+     * where A is (M x K) and B is (K x N), resulting in C of shape (M x N).
+     *
+     * @param other The tensor to multiply with (B).
+     * @return TensorWrapper Result tensor (C).
      */
     TensorWrapper matmul(const TensorWrapper& other) const {
         if (getDimensions() != 2 || other.getDimensions() != 2) {
@@ -1204,10 +1216,12 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief In-place update: this = this + alpha * other
-     * Useful for optimizers (e.g., SGD: param = param - lr * grad)
-     * @param alpha Scaling factor
-     * @param other Other tensor
+     * @brief In-place update: y = y + alpha * x
+     *
+     * Useful for optimizers (e.g., SGD: theta = theta - eta * grad).
+     *
+     * @param alpha Scaling factor.
+     * @param other Other tensor (x).
      */
     void axpy(T alpha, const TensorWrapper& other) {
         if (getShape() != other.getShape()) {
@@ -1223,6 +1237,35 @@ template <typename T> class TensorWrapper {
         }
     }
 
+    /**
+     * @brief Creates a new tensor of the same shape and device filled with ones.
+     * @return TensorWrapper A new tensor where every element is initialized to 1.
+     */
+    TensorWrapper ones() const {
+        TensorWrapper res(TensorShape(this->getShape()), T(1), this->getDevice());
+        return res;
+    }
+
+    /**
+     * @brief Creates a new tensor of the same shape and device filled with zeros.
+     * @return TensorWrapper A new tensor where every element is initialized to 0.
+     */
+    TensorWrapper zeros() const {
+        TensorWrapper res(
+            TensorShape(this->getShape()), T(0), this->getDevice());
+        return res;
+    }
+
+    /**
+     * @brief Creates a new tensor of the same shape and device filled with a specific value.
+     * @param initValue The value to initialize all elements of the new tensor with.
+     * @return TensorWrapper A new tensor where every element is initialized to @p initValue.
+     */
+    TensorWrapper sameShapeWithValue(T initValue) const {
+        TensorWrapper res(
+            TensorShape(this->getShape()), T(initValue), this->getDevice());
+        return res;
+    }
   private:
     TensorData<T> data_; /**< Managed tensor data and metadata. */
 

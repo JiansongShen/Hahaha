@@ -27,7 +27,7 @@ cmake -S . -B "${BUILD_DIR}" -G Ninja \
   -DHAHAHA_BUILD_EXAMPLES=OFF \
   -DHAHAHA_ENABLE_COVERAGE=ON
 
-cmake --build "${BUILD_DIR}" --parallel 2
+cmake --build "${BUILD_DIR}" --parallel 8
 ctest --test-dir "${BUILD_DIR}" --output-on-failure
 
 GCOVR_COMMON_ARGS=(
