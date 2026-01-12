@@ -26,8 +26,26 @@
 #include "TensorWrapper.h"
 
 namespace hahaha::math {
+
+/**
+ * @brief Collection of element-wise mathematical functions for TensorWrapper.
+ *
+ * This class provides static methods to perform common mathematical operations
+ * on tensors, supporting both out-of-place (returning new tensor) and
+ * in-place modifications.
+ */
 class TensorComputeFun {
   public:
+    /**
+     * @brief Computes the element-wise square root of the input tensor.
+     *
+     * Formula:
+     *     y[i] = sqrt(x[i])
+     *
+     * @tparam T The numeric type of the tensor.
+     * @param input The input tensor x.
+     * @return TensorWrapper<T> A new tensor containing the square root values.
+     */
     template <typename T>
     static TensorWrapper<T> sqrt(TensorWrapper<T>& input) {
         TensorWrapper<T> res;
@@ -38,6 +56,16 @@ class TensorComputeFun {
         return res;
     }
 
+    /**
+     * @brief Computes the element-wise square root in-place.
+     *
+     * Formula:
+     *     x[i] = sqrt(x[i])
+     *
+     * @tparam T The numeric type of the tensor.
+     * @param input The input tensor to modify x.
+     * @return TensorWrapper<T> Reference to the modified input tensor.
+     */
     template <typename T>
         static TensorWrapper<T> sqrtInPlace(TensorWrapper<T>& input) {
         for (size_t i = 0; i < input.getTotalSize(); ++i) {
@@ -46,11 +74,31 @@ class TensorComputeFun {
         return input;
     }
 
+    /**
+     * @brief Computes the element-wise square of the input tensor.
+     *
+     * Formula:
+     *     y[i] = x[i]^2
+     *
+     * @tparam T The numeric type of the tensor.
+     * @param input The input tensor x.
+     * @return TensorWrapper<T> A new tensor containing the squared values.
+     */
     template <typename T>
     static TensorWrapper<T> square(TensorWrapper<T>& input) {
         return input * input;
     }
 
+    /**
+     * @brief Computes the element-wise square in-place.
+     *
+     * Formula:
+     *     x[i] = x[i]^2
+     *
+     * @tparam T The numeric type of the tensor.
+     * @param input The input tensor to modify x.
+     * @return TensorWrapper<T> Reference to the modified input tensor.
+     */
     template <typename T>
     static TensorWrapper<T> squareInPlace(TensorWrapper<T>& input) {
         input *= input;

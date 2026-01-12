@@ -32,39 +32,50 @@ using common::f64;
 using common::u64;
 
 /**
+ * @brief AdamW Optimizer implementation.
  *
- * @tparam T /
-Initialize parameters θ
-Initialize m = 0, v = 0, t = 0
-While not converged:
-    t = t + 1
-    g = compute_gradient(θ)
-    m = β1 * m + (1 - β1) * g
-    v = β2 * v + (1 - β2) * (g ** 2)
-    m_hat = m / (1 - β1 ** t)
-    v_hat = v / (1 - β2 ** t)
-    θ = θ - η * m_hat / (sqrt(v_hat) + ε)
-*/
+ * AdamW (Adam with decoupled weight decay) decouples the weight decay from the
+ * gradient update, which yields better generalization performance than standard
+ * Adam with L2 regularization.
+ *
+ * The update rule is defined as:
+ *
+ *     t = t + 1
+ *     g_t = grad(theta_{t-1})
+ *     m_t = beta1 * m_{t-1} + (1 - beta1) * g_t
+ *     v_t = beta2 * v_{t-1} + (1 - beta2) * g_t^2
+ *     m_hat = m_t / (1 - beta1^t)
+ *     v_hat = v_t / (1 - beta2^t)
+ *     theta_t = theta_{t-1} - eta * (alpha * m_hat / (sqrt(v_hat) + epsilon) + lambda * theta_{t-1})
+ *
+ * Where:
+ * - eta: learning rate
+ * - beta1, beta2: coefficients for computing running averages of gradient and its square
+ * - epsilon: term added to the denominator to improve numerical stability
+ * - lambda: weight decay coefficient
+ *
+ * @tparam T The numeric type (must be float or double).
+ */
 template <typename T> class AdamWOptimizer : public Optimizer<T> {
     static_assert(utils::isLegalFloatType<T>::value,
-                  "AdamOptimizer just supports float values");
+                  "AdamWOptimizer just supports float values");
     static constexpr T DefaultBeta1 = 0.9;
     static constexpr T DefaultBeta2 = 0.999;
     static constexpr T DefaultEpsilon = 1e-8;
     static constexpr T DefaultWeightDecay = 1e-6;
   public:
-    AdamOptimizer(const std::vector<Tensor<T>>& parameters,
+    AdamWOptimizer(const std::vector<Tensor<T>>& parameters,
                   const T learningRate)
         : Optimizer<T>(parameters, learningRate) {
     }
-    explicit AdamOptimizer(const Optimizer<T>& optimizer)
+    explicit AdamWOptimizer(const Optimizer<T>& optimizer)
         : Optimizer<T>(optimizer) {
     }
 
-    explicit AdamOptimizer(Optimizer<T>&& optimizer) : Optimizer<T>(optimizer) {
+    explicit AdamWOptimizer(Optimizer<T>&& optimizer) : Optimizer<T>(optimizer) {
     }
 
-    AdamOptimizer(const std::vector<Tensor<T>>& parameters,
+    AdamWOptimizer(const std::vector<Tensor<T>>& parameters,
                   const T& learningRate,
                   T beta1,
                   T beta2,
@@ -87,9 +98,11 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
         ++turn_;
         beta1PowT_ *= beta1_;
         beta2PowT_ *= beta2_;
-        T mCorr = 1.0 / (1.0 - beta1PowT_);
-        T vCorr = 1.0 / (1.0 - beta2PowT_);
-        T invSqrtVCorr = 1.0 / std::sqrt(vCorr);
+        
+        // Bias correction terms
+        T biasCorrection1 = 1.0 / (1.0 - beta1PowT_);
+        T biasCorrection2 = 1.0 / (1.0 - beta2PowT_);
+        T biasCorrection2Sqrt = std::sqrt(biasCorrection2);
         T lr = this->learningRate_;
 
         for (size_t i = 0; i < parametersM_.size(); ++i) {
@@ -101,22 +114,27 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
             auto grad = paramNode->getGrad();
             if (grad == nullptr) continue;
 
+            // Update biased first moment estimate: m = β1 * m + (1 - β1) * g
             paramM *= beta1_;
             paramM.axpy(1.0 - beta1_, *grad);
 
+            // Update biased second moment estimate: v = β2 * v + (1 - β2) * g^2
             paramV *= beta2_;
             paramV.axpy(1.0 - beta2_, math::TensorComputeFun::square(*grad));
 
+            // Compute denominator: sqrt(v_hat) + ε = sqrt(v / (1 - β2^t)) + ε
             auto denom = math::TensorComputeFun::sqrt(paramV);
-            denom *= invSqrtVCorr;
+            denom *= biasCorrection2Sqrt;
             denom += epsilon_;
 
-            auto update = (paramM * mCorr);
+            // Compute update: m_hat / denom = (m / (1 - β1^t)) / denom
+            auto update = (paramM * biasCorrection1);
             update /= denom;
 
-            // theta = theta - lr * weight_decay * theta
-            paramNode->getData()->axpy(-lr * weightDecay_, *paramNode->getData());
+            // Apply weight decay: θ = θ * (1 - lr * λ)
+            *paramNode->getData() *= (1 - lr * weightDecay_);
 
+            // Apply update: θ = θ - lr * update
             paramNode->getData()->axpy(-lr, update);
         }
 
