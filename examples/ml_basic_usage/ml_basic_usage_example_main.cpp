@@ -19,6 +19,10 @@
 #include "basic_adam_optimizer_example.h"
 #include "basic_sgd_optimizer_example.h"
 int main() {
+    std::cout << "========================SGD Optimizer======================="
+              << std::endl;
     basic_linear_regression_example();
+    std::cout << "========================Adam Optimizer======================="
+              << std::endl;
     basic_adam_optimizer_example();
 }
