@@ -1,19 +1,20 @@
-// Copyright (c) 2025 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
+//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//      https://www.apache.org/licenses/LICENSE-2.0
+//       https://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 //
-// Contributors:
-// Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
+//  Contributors:
+//  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
+//
 //
 
 #ifndef HAHAHA_BACKEND_GPU_DEVICE_BUFFER_H
@@ -22,7 +23,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace hahaha::backend::gpu {
+namespace hahaha::backend {
 
 // Forward declaration
 class GpuMemory;
@@ -46,7 +47,7 @@ class DeviceBuffer {
      * @param address The device address as an integer.
      * @param size The size of the buffer in bytes.
      */
-    DeviceBuffer(std::uintptr_t address, size_t size)
+    DeviceBuffer(const std::uintptr_t address, const size_t size)
         : address_(address), size_(size) {
     }
 
@@ -111,6 +112,6 @@ class DeviceBuffer {
     friend class GpuMemory;
 };
 
-} // namespace hahaha::backend::gpu
+} // namespace hahaha::backend
 
 #endif // HAHAHA_BACKEND_GPU_DEVICE_BUFFER_H

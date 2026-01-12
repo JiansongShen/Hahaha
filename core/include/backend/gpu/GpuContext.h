@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-namespace hahaha::backend::gpu {
+namespace hahaha::backend {
 
 /**
  * @brief Manages the GPU device context and resources.
@@ -69,6 +69,6 @@ class GpuContext {
     [[nodiscard]] virtual int getDeviceCount() const = 0;
 };
 
-} // namespace hahaha::backend::gpu
+} // namespace hahaha::backend
 
 #endif // HAHAHA_BACKEND_GPU_GPU_CONTEXT_H
