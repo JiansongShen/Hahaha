@@ -15,9 +15,57 @@ option(HAHAHA_ENABLE_COVERAGE "Enable coverage flags for tests (gcc/clang)." OFF
 set(HAHAHA_IMGUI_DIR "" CACHE PATH "Path to ImGui source directory (e.g. a git submodule at subprojects/imgui). If empty, CMake will auto-detect.")
 set(HAHAHA_GOOGLETEST_DIR "" CACHE PATH "Path to GoogleTest source directory (e.g. a git submodule at subprojects/googletest). If empty, CMake will auto-detect.")
 
+# ---- vcpkg (repo-local) helper ----
+# Prefer passing the vcpkg toolchain on the CLI:
+#   -DCMAKE_TOOLCHAIN_FILE=<repo>/vcpkg/vcpkg_root/scripts/buildsystems/vcpkg.cmake
+# But for convenience (and to mirror Meson's behavior), we also auto-hint CMAKE_PREFIX_PATH.
+set(HAHAHA_VCPKG_TRIPLET "auto" CACHE STRING "vcpkg triplet under vcpkg/vcpkg_root/installed/<triplet> (auto/x64-linux/arm64-linux/x64-osx/arm64-osx/x64-windows/...).")
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# MSVC: Use static runtime library to match vcpkg x64-windows-static triplet
+# This avoids LNK2038 "RuntimeLibrary mismatch" errors
+if(MSVC)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
+set(_HAHAHA_VCPKG_ROOT "${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root")
+set(_HAHAHA_VCPKG_INSTALLED "${_HAHAHA_VCPKG_ROOT}/installed")
+if(EXISTS "${_HAHAHA_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" AND EXISTS "${_HAHAHA_VCPKG_INSTALLED}")
+  set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "${HAHAHA_VCPKG_TRIPLET}")
+  if(_HAHAHA_VCPKG_TRIPLET_RESOLVED STREQUAL "auto" OR _HAHAHA_VCPKG_TRIPLET_RESOLVED STREQUAL "")
+    # Host-based heuristic (works for native CI runners).
+    # Windows: prefer static triplet to avoid DLL PATH issues in CI/tests
+    if(WIN32)
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64|arm64")
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-windows-static")
+      else()
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-windows-static")
+      endif()
+    elseif(APPLE)
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-osx")
+      else()
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-osx")
+      endif()
+    else()
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64|arm64")
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-linux")
+      else()
+        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-linux")
+      endif()
+    endif()
+  endif()
+
+  if(EXISTS "${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
+    list(PREPEND CMAKE_PREFIX_PATH "${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
+    message(STATUS "Using repo-local vcpkg prefix: ${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
+  else()
+    message(STATUS "Repo-local vcpkg detected but triplet '${_HAHAHA_VCPKG_TRIPLET_RESOLVED}' not found under ${_HAHAHA_VCPKG_INSTALLED}. Pass -DHAHAHA_VCPKG_TRIPLET=<triplet> or install it via vcpkg.")
+  endif()
+endif()
 
 # ---- core library ----
 
@@ -103,47 +151,12 @@ if(HAHAHA_DISPLAY)
     message(FATAL_ERROR "GLFW3 not found. Install glfw3 dev package or provide a CMake glfw3 config package, or configure with -DHAHAHA_DISPLAY=OFF.")
   endif()
 
-  # ---- ImGui (vendored as Meson subproject) ----
-  if(NOT HAHAHA_IMGUI_DIR)
-    if(EXISTS "${PROJECT_SOURCE_DIR}/subprojects/imgui/imgui.h")
-      set(HAHAHA_IMGUI_DIR "${PROJECT_SOURCE_DIR}/subprojects/imgui")
-    else()
-      file(GLOB _imgui_candidates LIST_DIRECTORIES true "${PROJECT_SOURCE_DIR}/subprojects/imgui-*")
-      foreach(_cand IN LISTS _imgui_candidates)
-        if(EXISTS "${_cand}/imgui.h")
-          set(HAHAHA_IMGUI_DIR "${_cand}")
-          break()
-        endif()
-      endforeach()
-    endif()
-  endif()
-  if(NOT HAHAHA_IMGUI_DIR OR NOT EXISTS "${HAHAHA_IMGUI_DIR}/imgui.h")
-    message(FATAL_ERROR "ImGui not found. Provide -DHAHAHA_IMGUI_DIR=/path/to/imgui (recommended: git submodule at subprojects/imgui), or configure with -DHAHAHA_DISPLAY=OFF.")
-  endif()
+  # ---- ImGui ----
+  set(_imgui_target "")
 
-  set(_imgui_root "${HAHAHA_IMGUI_DIR}")
-  # Build ImGui directly into libhahaha to keep installation/export simple.
-  target_sources(hahaha PRIVATE
-    "${_imgui_root}/imgui.cpp"
-    "${_imgui_root}/imgui_demo.cpp"
-    "${_imgui_root}/imgui_draw.cpp"
-    "${_imgui_root}/imgui_tables.cpp"
-    "${_imgui_root}/imgui_widgets.cpp"
-    "${_imgui_root}/backends/imgui_impl_glfw.cpp"
-    "${_imgui_root}/backends/imgui_impl_opengl3.cpp"
-    "${_imgui_root}/misc/cpp/imgui_stdlib.cpp"
-  )
-  target_include_directories(hahaha PRIVATE
-    "${_imgui_root}"
-    "${_imgui_root}/backends"
-    "${_imgui_root}/misc/cpp"
-  )
-
-  # Public (build-tree only): examples include <imgui.h>. Keep install interface clean.
-  target_include_directories(hahaha PUBLIC
-    $<BUILD_INTERFACE:${_imgui_root}>
-    $<BUILD_INTERFACE:${_imgui_root}/backends>
-  )
+  # Try finding via Config (e.g. vcpkg/Homebrew). Repo-local vcpkg prefix is hinted above.
+  find_package(imgui CONFIG REQUIRED)
+  target_link_libraries(hahaha PUBLIC imgui::imgui)
 
   # This mirrors Meson's declare_dependency() behavior: downstream targets that
   # link to hahaha get the needed libs as well.
@@ -165,7 +178,6 @@ install(EXPORT hahahaTargets
 )
 
 # ---- subprojects ----
-
 if(HAHAHA_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)

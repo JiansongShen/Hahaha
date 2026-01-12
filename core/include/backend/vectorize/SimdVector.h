@@ -23,7 +23,7 @@
 #include <span>
 #include <type_traits>
 
-namespace hahaha::backend::vectorize {
+namespace hahaha::backend {
 
 /**
  * @brief Represents a fixed-size vector for SIMD operations.
@@ -73,6 +73,6 @@ template <typename T, size_t Width> class SimdVector {
     void broadcast(T value);
 };
 
-} // namespace hahaha::backend::vectorize
+} // namespace hahaha::backend
 
 #endif // HAHAHA_BACKEND_VECTORIZE_SIMD_VECTOR_H
