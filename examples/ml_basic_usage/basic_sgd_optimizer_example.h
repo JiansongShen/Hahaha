@@ -23,14 +23,16 @@
 #include <random>
 #include <vector>
 
-#include "../../core/include/public/Tensor.h"
+#include "public/Tensor.h"
 #include "common/definitions.h"
 #include "ml/optimizer/SGDOptimizer.h"
 
 using hahaha::Tensor;
 using namespace hahaha::common;
 
-inline void nn_train_example() {
+inline void basic_linear_regression_example() {
+    constexpr int SmallestX = 0;
+    constexpr int BiggestX = 100;
 
     std::mt19937 engine;
 
@@ -41,10 +43,10 @@ inline void nn_train_example() {
             std::chrono::steady_clock::now().time_since_epoch().count())};
     engine.seed(seed);
 
-    std::uniform_real_distribution<float> dist(0, 100);
+    std::uniform_real_distribution<float> dist(SmallestX, BiggestX);
 
     constexpr int DataSize = 100;
-    constexpr int TrainLoop = 10;
+    constexpr int TrainLoop = 100;
 
     std::vector<f32> x;
     std::vector<f32> y;
@@ -53,9 +55,9 @@ inline void nn_train_example() {
 
     // y = 2 * x
     for (int i = 0; i < DataSize; ++i) {
-        auto val = dist(engine);
-        x[i] = val;
-        y[i] = val * 2;
+        const auto val = dist(engine);
+        x[i] = val / (BiggestX - SmallestX);
+        y[i] = x[i] * 2;
     }
 
     Tensor<f32> const xTensor1 = Tensor<f32>::buildFromVector(x);
@@ -68,7 +70,7 @@ inline void nn_train_example() {
     Tensor<f32> loss(1);
     loss.setRequiresGrad(true);
 
-    auto optimizer = hahaha::ml::SGDOptimizer<f32>({w}, 0.000001);
+    auto optimizer = hahaha::ml::SGDOptimizer<f32>({w}, 0.001);
 
     for (int i = 0; i < TrainLoop; ++i) {
         optimizer.zeroGrad();

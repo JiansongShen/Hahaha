@@ -14,6 +14,7 @@
 //
 // Contributors:
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
+//
 
 #include <gtest/gtest.h>
 
@@ -500,7 +501,7 @@ TEST_F(TensorWrapperUtilityTest, ScalarTensorTensorOps_TwoScalars_Work) {
     EXPECT_FLOAT_EQ(quot.at({}), 1.5f);
 }
 
-TEST_F(TensorWrapperUtilityTest, ScalarTensorTensorOps_AllScalarTypes) {
+TEST_F(TensorWrapperUtilityTest, ScalarTensorTensorOps_AllScalarTypes_Add) {
     // Test operations with different scalar representations
     // 0D scalar
     TensorWrapper<float> s0(2.0f);
@@ -525,4 +526,82 @@ TEST_F(TensorWrapperUtilityTest, ScalarTensorTensorOps_AllScalarTypes) {
     TensorWrapper<float> s3b(NestedData<float>{{{3.0f}}});
     auto r3 = s3 + s3b;
     EXPECT_FLOAT_EQ(r3.at({0, 0, 0}), 5.0f);
+}
+TEST_F(TensorWrapperUtilityTest, ScalarTensorTensorOps_AllScalarTypes_Sub) {
+    // Test operations with different scalar representations
+    // 0D scalar
+    TensorWrapper<float> s0(2.0f);
+    TensorWrapper<float> s0b(3.0f);
+    auto r0 = s0 - s0b;
+    EXPECT_FLOAT_EQ(r0.at({}), -1.0f);
+
+    // 1D scalar [1]
+    TensorWrapper<float> s1(NestedData<float>{2.0f});
+    TensorWrapper<float> s1b(NestedData<float>{3.0f});
+    auto r1 = s1 - s1b;
+    EXPECT_FLOAT_EQ(r1.at({0}), -1.0f);
+
+    // 2D scalar [1, 1]
+    TensorWrapper<float> s2(NestedData<float>{{2.0f}});
+    TensorWrapper<float> s2b(NestedData<float>{{3.0f}});
+    auto r2 = s2 - s2b;
+    EXPECT_FLOAT_EQ(r2.at({0, 0}), -1.0f);
+
+    // 3D scalar [1, 1, 1]
+    TensorWrapper<float> s3(NestedData<float>{{{2.0f}}});
+    TensorWrapper<float> s3b(NestedData<float>{{{3.0f}}});
+    auto r3 = s3 - s3b;
+    EXPECT_FLOAT_EQ(r3.at({0, 0, 0}), -1.0f);
+}
+TEST_F(TensorWrapperUtilityTest, ScalarTensorTensorOps_AllScalarTypes_Mul) {
+    // Test operations with different scalar representations
+    // 0D scalar
+    TensorWrapper<float> s0(2.0f);
+    TensorWrapper<float> s0b(3.0f);
+    auto r0 = s0 * s0b;
+    EXPECT_FLOAT_EQ(r0.at({}), 6.0f);
+
+    // 1D scalar [1]
+    TensorWrapper<float> s1(NestedData<float>{2.0f});
+    TensorWrapper<float> s1b(NestedData<float>{3.0f});
+    auto r1 = s1 * s1b;
+    EXPECT_FLOAT_EQ(r1.at({0}), 6.0f);
+
+    // 2D scalar [1, 1]
+    TensorWrapper<float> s2(NestedData<float>{{2.0f}});
+    TensorWrapper<float> s2b(NestedData<float>{{3.0f}});
+    auto r2 = s2 * s2b;
+    EXPECT_FLOAT_EQ(r2.at({0, 0}), 6.0f);
+
+    // 3D scalar [1, 1, 1]
+    TensorWrapper<float> s3(NestedData<float>{{{2.0f}}});
+    TensorWrapper<float> s3b(NestedData<float>{{{3.0f}}});
+    auto r3 = s3 * s3b;
+    EXPECT_FLOAT_EQ(r3.at({0, 0, 0}), 6.0f);
+}
+TEST_F(TensorWrapperUtilityTest, ScalarTensorTensorOps_AllScalarTypes_Div) {
+    // Test operations with different scalar representations
+    // 0D scalar
+    TensorWrapper<float> s0(2.0f);
+    TensorWrapper<float> s0b(3.0f);
+    auto r0 = s0 / s0b;
+    EXPECT_FLOAT_EQ(r0.at({}), 2.0f / 3.0f);
+
+    // 1D scalar [1]
+    TensorWrapper<float> s1(NestedData<float>{2.0f});
+    TensorWrapper<float> s1b(NestedData<float>{3.0f});
+    auto r1 = s1 / s1b;
+    EXPECT_FLOAT_EQ(r1.at({0}), 2.0f / 3.0f);
+
+    // 2D scalar [1, 1]
+    TensorWrapper<float> s2(NestedData<float>{{2.0f}});
+    TensorWrapper<float> s2b(NestedData<float>{{3.0f}});
+    auto r2 = s2 / s2b;
+    EXPECT_FLOAT_EQ(r2.at({0, 0}), 2.0f / 3.0f);
+
+    // 3D scalar [1, 1, 1]
+    TensorWrapper<float> s3(NestedData<float>{{{2.0f}}});
+    TensorWrapper<float> s3b(NestedData<float>{{{3.0f}}});
+    auto r3 = s3 / s3b;
+    EXPECT_FLOAT_EQ(r3.at({0, 0, 0}), 2.0f / 3.0f);
 }
