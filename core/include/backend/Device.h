@@ -30,11 +30,12 @@ namespace hahaha::backend {
  * @brief Types of devices supported for computation.
  */
 enum class DeviceType : std::uint8_t {
-    CPU,  /**< Standard Central Processing Unit. */
-    GPU,  /**< Graphics Processing Unit. */
-    CUDA, /**< NVIDIA CUDA Device. */
-    SIMD  /**< Single Instruction, Multiple Data (vectorized CPU instructions).
-           */
+    CPU = 0,
+    CUDA = 1, // NVIDIA GPUs
+    HIP = 2,  // AMD GPUs
+    MPS = 3,  // Apple Silicon
+    XLA = 4,  // TPUs / OpenXLA
+    COMPILE_TIME_MAX = 5
 };
 
 /**
@@ -74,14 +75,20 @@ class alignas(8) Device {
         case DeviceType::CPU:
             deviceName = "CPU";
             break;
-        case DeviceType::GPU:
-            deviceName = "GPU";
-            break;
         case DeviceType::CUDA:
             deviceName = "CUDA";
             break;
-        case DeviceType::SIMD:
-            deviceName = "SIMD";
+        case DeviceType::HIP:
+            deviceName = "HIP";
+            break;
+        case DeviceType::MPS:
+            deviceName = "MPS";
+            break;
+        case DeviceType::XLA:
+            deviceName = "XLA";
+            break;
+        default:
+            deviceName = "Unknown";
             break;
         }
         return deviceName + ":" + std::to_string(id_);

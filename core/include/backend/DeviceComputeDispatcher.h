@@ -186,7 +186,7 @@ std::expected<void, Error> dispatchAdd(const math::TensorWrapper<T>& lhs,
     if constexpr (dev == DeviceType::CPU) {
         cpu_add(shape, lStride, rStride, lBuf, rBuf, resBuf);
         return {};
-    } else if constexpr (dev == DeviceType::CUDA || dev == DeviceType::GPU) {
+    } else if constexpr (dev == DeviceType::CUDA) {
         cuda_add(lBuf, rBuf, resBuf);
         return {};
     }
@@ -202,7 +202,6 @@ std::expected<void, Error> dispatchAdd(const DeviceType dev,
     case DeviceType::CPU:
         return dispatchAdd<T, DeviceType::CPU>(lhs, rhs, res);
     case DeviceType::CUDA:
-    case DeviceType::GPU:
         return dispatchAdd<T, DeviceType::CUDA>(lhs, rhs, res);
     default:
         return std::unexpected(DeviceNotSupportedError());
@@ -261,7 +260,7 @@ std::expected<void, Error> dispatchSub(const math::TensorWrapper<T>& lhs,
     if constexpr (dev == DeviceType::CPU) {
         cpu_sub(shape, lStride, rStride, lBuf, rBuf, resBuf);
         return {};
-    } else if constexpr (dev == DeviceType::CUDA || dev == DeviceType::GPU) {
+    } else if constexpr (dev == DeviceType::CUDA) {
         cuda_sub(lBuf, rBuf, resBuf);
         return {};
     }
@@ -277,7 +276,6 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
     case DeviceType::CPU:
         return dispatchSub<T, DeviceType::CPU>(lhs, rhs, res);
     case DeviceType::CUDA:
-    case DeviceType::GPU:
         return dispatchSub<T, DeviceType::CUDA>(lhs, rhs, res);
     default:
         return std::unexpected(DeviceNotSupportedError());
@@ -350,7 +348,7 @@ std::expected<void, Error> dispatchMul(const math::TensorWrapper<T>& lhs,
     if constexpr (dev == DeviceType::CPU) {
         cpu_mul(shape, lStride, rStride, lBuf, rBuf, resBuf);
         return {};
-    } else if constexpr (dev == DeviceType::CUDA || dev == DeviceType::GPU) {
+    } else if constexpr (dev == DeviceType::CUDA) {
         cuda_mul(lBuf, rBuf, resBuf);
         return {};
     }
@@ -366,7 +364,6 @@ std::expected<void, Error> dispatchMul(const DeviceType dev,
     case DeviceType::CPU:
         return dispatchMul<T, DeviceType::CPU>(lhs, rhs, res);
     case DeviceType::CUDA:
-    case DeviceType::GPU:
         return dispatchMul<T, DeviceType::CUDA>(lhs, rhs, res);
     default:
         return std::unexpected(DeviceNotSupportedError());
@@ -425,7 +422,7 @@ std::expected<void, Error> dispatchDiv(const math::TensorWrapper<T>& lhs,
     if constexpr (dev == DeviceType::CPU) {
         cpu_div(shape, lStride, rStride, lBuf, rBuf, resBuf);
         return {};
-    } else if constexpr (dev == DeviceType::CUDA || dev == DeviceType::GPU) {
+    } else if constexpr (dev == DeviceType::CUDA) {
         cuda_div(lBuf, rBuf, resBuf);
         return {};
     }
@@ -441,7 +438,6 @@ std::expected<void, Error> dispatchDiv(const DeviceType dev,
     case DeviceType::CPU:
         return dispatchDiv<T, DeviceType::CPU>(lhs, rhs, res);
     case DeviceType::CUDA:
-    case DeviceType::GPU:
         return dispatchDiv<T, DeviceType::CUDA>(lhs, rhs, res);
     default:
         return std::unexpected(DeviceNotSupportedError());

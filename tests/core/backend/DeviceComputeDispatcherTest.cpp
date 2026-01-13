@@ -213,7 +213,7 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_UnsupportedDevice_Throws) {
                              0.0f,
                              std::make_shared<hahaha::backend::CPUDevice>());
 
-    auto result = hahaha::backend::dispatchAdd(DeviceType::SIMD, a, b, res);
+    auto result = hahaha::backend::dispatchAdd(DeviceType::HIP, a, b, res);
     EXPECT_FALSE(result.has_value());
     EXPECT_EQ(result.error().code,
               hahaha::common::ErrorCode::DeviceNotSupported);
@@ -244,7 +244,7 @@ TEST(DeviceComputeDispatcherTest, DispatchMatMul_UnsupportedDevice_Throws) {
                              0.0f,
                              std::make_shared<hahaha::backend::CPUDevice>());
 
-    auto res_val = hahaha::backend::dispatchMatMul(DeviceType::SIMD, a, b, res);
+    auto res_val = hahaha::backend::dispatchMatMul(DeviceType::HIP, a, b, res);
     EXPECT_FALSE(res_val.has_value());
     EXPECT_EQ(res_val.error().code,
               hahaha::common::ErrorCode::DeviceNotSupported);
@@ -258,9 +258,9 @@ TEST(DeviceComputeDispatcherTest, DispatchScalar_UnsupportedDevice_Throws) {
                              0.0f,
                              std::make_shared<hahaha::backend::CPUDevice>());
 
-    EXPECT_FALSE(hahaha::backend::dispatchAdd(DeviceType::SIMD, a, 1.0f, res)
+    EXPECT_FALSE(hahaha::backend::dispatchAdd(DeviceType::HIP, a, 1.0f, res)
                      .has_value());
-    EXPECT_FALSE(hahaha::backend::dispatchAdd(DeviceType::SIMD, 1.0f, a, res)
+    EXPECT_FALSE(hahaha::backend::dispatchAdd(DeviceType::HIP, 1.0f, a, res)
                      .has_value());
 }
 
@@ -370,8 +370,7 @@ TEST(DeviceComputeDispatcherTest, DispatchAxpy_UnsupportedDevice_Throws) {
     TensorWrapper<float> res(
         TensorShape({3}), 2.0f, std::make_shared<hahaha::backend::CPUDevice>());
 
-    auto res_val =
-        hahaha::backend::dispatchAxpy(DeviceType::SIMD, 1.0f, x, res);
+    auto res_val = hahaha::backend::dispatchAxpy(DeviceType::HIP, 1.0f, x, res);
     EXPECT_FALSE(res_val.has_value());
     EXPECT_EQ(res_val.error().code,
               hahaha::common::ErrorCode::DeviceNotSupported);

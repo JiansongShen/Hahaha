@@ -64,8 +64,7 @@ template <typename T> class TensorData {
                    std::make_shared<backend::CPUDevice>())
         : shape_(shape), stride_(shape), device_(device) {
         size_t size = shape_.getTotalSize();
-        if (device_->getType() == backend::DeviceType::CPU
-            || device_->getType() == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU) {
             data_ = std::make_shared<T[]>(size);
             std::fill(data_.get(), data_.get() + size, initValue);
         } else {
@@ -85,8 +84,7 @@ template <typename T> class TensorData {
                             std::make_shared<backend::CPUDevice>())
         : shape_(shape), stride_(shape), device_(device) {
         const size_t size = shape_.getTotalSize();
-        if (device_->getType() == backend::DeviceType::CPU
-            || device_->getType() == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU) {
             data_ = std::make_shared<T[]>(size);
         } else {
             // TODO: Handle GPU allocation using compute::gpu::GpuMemory
@@ -101,8 +99,7 @@ template <typename T> class TensorData {
     TensorData(const TensorData& other)
         : shape_(other.shape_), stride_(other.stride_), device_(other.device_) {
         size_t size = shape_.getTotalSize();
-        if (device_->getType() == backend::DeviceType::CPU
-            || device_->getType() == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU) {
             data_ = std::make_shared<T[]>(size);
             std::copy(other.data_.get(), other.data_.get() + size, data_.get());
         } else {

@@ -193,7 +193,7 @@ TEST_F(TensorDataTest, Device_GetSet_Works) {
     TensorData<int> td(hahaha::math::TensorShape({1}), 1);
     EXPECT_EQ(td.getDevice()->getType(), hahaha::backend::DeviceType::CPU);
     td.setDevice((std::make_shared<hahaha::backend::GPUDevice>()));
-    EXPECT_EQ(td.getDevice()->getType(), hahaha::backend::DeviceType::GPU);
+    EXPECT_EQ(td.getDevice()->getType(), hahaha::backend::DeviceType::CUDA);
 }
 
 TEST_F(TensorDataTest, OperatorIndex_ReferencesUnderlyingData) {

@@ -26,8 +26,8 @@ namespace hahaha::backend {
 
 class GPUDevice : public Device {
   public:
-    GPUDevice() {
-        this->type_ = DeviceType::GPU;
+    explicit GPUDevice(const DeviceType type = DeviceType::CUDA) {
+        this->type_ = type;
         this->id_ = 0;
     }
 

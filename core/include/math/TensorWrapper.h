@@ -198,14 +198,13 @@ template <typename T> class TensorWrapper {
         }
 
         // Logic for moving data between devices
-        if (device->getType() == backend::DeviceType::CPU
-            || device->getType() == backend::DeviceType::SIMD) {
-            if (data_.getDevice()->getType() == backend::DeviceType::GPU) {
+        if (device->getType() == backend::DeviceType::CPU) {
+            if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
                 // TODO(jiansongshen): Implement GPU to CPU transfer
                 throw std::runtime_error(
                     "GPU to CPU transfer not yet implemented");
             }
-        } else if (device->getType() == backend::DeviceType::GPU) {
+        } else if (device->getType() == backend::DeviceType::CUDA) {
             // TODO(jiansongshen): Implement CPU to GPU transfer
             throw std::runtime_error("CPU to GPU transfer not yet implemented");
         }

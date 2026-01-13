@@ -20,21 +20,41 @@
 
 #include <gtest/gtest.h>
 
+#include "backend/cpu/CPUDevice.h"
+#include "backend/gpu/GPUDevice.h"
+
+using hahaha::backend::CPUDevice;
 using hahaha::backend::Device;
 using hahaha::backend::DeviceType;
+using hahaha::backend::GPUDevice;
 
-// TEST(DeviceTest, ToString_AllTypes) {
-//     EXPECT_EQ(Device(DeviceType::CPU, 0).toString(), "CPU:0");
-//     EXPECT_EQ(Device(DeviceType::GPU, 1).toString(), "GPU:1");
-//     EXPECT_EQ(Device(DeviceType::SIMD, 2).toString(), "SIMD:2");
-// }
-//
-// TEST(DeviceTest, Equality) {
-//     Device d1(DeviceType::CPU, 0);
-//     Device d2(DeviceType::CPU, 0);
-//     Device d3(DeviceType::GPU, 0);
-//
-//     EXPECT_TRUE(d1 == d2);
-//     EXPECT_FALSE(d1 == d3);
-//     EXPECT_TRUE(d1 != d3);
-// }
+TEST(DeviceTest, ToString_AllTypes) {
+    EXPECT_EQ(CPUDevice().toString(), "CPU:0");
+    EXPECT_EQ(GPUDevice(DeviceType::CUDA).toString(), "CUDA:0");
+    EXPECT_EQ(GPUDevice(DeviceType::HIP).toString(), "HIP:0");
+    EXPECT_EQ(GPUDevice(DeviceType::MPS).toString(), "MPS:0");
+    EXPECT_EQ(GPUDevice(DeviceType::XLA).toString(), "XLA:0");
+}
+
+TEST(DeviceTest, Equality) {
+    CPUDevice d1;
+    CPUDevice d2;
+    GPUDevice d3(DeviceType::CUDA);
+
+    EXPECT_TRUE(d1 == d2);
+    EXPECT_FALSE(d1 == d3);
+    EXPECT_TRUE(d1 != d3);
+}
+
+TEST(DeviceTest, DifferentIds) {
+    // We can't easily change ID via public API of CPUDevice/GPUDevice yet
+    // without a custom constructor exposing ID. However, we can test that
+    // different types are not equal.
+
+    // For now, let's stick to testing what we can construct.
+    GPUDevice d1(DeviceType::CUDA);
+    GPUDevice d2(DeviceType::HIP);
+
+    EXPECT_FALSE(d1 == d2);
+    EXPECT_TRUE(d1 != d2);
+}
