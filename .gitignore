@@ -277,4 +277,4 @@ subprojects/*
 !subprojects/packagefiles/**
 subprojects/packagecache/
 
-vcpkg/
+vcpkg/*

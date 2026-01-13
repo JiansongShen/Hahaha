@@ -31,6 +31,6 @@ TEST(LogColorTest, ToString_CoversAllColorsAndDefault) {
     EXPECT_EQ(toString(LogColor::RESET), "\033[0m");
 
     // Force default branch.
-    auto invalid = static_cast<LogColor>(999);
+    constexpr auto invalid = static_cast<LogColor>(999);
     EXPECT_EQ(toString(invalid), "\033[0m");
 }

@@ -23,6 +23,7 @@
 #include <type_traits>
 #include <typeinfo>
 
+#include "backend/gpu/GPUDevice.h"
 #include "common/definitions.h"
 #include "math/ds/NestedData.h"
 #include "public/Tensor.h"
@@ -660,9 +661,8 @@ TYPED_TEST(TensorTypedTest, ElementAccess_OutOfBounds_ThrowsOutOfRange) {
 TYPED_TEST(TensorTypedTest, To_Gpu_ThrowsRuntimeError) {
     using T = TestFixture::Type;
     Tensor<T> t(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
-    EXPECT_THROW(
-        t.to(hahaha::backend::Device(hahaha::backend::DeviceType::GPU, 0)),
-        std::runtime_error);
+    EXPECT_THROW(t.to(std::make_shared<hahaha::backend::GPUDevice>()),
+                 std::runtime_error);
 }
 
 TYPED_TEST(TensorTypedTest, Clear_ResetsUnderlyingData) {

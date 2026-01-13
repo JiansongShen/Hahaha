@@ -42,9 +42,7 @@ enum class DeviceType : std::uint8_t {
  */
 class alignas(8) Device {
   public:
-    DeviceType type = DeviceType::CPU; /**< Type of the device. */
-    std::uint8_t id =
-        0; /**< Unique identifier for multiple devices of the same type. */
+    virtual ~Device() = default;
 
     /** @brief Default constructor (CPU, ID 0). */
     Device() = default;
@@ -56,12 +54,12 @@ class alignas(8) Device {
      */
     explicit Device(const DeviceType deviceType,
                     const std::uint8_t deviceId = 0)
-        : type(deviceType), id(deviceId) {
+        : type_(deviceType), id_(deviceId) {
     }
 
     /** @brief Check if two devices are identical. */
     bool operator==(const Device& other) const {
-        return type == other.type && id == other.id;
+        return type_ == other.type_ && id_ == other.id_;
     }
 
     /** @brief Check if two devices are different. */
@@ -72,7 +70,7 @@ class alignas(8) Device {
     /** @brief Get a string representation of the device. */
     [[nodiscard]] std::string toString() const {
         std::string deviceName;
-        switch (type) {
+        switch (type_) {
         case DeviceType::CPU:
             deviceName = "CPU";
             break;
@@ -86,15 +84,25 @@ class alignas(8) Device {
             deviceName = "SIMD";
             break;
         }
-        return deviceName + ":" + std::to_string(id);
+        return deviceName + ":" + std::to_string(id_);
     }
 
-    DeviceBuffer allocate(size_t size) {
-        return DeviceBuffer();
+    virtual DeviceBuffer allocate(size_t size) = 0;
+
+    virtual void deallocate(DeviceBuffer buffer) = 0;
+
+    [[nodiscard]] DeviceType getType() const {
+        return type_;
     }
-    DeviceBuffer deallocate(DeviceBuffer buffer) {
-        return DeviceBuffer();
+
+    [[nodiscard]] std::uint8_t getId() const {
+        return id_;
     }
+
+  protected:
+    DeviceType type_ = DeviceType::CPU; /**< Type of the device. */
+    std::uint8_t id_ =
+        0; /**< Unique identifier for multiple devices of the same type. */
 };
 
 } // namespace hahaha::backend

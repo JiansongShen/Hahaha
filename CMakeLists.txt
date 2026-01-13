@@ -11,6 +11,7 @@ option(HAHAHA_DISPLAY "Build visualization/display components (GLFW/OpenGL/ImGui
 option(HAHAHA_BUILD_TESTS "Build unit tests (GoogleTest)." ON)
 option(HAHAHA_BUILD_EXAMPLES "Build example programs." ON)
 option(HAHAHA_ENABLE_COVERAGE "Enable coverage flags for tests (gcc/clang)." OFF)
+option(HAHAHA_USE_CUDA "Enable CUDA support." OFF)
 
 set(HAHAHA_IMGUI_DIR "" CACHE PATH "Path to ImGui source directory (e.g. a git submodule at subprojects/imgui). If empty, CMake will auto-detect.")
 set(HAHAHA_GOOGLETEST_DIR "" CACHE PATH "Path to GoogleTest source directory (e.g. a git submodule at subprojects/googletest). If empty, CMake will auto-detect.")
@@ -69,9 +70,24 @@ endif()
 
 # ---- core library ----
 
-file(GLOB_RECURSE HAHAHA_SOURCES CONFIGURE_DEPENDS
-  "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
-)
+if(HAHAHA_USE_CUDA)
+  message("Using cuda to compile")
+  enable_language(CUDA)
+  set(CMAKE_CUDA_STANDARD 20)
+  set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bdynamic")
+
+  find_package(CUDAToolkit REQUIRED)
+
+  file(GLOB_RECURSE HAHAHA_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
+    "${PROJECT_SOURCE_DIR}/core/src/*.cu"
+  )
+else()
+  file(GLOB_RECURSE HAHAHA_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
+  )
+endif()
 
 if(NOT HAHAHA_DISPLAY)
   # Headless build: drop display sources that depend on GLFW/OpenGL/ImGui.
@@ -104,8 +120,16 @@ target_include_directories(hahaha
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-# Meson used this flag; keep it for compatibility (even if currently unused).
-target_compile_definitions(hahaha PRIVATE BUILDING_MESON_LIBRARY)
+target_compile_definitions(hahaha PUBLIC)
+
+if(HAHAHA_USE_CUDA)
+  target_compile_definitions(hahaha PUBLIC HAHAHA_USE_CUDA)
+  find_package(CUDAToolkit REQUIRED)
+  # Enable separable compilation if you use device linking or dynamic parallelism
+  set_target_properties(hahaha PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+  # Link against common CUDA libraries if needed (e.g. cuBLAS, cuFFT)
+   target_link_libraries(hahaha PRIVATE CUDA::cublas CUDA::cudart)
+endif()
 
 # dl (Linux/Unix) - harmless elsewhere.
 if(CMAKE_DL_LIBS)
@@ -149,6 +173,24 @@ if(HAHAHA_DISPLAY)
 
   if(NOT _glfw_target)
     message(FATAL_ERROR "GLFW3 not found. Install glfw3 dev package or provide a CMake glfw3 config package, or configure with -DHAHAHA_DISPLAY=OFF.")
+  endif()
+
+  # Workaround: Remove problematic absolute paths from GLFW's link interface on Linux
+  # Modern glibc includes rt and m functions, and hardcoded absolute paths may not exist
+  if(TARGET ${_glfw_target} AND UNIX AND NOT APPLE)
+    get_target_property(_glfw_link_libs ${_glfw_target} INTERFACE_LINK_LIBRARIES)
+    if(_glfw_link_libs)
+      set(_filtered_libs "")
+      foreach(_lib IN LISTS _glfw_link_libs)
+        # Keep the library unless it's a problematic absolute path
+        if(NOT _lib MATCHES "^/usr/lib.*/(librt\\.a|libm\\.so)$")
+          list(APPEND _filtered_libs "${_lib}")
+        else()
+          message(STATUS "Filtering out problematic library: ${_lib}")
+        endif()
+      endforeach()
+      set_target_properties(${_glfw_target} PROPERTIES INTERFACE_LINK_LIBRARIES "${_filtered_libs}")
+    endif()
   endif()
 
   # ---- ImGui ----

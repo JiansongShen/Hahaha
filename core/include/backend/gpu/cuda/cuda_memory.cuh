@@ -1,4 +1,5 @@
-//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
+//  Copyright (c) 2025 - 2026 Contributors of
+//  Hahaha(https://github.com/Napbad/Hahaha)
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -13,28 +14,20 @@
 //  limitations under the License.
 //
 //  Contributors:
-//  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
+//  Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 //
 
-#ifndef HAHAHA_GPUDEVICE_H_331F2FFB5CF742BB836F988DD6080929
-#define HAHAHA_GPUDEVICE_H_331F2FFB5CF742BB836F988DD6080929
-#include "GpuMemory.h"
-#include "backend/Device.h"
+#ifndef HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7
+#define HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7
 
 namespace hahaha::backend {
+#ifdef HAHAHA_USE_CUDA
+__global__ void cudaMemoryAllocate(size_t size, void** ptr);
 
-class GpuDevice : public Device {
-  public:
-    DeviceBuffer allocate(const size_t size) override {
-        return GpuMemory::allocate(size);
-    }
+__global__ void cudaMemoryFree(void* ptr);
 
-    DeviceBuffer deallocate(DeviceBuffer buffer) override {
-        return GpuMemory::deallocate(buffer);
-    }
-};
-
+#endif
 } // namespace hahaha::backend
 
-#endif // HAHAHA_GPUDEVICE_H_331F2FFB5CF742BB836F988DD6080929
+#endif // HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7

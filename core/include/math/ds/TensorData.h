@@ -21,8 +21,9 @@
 
 #include <memory>
 #include <stdexcept>
+#include <utility>
 
-#include "backend/Device.h"
+#include "backend/cpu/CPUDevice.h"
 #include "math/ds/NestedData.h"
 #include "math/ds/TensorShape.h"
 #include "math/ds/TensorStride.h"
@@ -59,11 +60,12 @@ template <typename T> class TensorData {
      */
     TensorData(const TensorShape& shape,
                T initValue,
-               const backend::Device device = backend::Device())
+               const std::shared_ptr<backend::Device>& device =
+                   std::make_shared<backend::CPUDevice>())
         : shape_(shape), stride_(shape), device_(device) {
         size_t size = shape_.getTotalSize();
-        if (device_.type == backend::DeviceType::CPU
-            || device_.type == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU
+            || device_->getType() == backend::DeviceType::SIMD) {
             data_ = std::make_shared<T[]>(size);
             std::fill(data_.get(), data_.get() + size, initValue);
         } else {
@@ -79,11 +81,12 @@ template <typename T> class TensorData {
      * @param device The device where the data should reside.
      */
     explicit TensorData(const TensorShape& shape,
-                        const backend::Device device = backend::Device())
+                        const std::shared_ptr<backend::Device>& device =
+                            std::make_shared<backend::CPUDevice>())
         : shape_(shape), stride_(shape), device_(device) {
         const size_t size = shape_.getTotalSize();
-        if (device_.type == backend::DeviceType::CPU
-            || device_.type == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU
+            || device_->getType() == backend::DeviceType::SIMD) {
             data_ = std::make_shared<T[]>(size);
         } else {
             // TODO: Handle GPU allocation using compute::gpu::GpuMemory
@@ -98,8 +101,8 @@ template <typename T> class TensorData {
     TensorData(const TensorData& other)
         : shape_(other.shape_), stride_(other.stride_), device_(other.device_) {
         size_t size = shape_.getTotalSize();
-        if (device_.type == backend::DeviceType::CPU
-            || device_.type == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU
+            || device_->getType() == backend::DeviceType::SIMD) {
             data_ = std::make_shared<T[]>(size);
             std::copy(other.data_.get(), other.data_.get() + size, data_.get());
         } else {
@@ -115,7 +118,7 @@ template <typename T> class TensorData {
      */
     TensorData(TensorData&& other) noexcept
         : data_(std::move(other.data_)), shape_(std::move(other.shape_)),
-          stride_(std::move(other.stride_)), device_(other.device_) {
+          stride_(std::move(other.stride_)), device_(std::move(other.device_)) {
     }
 
     /**
@@ -179,8 +182,7 @@ template <typename T> class TensorData {
      * @param data The NestedData object containing flattened data and shape.
      */
     explicit TensorData(NestedData<T>&& data) : shape_(data.getShape()) {
-        size_t size = data.getFlatData().size();
-        if (size > 0) {
+        if (const size_t size = data.getFlatData().size(); size > 0) {
             data_ = std::make_shared<T[]>(size);
             std::copy(data.getFlatData().begin(),
                       data.getFlatData().end(),
@@ -189,6 +191,7 @@ template <typename T> class TensorData {
             data_ = nullptr; // Explicitly null for truly empty tensors
         }
         stride_ = TensorStride(shape_);
+        device_ = std::make_shared<backend::CPUDevice>();
     }
 
     /**
@@ -260,7 +263,7 @@ template <typename T> class TensorData {
      * @brief Get the device where the data is stored.
      * @return Const reference to the device.
      */
-    [[nodiscard]] const backend::Device& getDevice() const {
+    [[nodiscard]] std::shared_ptr<backend::Device> getDevice() const {
         return device_;
     }
 
@@ -268,15 +271,15 @@ template <typename T> class TensorData {
      * @brief Set the device for this tensor data.
      * @param device New device.
      */
-    void setDevice(const backend::Device& device) {
-        device_ = device;
+    void setDevice(std::shared_ptr<backend::Device> device) {
+        device_ = std::move(device);
     }
 
   private:
     std::shared_ptr<T[]> data_; /**< Raw heap-allocated data array. */
     TensorShape shape_;         /**< Dimensionality metadata. */
     TensorStride stride_;       /**< Memory skip values for indexing. */
-    backend::Device device_;    /**< Device where data resides. */
+    std::shared_ptr<backend::Device> device_; /**< Device where data resides. */
 
     friend class TensorWrapper<T>;
 };

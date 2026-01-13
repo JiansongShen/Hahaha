@@ -120,21 +120,23 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
            ShapeInitValueDevice_CreatesCorrectTensor) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
-    TensorWrapper<T> tensor(
-        TensorShape({2, 3}), val, Device(DeviceType::CPU, 0));
+    TensorWrapper<T> tensor(TensorShape({2, 3}),
+                            val,
+                            std::make_shared<hahaha::backend::CPUDevice>());
     EXPECT_EQ(tensor.getTotalSize(), 6);
     EXPECT_EQ(tensor.getShape().size(), 2);
-    EXPECT_EQ(tensor.getDevice().type, DeviceType::CPU);
+    EXPECT_EQ(tensor.getDevice()->getType(), DeviceType::CPU);
     this->expectNear(tensor.at({0, 0}), val);
 }
 
 TYPED_TEST(TensorWrapperConstructionTypedTest,
            ShapeDevice_CreatesCorrectTensorWithDefaultInit) {
     using T = TestFixture::Type;
-    TensorWrapper<T> tensor(TensorShape({2, 2}), Device(DeviceType::CPU, 0));
+    TensorWrapper<T> tensor(TensorShape({2, 2}),
+                            std::make_shared<hahaha::backend::CPUDevice>());
     EXPECT_EQ(tensor.getTotalSize(), 4);
     EXPECT_EQ(tensor.getShape().size(), 2);
-    EXPECT_EQ(tensor.getDevice().type, DeviceType::CPU);
+    EXPECT_EQ(tensor.getDevice()->getType(), DeviceType::CPU);
     T expectedDefault = T(0);
     this->expectNear(tensor.at({0, 0}), expectedDefault);
 }
@@ -363,8 +365,8 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
            GetDevice_ReturnsCorrectDefaultDevice) {
     using T = TestFixture::Type;
     TensorWrapper<T> tensor(TensorShape({2, 2}));
-    EXPECT_EQ(tensor.getDevice().type, DeviceType::CPU);
-    EXPECT_EQ(tensor.getDevice().id, 0);
+    EXPECT_EQ(tensor.getDevice()->getType(), DeviceType::CPU);
+    EXPECT_EQ(tensor.getDevice()->getId(), 0);
 }
 
 TYPED_TEST(TensorWrapperConstructionTypedTest,

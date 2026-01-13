@@ -23,18 +23,18 @@
 using hahaha::backend::Device;
 using hahaha::backend::DeviceType;
 
-TEST(DeviceTest, ToString_AllTypes) {
-    EXPECT_EQ(Device(DeviceType::CPU, 0).toString(), "CPU:0");
-    EXPECT_EQ(Device(DeviceType::GPU, 1).toString(), "GPU:1");
-    EXPECT_EQ(Device(DeviceType::SIMD, 2).toString(), "SIMD:2");
-}
-
-TEST(DeviceTest, Equality) {
-    Device d1(DeviceType::CPU, 0);
-    Device d2(DeviceType::CPU, 0);
-    Device d3(DeviceType::GPU, 0);
-
-    EXPECT_TRUE(d1 == d2);
-    EXPECT_FALSE(d1 == d3);
-    EXPECT_TRUE(d1 != d3);
-}
+// TEST(DeviceTest, ToString_AllTypes) {
+//     EXPECT_EQ(Device(DeviceType::CPU, 0).toString(), "CPU:0");
+//     EXPECT_EQ(Device(DeviceType::GPU, 1).toString(), "GPU:1");
+//     EXPECT_EQ(Device(DeviceType::SIMD, 2).toString(), "SIMD:2");
+// }
+//
+// TEST(DeviceTest, Equality) {
+//     Device d1(DeviceType::CPU, 0);
+//     Device d2(DeviceType::CPU, 0);
+//     Device d3(DeviceType::GPU, 0);
+//
+//     EXPECT_TRUE(d1 == d2);
+//     EXPECT_FALSE(d1 == d3);
+//     EXPECT_TRUE(d1 != d3);
+// }

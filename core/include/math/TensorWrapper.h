@@ -11,6 +11,7 @@
 
 #include "backend/Device.h"
 #include "backend/DeviceComputeDispatcher.h"
+#include "backend/cpu/CPUDevice.h"
 #include "common/Operator.h"
 #include "math/ds/TensorData.h"
 #include "math/ds/TensorShape.h"
@@ -22,7 +23,6 @@ template <typename T> class ComputeNode;
 } // namespace hahaha::compute
 
 namespace hahaha::math {
-
 /**
  * @brief Main Tensor class providing a high-level API for numerical operations.
  *
@@ -49,7 +49,8 @@ template <typename T> class TensorWrapper {
      */
     explicit TensorWrapper(const TensorShape& shape,
                            T initValue,
-                           backend::Device device = backend::Device())
+                           std::shared_ptr<backend::Device> device =
+                               std::make_shared<backend::CPUDevice>())
         : data_(TensorData<T>(TensorShape(shape), initValue, device)) {
     }
 
@@ -59,7 +60,8 @@ template <typename T> class TensorWrapper {
      * @param shape The shape of the tensor.
      * @param device The device where the data should reside.
      */
-    explicit TensorWrapper(const TensorShape& shape, backend::Device device)
+    explicit TensorWrapper(const TensorShape& shape,
+                           std::shared_ptr<backend::Device> device)
         : data_(TensorData<T>(TensorShape(shape), T(0), device)) {
     }
 
@@ -69,7 +71,9 @@ template <typename T> class TensorWrapper {
      * @param shape The shape of the tensor.
      */
     explicit TensorWrapper(const TensorShape& shape)
-        : data_(TensorData<T>(TensorShape(shape), T(0), backend::Device())) {
+        : data_(TensorData<T>(TensorShape(shape),
+                              T(0),
+                              std::make_shared<backend::CPUDevice>())) {
     }
 
     /**
@@ -103,6 +107,7 @@ template <typename T> class TensorWrapper {
         }
         return *this;
     }
+
     /**
      * @brief Construct from NestedData (e.g., nested initializer list).
      * @param data The source nested data.
@@ -177,9 +182,9 @@ template <typename T> class TensorWrapper {
 
     /**
      * @brief Get the device where the tensor resides.
-     * @return const backend::Device& reference to the device.
+     * @return std::shared_ptr<backend::Device> reference to the device.
      */
-    [[nodiscard]] const backend::Device& getDevice() const {
+    [[nodiscard]] std::shared_ptr<backend::Device> getDevice() const {
         return data_.getDevice();
     }
 
@@ -187,20 +192,20 @@ template <typename T> class TensorWrapper {
      * @brief Move the tensor to a different device.
      * @param device The target device.
      */
-    void to(const backend::Device& device) {
-        if (data_.getDevice() == device) {
+    void to(std::shared_ptr<backend::Device> device) {
+        if (*data_.getDevice() == *device) {
             return;
         }
 
         // Logic for moving data between devices
-        if (device.type == backend::DeviceType::CPU
-            || device.type == backend::DeviceType::SIMD) {
-            if (data_.getDevice().type == backend::DeviceType::GPU) {
+        if (device->getType() == backend::DeviceType::CPU
+            || device->getType() == backend::DeviceType::SIMD) {
+            if (data_.getDevice()->getType() == backend::DeviceType::GPU) {
                 // TODO(jiansongshen): Implement GPU to CPU transfer
                 throw std::runtime_error(
                     "GPU to CPU transfer not yet implemented");
             }
-        } else if (device.type == backend::DeviceType::GPU) {
+        } else if (device->getType() == backend::DeviceType::GPU) {
             // TODO(jiansongshen): Implement CPU to GPU transfer
             throw std::runtime_error("CPU to GPU transfer not yet implemented");
         }
@@ -293,6 +298,7 @@ template <typename T> class TensorWrapper {
 
         size_t currentSize = getTotalSize();
         result.data_.setData(std::make_unique<T[]>(currentSize));
+        result.data_.setDevice(data_.getDevice());
         std::copy(data_.getData().get(),
                   data_.getData().get() + currentSize,
                   result.data_.getData().get());
@@ -360,7 +366,7 @@ template <typename T> class TensorWrapper {
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
         auto res = backend::dispatchAdd<T>(
-            data_.getDevice().type, *this, other, result);
+            data_.getDevice()->getType(), *this, other, result);
 
         if (!res) {
             throw std::runtime_error(res.error().message());
@@ -385,7 +391,6 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper Result tensor (C).
      */
     TensorWrapper subtract(const TensorWrapper& other) const {
-
         checkSameDevice(other);
 
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
@@ -417,7 +422,7 @@ template <typename T> class TensorWrapper {
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
         auto res = backend::dispatchSub<T>(
-            data_.getDevice().type, *this, other, result);
+            data_.getDevice()->getType(), *this, other, result);
 
         if (!res) {
             throw std::runtime_error(res.error().message());
@@ -441,7 +446,6 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper Result tensor (C).
      */
     TensorWrapper multiply(const TensorWrapper& other) const {
-
         checkSameDevice(other);
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
             return other.multiply(data_.getData()[0]);
@@ -472,7 +476,7 @@ template <typename T> class TensorWrapper {
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
         auto res = backend::dispatchMul<T>(
-            data_.getDevice().type, *this, other, result);
+            data_.getDevice()->getType(), *this, other, result);
 
         if (!res) {
             throw std::runtime_error(res.error().message());
@@ -497,7 +501,6 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper Result tensor (C).
      */
     TensorWrapper divide(const TensorWrapper& other) const {
-
         checkSameDevice(other);
 
         if (getTotalSize() == 1 && other.getTotalSize() > 1) {
@@ -532,7 +535,7 @@ template <typename T> class TensorWrapper {
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
         auto res = backend::dispatchDiv<T>(
-            data_.getDevice().type, *this, other, result);
+            data_.getDevice()->getType(), *this, other, result);
 
         if (!res) {
             throw std::runtime_error(res.error().message());
@@ -553,8 +556,8 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        auto res =
-            backend::dispatchAdd(data_.getDevice().type, *this, scalar, result);
+        auto res = backend::dispatchAdd(
+            data_.getDevice()->getType(), *this, scalar, result);
         if (!res) {
             throw std::runtime_error(res.error().message());
         }
@@ -574,8 +577,8 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        auto res =
-            backend::dispatchSub(data_.getDevice().type, *this, scalar, result);
+        auto res = backend::dispatchSub(
+            data_.getDevice()->getType(), *this, scalar, result);
         if (!res) {
             throw std::runtime_error(res.error().message());
         }
@@ -595,8 +598,8 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        auto res =
-            backend::dispatchMul(data_.getDevice().type, *this, scalar, result);
+        auto res = backend::dispatchMul(
+            data_.getDevice()->getType(), *this, scalar, result);
         if (!res) {
             throw std::runtime_error(res.error().message());
         }
@@ -618,8 +621,8 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        auto res =
-            backend::dispatchDiv(data_.getDevice().type, *this, scalar, result);
+        auto res = backend::dispatchDiv(
+            data_.getDevice()->getType(), *this, scalar, result);
         if (!res) {
             throw std::runtime_error(res.error().message());
         }
@@ -639,8 +642,8 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        auto res =
-            backend::dispatchSub(data_.getDevice().type, scalar, *this, result);
+        auto res = backend::dispatchSub(
+            data_.getDevice()->getType(), scalar, *this, result);
         if (!res) {
             throw std::runtime_error(res.error().message());
         }
@@ -661,8 +664,8 @@ template <typename T> class TensorWrapper {
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
 
-        auto res =
-            backend::dispatchDiv(data_.getDevice().type, scalar, *this, result);
+        auto res = backend::dispatchDiv(
+            data_.getDevice()->getType(), scalar, *this, result);
         if (!res) {
             throw std::runtime_error(res.error().message());
         }
@@ -713,7 +716,7 @@ template <typename T> class TensorWrapper {
         result.data_.setData(std::make_unique<T[]>(rows * cols));
 
         auto result_val = backend::dispatchMatMul(
-            data_.getDevice().type, *this, other, result);
+            data_.getDevice()->getType(), *this, other, result);
         if (!result_val) {
             throw std::runtime_error(result_val.error().message());
         }
@@ -742,6 +745,7 @@ template <typename T> class TensorWrapper {
         result.data_.setShape(TensorShape({cols, rows}));
         result.data_.setStride(TensorStride(result.data_.getShape()));
         result.data_.setData(std::make_unique<T[]>(getTotalSize()));
+        result.data_.setDevice(data_.getDevice());
 
         for (size_t i = 0; i < rows; ++i) {
             for (size_t j = 0; j < cols; ++j) {
@@ -818,6 +822,7 @@ template <typename T> class TensorWrapper {
             result.data_.setShape(TensorShape({}));
             result.data_.setStride(TensorStride(result.data_.getShape()));
             result.data_.setData(std::make_shared<T[]>(1));
+            result.data_.setDevice(data_.getDevice());
             result.getRawData().get()[0] = this->sum();
             return result;
         }
@@ -925,7 +930,6 @@ template <typename T> class TensorWrapper {
      *         or if newShape rank is smaller than current rank.
      */
     TensorWrapper broadcastTo(const TensorShape& newShape) {
-
         auto broadcasted =
             TensorShape::broadcastShape(this->data_.getShape(), newShape);
         if (!broadcasted.has_value() || TensorShape(*broadcasted) != newShape) {
@@ -952,7 +956,6 @@ template <typename T> class TensorWrapper {
         long selfShapeIdx = static_cast<long>(this->getShape().size() - 1);
 
         while (selfShapeIdx >= 0) {
-
             if (newShape.getDims()[newShapeIdx] != 1
                 && getShape()[selfShapeIdx] == 1) {
                 newStride.getStrides()[newShapeIdx] = 0;
@@ -964,6 +967,7 @@ template <typename T> class TensorWrapper {
 
         result.data_.setShape(newShape);
         result.data_.setStride(newStride);
+        result.data_.setDevice(data_.getDevice());
 
         return result;
     }
@@ -1050,6 +1054,7 @@ template <typename T> class TensorWrapper {
         result.data_.setStride(data_.getStride());
         const size_t tensorSize = getTotalSize();
         result.data_.setData(std::make_unique<T[]>(tensorSize));
+        result.data_.setDevice(data_.getDevice());
         for (size_t i = 0; i < tensorSize; ++i) {
             result.data_.getData()[i] = -data_.getData()[i];
         }
@@ -1230,25 +1235,30 @@ template <typename T> class TensorWrapper {
         checkSameDevice(other);
 
         // Dispatch to backend for hardware-specific optimization
-        auto res =
-            backend::dispatchAxpy(data_.getDevice().type, alpha, other, *this);
+        auto res = backend::dispatchAxpy(
+            data_.getDevice()->getType(), alpha, other, *this);
         if (!res) {
             throw std::runtime_error(res.error().message());
         }
     }
 
     /**
-     * @brief Creates a new tensor of the same shape and device filled with ones.
-     * @return TensorWrapper A new tensor where every element is initialized to 1.
+     * @brief Creates a new tensor of the same shape and device filled with
+     * ones.
+     * @return TensorWrapper A new tensor where every element is initialized
+     * to 1.
      */
     TensorWrapper ones() const {
-        TensorWrapper res(TensorShape(this->getShape()), T(1), this->getDevice());
+        TensorWrapper res(
+            TensorShape(this->getShape()), T(1), this->getDevice());
         return res;
     }
 
     /**
-     * @brief Creates a new tensor of the same shape and device filled with zeros.
-     * @return TensorWrapper A new tensor where every element is initialized to 0.
+     * @brief Creates a new tensor of the same shape and device filled with
+     * zeros.
+     * @return TensorWrapper A new tensor where every element is initialized to
+     * 0.
      */
     TensorWrapper zeros() const {
         TensorWrapper res(
@@ -1257,15 +1267,19 @@ template <typename T> class TensorWrapper {
     }
 
     /**
-     * @brief Creates a new tensor of the same shape and device filled with a specific value.
-     * @param initValue The value to initialize all elements of the new tensor with.
-     * @return TensorWrapper A new tensor where every element is initialized to @p initValue.
+     * @brief Creates a new tensor of the same shape and device filled with a
+     * specific value.
+     * @param initValue The value to initialize all elements of the new tensor
+     * with.
+     * @return TensorWrapper A new tensor where every element is initialized to
+     * @p initValue.
      */
     TensorWrapper sameShapeWithValue(T initValue) const {
         TensorWrapper res(
             TensorShape(this->getShape()), T(initValue), this->getDevice());
         return res;
     }
+
   private:
     TensorData<T> data_; /**< Managed tensor data and metadata. */
 
@@ -1274,11 +1288,12 @@ template <typename T> class TensorWrapper {
      * @param other The other tensor to check.
      */
     void checkSameDevice(const TensorWrapper& other) const {
-        if (getDevice() != other.getDevice()) {
+        if (*getDevice() != *other.getDevice()) {
+
             throw std::invalid_argument(
                 "Tensors must be on the same device for this operation (found "
-                + getDevice().toString() + " and "
-                + other.getDevice().toString() + ")");
+                + getDevice()->toString() + " and "
+                + other.getDevice()->toString() + ")");
         }
     }
 
@@ -1334,7 +1349,6 @@ template <typename T>
 TensorWrapper<T> operator/(T scalar, const TensorWrapper<T>& tensor) {
     return tensor.divideInto(scalar);
 }
-
 } // namespace hahaha::math
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_H
