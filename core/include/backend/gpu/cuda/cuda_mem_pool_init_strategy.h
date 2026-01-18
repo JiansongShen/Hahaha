@@ -18,25 +18,9 @@
 //
 //
 
-#ifdef HAHAHA_USE_CUDA
+#ifndef HAHAHA_CUDA_MEM_POOL_INIT_STRATEGY_H_CCB16DE138AF48EF8FA6BDC79DFBDBE8
+#define HAHAHA_CUDA_MEM_POOL_INIT_STRATEGY_H_CCB16DE138AF48EF8FA6BDC79DFBDBE8
 
-#include <driver_types.h>
-#endif
+struct CudaMemPoolInitStrategy {};
 
-#include "backend/gpu/cuda/cuda_memory.cuh"
-
-namespace hahaha::backend {
-
-#ifdef HAHAHA_USE_CUDA
-
-cudaError_t cudaMemoryAllocate(size_t size, void** ptr) {
-    cudaError_t err = cudaMalloc(ptr, size);
-    return err;
-}
-
-cudaError_t cudaMemoryFree(void* ptr) {
-    cudaError_t err = cudaFree(ptr);
-    return err;
-}
-#endif
-} // namespace hahaha::backend
+#endif // HAHAHA_CUDA_MEM_POOL_INIT_STRATEGY_H_CCB16DE138AF48EF8FA6BDC79DFBDBE8

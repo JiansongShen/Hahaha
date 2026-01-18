@@ -20,9 +20,8 @@
 #ifndef HAHAHA_GPU_MEMORY_H_8D60664C7DC2476F894F2E21EB3CEE0C
 #define HAHAHA_GPU_MEMORY_H_8D60664C7DC2476F894F2E21EB3CEE0C
 
-#include "CudaDevice.h"
-#include "CudaMemoryPool.h"
 #include "backend/gpu/GPUMemory.h"
+#include "backend/gpu/cuda/CudaMemoryPool.h"
 
 namespace hahaha::backend {
 class CudaMemory : public GPUMemory {

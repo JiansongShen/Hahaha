@@ -21,11 +21,12 @@
 #ifndef HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7
 #define HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7
 
+#include <driver_types.h>
 namespace hahaha::backend {
 #ifdef HAHAHA_USE_CUDA
-__global__ void cudaMemoryAllocate(size_t size, void** ptr);
+cudaError_t cudaMemoryAllocate(size_t size, void** ptr);
 
-__global__ void cudaMemoryFree(void* ptr);
+cudaError_t cudaMemoryFree(void* ptr);
 
 #endif
 } // namespace hahaha::backend

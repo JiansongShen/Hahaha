@@ -22,7 +22,9 @@
 #define HAHAHA_CUDADEVICE_H_4854C266038C49758A81068C61BC2447
 
 #ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
 #include <driver_types.h>
+#endif
 #endif
 
 #include "CudaMemory.h"
@@ -31,7 +33,7 @@
 
 namespace hahaha::backend {
 
-#ifdef HAHA_USE_CUDA
+#if defined(HAHAHA_USE_CUDA) && __has_include(<driver_types.h>)
 class CudaDevice : public GPUDevice {
   public:
     explicit CudaDevice(cudaDeviceProp* prop) : prop_(prop) {

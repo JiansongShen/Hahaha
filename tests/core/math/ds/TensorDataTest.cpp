@@ -370,3 +370,56 @@ TEST_F(TensorDataTest, ShapeValueConstructor_3D_Tensor) {
         EXPECT_EQ(td3D.getData()[i], 9);
     }
 }
+
+TEST_F(TensorDataTest, CopyConstructor_GpuDevice_ThrowsRuntimeError) {
+    hahaha::math::TensorShape shape({1});
+    TensorData<int> original(shape);
+    original.setDevice(std::make_shared<hahaha::backend::GPUDevice>());
+
+    EXPECT_THROW(TensorData<int> copied(original), std::runtime_error);
+}
+
+TEST_F(TensorDataTest, MoveConstructor_PreservesAllData) {
+    hahaha::math::TensorShape shape({2, 3});
+    TensorData<int> original(shape, 42);
+    auto originalShape = original.getShape();
+    auto originalStride = original.getStride();
+    auto originalDevice = original.getDevice();
+
+    TensorData<int> moved(std::move(original));
+
+    EXPECT_EQ(moved.getShape(), originalShape);
+    EXPECT_EQ(moved.getStride().toString(), originalStride.toString());
+    EXPECT_EQ(moved.getDevice(), originalDevice);
+    EXPECT_EQ(moved.getShape().getTotalSize(), 6);
+}
+
+TEST_F(TensorDataTest, Share_PreservesOriginalState) {
+    hahaha::math::TensorShape shape({2, 2});
+    TensorData<int> original(shape, 10);
+
+    auto shared = original.share();
+
+    // Verify shared data is the same
+    EXPECT_EQ(shared.getData().get(), original.getData().get());
+    EXPECT_EQ(shared.getShape(), original.getShape());
+    EXPECT_EQ(shared.getStride().toString(), original.getStride().toString());
+
+    // Modify shared and verify original is affected
+    shared.getData()[0] = 99;
+    EXPECT_EQ(original.getData()[0], 99);
+}
+
+TEST_F(TensorDataTest, SetData_ReplaceCorrectly) {
+    TensorData<int> td;
+    auto newData = std::make_shared<int[]>(5);
+    for (int i = 0; i < 5; ++i) {
+        newData[i] = i + 10;
+    }
+
+    td.setData(newData);
+
+    for (int i = 0; i < 5; ++i) {
+        EXPECT_EQ(td.getData()[i], i + 10);
+    }
+}

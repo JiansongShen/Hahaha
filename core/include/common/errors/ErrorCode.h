@@ -33,7 +33,10 @@ enum class ErrorCode : std::size_t {
                         ///< operation.
     Overflow,           ///< Numerical overflow occurred.
     InternalError,      ///< An internal logic error occurred.
-    Count               ///< Number of error codes (for bounds checking).
+
+    CudaDeviceOutOfMemory,
+
+    Count ///< Number of error codes (for bounds checking).
 };
 
 /**
@@ -44,7 +47,8 @@ constexpr const char* ErrorMessages[] = {
     "Invalid argument (e.g., shape mismatch)",
     "Device unsupported",
     "Numerical overflow",
-    "Internal error"};
+    "Internal error",
+    "Cuda device out of memory"};
 
 } // namespace hahaha::common
 

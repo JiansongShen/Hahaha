@@ -563,3 +563,68 @@ TEST_F(TensorShapeTest, Broadcast_3Dvs3D_DimOneBroadcasting) {
     ASSERT_TRUE(res.has_value());
     EXPECT_EQ(TensorShape(*res), TensorShape({2, 2, 3}));
 }
+
+TEST_F(TensorShapeTest, EdgeCasesWithLargeDimensions) {
+    // Test with large dimensions
+    TensorShape large({1000000, 1000000});
+    EXPECT_EQ(large.getTotalSize(), 1000000000000ULL);
+
+    // Test with very small dimensions
+    TensorShape tiny({1, 1, 1});
+    EXPECT_EQ(tiny.getTotalSize(), 1);
+}
+
+TEST_F(TensorShapeTest, ReverseOnEmptyShape) {
+    TensorShape empty;
+    empty.reverse(); // Should not crash
+    EXPECT_EQ(empty.getDims().size(), 0);
+}
+
+TEST_F(TensorShapeTest, ReverseSingleDimension) {
+    TensorShape single({5});
+    single.reverse();
+    EXPECT_EQ(single.getDims().size(), 1);
+    EXPECT_EQ(single.getDims()[0], 5);
+}
+
+TEST_F(TensorShapeTest, ReverseTwoDimensions) {
+    TensorShape two({3, 4});
+    two.reverse();
+    EXPECT_EQ(two.getDims().size(), 2);
+    EXPECT_EQ(two.getDims()[0], 4);
+    EXPECT_EQ(two.getDims()[1], 3);
+}
+
+TEST_F(TensorShapeTest, BroadcastWithVeryDifferentRanks) {
+    // Test broadcasting with significantly different ranks
+    auto res1 =
+        TensorShape::broadcastShape(TensorShape({}), TensorShape({2, 3, 4, 5}));
+    ASSERT_TRUE(res1.has_value());
+    EXPECT_EQ(TensorShape(*res1), TensorShape({2, 3, 4, 5}));
+
+    auto res2 =
+        TensorShape::broadcastShape(TensorShape({2, 3, 4, 5}), TensorShape({}));
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(TensorShape(*res2), TensorShape({2, 3, 4, 5}));
+}
+
+TEST_F(TensorShapeTest, InvalidBroadcastCombinations) {
+    // Test various combinations that should fail
+    auto res1 =
+        TensorShape::broadcastShape(TensorShape({2, 3}), TensorShape({3, 4}));
+    ASSERT_FALSE(res1.has_value());
+
+    auto res2 = TensorShape::broadcastShape(TensorShape({2, 3, 4}),
+                                            TensorShape({2, 3, 5}));
+    ASSERT_FALSE(res2.has_value());
+
+    auto res3 = TensorShape::broadcastShape(TensorShape({2}), TensorShape({3}));
+    ASSERT_FALSE(res3.has_value());
+}
+
+TEST_F(TensorShapeTest, GetDimsMutableAccess) {
+    TensorShape ts({1, 2, 3});
+    std::vector<size_t>& mutableDims = ts.getDims();
+    mutableDims[0] = 10;
+    EXPECT_EQ(ts.getDims()[0], 10);
+}

@@ -87,6 +87,13 @@ else()
   file(GLOB_RECURSE HAHAHA_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
   )
+  # Exclude CUDA sources from non-CUDA build to avoid missing header errors
+  foreach(_src IN LISTS HAHAHA_SOURCES)
+      string(REPLACE "\\" "/" _src_norm "${_src}")
+      if(_src_norm MATCHES "/core/src/backend/gpu/cuda/")
+          list(REMOVE_ITEM HAHAHA_SOURCES "${_src}")
+      endif()
+  endforeach()
 endif()
 
 if(NOT HAHAHA_DISPLAY)
