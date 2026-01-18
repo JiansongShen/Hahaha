@@ -45,7 +45,90 @@ class Bitmap {
      * @param size The total number of bits to manage.
      */
     explicit Bitmap(const sizeT size) : size_(size) {
-        words_ = std::make_unique<wordType[]>((size + wordSize - 1) / wordSize);
+        if (size_ > 0) {
+            words_ =
+                std::make_unique<wordType[]>((size_ + wordSize - 1) / wordSize);
+            clear();
+        }
+    }
+
+    /**
+     * @brief Construct a new Bitmap object with initial value.
+     *
+     * @param size The total number of bits to manage.
+     * @param initialValue The initial value for all bits.
+     */
+    Bitmap(const sizeT size, const bool initialValue) : size_(size) {
+        if (size_ > 0) {
+            words_ =
+                std::make_unique<wordType[]>((size_ + wordSize - 1) / wordSize);
+            if (initialValue) {
+                setAll();
+            } else {
+                clear();
+            }
+        }
+    }
+
+    /**
+     * @brief Copy constructor.
+     */
+    Bitmap(const Bitmap& other) : size_(other.size_) {
+        if (size_ > 0) {
+            const sizeT numWords = (size_ + wordSize - 1) / wordSize;
+            words_ = std::make_unique<wordType[]>(numWords);
+            std::copy(other.words_.get(),
+                      other.words_.get() + numWords,
+                      words_.get());
+        }
+    }
+
+    /**
+     * @brief Move constructor.
+     */
+    Bitmap(Bitmap&& other) noexcept
+        : size_(other.size_), words_(std::move(other.words_)) {
+        other.size_ = 0;
+    }
+
+    /**
+     * @brief Copy assignment operator.
+     */
+    Bitmap& operator=(const Bitmap& other) {
+        if (this != &other) {
+            size_ = other.size_;
+            if (size_ > 0) {
+                const sizeT numWords = (size_ + wordSize - 1) / wordSize;
+                words_ = std::make_unique<wordType[]>(numWords);
+                std::copy(other.words_.get(),
+                          other.words_.get() + numWords,
+                          words_.get());
+            } else {
+                words_.reset();
+            }
+        }
+        return *this;
+    }
+
+    /**
+     * @brief Move assignment operator.
+     */
+    Bitmap& operator=(Bitmap&& other) noexcept {
+        if (this != &other) {
+            size_ = other.size_;
+            words_ = std::move(other.words_);
+            other.size_ = 0;
+        }
+        return *this;
+    }
+
+    /**
+     * @brief Get the size of the bitmap.
+     *
+     * @return sizeT The total number of bits managed.
+     */
+    [[nodiscard]] sizeT size() const {
+        return size_;
     }
 
     /**
@@ -92,9 +175,33 @@ class Bitmap {
     }
 
     /**
+     * @brief Set all bits to 1.
+     */
+    void setAll() {
+        if (size_ == 0)
+            return;
+
+        const sizeT numWords = (size_ + wordSize - 1) / wordSize;
+        const sizeT lastWordBits = size_ % wordSize;
+
+        // Set all complete words to all 1s
+        std::fill_n(
+            words_.get(), numWords - (lastWordBits ? 1 : 0), ~wordType(0));
+
+        // Handle the last partial word if needed
+        if (lastWordBits) {
+            const wordType mask = (wordType(1) << lastWordBits) - 1;
+            words_[numWords - 1] = mask;
+        }
+    }
+
+    /**
      * @brief Clear all bits (set to 0).
      */
-    void clear() const {
+    void clear() {
+        if (size_ == 0)
+            return;
+
         const sizeT numWords = (size_ + wordSize - 1) / wordSize;
         std::fill_n(words_.get(), numWords, 0);
     }
@@ -116,6 +223,120 @@ class Bitmap {
     }
 
     /**
+     * @brief Count the number of set bits (population count).
+     *
+     * @return sizeT The number of bits set to 1.
+     */
+    [[nodiscard]] sizeT count() const {
+        if (size_ == 0)
+            return 0;
+
+        sizeT result = 0;
+        const sizeT numWords = (size_ + wordSize - 1) / wordSize;
+        const sizeT lastWordBits = size_ % wordSize;
+
+        // Count bits in all complete words
+        for (sizeT i = 0; i < (lastWordBits ? numWords - 1 : numWords); ++i) {
+            result += __builtin_popcountll(words_[i]);
+        }
+
+        // Handle the last partial word if needed
+        if (lastWordBits) {
+            const wordType lastWord = words_[numWords - 1];
+            const wordType mask = (wordType(1) << lastWordBits) - 1;
+            result += __builtin_popcountll(lastWord & mask);
+        }
+
+        return result;
+    }
+
+    /**
+     * @brief Check if all bits are set to 1.
+     *
+     * @return true If all bits are 1, false otherwise.
+     */
+    [[nodiscard]] bool all() const {
+        if (size_ == 0)
+            return true; // Empty bitmap has all bits set (vacuous truth)
+
+        const sizeT numWords = (size_ + wordSize - 1) / wordSize;
+        const sizeT lastWordBits = size_ % wordSize;
+
+        // Check all complete words
+        for (sizeT i = 0; i < (lastWordBits ? numWords - 1 : numWords); ++i) {
+            if (words_[i] != ~wordType(0)) {
+                return false;
+            }
+        }
+
+        // Check the last partial word if needed
+        if (lastWordBits) {
+            const wordType mask = (wordType(1) << lastWordBits) - 1;
+            if ((words_[numWords - 1] & mask) != mask) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @brief Check if no bits are set to 1.
+     *
+     * @return true If no bits are 1, false otherwise.
+     */
+    [[nodiscard]] bool none() const {
+        if (size_ == 0)
+            return true; // Empty bitmap has no bits set
+
+        const sizeT numWords = (size_ + wordSize - 1) / wordSize;
+        const sizeT lastWordBits = size_ % wordSize;
+
+        // Check all complete words
+        for (sizeT i = 0; i < (lastWordBits ? numWords - 1 : numWords); ++i) {
+            if (words_[i] != 0) {
+                return false;
+            }
+        }
+
+        // Check the last partial word if needed
+        if (lastWordBits) {
+            const wordType mask = (wordType(1) << lastWordBits) - 1;
+            if ((words_[numWords - 1] & mask) != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @brief Check if any bit is set to 1.
+     *
+     * @return true If at least one bit is 1, false otherwise.
+     */
+    [[nodiscard]] bool any() const {
+        if (size_ == 0)
+            return false; // Empty bitmap has no bits set
+
+        return !none();
+    }
+
+    /**
+     * @brief Flip the bit at the specified index.
+     *
+     * @param index The index of the bit to flip.
+     * @throws std::out_of_range If index is >= size.
+     */
+    void flip(const sizeT index) {
+        if (index >= size_) {
+            throw std::out_of_range("index out of range");
+        }
+        const sizeT wordIndex = index / wordSize;
+        words_[wordIndex] ^= wordType(1) << (index % wordSize);
+    }
+
+    /**
      * @brief Expand the bitmap by a specified number of bits.
      *
      * @param expandSize The number of bits to add.
@@ -129,9 +350,74 @@ class Bitmap {
         const sizeT newNumWords = (newSize + wordSize - 1) / wordSize;
 
         auto newWords = std::make_unique<wordType[]>(newNumWords);
-        for (sizeT i = 0; i < oldNumWords; ++i) {
-            newWords[i] = words_[i];
+        if (oldNumWords > 0) {
+            std::copy(words_.get(), words_.get() + oldNumWords, newWords.get());
         }
+        size_ = newSize;
+        words_ = std::move(newWords);
+    }
+
+    /**
+     * @brief Resize the bitmap to the specified size.
+     *
+     * @param newSize The new size for the bitmap.
+     * @param defaultValue The value to initialize new bits with if expanding.
+     */
+    void resize(const sizeT newSize, const bool defaultValue = false) {
+        if (newSize == size_) {
+            return;
+        }
+
+        if (newSize == 0) {
+            size_ = 0;
+            words_.reset();
+            return;
+        }
+
+        const sizeT oldSize = size_;
+        const sizeT oldNumWords = (size_ + wordSize - 1) / wordSize;
+        const sizeT newNumWords = (newSize + wordSize - 1) / wordSize;
+
+        auto newWords = std::make_unique<wordType[]>(newNumWords);
+
+        if (oldSize > 0) {
+            const sizeT minWords = std::min(oldNumWords, newNumWords);
+            std::copy(words_.get(), words_.get() + minWords, newWords.get());
+        }
+
+        if (newSize > oldSize && defaultValue) {
+            // Initialize new bits to true
+            const sizeT lastOldBit = oldSize % wordSize;
+            const sizeT lastNewBit = newSize % wordSize;
+
+            if (lastOldBit > 0) {
+                // Update the last word that had old bits
+                const sizeT lastOldWordIdx = oldSize / wordSize;
+                const wordType oldMask = (wordType(1) << lastOldBit) - 1;
+                const wordType newMask =
+                    (wordType(1) << std::min(wordSize, lastNewBit)) - 1;
+                newWords[lastOldWordIdx] =
+                    (newWords[lastOldWordIdx] & oldMask) | (newMask & ~oldMask);
+            }
+
+            // Set remaining words to all 1s if expanding
+            if (newSize > oldSize + (wordSize - lastOldBit) % wordSize) {
+                const sizeT startWord = (oldSize + wordSize - 1) / wordSize;
+                const sizeT endWord =
+                    (newSize + wordSize - 1) / wordSize - (lastNewBit ? 1 : 0);
+                for (sizeT i = startWord; i < endWord; ++i) {
+                    newWords[i] = ~wordType(0);
+                }
+                if (lastNewBit) {
+                    const wordType mask = (wordType(1) << lastNewBit) - 1;
+                    newWords[newNumWords - 1] = mask;
+                }
+            }
+        } else if (newSize > oldSize) {
+            // Initialize new bits to false (already done by default
+            // initialization)
+        }
+
         size_ = newSize;
         words_ = std::move(newWords);
     }
