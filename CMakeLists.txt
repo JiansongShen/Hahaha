@@ -82,7 +82,8 @@ if(NOT HAHAHA_DISPLAY)
       list(APPEND _filtered_sources "${_src}")
     endif()
   endforeach()
-  set(HAHAHA_SOURCES "${_filtered_sources}")
+  set(HAHAHA_SOURCES "${_filtered_sources}"
+          core/include/ml/dataset/DatasetInnerLoader.h)
 endif()
 
 add_library(hahaha STATIC ${HAHAHA_SOURCES})

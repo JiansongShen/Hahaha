@@ -18,6 +18,9 @@
 //
 
 #include <gtest/gtest.h>
+
+#include "ml/dataset/DatasetInner.h"
+
 class DatasetTest : public ::testing::Test {
   public:
   private:

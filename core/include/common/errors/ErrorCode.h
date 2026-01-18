@@ -33,6 +33,9 @@ enum class ErrorCode : std::size_t {
                         ///< operation.
     Overflow,           ///< Numerical overflow occurred.
     InternalError,      ///< An internal logic error occurred.
+
+    InvalidDataset,     ///< Invalid dataset provided.
+
     Count               ///< Number of error codes (for bounds checking).
 };
 
@@ -44,7 +47,9 @@ constexpr const char* ErrorMessages[] = {
     "Invalid argument (e.g., shape mismatch)",
     "Device unsupported",
     "Numerical overflow",
-    "Internal error"};
+    "Internal error",
+    "Invalid dataset"
+};
 
 } // namespace hahaha::common
 
