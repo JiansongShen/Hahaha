@@ -20,14 +20,24 @@
 
 #include "backend/gpu/cuda/CudaMemory.h"
 
+#include "utils/log/Logger.h"
+
 namespace hahaha::backend {
 
 void CudaMemory::copyDeviceToDevice(DeviceBuffer& dst,
                                     const DeviceBuffer& src) {
 }
 
+void CudaMemory::free(DeviceBuffer& deviceBuffer) {
+}
+
+// maybe more error handle strategy is needed
 DeviceBuffer CudaMemory::allocate(size_t size) {
-    return {};
+    if (size < smallMemoryBlockThreshold_) {
+        return allocateSmall(size);
+    }
+
+    return allocateBig(size);
 }
 
 void CudaMemory::copyDeviceToHost(std::span<std::byte> dst,
@@ -35,6 +45,26 @@ void CudaMemory::copyDeviceToHost(std::span<std::byte> dst,
 }
 
 void CudaMemory::memset(DeviceBuffer& dst, int value, size_t count) {
+}
+
+DeviceBuffer CudaMemory::allocateSmall(size_t size) {
+    if (auto expected = memoryPool_.allocateSmall(size); expected.has_value()) {
+        return DeviceBuffer{reinterpret_cast<std::uintptr_t>(expected.value()),
+                            size};
+    }
+
+    warn(std::format("cuda has no enough memory, need {}", size));
+    return {};
+}
+
+DeviceBuffer CudaMemory::allocateBig(size_t size) {
+    if (auto res = memoryPool_.allocateBig(size); res.has_value()) {
+        return DeviceBuffer{reinterpret_cast<std::uintptr_t>(res.value())
+                                + sizeof(CudaMemoryPool::BigCudaMemoryBlock),
+                            size};
+    }
+
+    throw std::runtime_error("cuda has no enough memory");
 }
 
 void CudaMemory::copyHostToDevice(DeviceBuffer& dst,

@@ -77,9 +77,7 @@ class Bitmap {
         if (size_ > 0) {
             const sizeT numWords = (size_ + wordSize - 1) / wordSize;
             words_ = std::make_unique<wordType[]>(numWords);
-            std::copy(other.words_.get(),
-                      other.words_.get() + numWords,
-                      words_.get());
+            std::copy_n(other.words_.get(), numWords, words_.get());
         }
     }
 
@@ -100,9 +98,7 @@ class Bitmap {
             if (size_ > 0) {
                 const sizeT numWords = (size_ + wordSize - 1) / wordSize;
                 words_ = std::make_unique<wordType[]>(numWords);
-                std::copy(other.words_.get(),
-                          other.words_.get() + numWords,
-                          words_.get());
+                std::copy_n(other.words_.get(), numWords, words_.get());
             } else {
                 words_.reset();
             }
@@ -142,7 +138,7 @@ class Bitmap {
             throw std::out_of_range("index out of range");
         }
         const sizeT wordIndex = index / wordSize;
-        words_[wordIndex] |= wordType(1) << (index % wordSize);
+        words_[wordIndex] |= static_cast<wordType>(1) << (index % wordSize);
     }
 
     /**
@@ -156,7 +152,7 @@ class Bitmap {
             throw std::out_of_range("index out of range");
         }
         const sizeT wordIndex = index / wordSize;
-        words_[wordIndex] &= ~(wordType(1) << (index % wordSize));
+        words_[wordIndex] &= ~(static_cast<wordType>(1) << (index % wordSize));
     }
 
     /**
@@ -185,12 +181,14 @@ class Bitmap {
         const sizeT lastWordBits = size_ % wordSize;
 
         // Set all complete words to all 1s
-        std::fill_n(
-            words_.get(), numWords - (lastWordBits ? 1 : 0), ~wordType(0));
+        std::fill_n(words_.get(),
+                    numWords - (lastWordBits ? 1 : 0),
+                    ~static_cast<wordType>(0));
 
         // Handle the last partial word if needed
         if (lastWordBits) {
-            const wordType mask = (wordType(1) << lastWordBits) - 1;
+            const wordType mask =
+                (static_cast<wordType>(1) << lastWordBits) - 1;
             words_[numWords - 1] = mask;
         }
     }
@@ -198,7 +196,7 @@ class Bitmap {
     /**
      * @brief Clear all bits (set to 0).
      */
-    void clear() {
+    void clear() const {
         if (size_ == 0)
             return;
 
@@ -219,7 +217,9 @@ class Bitmap {
             throw std::out_of_range("index out of range");
         }
         const sizeT wordIndex = index / wordSize;
-        return (words_[wordIndex] & (wordType(1) << (index % wordSize))) != 0;
+        return (words_[wordIndex]
+                & static_cast<wordType>(1) << (index % wordSize))
+            != 0;
     }
 
     /**
@@ -243,7 +243,8 @@ class Bitmap {
         // Handle the last partial word if needed
         if (lastWordBits) {
             const wordType lastWord = words_[numWords - 1];
-            const wordType mask = (wordType(1) << lastWordBits) - 1;
+            const wordType mask =
+                (static_cast<wordType>(1) << lastWordBits) - 1;
             result += __builtin_popcountll(lastWord & mask);
         }
 
@@ -264,15 +265,16 @@ class Bitmap {
 
         // Check all complete words
         for (sizeT i = 0; i < (lastWordBits ? numWords - 1 : numWords); ++i) {
-            if (words_[i] != ~wordType(0)) {
+            if (words_[i] != ~static_cast<wordType>(0)) {
                 return false;
             }
         }
 
         // Check the last partial word if needed
         if (lastWordBits) {
-            const wordType mask = (wordType(1) << lastWordBits) - 1;
-            if ((words_[numWords - 1] & mask) != mask) {
+            if (const wordType mask =
+                    (static_cast<wordType>(1) << lastWordBits) - 1;
+                (words_[numWords - 1] & mask) != mask) {
                 return false;
             }
         }
@@ -301,8 +303,9 @@ class Bitmap {
 
         // Check the last partial word if needed
         if (lastWordBits) {
-            const wordType mask = (wordType(1) << lastWordBits) - 1;
-            if ((words_[numWords - 1] & mask) != 0) {
+            if (const wordType mask =
+                    (static_cast<wordType>(1) << lastWordBits) - 1;
+                (words_[numWords - 1] & mask) != 0) {
                 return false;
             }
         }
@@ -333,7 +336,7 @@ class Bitmap {
             throw std::out_of_range("index out of range");
         }
         const sizeT wordIndex = index / wordSize;
-        words_[wordIndex] ^= wordType(1) << (index % wordSize);
+        words_[wordIndex] ^= static_cast<wordType>(1) << (index % wordSize);
     }
 
     /**
@@ -351,7 +354,7 @@ class Bitmap {
 
         auto newWords = std::make_unique<wordType[]>(newNumWords);
         if (oldNumWords > 0) {
-            std::copy(words_.get(), words_.get() + oldNumWords, newWords.get());
+            std::copy_n(words_.get(), oldNumWords, newWords.get());
         }
         size_ = newSize;
         words_ = std::move(newWords);
@@ -382,7 +385,7 @@ class Bitmap {
 
         if (oldSize > 0) {
             const sizeT minWords = std::min(oldNumWords, newNumWords);
-            std::copy(words_.get(), words_.get() + minWords, newWords.get());
+            std::copy_n(words_.get(), minWords, newWords.get());
         }
 
         if (newSize > oldSize && defaultValue) {
@@ -393,11 +396,13 @@ class Bitmap {
             if (lastOldBit > 0) {
                 // Update the last word that had old bits
                 const sizeT lastOldWordIdx = oldSize / wordSize;
-                const wordType oldMask = (wordType(1) << lastOldBit) - 1;
+                const wordType oldMask =
+                    (static_cast<wordType>(1) << lastOldBit) - 1;
                 const wordType newMask =
-                    (wordType(1) << std::min(wordSize, lastNewBit)) - 1;
+                    (static_cast<wordType>(1) << std::min(wordSize, lastNewBit))
+                    - 1;
                 newWords[lastOldWordIdx] =
-                    (newWords[lastOldWordIdx] & oldMask) | (newMask & ~oldMask);
+                    newWords[lastOldWordIdx] & oldMask | newMask & ~oldMask;
             }
 
             // Set remaining words to all 1s if expanding
@@ -406,10 +411,11 @@ class Bitmap {
                 const sizeT endWord =
                     (newSize + wordSize - 1) / wordSize - (lastNewBit ? 1 : 0);
                 for (sizeT i = startWord; i < endWord; ++i) {
-                    newWords[i] = ~wordType(0);
+                    newWords[i] = ~static_cast<wordType>(0);
                 }
                 if (lastNewBit) {
-                    const wordType mask = (wordType(1) << lastNewBit) - 1;
+                    const wordType mask =
+                        (static_cast<wordType>(1) << lastNewBit) - 1;
                     newWords[newNumWords - 1] = mask;
                 }
             }

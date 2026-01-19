@@ -25,7 +25,12 @@
 
 namespace hahaha::backend {
 class CudaMemory : public GPUMemory {
+    static constexpr size_t DefaultSmallMemoryBlockThreshold = 512
+        << 20; // 512MB
+
   public:
+    void free(DeviceBuffer& deviceBuffer);
+
     /**
      * @brief Allocates a block of memory on the device.
      * @param size The size of the memory block in bytes.
@@ -66,7 +71,11 @@ class CudaMemory : public GPUMemory {
     void memset(DeviceBuffer& dst, int value, size_t count) override;
 
   private:
+    DeviceBuffer allocateSmall(size_t size);
+    DeviceBuffer allocateBig(size_t size);
+
     CudaMemoryPool memoryPool_;
+    size_t smallMemoryBlockThreshold_ = DefaultSmallMemoryBlockThreshold;
 };
 } // namespace hahaha::backend
 

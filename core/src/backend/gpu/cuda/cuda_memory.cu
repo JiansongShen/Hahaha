@@ -38,5 +38,9 @@ cudaError_t cudaMemoryFree(void* ptr) {
     cudaError_t err = cudaFree(ptr);
     return err;
 }
+
+cudaError_t cudaMemorySet(void* ptr, int value, size_t count) {
+    return cudaMemset(ptr, value, count);
+}
 #endif
 } // namespace hahaha::backend

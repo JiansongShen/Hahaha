@@ -20,45 +20,113 @@
 
 #ifndef HAHAHA_CUDAMEMORYPOOL_H_1C230E81AAF44C518925E9CB91324ECE
 #define HAHAHA_CUDAMEMORYPOOL_H_1C230E81AAF44C518925E9CB91324ECE
-#include <bitset>
-#include <cstddef>
+
 #include <expected>
-#include <memory>
 #include <vector>
 
+#include "backend/DeviceBuffer.h"
 #include "common/errors/Error.h"
 #include "utils/data_structure/Bitmap.h"
 
 namespace hahaha::backend {
 
 class CudaMemoryPool {
-  public:
-    [[nodiscard]] common::Error checkFreeBlockExist(size_t size) const;
 
-    std::expected<void*, common::Error> allocate(size_t size);
+    static constexpr size_t BaseMemoryBlockSize = 32 << 10;
+
+  public:
+    [[nodiscard]] common::Error checkFreeBlockListExist(size_t size) const;
+
+    std::expected<void*, common::Error> allocateSmall(size_t size);
 
     void free(void* ptr);
 
+    std::expected<void*, common::Error> allocateBig(size_t size);
+
   private:
-    struct CudaMemoryBlock {
+    struct CudaMemoryBlockHeader {
+        CudaMemoryBlockHeader* prev;
+        CudaMemoryBlockHeader* next;
         size_t size;
-        CudaMemoryBlock* next;
     };
 
+    struct CudaMemoryBlock {
+        CudaMemoryBlockHeader header;
+
+        CudaMemoryBlock* next() {
+            return reinterpret_cast<CudaMemoryBlock*>(&header.next);
+        }
+        CudaMemoryBlock* prev() {
+            return reinterpret_cast<CudaMemoryBlock*>(&header.prev);
+        }
+
+        void setNext(CudaMemoryBlock* block) {
+            header.next = reinterpret_cast<CudaMemoryBlockHeader*>(block);
+        }
+        void setPrev(CudaMemoryBlock* block) {
+            header.prev = reinterpret_cast<CudaMemoryBlockHeader*>(block);
+        }
+
+        void setSize(const size_t size) {
+            header.size = size;
+        };
+        [[nodiscard]] size_t getSize() const {
+            return header.size;
+        }
+    };
+
+    struct BigCudaMemoryBlock {
+        CudaMemoryBlockHeader header;
+        size_t cacheLiveTimes;
+        CudaMemoryBlock* next() {
+            return reinterpret_cast<CudaMemoryBlock*>(&header.next);
+        }
+        CudaMemoryBlock* prev() {
+            return reinterpret_cast<CudaMemoryBlock*>(&header.prev);
+        }
+
+        void setNext(CudaMemoryBlock* block) {
+            header.next = reinterpret_cast<CudaMemoryBlockHeader*>(block);
+        }
+        void setPrev(CudaMemoryBlock* block) {
+            header.prev = reinterpret_cast<CudaMemoryBlockHeader*>(block);
+        }
+
+        void setSize(const size_t size) {
+            header.size = size;
+        }
+
+        void refreshCacheLiveTime() {
+            cacheLiveTimes = 0;
+        }
+
+        [[nodiscard]] size_t getSize() const {
+            return header.size;
+        }
+    };
     static size_t getBlockIndexOfSize(size_t size);
 
-    void* allocateOnBlock(size_t block);
+    common::Error requireSplitBlock(size_t blockIdx);
+
+    std::expected<void*, common::Error> allocateOnBlock(size_t blockIdx);
 
     static size_t getMemoryNeeded(size_t size);
 
-    static std::expected<void*, common::Error>
-    requireMoreMemoryBlock(size_t size);
-
     void insertIntoFreeBlock(CudaMemoryBlock* block);
+
+    void insertIntoBigBlock(BigCudaMemoryBlock* block);
+
+    std::expected<BigCudaMemoryBlock*, common::Error>
+    requireNewBigBlock(size_t size);
+
+    BigCudaMemoryBlock* findCachedBigBlock(size_t size);
 
     // records from size 32KB to 1TB
     std::vector<CudaMemoryBlock*> freeBlocks_;
     std::vector<utils::Bitmap> blocksBitmap_;
+
+    std::vector<BigCudaMemoryBlock*> bigBlocks_;
+    std::vector<BigCudaMemoryBlock*> allocatedBigBlocks_;
 };
 
 } // namespace hahaha::backend

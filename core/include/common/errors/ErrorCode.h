@@ -36,6 +36,7 @@ enum class ErrorCode : std::size_t {
 
     CudaDeviceOutOfMemory,
 
+    CudaSmallObjectMemoryPoolFull,
     Count ///< Number of error codes (for bounds checking).
 };
 

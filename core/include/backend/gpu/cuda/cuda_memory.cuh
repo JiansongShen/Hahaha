@@ -28,6 +28,8 @@ cudaError_t cudaMemoryAllocate(size_t size, void** ptr);
 
 cudaError_t cudaMemoryFree(void* ptr);
 
+cudaError_t cudaMemorySet(void* ptr, int value, size_t count);
+
 #endif
 } // namespace hahaha::backend
 
