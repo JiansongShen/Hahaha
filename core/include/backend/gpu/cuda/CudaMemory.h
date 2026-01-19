@@ -23,12 +23,30 @@
 #include "backend/gpu/GPUMemory.h"
 #include "backend/gpu/cuda/CudaMemoryPool.h"
 
+#ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
+#include <driver_types.h>
+#endif
+#endif
+
 namespace hahaha::backend {
+
+#ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
+
+/**
+ * @brief CUDA memory management implementation.
+ * @details Uses CudaMemoryPool for memory allocation with CPU-side metadata.
+ */
 class CudaMemory : public GPUMemory {
     static constexpr size_t DefaultSmallMemoryBlockThreshold = 512
         << 20; // 512MB
 
   public:
+    /**
+     * @brief Free a device buffer.
+     * @param deviceBuffer The buffer to free.
+     */
     void free(DeviceBuffer& deviceBuffer);
 
     /**
@@ -71,12 +89,64 @@ class CudaMemory : public GPUMemory {
     void memset(DeviceBuffer& dst, int value, size_t count) override;
 
   private:
+    /**
+     * @brief Allocate small memory block.
+     * @param size Size in bytes.
+     * @return DeviceBuffer.
+     */
     DeviceBuffer allocateSmall(size_t size);
+
+    /**
+     * @brief Allocate big memory block.
+     * @param size Size in bytes.
+     * @return DeviceBuffer.
+     */
     DeviceBuffer allocateBig(size_t size);
 
     CudaMemoryPool memoryPool_;
     size_t smallMemoryBlockThreshold_ = DefaultSmallMemoryBlockThreshold;
 };
+
+#else  // !__has_include(<driver_types.h>)
+// Stub implementation when CUDA headers not available
+class CudaMemory : public GPUMemory {
+  public:
+    void free(DeviceBuffer&) override {
+    }
+    DeviceBuffer allocate(size_t) override {
+        return DeviceBuffer();
+    }
+    void copyHostToDevice(DeviceBuffer&, std::span<const std::byte>) override {
+    }
+    void copyDeviceToHost(std::span<std::byte>, const DeviceBuffer&) override {
+    }
+    void copyDeviceToDevice(DeviceBuffer&, const DeviceBuffer&) override {
+    }
+    void memset(DeviceBuffer&, int, size_t) override {
+    }
+};
+#endif // __has_include(<driver_types.h>)
+
+#else  // !HAHAHA_USE_CUDA
+// Stub implementation when CUDA not enabled
+class CudaMemory : public GPUMemory {
+  public:
+    void free(DeviceBuffer&) override {
+    }
+    DeviceBuffer allocate(size_t) override {
+        return DeviceBuffer();
+    }
+    void copyHostToDevice(DeviceBuffer&, std::span<const std::byte>) override {
+    }
+    void copyDeviceToHost(std::span<std::byte>, const DeviceBuffer&) override {
+    }
+    void copyDeviceToDevice(DeviceBuffer&, const DeviceBuffer&) override {
+    }
+    void memset(DeviceBuffer&, int, size_t) override {
+    }
+};
+#endif // HAHAHA_USE_CUDA
+
 } // namespace hahaha::backend
 
 #endif // HAHAHA_GPU_MEMORY_H_8D60664C7DC2476F894F2E21EB3CEE0C

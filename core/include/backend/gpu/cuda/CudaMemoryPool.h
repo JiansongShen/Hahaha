@@ -21,114 +21,223 @@
 #ifndef HAHAHA_CUDAMEMORYPOOL_H_1C230E81AAF44C518925E9CB91324ECE
 #define HAHAHA_CUDAMEMORYPOOL_H_1C230E81AAF44C518925E9CB91324ECE
 
+#include <cmath>
 #include <expected>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
-#include "backend/DeviceBuffer.h"
 #include "common/errors/Error.h"
 #include "utils/data_structure/Bitmap.h"
 
+#ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
+#include <driver_types.h>
+#endif
+#endif
+
 namespace hahaha::backend {
+#ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
 
+constexpr int log2(const size_t val) {
+    for (int i = 0; i < 32; ++i) {
+        // ReSharper disable once CppRedundantParentheses
+        if (val == (1 << i)) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+/**
+ * @brief CUDA memory pool with metadata stored on CPU.
+ * @details All metadata (block headers, free lists, etc.) are stored in CPU
+ * memory. Only the actual data buffers are allocated on GPU.
+ */
 class CudaMemoryPool {
-
-    static constexpr size_t BaseMemoryBlockSize = 32 << 10;
+    static constexpr size_t BaseMemoryBlockSize = 32;                 // 32B
+    static constexpr size_t SingleSmallObjectPoolMaxSize = 512 << 20; // 512MB
+    static constexpr size_t MaxSmallObjectPoolListSize =
+        log2(SingleSmallObjectPoolMaxSize / BaseMemoryBlockSize);
 
   public:
-    [[nodiscard]] common::Error checkFreeBlockListExist(size_t size) const;
+    /**
+     * @brief Check if free block list exists for given size.
+     * @param blockIdx Block size index.
+     * @return Error if invalid, Success otherwise.
+     */
+    [[nodiscard]] static common::Error checkFreeBlockListExist(size_t blockIdx);
 
+    /**
+     * @brief Allocate small memory block (< threshold).
+     * @param size Size in bytes.
+     * @return Pointer to allocated GPU memory or error.
+     */
     std::expected<void*, common::Error> allocateSmall(size_t size);
 
-    void free(void* ptr);
-
+    /**
+     * @brief Allocate large memory block (>= threshold).
+     * @param size Size in bytes.
+     * @return Pointer to allocated GPU memory or error.
+     */
     std::expected<void*, common::Error> allocateBig(size_t size);
 
+    /**
+     * @brief Free a memory block.
+     * @param ptr Pointer to GPU memory to free.
+     */
+    void free(void* ptr);
+
   private:
-    struct CudaMemoryBlockHeader {
-        CudaMemoryBlockHeader* prev;
-        CudaMemoryBlockHeader* next;
-        size_t size;
-    };
+    /**
+     * @brief CPU-side metadata for a small memory block.
+     */
+    struct SmallBlockMetadata {
+        void* gpuPtr;    // GPU memory pointer
+        size_t size;     // Block size in bytes
+        size_t blockIdx; // Block index in free list
+        SmallBlockMetadata* prev;
+        SmallBlockMetadata* next;
+        bool isAllocated; // Allocation state
 
-    struct CudaMemoryBlock {
-        CudaMemoryBlockHeader header;
-
-        CudaMemoryBlock* next() {
-            return reinterpret_cast<CudaMemoryBlock*>(&header.next);
-        }
-        CudaMemoryBlock* prev() {
-            return reinterpret_cast<CudaMemoryBlock*>(&header.prev);
-        }
-
-        void setNext(CudaMemoryBlock* block) {
-            header.next = reinterpret_cast<CudaMemoryBlockHeader*>(block);
-        }
-        void setPrev(CudaMemoryBlock* block) {
-            header.prev = reinterpret_cast<CudaMemoryBlockHeader*>(block);
-        }
-
-        void setSize(const size_t size) {
-            header.size = size;
-        };
-        [[nodiscard]] size_t getSize() const {
-            return header.size;
+        SmallBlockMetadata()
+            : gpuPtr(nullptr), size(0), blockIdx(0), prev(nullptr),
+              next(nullptr), isAllocated(false) {
         }
     };
 
-    struct BigCudaMemoryBlock {
-        CudaMemoryBlockHeader header;
-        size_t cacheLiveTimes;
-        CudaMemoryBlock* next() {
-            return reinterpret_cast<CudaMemoryBlock*>(&header.next);
-        }
-        CudaMemoryBlock* prev() {
-            return reinterpret_cast<CudaMemoryBlock*>(&header.prev);
-        }
+    /**
+     * @brief CPU-side metadata for a large memory block.
+     */
+    struct BigBlockMetadata {
+        void* gpuPtr; // GPU memory pointer (points to data, not header)
+        size_t size;  // Block size in bytes
+        size_t cacheLiveTimes; // Cache lifetime counter
+        bool isAllocated;      // Allocation state
 
-        void setNext(CudaMemoryBlock* block) {
-            header.next = reinterpret_cast<CudaMemoryBlockHeader*>(block);
-        }
-        void setPrev(CudaMemoryBlock* block) {
-            header.prev = reinterpret_cast<CudaMemoryBlockHeader*>(block);
-        }
-
-        void setSize(const size_t size) {
-            header.size = size;
+        BigBlockMetadata()
+            : gpuPtr(nullptr), size(0), cacheLiveTimes(0), isAllocated(false) {
         }
 
         void refreshCacheLiveTime() {
             cacheLiveTimes = 0;
         }
-
-        [[nodiscard]] size_t getSize() const {
-            return header.size;
-        }
     };
+
+    /**
+     * @brief Get block index for given size.
+     * @param size Size in bytes.
+     * @return Block index.
+     */
     static size_t getBlockIndexOfSize(size_t size);
 
-    common::Error requireSplitBlock(size_t blockIdx);
-
+    /**
+     * @brief Allocate memory on a specific block index.
+     * @param blockIdx Block index.
+     * @return Pointer to allocated GPU memory or error.
+     */
     std::expected<void*, common::Error> allocateOnBlock(size_t blockIdx);
 
-    static size_t getMemoryNeeded(size_t size);
+    /**
+     * @brief Require splitting a block from larger size.
+     * @param blockIdx Target block index.
+     * @return Error if failed, Success otherwise.
+     */
+    common::Error requireSplitBlock(size_t blockIdx);
 
-    void insertIntoFreeBlock(CudaMemoryBlock* block);
+    /**
+     * @brief Insert block into free list.
+     * @param metadata Block metadata to insert.
+     */
+    void insertIntoFreeBlock(SmallBlockMetadata* metadata);
 
-    void insertIntoBigBlock(BigCudaMemoryBlock* block);
+    /**
+     * @brief Insert big block into cache.
+     * @param metadata Big block metadata.
+     */
+    void insertIntoBigBlock(BigBlockMetadata* metadata);
 
-    std::expected<BigCudaMemoryBlock*, common::Error>
+    /**
+     * @brief Require new big block allocation.
+     * @param size Size in bytes.
+     * @return Big block metadata or error.
+     */
+    std::expected<BigBlockMetadata*, common::Error>
     requireNewBigBlock(size_t size);
 
-    BigCudaMemoryBlock* findCachedBigBlock(size_t size);
+    /**
+     * @brief Find cached big block that fits size.
+     * @param size Required size in bytes.
+     * @return Best fit block metadata or nullptr.
+     */
+    BigBlockMetadata* findCachedBigBlock(size_t size);
 
-    // records from size 32KB to 1TB
-    std::vector<CudaMemoryBlock*> freeBlocks_;
-    std::vector<utils::Bitmap> blocksBitmap_;
+    /**
+     * @brief Calculate memory needed including overhead.
+     * @param size Size in bytes.
+     * @return Total memory needed.
+     */
+    static size_t getMemoryNeeded(size_t size);
 
-    std::vector<BigCudaMemoryBlock*> bigBlocks_;
-    std::vector<BigCudaMemoryBlock*> allocatedBigBlocks_;
+    // Free lists for small blocks (indexed by block size)
+    std::vector<SmallBlockMetadata*> freeSmallBlocks_;
+
+    // Big block cache (CPU-side metadata)
+    std::vector<std::unique_ptr<BigBlockMetadata>> bigBlocks_;
+
+    // All allocated big blocks (for cleanup)
+    std::vector<std::unique_ptr<BigBlockMetadata>> allocatedBigBlocks_;
+
+    // All small block metadata (for lifetime management)
+    SmallBlockMetadata* smallBlockStorage_ = nullptr;
+
+    // Map GPU pointer to metadata (for fast lookup)
+    std::unordered_map<void*, SmallBlockMetadata*> smallBlockMap_;
+    std::unordered_map<void*, BigBlockMetadata*> bigBlockMap_;
 };
 
+#else  // !__has_include(<driver_types.h>)
+// Stub implementation when CUDA headers not available
+class CudaMemoryPool {
+  public:
+    [[nodiscard]] hahaha::common::Error checkFreeBlockListExist(size_t) const {
+        return hahaha::common::Error::Success();
+    }
+
+    std::expected<void*, hahaha::common::Error> allocateSmall(size_t) {
+        return std::unexpected(hahaha::common::Error::Success());
+    }
+
+    std::expected<void*, hahaha::common::Error> allocateBig(size_t) {
+        return std::unexpected(hahaha::common::Error::Success());
+    }
+
+    void free(void*) {
+    }
+};
+#endif // __has_include(<driver_types.h>)
+
+#else  // !HAHAHA_USE_CUDA
+// Stub implementation when CUDA not enabled
+class CudaMemoryPool {
+  public:
+    [[nodiscard]] hahaha::common::Error checkFreeBlockListExist(size_t) const {
+        return hahaha::common::Error::Success();
+    }
+
+    std::expected<void*, hahaha::common::Error> allocateSmall(size_t) {
+        return std::unexpected(hahaha::common::Error::Success());
+    }
+
+    std::expected<void*, hahaha::common::Error> allocateBig(size_t) {
+        return std::unexpected(hahaha::common::Error::Success());
+    }
+
+    void free(void*) {
+    }
+};
+#endif // HAHAHA_USE_CUDA
 } // namespace hahaha::backend
 
 #endif // HAHAHA_CUDAMEMORYPOOL_H_1C230E81AAF44C518925E9CB91324ECE

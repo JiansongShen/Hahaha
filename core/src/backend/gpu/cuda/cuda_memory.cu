@@ -19,28 +19,36 @@
 //
 
 #ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
 
 #include <driver_types.h>
-#endif
 
 #include "backend/gpu/cuda/cuda_memory.cuh"
 
 namespace hahaha::backend {
 
-#ifdef HAHAHA_USE_CUDA
-
 cudaError_t cudaMemoryAllocate(size_t size, void** ptr) {
-    cudaError_t err = cudaMalloc(ptr, size);
-    return err;
+    if (ptr == nullptr || size == 0) {
+        return cudaErrorInvalidValue;
+    }
+    return cudaMalloc(ptr, size);
 }
 
 cudaError_t cudaMemoryFree(void* ptr) {
-    cudaError_t err = cudaFree(ptr);
-    return err;
+    if (ptr == nullptr) {
+        return cudaSuccess;
+    }
+    return cudaFree(ptr);
 }
 
 cudaError_t cudaMemorySet(void* ptr, int value, size_t count) {
+    if (ptr == nullptr || count == 0) {
+        return cudaSuccess;
+    }
     return cudaMemset(ptr, value, count);
 }
-#endif
+
 } // namespace hahaha::backend
+
+#endif // __has_include(<driver_types.h>)
+#endif // HAHAHA_USE_CUDA

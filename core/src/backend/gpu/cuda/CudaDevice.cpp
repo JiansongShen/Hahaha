@@ -18,10 +18,18 @@
 //
 //
 
+#ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
+
 #include "backend/gpu/cuda/CudaDevice.h"
 
 namespace hahaha::backend {
-// CudaDevice::~CudaDevice() {
-//     delete prop_;
-// }
+
+CudaDevice::~CudaDevice() {
+    // prop_ is managed externally, no need to delete
 }
+
+} // namespace hahaha::backend
+
+#endif // __has_include(<driver_types.h>)
+#endif // HAHAHA_USE_CUDA

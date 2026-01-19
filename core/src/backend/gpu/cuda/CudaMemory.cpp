@@ -18,21 +18,53 @@
 //
 //
 
+#ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>) && __has_include(<cuda_runtime_api.h>)
+
 #include "backend/gpu/cuda/CudaMemory.h"
 
+#include <cuda_runtime_api.h>
+#include <driver_types.h>
+#include <span>
+#include <stdexcept>
+
+#include "backend/gpu/cuda/cuda_memory.cuh"
 #include "utils/log/Logger.h"
 
 namespace hahaha::backend {
 
 void CudaMemory::copyDeviceToDevice(DeviceBuffer& dst,
                                     const DeviceBuffer& src) {
+    if (dst.size() != src.size()) {
+        throw std::runtime_error("Device to device copy size mismatch");
+    }
+
+    const cudaError_t err =
+        cudaMemcpy(reinterpret_cast<void*>(dst.address()),
+                   reinterpret_cast<const void*>(src.address()),
+                   src.size(),
+                   cudaMemcpyDeviceToDevice);
+
+    if (err != cudaSuccess) {
+        throw std::runtime_error("CUDA device to device copy failed");
+    }
 }
 
 void CudaMemory::free(DeviceBuffer& deviceBuffer) {
+    if (deviceBuffer.address() == 0) {
+        return;
+    }
+
+    void* ptr = reinterpret_cast<void*>(deviceBuffer.address());
+    memoryPool_.free(ptr);
+    deviceBuffer = DeviceBuffer(); // Reset to empty
 }
 
-// maybe more error handle strategy is needed
 DeviceBuffer CudaMemory::allocate(size_t size) {
+    if (size == 0) {
+        return DeviceBuffer();
+    }
+
     if (size < smallMemoryBlockThreshold_) {
         return allocateSmall(size);
     }
@@ -42,9 +74,32 @@ DeviceBuffer CudaMemory::allocate(size_t size) {
 
 void CudaMemory::copyDeviceToHost(std::span<std::byte> dst,
                                   const DeviceBuffer& src) {
+    if (dst.size() != src.size()) {
+        throw std::runtime_error("Device to host copy size mismatch");
+    }
+
+    const cudaError_t err =
+        cudaMemcpy(dst.data(),
+                   reinterpret_cast<const void*>(src.address()),
+                   src.size(),
+                   cudaMemcpyDeviceToHost);
+
+    if (err != cudaSuccess) {
+        throw std::runtime_error("CUDA device to host copy failed");
+    }
 }
 
 void CudaMemory::memset(DeviceBuffer& dst, int value, size_t count) {
+    if (count == 0 || dst.address() == 0) {
+        return;
+    }
+
+    const cudaError_t err =
+        cudaMemorySet(reinterpret_cast<void*>(dst.address()), value, count);
+
+    if (err != cudaSuccess) {
+        throw std::runtime_error("CUDA memset failed");
+    }
 }
 
 DeviceBuffer CudaMemory::allocateSmall(size_t size) {
@@ -53,22 +108,36 @@ DeviceBuffer CudaMemory::allocateSmall(size_t size) {
                             size};
     }
 
-    warn(std::format("cuda has no enough memory, need {}", size));
-    return {};
+    warn(std::format("CUDA has no enough memory, need {}", size));
+    return DeviceBuffer();
 }
 
 DeviceBuffer CudaMemory::allocateBig(size_t size) {
     if (auto res = memoryPool_.allocateBig(size); res.has_value()) {
-        return DeviceBuffer{reinterpret_cast<std::uintptr_t>(res.value())
-                                + sizeof(CudaMemoryPool::BigCudaMemoryBlock),
+        return DeviceBuffer{reinterpret_cast<std::uintptr_t>(res.value()),
                             size};
     }
 
-    throw std::runtime_error("cuda has no enough memory");
+    throw std::runtime_error("CUDA has no enough memory");
 }
 
 void CudaMemory::copyHostToDevice(DeviceBuffer& dst,
                                   std::span<const std::byte> src) {
+    if (dst.size() != src.size()) {
+        throw std::runtime_error("Host to device copy size mismatch");
+    }
+
+    const cudaError_t err = cudaMemcpy(reinterpret_cast<void*>(dst.address()),
+                                       src.data(),
+                                       src.size(),
+                                       cudaMemcpyHostToDevice);
+
+    if (err != cudaSuccess) {
+        throw std::runtime_error("CUDA host to device copy failed");
+    }
 }
 
 } // namespace hahaha::backend
+
+#endif // __has_include(<driver_types.h>)
+#endif // HAHAHA_USE_CUDA
