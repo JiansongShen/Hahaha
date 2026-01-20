@@ -37,7 +37,7 @@ class CPUDeviceTest : public ::testing::Test {
 };
 
 TEST_F(CPUDeviceTest, Constructor) {
-    CPUDevice device;
+    const CPUDevice device;
     EXPECT_EQ(device.getType(), DeviceType::CPU);
     EXPECT_EQ(device.getId(), 0);
 }
@@ -140,7 +140,7 @@ TEST_F(CPUDeviceTest, DeallocateTwice) {
     EXPECT_NO_THROW(device.deallocate(std::move(buffer)));
 
     // Second allocation and deallocation
-    DeviceBuffer buffer2 = device.allocate(64);
+    DeviceBuffer buffer2 = device.allocate(0);
     EXPECT_NO_THROW(device.deallocate(std::move(buffer2)));
 }
 

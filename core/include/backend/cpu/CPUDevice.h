@@ -35,7 +35,7 @@ class CPUDevice : public Device {
     }
 
     void deallocate(const DeviceBuffer buffer) override {
-        delete reinterpret_cast<char*>(buffer.address());
+        delete[] reinterpret_cast<char*>(buffer.address());
     }
 
     ~CPUDevice() override = default;

@@ -38,7 +38,7 @@ class DeviceBufferTest : public ::testing::Test {
 };
 
 TEST_F(DeviceBufferTest, DefaultConstructor) {
-    DeviceBuffer buffer;
+    DeviceBuffer buffer = DeviceBuffer();
     EXPECT_EQ(buffer.address(), 0);
     EXPECT_EQ(buffer.size(), 0);
 }

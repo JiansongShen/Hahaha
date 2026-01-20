@@ -45,7 +45,8 @@ class CudaDevice : public GPUDevice {
      * @brief Construct CUDA device with properties.
      * @param prop CUDA device properties.
      */
-    explicit CudaDevice(cudaDeviceProp* prop) : prop_(prop) {
+    explicit CudaDevice(cudaDeviceProp* prop)
+        : GPUDevice(DeviceType::CUDA), prop_(prop) {
     }
 
     /**
@@ -57,7 +58,7 @@ class CudaDevice : public GPUDevice {
     CudaDevice(const DeviceType deviceType,
                const std::uint8_t deviceId,
                cudaDeviceProp* prop)
-        : Device(deviceType, deviceId), prop_(prop) {
+        : GPUDevice(deviceType, deviceId), prop_(prop) {
     }
 
     /**

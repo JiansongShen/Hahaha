@@ -27,6 +27,16 @@
 #include "backend/Device.h"
 #include "common/error_handler.h"
 
+#ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
+#include <cuda_runtime.h>
+
+#include "backend/gpu/cuda/CudaDevice.h"
+#include "backend/gpu/cuda/CudaMemory.h"
+#include "backend/gpu/cuda/cuda_compute_fun.h"
+#endif
+#endif
+
 namespace hahaha::math {
 template <typename T> class TensorWrapper;
 } // namespace hahaha::math
@@ -38,6 +48,27 @@ using common::err;
 using common::Error;
 using common::ErrorCode;
 using common::InvalidArgumentError;
+
+/**
+ * @brief Helper function to check if tensor data is contiguous.
+ * @param shape Tensor shape
+ * @param stride Tensor stride
+ * @return true if data is contiguous, false otherwise
+ */
+inline bool isContiguous(const std::vector<size_t>& shape,
+                         const std::vector<size_t>& stride) {
+    if (shape.empty() || stride.empty()) {
+        return true;
+    }
+    size_t expectedStride = 1;
+    for (long i = static_cast<long>(shape.size()) - 1; i >= 0; --i) {
+        if (stride[static_cast<size_t>(i)] != expectedStride) {
+            return false;
+        }
+        expectedStride *= shape[static_cast<size_t>(i)];
+    }
+    return true;
+}
 
 /**
  * @brief Stride-aware elementwise iterator.
@@ -139,8 +170,266 @@ void cpu_div(const std::vector<size_t>& shape,
     });
 }
 
-// --- CUDA Kernels (Stubs) ---
+// --- CUDA Kernels ---
 
+#ifdef HAHAHA_USE_CUDA
+#if __has_include(<driver_types.h>)
+
+// Forward declarations for CUDA functions
+template <typename T>
+void cuda_add(std::span<const T> a, std::span<const T> b, std::span<T> out);
+
+template <typename T>
+void cuda_sub(std::span<const T> a, std::span<const T> b, std::span<T> out);
+
+template <typename T>
+void cuda_mul(std::span<const T> a, std::span<const T> b, std::span<T> out);
+
+template <typename T>
+void cuda_div(std::span<const T> a, std::span<const T> b, std::span<T> out);
+
+/**
+ * @brief CUDA implementation for element-wise addition (float specialization).
+ */
+template <>
+inline void cuda_add<float>(std::span<const float> a,
+                            std::span<const float> b,
+                            std::span<float> out) {
+    const size_t size = a.size();
+    if (size == 0) {
+        return;
+    }
+
+    // Allocate GPU memory
+    CudaMemory cudaMem;
+    const size_t bytes = size * sizeof(float);
+    DeviceBuffer bufA = cudaMem.allocate(bytes);
+    DeviceBuffer bufB = cudaMem.allocate(bytes);
+    DeviceBuffer bufOut = cudaMem.allocate(bytes);
+
+    // Copy data to GPU
+    cudaMem.copyHostToDevice(
+        bufA,
+        std::span<const std::byte>(reinterpret_cast<const std::byte*>(a.data()),
+                                   bytes));
+    cudaMem.copyHostToDevice(
+        bufB,
+        std::span<const std::byte>(reinterpret_cast<const std::byte*>(b.data()),
+                                   bytes));
+
+    // Launch kernel
+    const unsigned int blockSize = 256;
+    cudaError_t err = cudaComputeAdd(reinterpret_cast<cf32*>(bufA.address()),
+                                     reinterpret_cast<cf32*>(bufB.address()),
+                                     reinterpret_cast<cf32*>(bufOut.address()),
+                                     size,
+                                     blockSize);
+    if (err != cudaSuccess) {
+        cudaMem.free(bufA);
+        cudaMem.free(bufB);
+        cudaMem.free(bufOut);
+        throw std::runtime_error("CUDA kernel launch failed");
+    }
+
+    // Synchronize and copy result back
+    cudaDeviceSynchronize();
+    cudaMem.copyDeviceToHost(
+        std::span<std::byte>(reinterpret_cast<std::byte*>(out.data()), bytes),
+        bufOut);
+
+    // Free GPU memory
+    cudaMem.free(bufA);
+    cudaMem.free(bufB);
+    cudaMem.free(bufOut);
+}
+
+/**
+ * @brief CUDA implementation for element-wise subtraction (float
+ * specialization).
+ */
+template <>
+inline void cuda_sub<float>(std::span<const float> a,
+                            std::span<const float> b,
+                            std::span<float> out) {
+    const size_t size = a.size();
+    if (size == 0) {
+        return;
+    }
+
+    CudaMemory cudaMem;
+    const size_t bytes = size * sizeof(float);
+    DeviceBuffer bufA = cudaMem.allocate(bytes);
+    DeviceBuffer bufB = cudaMem.allocate(bytes);
+    DeviceBuffer bufOut = cudaMem.allocate(bytes);
+
+    cudaMem.copyHostToDevice(
+        bufA,
+        std::span<const std::byte>(reinterpret_cast<const std::byte*>(a.data()),
+                                   bytes));
+    cudaMem.copyHostToDevice(
+        bufB,
+        std::span<const std::byte>(reinterpret_cast<const std::byte*>(b.data()),
+                                   bytes));
+
+    const unsigned int blockSize = 256;
+    cudaError_t err =
+        cudaComputeSubtract(reinterpret_cast<cf32*>(bufA.address()),
+                            reinterpret_cast<cf32*>(bufB.address()),
+                            reinterpret_cast<cf32*>(bufOut.address()),
+                            size,
+                            blockSize);
+    if (err != cudaSuccess) {
+        cudaMem.free(bufA);
+        cudaMem.free(bufB);
+        cudaMem.free(bufOut);
+        throw std::runtime_error("CUDA kernel launch failed");
+    }
+
+    cudaDeviceSynchronize();
+    cudaMem.copyDeviceToHost(
+        std::span<std::byte>(reinterpret_cast<std::byte*>(out.data()), bytes),
+        bufOut);
+
+    cudaMem.free(bufA);
+    cudaMem.free(bufB);
+    cudaMem.free(bufOut);
+}
+
+/**
+ * @brief CUDA implementation for element-wise multiplication (float
+ * specialization).
+ */
+template <>
+inline void cuda_mul<float>(std::span<const float> a,
+                            std::span<const float> b,
+                            std::span<float> out) {
+    const size_t size = a.size();
+    if (size == 0) {
+        return;
+    }
+
+    CudaMemory cudaMem;
+    const size_t bytes = size * sizeof(float);
+    DeviceBuffer bufA = cudaMem.allocate(bytes);
+    DeviceBuffer bufB = cudaMem.allocate(bytes);
+    DeviceBuffer bufOut = cudaMem.allocate(bytes);
+
+    cudaMem.copyHostToDevice(
+        bufA,
+        std::span<const std::byte>(reinterpret_cast<const std::byte*>(a.data()),
+                                   bytes));
+    cudaMem.copyHostToDevice(
+        bufB,
+        std::span<const std::byte>(reinterpret_cast<const std::byte*>(b.data()),
+                                   bytes));
+
+    const unsigned int blockSize = 256;
+    cudaError_t err =
+        cudaComputeMultiply(reinterpret_cast<cf32*>(bufA.address()),
+                            reinterpret_cast<cf32*>(bufB.address()),
+                            reinterpret_cast<cf32*>(bufOut.address()),
+                            size,
+                            blockSize);
+    if (err != cudaSuccess) {
+        cudaMem.free(bufA);
+        cudaMem.free(bufB);
+        cudaMem.free(bufOut);
+        throw std::runtime_error("CUDA kernel launch failed");
+    }
+
+    cudaDeviceSynchronize();
+    cudaMem.copyDeviceToHost(
+        std::span<std::byte>(reinterpret_cast<std::byte*>(out.data()), bytes),
+        bufOut);
+
+    cudaMem.free(bufA);
+    cudaMem.free(bufB);
+    cudaMem.free(bufOut);
+}
+
+/**
+ * @brief CUDA implementation for element-wise division (float specialization).
+ */
+template <>
+inline void cuda_div<float>(std::span<const float> a,
+                            std::span<const float> b,
+                            std::span<float> out) {
+    const size_t size = a.size();
+    if (size == 0) {
+        return;
+    }
+
+    CudaMemory cudaMem;
+    const size_t bytes = size * sizeof(float);
+    DeviceBuffer bufA = cudaMem.allocate(bytes);
+    DeviceBuffer bufB = cudaMem.allocate(bytes);
+    DeviceBuffer bufOut = cudaMem.allocate(bytes);
+
+    cudaMem.copyHostToDevice(
+        bufA,
+        std::span<const std::byte>(reinterpret_cast<const std::byte*>(a.data()),
+                                   bytes));
+    cudaMem.copyHostToDevice(
+        bufB,
+        std::span<const std::byte>(reinterpret_cast<const std::byte*>(b.data()),
+                                   bytes));
+
+    const unsigned int blockSize = 256;
+    cudaError_t err =
+        cudaComputeDivide(reinterpret_cast<cf32*>(bufA.address()),
+                          reinterpret_cast<cf32*>(bufB.address()),
+                          reinterpret_cast<cf32*>(bufOut.address()),
+                          size,
+                          blockSize);
+    if (err != cudaSuccess) {
+        cudaMem.free(bufA);
+        cudaMem.free(bufB);
+        cudaMem.free(bufOut);
+        throw std::runtime_error("CUDA kernel launch failed");
+    }
+
+    cudaDeviceSynchronize();
+    cudaMem.copyDeviceToHost(
+        std::span<std::byte>(reinterpret_cast<std::byte*>(out.data()), bytes),
+        bufOut);
+
+    cudaMem.free(bufA);
+    cudaMem.free(bufB);
+    cudaMem.free(bufOut);
+}
+
+// Stubs for non-float types
+template <typename T>
+void cuda_add(std::span<const T> /* a */,
+              std::span<const T> /* b*/,
+              std::span<T> /*out*/) {
+    throw std::runtime_error("CUDA operations only support float type");
+}
+
+template <typename T>
+void cuda_sub(std::span<const T> /* a */,
+              std::span<const T> /* b*/,
+              std::span<T> /*out*/) {
+    throw std::runtime_error("CUDA operations only support float type");
+}
+
+template <typename T>
+void cuda_mul(std::span<const T> /* a */,
+              std::span<const T> /* b*/,
+              std::span<T> /*out*/) {
+    throw std::runtime_error("CUDA operations only support float type");
+}
+
+template <typename T>
+void cuda_div(std::span<const T> /* a */,
+              std::span<const T> /* b*/,
+              std::span<T> /*out*/) {
+    throw std::runtime_error("CUDA operations only support float type");
+}
+
+#else // !__has_include(<driver_types.h>)
+
+// Stubs when CUDA headers not available
 template <typename T>
 void cuda_sub(std::span<const T> /* a */,
               std::span<const T> /* b*/,
@@ -161,6 +450,33 @@ void cuda_div(std::span<const T> /* a */,
               std::span<const T> /* b*/,
               std::span<T> /*out*/) {
 }
+
+#endif // __has_include(<driver_types.h>)
+#else  // !HAHAHA_USE_CUDA
+
+// Stubs when CUDA not enabled
+template <typename T>
+void cuda_sub(std::span<const T> /* a */,
+              std::span<const T> /* b*/,
+              std::span<T> /*out*/) {
+}
+template <typename T>
+void cuda_add(std::span<const T> /* a */,
+              std::span<const T> /* b*/,
+              std::span<T> /*out*/) {
+}
+template <typename T>
+void cuda_mul(std::span<const T> /* a */,
+              std::span<const T> /* b*/,
+              std::span<T> /*out*/) {
+}
+template <typename T>
+void cuda_div(std::span<const T> /* a */,
+              std::span<const T> /* b*/,
+              std::span<T> /*out*/) {
+}
+
+#endif // HAHAHA_USE_CUDA
 
 // --- Specific Dispatch Functions ---
 
@@ -187,7 +503,20 @@ std::expected<void, Error> dispatchAdd(const math::TensorWrapper<T>& lhs,
         cpu_add(shape, lStride, rStride, lBuf, rBuf, resBuf);
         return {};
     } else if constexpr (dev == DeviceType::CUDA) {
-        cuda_add(lBuf, rBuf, resBuf);
+        // CUDA kernels require contiguous data
+        // Check if data is contiguous, if not, fall back to CPU
+        const bool lContiguous = isContiguous(shape, lStride);
+        const bool rContiguous = isContiguous(shape, rStride);
+        const bool resContiguous =
+            isContiguous(shape, res.getStride().getStrides());
+
+        if (lContiguous && rContiguous && resContiguous) {
+            // Direct CUDA computation
+            cuda_add(lBuf, rBuf, resBuf);
+        } else {
+            // Fall back to CPU for non-contiguous data
+            cpu_add(shape, lStride, rStride, lBuf, rBuf, resBuf);
+        }
         return {};
     }
     return std::unexpected(InvalidArgumentError());

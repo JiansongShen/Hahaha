@@ -31,6 +31,11 @@ class GPUDevice : public Device {
         this->id_ = 0;
     }
 
+    GPUDevice(const DeviceType type, const std::uint8_t deviceId) {
+        this->type_ = type;
+        this->id_ = deviceId;
+    }
+
     // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     DeviceBuffer allocate(const size_t size) override {
         std::unreachable();

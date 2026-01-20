@@ -35,7 +35,6 @@ enum class ErrorCode : std::size_t {
     InternalError,      ///< An internal logic error occurred.
 
     CudaDeviceOutOfMemory,
-
     CudaSmallObjectMemoryPoolFull,
     Count ///< Number of error codes (for bounds checking).
 };
@@ -49,7 +48,8 @@ constexpr const char* ErrorMessages[] = {
     "Device unsupported",
     "Numerical overflow",
     "Internal error",
-    "Cuda device out of memory"};
+    "Cuda device out of memory",
+    "CUDA small object memory pool full"};
 
 } // namespace hahaha::common
 

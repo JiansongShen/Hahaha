@@ -26,15 +26,31 @@
 #include <cuda_runtime.h>
 #include <driver_types.h>
 
-// Forward declarations of CUDA kernels
-extern __global__ void
-compute_add(cf32* input1, cf32* input2, cf32* output, size_t size);
-extern __global__ void
-compute_subtract(cf32* input1, cf32* input2, cf32* output, size_t size);
-extern __global__ void
-compute_multiply(cf32* input1, cf32* input2, cf32* output, size_t size);
-extern __global__ void
-compute_divide(cf32* input1, cf32* input2, cf32* output, size_t size);
+/**
+ * @brief External C interface functions defined in CUDA files.
+ */
+extern "C" {
+void cuda_compute_add_c_interface(float* input1,
+                                  float* input2,
+                                  float* output,
+                                  size_t size,
+                                  unsigned int blockSize);
+void cuda_compute_subtract_c_interface(float* input1,
+                                       float* input2,
+                                       float* output,
+                                       size_t size,
+                                       unsigned int blockSize);
+void cuda_compute_multiply_c_interface(float* input1,
+                                       float* input2,
+                                       float* output,
+                                       size_t size,
+                                       unsigned int blockSize);
+void cuda_compute_divide_c_interface(float* input1,
+                                     float* input2,
+                                     float* output,
+                                     size_t size,
+                                     unsigned int blockSize);
+}
 
 namespace hahaha::backend {
 
@@ -48,13 +64,14 @@ cudaError_t cudaComputeAdd(cf32* input1,
         return cudaErrorInvalidValue;
     }
 
-    // Calculate grid size
-    unsigned int gridSize = (size + blockSize - 1) / blockSize;
+    // Call C interface
+    cuda_compute_add_c_interface(reinterpret_cast<float*>(input1),
+                                 reinterpret_cast<float*>(input2),
+                                 reinterpret_cast<float*>(output),
+                                 size,
+                                 blockSize);
 
-    // Launch kernel
-    compute_add<<<gridSize, blockSize>>>(input1, input2, output, size);
-
-    // Check for kernel launch errors
+    // Check kernel launch error
     return cudaGetLastError();
 }
 
@@ -68,13 +85,14 @@ cudaError_t cudaComputeSubtract(cf32* input1,
         return cudaErrorInvalidValue;
     }
 
-    // Calculate grid size
-    unsigned int gridSize = (size + blockSize - 1) / blockSize;
+    // Call C interface
+    cuda_compute_subtract_c_interface(reinterpret_cast<float*>(input1),
+                                      reinterpret_cast<float*>(input2),
+                                      reinterpret_cast<float*>(output),
+                                      size,
+                                      blockSize);
 
-    // Launch kernel
-    compute_subtract<<<gridSize, blockSize>>>(input1, input2, output, size);
-
-    // Check for kernel launch errors
+    // Check kernel launch error
     return cudaGetLastError();
 }
 
@@ -88,13 +106,14 @@ cudaError_t cudaComputeMultiply(cf32* input1,
         return cudaErrorInvalidValue;
     }
 
-    // Calculate grid size
-    unsigned int gridSize = (size + blockSize - 1) / blockSize;
+    // Call C interface
+    cuda_compute_multiply_c_interface(reinterpret_cast<float*>(input1),
+                                      reinterpret_cast<float*>(input2),
+                                      reinterpret_cast<float*>(output),
+                                      size,
+                                      blockSize);
 
-    // Launch kernel
-    compute_multiply<<<gridSize, blockSize>>>(input1, input2, output, size);
-
-    // Check for kernel launch errors
+    // Check kernel launch error
     return cudaGetLastError();
 }
 
@@ -108,13 +127,14 @@ cudaError_t cudaComputeDivide(cf32* input1,
         return cudaErrorInvalidValue;
     }
 
-    // Calculate grid size
-    unsigned int gridSize = (size + blockSize - 1) / blockSize;
+    // Call C interface
+    cuda_compute_divide_c_interface(reinterpret_cast<float*>(input1),
+                                    reinterpret_cast<float*>(input2),
+                                    reinterpret_cast<float*>(output),
+                                    size,
+                                    blockSize);
 
-    // Launch kernel
-    compute_divide<<<gridSize, blockSize>>>(input1, input2, output, size);
-
-    // Check for kernel launch errors
+    // Check kernel launch error
     return cudaGetLastError();
 }
 

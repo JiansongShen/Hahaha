@@ -43,7 +43,9 @@ TEST_F(ErrorCodeTest, ErrorCodeEnumValues) {
     EXPECT_EQ(static_cast<std::size_t>(ErrorCode::Overflow), 3);
     EXPECT_EQ(static_cast<std::size_t>(ErrorCode::InternalError), 4);
     EXPECT_EQ(static_cast<std::size_t>(ErrorCode::CudaDeviceOutOfMemory), 5);
-    EXPECT_EQ(static_cast<std::size_t>(ErrorCode::Count), 6);
+    EXPECT_EQ(
+        static_cast<std::size_t>(ErrorCode::CudaSmallObjectMemoryPoolFull), 6);
+    EXPECT_EQ(static_cast<std::size_t>(ErrorCode::Count), 7);
 }
 
 TEST_F(ErrorCodeTest, ErrorMessagesArraySize) {
@@ -52,7 +54,8 @@ TEST_F(ErrorCodeTest, ErrorMessagesArraySize) {
     // array size should match
     const std::size_t errorCodeCount =
         static_cast<std::size_t>(ErrorCode::Count);
-    EXPECT_EQ(errorCodeCount, 6); // Based on our enum values
+    EXPECT_EQ(errorCodeCount, 7); // Updated to reflect all enum values
+                                  // including CudaSmallObjectMemoryPoolFull
 
     // Verify that ErrorMessages array has the right number of elements
     EXPECT_STREQ(ErrorMessages[0], "Success");
@@ -61,6 +64,7 @@ TEST_F(ErrorCodeTest, ErrorMessagesArraySize) {
     EXPECT_STREQ(ErrorMessages[3], "Numerical overflow");
     EXPECT_STREQ(ErrorMessages[4], "Internal error");
     EXPECT_STREQ(ErrorMessages[5], "Cuda device out of memory");
+    EXPECT_STREQ(ErrorMessages[6], "CUDA small object memory pool full");
 }
 
 TEST_F(ErrorCodeTest, ErrorMessagesAccessibility) {
@@ -82,17 +86,21 @@ TEST_F(ErrorCodeTest, ErrorMessagesAccessibility) {
     EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(
                      ErrorCode::CudaDeviceOutOfMemory)],
                  "Cuda device out of memory");
+    EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(
+                     ErrorCode::CudaSmallObjectMemoryPoolFull)],
+                 "CUDA small object memory pool full");
 }
 
 TEST_F(ErrorCodeTest, ErrorCodeCountRepresentsTotal) {
     // The Count enum value should represent the total number of error codes
-    EXPECT_EQ(static_cast<std::size_t>(ErrorCode::Count), 6);
+    EXPECT_EQ(static_cast<std::size_t>(ErrorCode::Count), 7);
 
     // This should match the actual number of error codes defined (excluding
     // Count itself)
     const std::size_t expectedCount =
-        6; // Success, InvalidArgument, DeviceNotSupported, Overflow,
-           // InternalError, CudaDeviceOutOfMemory
+        7; // Success, InvalidArgument, DeviceNotSupported, Overflow,
+           // InternalError, CudaDeviceOutOfMemory,
+           // CudaSmallObjectMemoryPoolFull
     EXPECT_EQ(static_cast<std::size_t>(ErrorCode::Count), expectedCount);
 }
 
@@ -101,7 +109,7 @@ TEST_F(ErrorCodeTest, ErrorMessageArrayBoundsCheck) {
     const std::size_t maxIndex = static_cast<std::size_t>(ErrorCode::Count) - 1;
 
     // Test that the highest valid index has a proper message
-    EXPECT_STREQ(ErrorMessages[maxIndex], "Cuda device out of memory");
+    EXPECT_STREQ(ErrorMessages[maxIndex], "CUDA small object memory pool full");
 
     // Test a few more to ensure array integrity
     for (std::size_t i = 0; i < static_cast<std::size_t>(ErrorCode::Count);
@@ -119,7 +127,8 @@ TEST_F(ErrorCodeTest, EnumValuesAreSequential) {
     EXPECT_EQ(static_cast<int>(ErrorCode::Overflow), 3);
     EXPECT_EQ(static_cast<int>(ErrorCode::InternalError), 4);
     EXPECT_EQ(static_cast<int>(ErrorCode::CudaDeviceOutOfMemory), 5);
-    EXPECT_EQ(static_cast<int>(ErrorCode::Count), 6);
+    EXPECT_EQ(static_cast<int>(ErrorCode::CudaSmallObjectMemoryPoolFull), 6);
+    EXPECT_EQ(static_cast<int>(ErrorCode::Count), 7);
 }
 
 TEST_F(ErrorCodeTest, ErrorMessagesContent) {
@@ -143,4 +152,7 @@ TEST_F(ErrorCodeTest, ErrorMessagesContent) {
     EXPECT_EQ(std::string(ErrorMessages[static_cast<std::size_t>(
                   ErrorCode::CudaDeviceOutOfMemory)]),
               "Cuda device out of memory");
+    EXPECT_EQ(std::string(ErrorMessages[static_cast<std::size_t>(
+                  ErrorCode::CudaSmallObjectMemoryPoolFull)]),
+              "CUDA small object memory pool full");
 }
