@@ -33,6 +33,12 @@
 
 namespace hahaha::backend {
 
+CudaMemoryPool::CudaMemoryPool() {
+    freeSmallBlocks_.resize(MaxSmallObjectPoolListSize, nullptr);
+}
+
+CudaMemoryPool::~CudaMemoryPool() = default;
+
 std::expected<void*, common::Error>
 CudaMemoryPool::allocateSmall(const size_t size) {
     const size_t blockIdx = getBlockIndexOfSize(size);
@@ -90,48 +96,86 @@ void CudaMemoryPool::insertIntoFreeBlock(SmallBlockMetadata* metadata) {
         throw std::runtime_error("Invalid block index");
     }
 
-    const auto isFrontBuddy =
-        reinterpret_cast<uintptr_t>(metadata->gpuPtr) & metadata->size;
-    std::uintptr_t buddyBlockGpuPtr;
-    if (isFrontBuddy) {
-        buddyBlockGpuPtr =
-            reinterpret_cast<uintptr_t>(metadata->gpuPtr) | metadata->size;
-    } else {
-        buddyBlockGpuPtr =
-            reinterpret_cast<uintptr_t>(metadata->gpuPtr) & ~metadata->size;
-    }
+    // Calculate buddy address: buddyPtr = basePtr XOR blockSize
+    const auto basePtr = reinterpret_cast<std::uintptr_t>(metadata->gpuPtr);
+    const std::uintptr_t buddyBlockGpuPtr = basePtr ^ metadata->size;
+
+    // Try to merge with buddy if it exists and is free
     if (const auto pair =
             smallBlockMap_.find(reinterpret_cast<void*>(buddyBlockGpuPtr));
         pair != smallBlockMap_.end()) {
-        // can be merged into a bigger one
+        // Can be merged into a bigger one
         if (pair->second->size == metadata->size
             && !pair->second->isAllocated) {
+            // Remove buddy from free list
+            SmallBlockMetadata* buddy = pair->second;
+            if (buddy->prev) {
+                buddy->prev->next = buddy->next;
+            } else {
+                // Buddy is at the head of free list
+                freeSmallBlocks_[blockIdx] = buddy->next;
+            }
+            if (buddy->next) {
+                buddy->next->prev = buddy->prev;
+            }
+
+            // Remove buddy from map
             smallBlockMap_.erase(pair);
-            smallBlockMap_[metadata->gpuPtr] = metadata;
-            metadata->size = metadata->size << 1;
-            metadata->isAllocated = false;
-            metadata->blockIdx = blockIdx + 1;
-            freeSmallBlocks_[metadata->blockIdx]->prev = metadata;
-            metadata->next = freeSmallBlocks_[metadata->blockIdx];
-            metadata->prev = nullptr;
-            freeSmallBlocks_[metadata->blockIdx] = metadata;
+
+            // Use the lower address as the merged block
+            SmallBlockMetadata* mergedBlock =
+                basePtr < buddyBlockGpuPtr ? metadata : buddy;
+            const SmallBlockMetadata* otherBlock =
+                basePtr < buddyBlockGpuPtr ? buddy : metadata;
+
+            // Update merged block
+            mergedBlock->size = metadata->size << 1;
+            mergedBlock->isAllocated = false;
+            mergedBlock->blockIdx = blockIdx + 1;
+            mergedBlock->prev = nullptr;
+            mergedBlock->next = nullptr;
+
+            // Update map
+            smallBlockMap_[mergedBlock->gpuPtr] = mergedBlock;
+
+            // Delete the other block metadata
+            delete otherBlock;
+
+            // Recursively try to merge with higher level
+            // insertIntoFreeBlock(mergedBlock);
             return;
         }
     }
+
+    // Cannot merge, just insert into free list
     metadata->isAllocated = false;
-    freeSmallBlocks_[metadata->blockIdx]->prev = metadata;
-    metadata->next = freeSmallBlocks_[metadata->blockIdx];
     metadata->prev = nullptr;
-    freeSmallBlocks_[metadata->blockIdx] = metadata;
+    metadata->next = freeSmallBlocks_[blockIdx];
+    if (freeSmallBlocks_[blockIdx]) {
+        freeSmallBlocks_[blockIdx]->prev = metadata;
+    }
+    freeSmallBlocks_[blockIdx] = metadata;
 }
 
-void CudaMemoryPool::insertIntoBigBlock(BigBlockMetadata* metadata) {
+void CudaMemoryPool::insertIntoFreeBigBlock(BigBlockMetadata* metadata) {
     if (!metadata) {
         return;
     }
     metadata->cacheLiveTimes = 0;
     metadata->isAllocated = false;
-    bigBlocks_.push_back(std::unique_ptr<BigBlockMetadata>(metadata));
+    // Note: metadata is already owned by allocatedBigBlocks_ (when allocated),
+    // we just move it to cache (bigBlocks_)
+    // Find and move from allocatedBigBlocks_ to bigBlocks_
+    for (auto it = allocatedBigBlocks_.begin(); it != allocatedBigBlocks_.end();
+         ++it) {
+        if (it->get() == metadata) {
+            freeBigBlocks_.push_back(std::move(*it));
+            allocatedBigBlocks_.erase(it);
+            return;
+        }
+    }
+
+    // If not found in allocatedBigBlocks_, it might already be in bigBlocks_
 }
 
 std::expected<CudaMemoryPool::BigBlockMetadata*, common::Error>
@@ -159,8 +203,10 @@ CudaMemoryPool::requireNewBigBlock(const size_t size) {
 CudaMemoryPool::BigBlockMetadata*
 CudaMemoryPool::findCachedBigBlock(const size_t size) {
     BigBlockMetadata* bestfit = nullptr;
+    auto bestfitIt = freeBigBlocks_.end();
 
-    for (auto& block : bigBlocks_) {
+    for (auto it = freeBigBlocks_.begin(); it != freeBigBlocks_.end(); ++it) {
+        auto& block = *it;
         if (!block || block->isAllocated) {
             continue;
         }
@@ -168,12 +214,18 @@ CudaMemoryPool::findCachedBigBlock(const size_t size) {
         if (block->size == size) {
             block->refreshCacheLiveTime();
             block->isAllocated = true;
-            return block.get();
+            // Move from cache to allocated list
+            allocatedBigBlocks_.push_back(std::move(block));
+            BigBlockMetadata* result = allocatedBigBlocks_.back().get();
+            // Remove from cache
+            freeBigBlocks_.erase(it);
+            return result;
         }
 
         if (block->size > size) {
             if (bestfit == nullptr || block->size < bestfit->size) {
                 bestfit = block.get();
+                bestfitIt = it;
             }
             block->cacheLiveTimes++;
         }
@@ -190,6 +242,9 @@ CudaMemoryPool::findCachedBigBlock(const size_t size) {
 
     bestfit->refreshCacheLiveTime();
     bestfit->isAllocated = true;
+    // Move from cache to allocated list
+    allocatedBigBlocks_.push_back(std::move(*bestfitIt));
+    freeBigBlocks_.erase(bestfitIt);
     return bestfit;
 }
 
@@ -208,8 +263,22 @@ void CudaMemoryPool::free(void* ptr) {
         if (BigBlockMetadata* metadata = bigIt->second;
             metadata && metadata->isAllocated) {
             metadata->isAllocated = false;
-            insertIntoBigBlock(metadata);
+            insertIntoFreeBigBlock(metadata);
         }
+
+        // if  this big block is not used for a long time, remove it from cache
+        if (bigIt->second->cacheLiveTimes > BigMemoryBlockMaxLiveTimes) {
+            bigBlockMap_.erase(bigIt);
+            for (auto it = freeBigBlocks_.begin(); it != freeBigBlocks_.end();
+                 ++it) {
+                if (it->get() == bigIt->second) {
+                    cudaMemoryFree(bigIt->second->gpuPtr);
+                    freeBigBlocks_.erase(it);
+                    break;
+                }
+            }
+        }
+
         return;
     }
 
@@ -224,6 +293,7 @@ void CudaMemoryPool::free(void* ptr) {
         return;
     }
 
+    // if we have a free block at max level, free it
     if (const auto block = freeSmallBlocks_[MaxSmallObjectPoolListSize - 1];
         block && !block->isAllocated) {
         const auto next = block->next;
@@ -243,6 +313,8 @@ void CudaMemoryPool::free(void* ptr) {
     }
 
     // Not found in our maps, might be direct allocation - free directly
+    // This should not normally happen for allocations made through this pool
+    // But we handle it gracefully
     cudaMemoryFree(ptr);
 }
 

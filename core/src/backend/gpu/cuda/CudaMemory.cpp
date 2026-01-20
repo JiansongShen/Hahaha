@@ -62,7 +62,7 @@ void CudaMemory::free(DeviceBuffer& deviceBuffer) {
 
 DeviceBuffer CudaMemory::allocate(size_t size) {
     if (size == 0) {
-        return DeviceBuffer();
+        return {};
     }
 
     if (size < smallMemoryBlockThreshold_) {
@@ -118,7 +118,8 @@ DeviceBuffer CudaMemory::allocateBig(size_t size) {
                             size};
     }
 
-    throw std::runtime_error("CUDA has no enough memory");
+    warn(std::format("CUDA has no enough memory, need {}", size));
+    return DeviceBuffer();
 }
 
 void CudaMemory::copyHostToDevice(DeviceBuffer& dst,

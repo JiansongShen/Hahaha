@@ -61,7 +61,19 @@ class CudaMemoryPool {
     static constexpr size_t MaxSmallObjectPoolListSize =
         log2(SingleSmallObjectPoolMaxSize / BaseMemoryBlockSize);
 
+    static constexpr size_t BigMemoryBlockMaxLiveTimes = 3;
+
   public:
+    /**
+     * @brief Constructor to initialize the memory pool.
+     */
+    CudaMemoryPool();
+
+    /**
+     * @brief Destructor to clean up the memory pool.
+     */
+    ~CudaMemoryPool();
+
     /**
      * @brief Check if free block list exists for given size.
      * @param blockIdx Block size index.
@@ -156,7 +168,7 @@ class CudaMemoryPool {
      * @brief Insert big block into cache.
      * @param metadata Big block metadata.
      */
-    void insertIntoBigBlock(BigBlockMetadata* metadata);
+    void insertIntoFreeBigBlock(BigBlockMetadata* metadata);
 
     /**
      * @brief Require new big block allocation.
@@ -184,12 +196,14 @@ class CudaMemoryPool {
     std::vector<SmallBlockMetadata*> freeSmallBlocks_;
 
     // Big block cache (CPU-side metadata)
-    std::vector<std::unique_ptr<BigBlockMetadata>> bigBlocks_;
+    std::vector<std::unique_ptr<BigBlockMetadata>> freeBigBlocks_;
 
     // All allocated big blocks (for cleanup)
     std::vector<std::unique_ptr<BigBlockMetadata>> allocatedBigBlocks_;
 
-    // All small block metadata (for lifetime management)
+    // All small block metadata (for lifetime management). it only stores the
+    // copy of highest level memory block (whose size is
+    // SingleSmallObjectPoolMaxSize) so that it can be found quickly.
     SmallBlockMetadata* smallBlockStorage_ = nullptr;
 
     // Map GPU pointer to metadata (for fast lookup)
