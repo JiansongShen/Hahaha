@@ -61,8 +61,6 @@ class CPUDevice : public Device {
             srcDevice->copyMemoryFromThis(src, dst, srcDevice);
         }
     }
-
-  private:
 };
 } // namespace hahaha::backend
 

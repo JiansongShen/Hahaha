@@ -294,8 +294,9 @@ void CudaMemoryPool::free(void* ptr) {
     }
 
     // if we have a free block at max level, free it
-    if (const auto block = freeSmallBlocks_[MaxSmallObjectPoolListSize - 1];
-        block && !block->isAllocated) {
+    for (auto block = freeSmallBlocks_[MaxSmallObjectPoolListSize - 1];
+         block && !block->isAllocated;
+         block = block->next) {
         const auto next = block->next;
         freeSmallBlocks_[MaxSmallObjectPoolListSize - 1] = next;
         next->prev = nullptr;
@@ -329,7 +330,7 @@ CudaMemoryPool::allocateBig(const size_t size) {
 }
 
 size_t CudaMemoryPool::getBlockIndexOfSize(const size_t size) {
-    size_t idx = 0;
+    size_t idx = 1;
     size_t currentSize = BaseMemoryBlockSize;
 
     while (size > currentSize
@@ -339,7 +340,7 @@ size_t CudaMemoryPool::getBlockIndexOfSize(const size_t size) {
         ++idx;
     }
 
-    return idx;
+    return idx - 1;
 }
 
 common::Error CudaMemoryPool::requireSplitBlock(const size_t blockIdx) {

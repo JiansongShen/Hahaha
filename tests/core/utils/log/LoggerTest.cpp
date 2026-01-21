@@ -38,6 +38,7 @@ class LoggerTest : public ::testing::Test {
     }
 
     void TearDown() override {
+
         if (std::filesystem::exists("test_log.txt")) {
             std::filesystem::remove("test_log.txt");
         }
