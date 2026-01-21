@@ -43,7 +43,6 @@ class CudaMemory : public GPUMemory {
     static constexpr size_t DefaultSmallMemoryBlockThreshold = 512
         << 20; // 512MB
 
-  public:
     /**
      * @brief Free a device buffer.
      * @param deviceBuffer The buffer to free.

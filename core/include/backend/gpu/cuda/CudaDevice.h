@@ -83,14 +83,27 @@ class CudaDevice : public GPUDevice {
         memory_.free(buffer);
     }
 
-    void copyMemoryFrom(std::span<std::byte> src,
-                        std::span<std::byte> dst,
-                        const std::shared_ptr<Device>& dstDevice) override {
+    void copyMemoryFromThis(std::span<std::byte> src,
+                            std::span<std::byte> dst,
+                            const std::shared_ptr<Device>& dstDevice) override {
+        if (dstDevice->getType() != DeviceType::CPU) {
+            throw std::invalid_argument("Invalid device type");
+        }
+
+        const auto buf = DeviceBuffer{
+            reinterpret_cast<std::uintptr_t>(src.data()), src.size()};
+        memory_.copyDeviceToHost(dst, buf);
     }
 
-    void copyMemoryTo(std::span<std::byte> src,
-                      std::span<std::byte> dst,
-                      const std::shared_ptr<Device>& srcDevice) override {
+    void copyMemoryToThis(std::span<std::byte> src,
+                          std::span<std::byte> dst,
+                          const std::shared_ptr<Device>& srcDevice) override {
+        if (srcDevice->getType() != DeviceType::CPU) {
+            throw std::invalid_argument("Invalid device type");
+        }
+        auto buf = DeviceBuffer{reinterpret_cast<std::uintptr_t>(dst.data()),
+                                dst.size()};
+        memory_.copyHostToDevice(buf, src);
     }
 
   private:

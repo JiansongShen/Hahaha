@@ -224,7 +224,7 @@ template <typename T> class TensorWrapper {
                 // we just update the device marker
                 // TODO: Implement proper GPU to CPU transfer when TensorData
                 // supports GPU storage
-                data_.setDevice(device);
+                data_.copyToDevice(device);
                 return;
             }
         } else if (device->getType() == backend::DeviceType::CUDA) {

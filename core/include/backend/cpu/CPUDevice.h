@@ -20,6 +20,8 @@
 
 #ifndef HAHAHA_CPUDEVICE_H_4C28A153F750404B93237EDDBE6463C1
 #define HAHAHA_CPUDEVICE_H_4C28A153F750404B93237EDDBE6463C1
+#include <cstring>
+
 #include "backend/Device.h"
 
 namespace hahaha::backend {
@@ -40,14 +42,24 @@ class CPUDevice : public Device {
 
     ~CPUDevice() override = default;
 
-    void copyMemoryFrom(std::span<std::byte> src,
-                        std::span<std::byte> dst,
-                        const std::shared_ptr<Device>& dstDevice) override {
+    void copyMemoryFromThis(std::span<std::byte> src,
+                            std::span<std::byte> dst,
+                            const std::shared_ptr<Device>& dstDevice) override {
+        if (dstDevice->getType() == DeviceType::CPU) {
+            std::memcpy(dst.data(), src.data(), src.size());
+        } else if (dstDevice->getType() == DeviceType::CUDA) {
+            dstDevice->copyMemoryToThis(src, dst, dstDevice);
+        }
     }
 
-    void copyMemoryTo(std::span<std::byte> src,
-                      std::span<std::byte> dst,
-                      const std::shared_ptr<Device>& srcDevice) override {
+    void copyMemoryToThis(std::span<std::byte> src,
+                          std::span<std::byte> dst,
+                          const std::shared_ptr<Device>& srcDevice) override {
+        if (srcDevice->getType() == DeviceType::CPU) {
+            std::memcpy(dst.data(), src.data(), src.size());
+        } else if (srcDevice->getType() == DeviceType::CUDA) {
+            srcDevice->copyMemoryFromThis(src, dst, srcDevice);
+        }
     }
 
   private:

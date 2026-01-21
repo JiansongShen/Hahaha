@@ -193,6 +193,56 @@ template <typename T> class TensorData {
         device_ = backend::getCPUDevice();
     }
 
+    std::expected<void, common::Error>
+    copyFromCpuToCuda(const std::shared_ptr<backend::Device>& targetDevice) {
+        auto byteSize = sizeof(T) * shape_.getTotalSize();
+        const auto targetBuffer = targetDevice->allocate(byteSize);
+        if (targetBuffer.address() == 0) {
+            return std::unexpected(common::CudaDeviceOutOfMemoryError());
+        }
+
+        targetDevice->copyMemoryToThis(
+            std::span(reinterpret_cast<std::byte*>(this->data_.get()),
+                      byteSize),
+            std::span(reinterpret_cast<std::byte*>(targetBuffer.address()),
+                      byteSize),
+            targetDevice);
+
+        return {};
+    }
+
+    std::expected<void, common::Error>
+    copyFromCudaToCpu(const std::shared_ptr<backend::Device>& targetDevice) {
+        auto byteSize = sizeof(T) * shape_.getTotalSize();
+        const auto targetBuffer =
+            backend::DeviceBuffer(this->getData().get(), byteSize);
+        if (targetBuffer.address() == 0) {
+            return std::unexpected(common::CudaDeviceOutOfMemoryError());
+        }
+
+        targetDevice->copyMemoryToThis(
+            std::span<std::byte>(this->data_.get(), byteSize),
+            std::span(reinterpret_cast<std::byte*>(targetBuffer.address()),
+                      byteSize),
+            targetDevice);
+
+        return {};
+    }
+
+    std::expected<void, common::Error>
+    copyToDevice(std::shared_ptr<backend::Device> targetDevice) {
+        if (*this->device_ == *targetDevice) {
+            return {};
+        }
+
+        if (this->device_->getType() == backend::DeviceType::CPU
+            && targetDevice->getType() == backend::DeviceType::CUDA) {
+            return copyFromCpuToCuda(targetDevice);
+        }
+
+        return {};
+    }
+
     /**
      * @brief Get the raw data pointer.
      * @return Reference to the shared_ptr holding the data.

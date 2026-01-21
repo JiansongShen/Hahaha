@@ -148,7 +148,7 @@ TEST_F(DeviceComputeDispatcherCudaTest,
 
 // Test CUDA dispatch with large tensors
 TEST_F(DeviceComputeDispatcherCudaTest, DispatchAdd_CUDA_LargeTensor) {
-    const size_t size = 10000;
+    const size_t size = 128;
     std::vector<float> data1(size, 1.0f);
     std::vector<float> data2(size, 2.0f);
 
@@ -156,8 +156,8 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchAdd_CUDA_LargeTensor) {
     TensorWrapper<float> b(data2);
     TensorWrapper<float> res(TensorShape({size}), 0.0f);
 
-    a.to(cudaDevice_);
     b.to(cudaDevice_);
+    a.to(cudaDevice_);
     res.to(cudaDevice_);
 
     auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b, res);

@@ -45,13 +45,13 @@ class TestDevice : public Device {
     void deallocate(DeviceBuffer buffer) override {
     }
 
-    void copyMemoryFrom(std::span<std::byte> src,
-                        std::span<std::byte> dst,
-                        const std::shared_ptr<Device>& dstDevice) override {
+    void copyMemoryFromThis(std::span<std::byte> src,
+                            std::span<std::byte> dst,
+                            const std::shared_ptr<Device>& dstDevice) override {
     }
-    void copyMemoryTo(std::span<std::byte> dst,
-                      std::span<std::byte> src,
-                      const std::shared_ptr<Device>& srcDevice) override {
+    void copyMemoryToThis(std::span<std::byte> dst,
+                          std::span<std::byte> src,
+                          const std::shared_ptr<Device>& srcDevice) override {
     }
 };
 
@@ -71,14 +71,14 @@ class TestDeviceWithInvalidType : public Device {
     void deallocate(DeviceBuffer buffer) override {
     }
 
-    void copyMemoryFrom(std::span<std::byte> src,
-                        std::span<std::byte> dst,
-                        const std::shared_ptr<Device>& dstDevice) override {
+    void copyMemoryFromThis(std::span<std::byte> src,
+                            std::span<std::byte> dst,
+                            const std::shared_ptr<Device>& dstDevice) override {
     }
 
-    void copyMemoryTo(std::span<std::byte> src,
-                      std::span<std::byte> dst,
-                      const std::shared_ptr<Device>& srcDevice) override {
+    void copyMemoryToThis(std::span<std::byte> src,
+                          std::span<std::byte> dst,
+                          const std::shared_ptr<Device>& srcDevice) override {
     }
 };
 

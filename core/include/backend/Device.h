@@ -100,13 +100,14 @@ class alignas(8) Device {
 
     virtual void deallocate(DeviceBuffer buffer) = 0;
 
-    virtual void copyMemoryTo(std::span<std::byte> src,
-                              std::span<std::byte> dst,
-                              const std::shared_ptr<Device>& srcDevice) = 0;
+    virtual void copyMemoryToThis(std::span<std::byte> src,
+                                  std::span<std::byte> dst,
+                                  const std::shared_ptr<Device>& srcDevice) = 0;
 
-    virtual void copyMemoryFrom(std::span<std::byte> src,
-                                std::span<std::byte> dst,
-                                const std::shared_ptr<Device>& dstDevice) = 0;
+    virtual void
+    copyMemoryFromThis(std::span<std::byte> src,
+                       std::span<std::byte> dst,
+                       const std::shared_ptr<Device>& dstDevice) = 0;
 
     [[nodiscard]] DeviceType getType() const {
         return type_;
