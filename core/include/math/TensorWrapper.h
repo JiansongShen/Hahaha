@@ -12,7 +12,6 @@
 #include "backend/Device.h"
 #include "backend/DeviceComputeDispatcher.h"
 #include "backend/DeviceRegistry.h"
-#include "backend/cpu/CPUDevice.h"
 #ifdef HAHAHA_USE_CUDA
 #if __has_include(<driver_types.h>)
 #include <cuda_runtime.h>
@@ -21,7 +20,6 @@
 #include "backend/gpu/cuda/CudaMemory.h"
 #endif
 #endif
-#include "common/Operator.h"
 #include "math/ds/TensorData.h"
 #include "math/ds/TensorShape.h"
 
@@ -157,6 +155,14 @@ template <typename T> class TensorWrapper {
     }
 
     /**
+     * @brief Get the GPU pointer.
+     * @return std::uintptr_t of GPU pointer.
+     */
+    std::uintptr_t getRawGpuPtr() const {
+        return data_.gpuPtr;
+    }
+
+    /**
      * @brief Get the tensor's shape.
      * @return const std::vector<size_t>& reference to internal shape.
      */
@@ -223,10 +229,7 @@ template <typename T> class TensorWrapper {
 
                 // Create new CPU data
                 auto newData = std::make_shared<T[]>(totalSize);
-                // For now, since TensorData doesn't support GPU storage,
-                // we just update the device marker
-                // TODO: Implement proper GPU to CPU transfer when TensorData
-                // supports GPU storage
+
                 data_.copyOrMoveToDevice(targetDevice);
                 data_.setDevice(targetDevice);
                 return;
@@ -243,9 +246,6 @@ template <typename T> class TensorWrapper {
                 return;
             }
 
-            // For now, just update the device marker
-            // GPU operations will handle data transfer internally
-            // TODO: Implement proper GPU storage in TensorData
             data_.copyOrMoveToDevice(targetDevice);
             data_.setDevice(targetDevice);
             return;

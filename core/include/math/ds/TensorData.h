@@ -230,9 +230,8 @@ template <typename T> class TensorData {
             return std::unexpected(common::CudaDeviceOutOfMemoryError());
         }
 
-        targetDevice->copyMemoryToThis(
-            std::span(reinterpret_cast<std::byte*>(this->data_.get()),
-                      byteSize),
+        device_->copyMemoryFromThis(
+            std::span(reinterpret_cast<std::byte*>(this->gpuPtr), byteSize),
             std::span(reinterpret_cast<std::byte*>(targetBuffer.address()),
                       byteSize),
             targetDevice);

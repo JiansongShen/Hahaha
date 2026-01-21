@@ -468,14 +468,14 @@ std::expected<void, Error> dispatchAdd(const math::TensorWrapper<T>& lhs,
     }
     const auto& lStride = lhs.getStride().getStrides();
     const auto& rStride = rhs.getStride().getStrides();
-    auto lRaw = lhs.getRawData();
-    auto rRaw = rhs.getRawData();
-    auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
-    std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
-    std::span<T> resBuf(resRaw.get(), res.getTotalSize());
 
     if constexpr (dev == DeviceType::CPU) {
+        auto lRaw = lhs.getRawData();
+        auto rRaw = rhs.getRawData();
+        auto resRaw = res.getRawData();
+        std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
+        std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
+        std::span<T> resBuf(resRaw.get(), res.getTotalSize());
         cpu_add(shape, lStride, rStride, lBuf, rBuf, resBuf);
         return {};
     } else if constexpr (dev == DeviceType::CUDA) {
@@ -486,12 +486,17 @@ std::expected<void, Error> dispatchAdd(const math::TensorWrapper<T>& lhs,
         const bool resContiguous =
             isContiguous(shape, res.getStride().getStrides());
 
+        std::span<const T> lBuf(reinterpret_cast<T*>(lhs.getRawGpuPtr()),
+                                lhs.getTotalSize());
+        std::span<const T> rBuf(reinterpret_cast<T*>(rhs.getRawGpuPtr()),
+                                rhs.getTotalSize());
+        std::span<T> resBuf(reinterpret_cast<T*>(res.getRawGpuPtr()),
+                            res.getTotalSize());
         if (lContiguous && rContiguous && resContiguous) {
             // Direct CUDA computation
             cuda_add(lBuf, rBuf, resBuf);
         } else {
-            // Fall back to CPU for non-contiguous data
-            cpu_add(shape, lStride, rStride, lBuf, rBuf, resBuf);
+            throw std::runtime_error("Non-contiguous data not supported");
         }
         return {};
     }

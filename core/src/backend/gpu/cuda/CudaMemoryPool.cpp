@@ -37,7 +37,62 @@ CudaMemoryPool::CudaMemoryPool() {
     freeSmallBlocks_.resize(MaxSmallObjectPoolListSize, nullptr);
 }
 
-CudaMemoryPool::~CudaMemoryPool() = default;
+CudaMemoryPool::~CudaMemoryPool() {
+    // Free all big blocks
+    for (auto& block : freeBigBlocks_) {
+        if (block && block->gpuPtr) {
+            cudaMemoryFree(block->gpuPtr);
+        }
+    }
+    freeBigBlocks_.clear();
+
+    for (auto& block : allocatedBigBlocks_) {
+        if (block && block->gpuPtr) {
+            cudaMemoryFree(block->gpuPtr);
+        }
+    }
+    allocatedBigBlocks_.clear();
+    bigBlockMap_.clear();
+
+    // Free all small blocks - traverse smallBlockStorage_ linked list
+    SmallBlockMetadata* current = smallBlockStorage_;
+    while (current) {
+        SmallBlockMetadata* next = current->next;
+        if (current->gpuPtr) {
+            cudaMemoryFree(current->gpuPtr);
+        }
+        delete current;
+        current = next;
+    }
+    smallBlockStorage_ = nullptr;
+
+    // Free all blocks in freeSmallBlocks_ lists
+    for (size_t i = 0; i < freeSmallBlocks_.size(); ++i) {
+        SmallBlockMetadata* block = freeSmallBlocks_[i];
+        while (block) {
+            SmallBlockMetadata* next = block->next;
+            if (block->gpuPtr) {
+                cudaMemoryFree(block->gpuPtr);
+            }
+            // Only delete if not in smallBlockStorage_ (to avoid double free)
+            bool inStorage = false;
+            SmallBlockMetadata* storage = smallBlockStorage_;
+            while (storage) {
+                if (storage == block) {
+                    inStorage = true;
+                    break;
+                }
+                storage = storage->next;
+            }
+            if (!inStorage) {
+                delete block;
+            }
+            block = next;
+        }
+        freeSmallBlocks_[i] = nullptr;
+    }
+    smallBlockMap_.clear();
+}
 
 std::expected<void*, common::Error>
 CudaMemoryPool::allocateSmall(const size_t size) {
@@ -260,22 +315,47 @@ void CudaMemoryPool::free(void* ptr) {
     // Check if it's a big block
     if (const auto bigIt = bigBlockMap_.find(ptr);
         bigIt != bigBlockMap_.end()) {
-        if (BigBlockMetadata* metadata = bigIt->second;
-            metadata && metadata->isAllocated) {
+        BigBlockMetadata* metadata = bigIt->second;
+        if (!metadata) {
+            return;
+        }
+
+        // Check cacheLiveTimes BEFORE resetting it in insertIntoFreeBigBlock
+        const bool shouldFree =
+            metadata->cacheLiveTimes > BigMemoryBlockMaxLiveTimes;
+
+        if (metadata->isAllocated) {
             metadata->isAllocated = false;
             insertIntoFreeBigBlock(metadata);
         }
 
-        // if  this big block is not used for a long time, remove it from cache
-        if (bigIt->second->cacheLiveTimes > BigMemoryBlockMaxLiveTimes) {
+        // If this big block is not used for a long time, remove it from cache
+        if (shouldFree) {
+            void* gpuPtrToFree = metadata->gpuPtr;
             bigBlockMap_.erase(bigIt);
+            // Find and remove from freeBigBlocks_
             for (auto it = freeBigBlocks_.begin(); it != freeBigBlocks_.end();
                  ++it) {
-                if (it->get() == bigIt->second) {
-                    cudaMemoryFree(bigIt->second->gpuPtr);
+                if (it->get() == metadata) {
+                    cudaMemoryFree(gpuPtrToFree);
                     freeBigBlocks_.erase(it);
                     break;
                 }
+            }
+        }
+
+        // Also check and free other old blocks in cache that haven't been used
+        for (auto it = freeBigBlocks_.begin(); it != freeBigBlocks_.end();) {
+            if ((*it) && (*it)->cacheLiveTimes > BigMemoryBlockMaxLiveTimes) {
+                void* gpuPtrToFree = (*it)->gpuPtr;
+                auto mapIt = bigBlockMap_.find(gpuPtrToFree);
+                if (mapIt != bigBlockMap_.end()) {
+                    bigBlockMap_.erase(mapIt);
+                }
+                cudaMemoryFree(gpuPtrToFree);
+                it = freeBigBlocks_.erase(it);
+            } else {
+                ++it;
             }
         }
 
@@ -293,23 +373,41 @@ void CudaMemoryPool::free(void* ptr) {
         return;
     }
 
-    // if we have a free block at max level, free it
-    for (auto block = freeSmallBlocks_[MaxSmallObjectPoolListSize - 1];
-         block && !block->isAllocated;
-         block = block->next) {
-        const auto next = block->next;
-        freeSmallBlocks_[MaxSmallObjectPoolListSize - 1] = next;
-        next->prev = nullptr;
-        const auto maxLevelBlock = smallBlockStorage_;
-        while (maxLevelBlock) {
-            if (maxLevelBlock->gpuPtr == block->gpuPtr) {
-                smallBlockStorage_ = maxLevelBlock->next;
-                if (smallBlockStorage_) {
-                    smallBlockStorage_->prev = nullptr;
+    // If we have a free block at max level, free it
+    // This helps prevent memory accumulation at the highest level
+    auto* block = freeSmallBlocks_[MaxSmallObjectPoolListSize - 1];
+    if (block && !block->isAllocated) {
+        // Find and remove from smallBlockStorage_ linked list
+        SmallBlockMetadata* current = smallBlockStorage_;
+        SmallBlockMetadata* prev = nullptr;
+        while (current) {
+            if (current->gpuPtr == block->gpuPtr) {
+                // Remove from linked list
+                if (prev) {
+                    prev->next = current->next;
+                    if (current->next) {
+                        current->next->prev = prev;
+                    }
+                } else {
+                    smallBlockStorage_ = current->next;
+                    if (smallBlockStorage_) {
+                        smallBlockStorage_->prev = nullptr;
+                    }
                 }
-                cudaMemoryFree(maxLevelBlock->gpuPtr);
+                // Remove from free list
+                freeSmallBlocks_[MaxSmallObjectPoolListSize - 1] = block->next;
+                if (block->next) {
+                    block->next->prev = nullptr;
+                }
+                // Remove from map
+                smallBlockMap_.erase(block->gpuPtr);
+                // Free GPU memory
+                cudaMemoryFree(block->gpuPtr);
+                delete block;
                 break;
             }
+            prev = current;
+            current = current->next;
         }
     }
 

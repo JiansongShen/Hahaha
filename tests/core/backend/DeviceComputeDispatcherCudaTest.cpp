@@ -66,6 +66,8 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchAdd_CUDA_WorksForDenseTensors) {
     auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b, res);
     EXPECT_TRUE(result.has_value());
 
+    res.to(hahaha::backend::getCPUDevice());
+
     // Verify results (with tolerance for floating point)
     EXPECT_NEAR(res.at({0, 0}), 11.0f, 1e-5f);
     EXPECT_NEAR(res.at({0, 1}), 22.0f, 1e-5f);
@@ -86,6 +88,7 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchSub_CUDA_WorksForDenseTensors) {
     auto result = hahaha::backend::dispatchSub(DeviceType::CUDA, b, a, res);
     EXPECT_TRUE(result.has_value());
 
+    res.to(hahaha::backend::getCPUDevice());
     EXPECT_NEAR(res.at({0, 0}), 9.0f, 1e-5f);
     EXPECT_NEAR(res.at({1, 1}), 36.0f, 1e-5f);
 }
@@ -103,6 +106,7 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchMul_CUDA_WorksForDenseTensors) {
     auto result = hahaha::backend::dispatchMul(DeviceType::CUDA, a, b, res);
     EXPECT_TRUE(result.has_value());
 
+    res.to(hahaha::backend::getCPUDevice());
     EXPECT_NEAR(res.at({0, 0}), 10.0f, 1e-5f);
     EXPECT_NEAR(res.at({1, 1}), 160.0f, 1e-5f);
 }
@@ -120,13 +124,14 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchDiv_CUDA_WorksForDenseTensors) {
     auto result = hahaha::backend::dispatchDiv(DeviceType::CUDA, b, a, res);
     EXPECT_TRUE(result.has_value());
 
+    res.to(hahaha::backend::getCPUDevice());
     EXPECT_NEAR(res.at({0, 0}), 10.0f, 1e-5f);
     EXPECT_NEAR(res.at({1, 1}), 10.0f, 1e-5f);
 }
 
 // Test CUDA dispatch with non-contiguous data (should fall back to CPU)
 TEST_F(DeviceComputeDispatcherCudaTest,
-       DispatchAdd_CUDA_NonContiguous_FallsBackToCPU) {
+       DispatchAdd_CUDA_NonContiguous_ThrowError) {
     TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
     TensorWrapper<float> b(NestedData<float>{{10.0f}, {20.0f}}); // shape (2, 1)
     TensorWrapper<float> b_broadcasted = b.broadcastTo(TensorShape({2, 2}));
@@ -138,12 +143,9 @@ TEST_F(DeviceComputeDispatcherCudaTest,
     res.to(cudaDevice_);
 
     // Non-contiguous data should fall back to CPU
-    auto result =
-        hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b_broadcasted, res);
-    EXPECT_TRUE(result.has_value());
-
-    EXPECT_NEAR(res.at({0, 0}), 11.0f, 1e-5f);
-    EXPECT_NEAR(res.at({0, 1}), 12.0f, 1e-5f);
+    EXPECT_THROW(auto result = hahaha::backend::dispatchAdd(
+                     DeviceType::CUDA, a, b_broadcasted, res),
+                 std::runtime_error);
 }
 
 // Test CUDA dispatch with large tensors
