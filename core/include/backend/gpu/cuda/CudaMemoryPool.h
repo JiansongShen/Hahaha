@@ -56,6 +56,7 @@ constexpr int log2(const size_t val) {
  * memory. Only the actual data buffers are allocated on GPU.
  */
 class CudaMemoryPool {
+  public:
     static constexpr size_t BaseMemoryBlockSize = 32;                 // 32B
     static constexpr size_t SingleSmallObjectPoolMaxSize = 512 << 20; // 512MB
     static constexpr size_t MaxSmallObjectPoolListSize =
@@ -63,7 +64,6 @@ class CudaMemoryPool {
 
     static constexpr size_t BigMemoryBlockMaxLiveTimes = 3;
 
-  public:
     /**
      * @brief Constructor to initialize the memory pool.
      */

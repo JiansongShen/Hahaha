@@ -20,6 +20,16 @@ if(NOT _gtest_main_target)
   message(FATAL_ERROR "GTest dependency not found.  Install GTest via repo-local vcpkg (preferred) or system GTest.")
 endif()
 
+if (HAHAHA_USE_CUDA)
+  message("Using cuda to compile")
+  enable_language(CUDA)
+  set(CMAKE_CUDA_STANDARD 20)
+  set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bdynamic")
+
+  find_package(CUDAToolkit REQUIRED)
+endif ()
+
 add_executable(hahaha_tests ${HAHAHA_TEST_SOURCES})
 target_link_libraries(hahaha_tests PRIVATE hahaha::hahaha ${_gtest_main_target})
 
@@ -29,6 +39,15 @@ if(HAHAHA_ENABLE_COVERAGE)
     target_compile_options(hahaha_tests PRIVATE -O0 -g --coverage)
     target_link_options(hahaha_tests PRIVATE --coverage)
   endif()
+endif()
+
+if(HAHAHA_USE_CUDA)
+  target_compile_definitions(hahaha_tests PUBLIC HAHAHA_USE_CUDA)
+  find_package(CUDAToolkit REQUIRED)
+  # Enable separable compilation if you use device linking or dynamic parallelism
+  set_target_properties(hahaha_tests PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+  # Link against common CUDA libraries if needed (e.g. cuBLAS, cuFFT)
+  target_link_libraries(hahaha_tests PRIVATE CUDA::cublas CUDA::cudart)
 endif()
 
 # MSVC: large translation units from typed tests may require /bigobj.

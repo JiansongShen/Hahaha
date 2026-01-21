@@ -179,16 +179,16 @@ TEST_F(TensorWrapperDeviceTest, Arithmetic_CUDA_Works) {
     // These operations should work even if data is on GPU
     // (operations will handle device transfer internally)
     auto sum = a + b;
-    EXPECT_EQ(sum.getDevice().getType(), DeviceType::CUDA);
+    EXPECT_EQ(sum.getDevice()->getType(), DeviceType::CUDA);
 
     auto diff = b - a;
-    EXPECT_EQ(diff.getDevice().getType(), DeviceType::CUDA);
+    EXPECT_EQ(diff.getDevice()->getType(), DeviceType::CUDA);
 
     auto prod = a * b;
-    EXPECT_EQ(prod.getDevice().getType(), DeviceType::CUDA);
+    EXPECT_EQ(prod.getDevice()->getType(), DeviceType::CUDA);
 
     auto quot = b / a;
-    EXPECT_EQ(quot.getDevice().getType(), DeviceType::CUDA);
+    EXPECT_EQ(quot.getDevice()->getType(), DeviceType::CUDA);
 }
 
 #endif // __has_include(<driver_types.h>)

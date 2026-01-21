@@ -26,6 +26,9 @@
 #include <cuda_runtime.h>
 #include <driver_types.h>
 
+#include "common/definitions.h"
+
+using cf32 = hahaha::common::f32;
 /**
  * @brief External C interface functions defined in CUDA files.
  */

@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <utility>
 
+#include "backend/DeviceRegistry.h"
 #include "backend/cpu/CPUDevice.h"
 #include "math/ds/NestedData.h"
 #include "math/ds/TensorShape.h"
@@ -61,7 +62,7 @@ template <typename T> class TensorData {
     TensorData(const TensorShape& shape,
                T initValue,
                const std::shared_ptr<backend::Device>& device =
-                   std::make_shared<backend::CPUDevice>())
+                   backend::getCPUDevice())
         : shape_(shape), stride_(shape), device_(device) {
         size_t size = shape_.getTotalSize();
         if (device_->getType() == backend::DeviceType::CPU) {
@@ -81,7 +82,7 @@ template <typename T> class TensorData {
      */
     explicit TensorData(const TensorShape& shape,
                         const std::shared_ptr<backend::Device>& device =
-                            std::make_shared<backend::CPUDevice>())
+                            backend::getCPUDevice())
         : shape_(shape), stride_(shape), device_(device) {
         const size_t size = shape_.getTotalSize();
         if (device_->getType() == backend::DeviceType::CPU) {
@@ -128,6 +129,7 @@ template <typename T> class TensorData {
           shape_(TensorShape(std::vector<size_t>{initVec.size()})) {
         stride_ = TensorStride(shape_);
         std::copy(initVec.begin(), initVec.end(), data_.get());
+        device_ = backend::getCPUDevice();
     }
 
     /**
@@ -188,7 +190,7 @@ template <typename T> class TensorData {
             data_ = nullptr; // Explicitly null for truly empty tensors
         }
         stride_ = TensorStride(shape_);
-        device_ = std::make_shared<backend::CPUDevice>();
+        device_ = backend::getCPUDevice();
     }
 
     /**

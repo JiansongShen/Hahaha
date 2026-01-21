@@ -65,14 +65,6 @@ class Memory {
                                   const DeviceBuffer& src) = 0;
 
     /**
-     * @brief Copies data from one device buffer to another.
-     * @param dst The destination device buffer.
-     * @param src The source device buffer.
-     */
-    virtual void copyDeviceToDevice(DeviceBuffer& dst,
-                                    const DeviceBuffer& src) = 0;
-
-    /**
      * @brief Sets a block of memory to a specified value.
      * @param dst The destination device buffer.
      * @param value The value to set (converted to unsigned char).

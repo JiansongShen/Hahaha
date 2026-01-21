@@ -44,11 +44,11 @@ enum class DeviceType : std::uint8_t {
  * @brief Represents a compute device where data resides and operations occur.
  */
 class alignas(8) Device {
+
+    class DeviceRegistry;
+
   public:
     virtual ~Device() = default;
-
-    /** @brief Default constructor (CPU, ID 0). */
-    Device() = default;
 
     /**
      * @brief Construct a Device with type and ID.
@@ -100,14 +100,6 @@ class alignas(8) Device {
 
     virtual void deallocate(DeviceBuffer buffer) = 0;
 
-    [[nodiscard]] DeviceType getType() const {
-        return type_;
-    }
-
-    [[nodiscard]] std::uint8_t getId() const {
-        return id_;
-    }
-
     virtual void copyMemoryTo(std::span<std::byte> src,
                               std::span<std::byte> dst,
                               const std::shared_ptr<Device>& srcDevice) = 0;
@@ -116,10 +108,23 @@ class alignas(8) Device {
                                 std::span<std::byte> dst,
                                 const std::shared_ptr<Device>& dstDevice) = 0;
 
+    [[nodiscard]] DeviceType getType() const {
+        return type_;
+    }
+
+    [[nodiscard]] std::uint8_t getId() const {
+        return id_;
+    }
+
   protected:
     DeviceType type_ = DeviceType::CPU; /**< Type of the device. */
     std::uint8_t id_ =
         0; /**< Unique identifier for multiple devices of the same type. */
+
+    /** @brief Default constructor (CPU, ID 0). */
+    Device() = default;
+
+    friend class DeviceRegistry;
 };
 
 } // namespace hahaha::backend

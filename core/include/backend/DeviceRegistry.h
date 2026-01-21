@@ -68,7 +68,8 @@ class DeviceRegistry {
      * @return Shared pointer to the CUDA device, or nullptr if not available.
      */
     [[nodiscard]] std::shared_ptr<Device>
-    getCudaDevice(std::uint8_t deviceId = 0) const {
+    getCudaDevice(const std::uint8_t deviceId =
+                      0) const { // NOLINT(*-convert-member-functions-to-static)
 #ifdef HAHAHA_USE_CUDA
 #if __has_include(<driver_types.h>)
         auto it = cudaDevices_.find(deviceId);
@@ -87,7 +88,7 @@ class DeviceRegistry {
      * @return Shared pointer to the device, or nullptr if not available.
      */
     [[nodiscard]] std::shared_ptr<Device>
-    getDevice(DeviceType type, std::uint8_t deviceId = 0) const {
+    getDevice(const DeviceType type, std::uint8_t deviceId = 0) const {
         switch (type) {
         case DeviceType::CPU:
             return cpuDevice_;
@@ -140,6 +141,10 @@ class DeviceRegistry {
         return cudaDevices_;
     }
 
+    // Prevent copying and assignment
+    DeviceRegistry(const DeviceRegistry&) = delete;
+    DeviceRegistry& operator=(const DeviceRegistry&) = delete;
+
   private:
     /**
      * @brief Private constructor for singleton pattern.
@@ -177,14 +182,10 @@ class DeviceRegistry {
 #endif
     }
 
-    // Prevent copying and assignment
-    DeviceRegistry(const DeviceRegistry&) = delete;
-    DeviceRegistry& operator=(const DeviceRegistry&) = delete;
-
     std::shared_ptr<Device> cpuDevice_;
+    std::unordered_map<std::uint8_t, std::shared_ptr<Device>> cudaDevices_;
 #ifdef HAHAHA_USE_CUDA
 #if __has_include(<driver_types.h>)
-    std::unordered_map<std::uint8_t, std::shared_ptr<Device>> cudaDevices_;
     std::vector<cudaDeviceProp> cudaProps_; // Store CUDA device properties
 #endif
 #endif

@@ -39,6 +39,7 @@ namespace hahaha::backend {
  * @details Uses CudaMemoryPool for memory allocation with CPU-side metadata.
  */
 class CudaMemory : public GPUMemory {
+  public:
     static constexpr size_t DefaultSmallMemoryBlockThreshold = 512
         << 20; // 512MB
 
@@ -73,20 +74,16 @@ class CudaMemory : public GPUMemory {
                           const DeviceBuffer& src) override;
 
     /**
-     * @brief Copies data from one device buffer to another.
-     * @param dst The destination device buffer.
-     * @param src The source device buffer.
-     */
-    void copyDeviceToDevice(DeviceBuffer& dst,
-                            const DeviceBuffer& src) override;
-
-    /**
      * @brief Sets a block of memory to a specified value.
      * @param dst The destination device buffer.
      * @param value The value to set (converted to unsigned char).
      * @param count The number of bytes to set.
      */
     void memset(DeviceBuffer& dst, int value, size_t count) override;
+
+    size_t getSmallBlockThreshold() const {
+        return smallMemoryBlockThreshold_;
+    }
 
   private:
     /**

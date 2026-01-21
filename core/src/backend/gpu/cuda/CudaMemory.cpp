@@ -33,23 +33,6 @@
 
 namespace hahaha::backend {
 
-void CudaMemory::copyDeviceToDevice(DeviceBuffer& dst,
-                                    const DeviceBuffer& src) {
-    if (dst.size() != src.size()) {
-        throw std::runtime_error("Device to device copy size mismatch");
-    }
-
-    const cudaError_t err =
-        cudaMemcpy(reinterpret_cast<void*>(dst.address()),
-                   reinterpret_cast<const void*>(src.address()),
-                   src.size(),
-                   cudaMemcpyDeviceToDevice);
-
-    if (err != cudaSuccess) {
-        throw std::runtime_error("CUDA device to device copy failed");
-    }
-}
-
 void CudaMemory::free(DeviceBuffer& deviceBuffer) {
     if (deviceBuffer.address() == 0) {
         return;
@@ -109,7 +92,7 @@ DeviceBuffer CudaMemory::allocateSmall(size_t size) {
     }
 
     warn(std::format("CUDA has no enough memory, need {}", size));
-    return DeviceBuffer();
+    return {};
 }
 
 DeviceBuffer CudaMemory::allocateBig(size_t size) {
@@ -119,7 +102,7 @@ DeviceBuffer CudaMemory::allocateBig(size_t size) {
     }
 
     warn(std::format("CUDA has no enough memory, need {}", size));
-    return DeviceBuffer();
+    return {};
 }
 
 void CudaMemory::copyHostToDevice(DeviceBuffer& dst,

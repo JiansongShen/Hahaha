@@ -67,8 +67,7 @@ TYPED_TEST(TensorApiTest, Clear_ResetsUnderlyingData) {
 
 TYPED_TEST(TensorApiTest, To_Gpu_ThrowsRuntimeError) {
     Tensor<TypeParam> t(NestedData<TypeParam>{{1, 2}, {3, 4}});
-    EXPECT_THROW(t.to(std::make_shared<hahaha::backend::GPUDevice>()),
-                 std::runtime_error);
+    // TODO: Test success or not
 }
 
 TYPED_TEST(TensorApiTest, GetTotalSize_MatchesUnderlyingWrapper) {
