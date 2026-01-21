@@ -40,6 +40,16 @@ class CPUDevice : public Device {
 
     ~CPUDevice() override = default;
 
+    void copyMemoryFrom(std::span<std::byte> src,
+                        std::span<std::byte> dst,
+                        const std::shared_ptr<Device>& dstDevice) override {
+    }
+
+    void copyMemoryTo(std::span<std::byte> src,
+                      std::span<std::byte> dst,
+                      const std::shared_ptr<Device>& srcDevice) override {
+    }
+
   private:
 };
 } // namespace hahaha::backend

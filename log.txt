@@ -1,0 +1,3 @@
+[WARN ]CUDA has no enough memory, need 400
+[WARN ]CUDA has no enough memory, need 400
+[WARN ]CUDA has no enough memory, need 400

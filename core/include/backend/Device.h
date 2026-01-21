@@ -20,6 +20,8 @@
 #define HAHAHA_BACKEND_DEVICE_H
 
 #include <cstdint>
+#include <memory>
+#include <span>
 #include <string>
 
 #include "DeviceBuffer.h"
@@ -105,6 +107,14 @@ class alignas(8) Device {
     [[nodiscard]] std::uint8_t getId() const {
         return id_;
     }
+
+    virtual void copyMemoryTo(std::span<std::byte> src,
+                              std::span<std::byte> dst,
+                              const std::shared_ptr<Device>& srcDevice) = 0;
+
+    virtual void copyMemoryFrom(std::span<std::byte> src,
+                                std::span<std::byte> dst,
+                                const std::shared_ptr<Device>& dstDevice) = 0;
 
   protected:
     DeviceType type_ = DeviceType::CPU; /**< Type of the device. */

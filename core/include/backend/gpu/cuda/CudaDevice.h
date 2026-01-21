@@ -64,7 +64,7 @@ class CudaDevice : public GPUDevice {
     /**
      * @brief Destructor.
      */
-    ~CudaDevice();
+    ~CudaDevice() override;
 
     /**
      * @brief Allocate memory on device.
@@ -83,6 +83,16 @@ class CudaDevice : public GPUDevice {
         memory_.free(buffer);
     }
 
+    void copyMemoryFrom(std::span<std::byte> src,
+                        std::span<std::byte> dst,
+                        const std::shared_ptr<Device>& dstDevice) override {
+    }
+
+    void copyMemoryTo(std::span<std::byte> src,
+                      std::span<std::byte> dst,
+                      const std::shared_ptr<Device>& srcDevice) override {
+    }
+
   private:
     cudaDeviceProp* prop_ = nullptr;
     CudaMemory memory_;
@@ -99,6 +109,16 @@ class CudaDevice : public GPUDevice {
     void deallocate(DeviceBuffer) override {
         std::unreachable();
     }
+
+    void copyMemoryFrom(std::span<std::byte> src,
+                        std::span<std::byte> dst,
+                        const std::shared_ptr<Device>& dstDevice) override {
+    }
+
+    void copyMemoryTo(std::span<std::byte> src,
+                      std::span<std::byte> dst,
+                      const std::shared_ptr<Device>& srcDevice) override {
+    }
 };
 #endif // __has_include(<driver_types.h>)
 
@@ -112,6 +132,16 @@ class CudaDevice : public GPUDevice {
 
     void deallocate(DeviceBuffer) override {
         std::unreachable();
+    }
+
+    void copyMemoryFrom(std::span<std::byte> src,
+                        std::span<std::byte> dst,
+                        const std::shared_ptr<Device>& dstDevice) override {
+    }
+
+    void copyMemoryTo(std::span<std::byte> src,
+                      std::span<std::byte> dst,
+                      const std::shared_ptr<Device>& srcDevice) override {
     }
 };
 #endif // HAHAHA_USE_CUDA

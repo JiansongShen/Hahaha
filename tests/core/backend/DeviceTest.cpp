@@ -40,9 +40,18 @@ class TestDevice : public Device {
     }
 
     DeviceBuffer allocate(size_t size) override {
-        return DeviceBuffer();
+        return {};
     }
     void deallocate(DeviceBuffer buffer) override {
+    }
+
+    void copyMemoryFrom(std::span<std::byte> src,
+                        std::span<std::byte> dst,
+                        const std::shared_ptr<Device>& dstDevice) override {
+    }
+    void copyMemoryTo(std::span<std::byte> dst,
+                      std::span<std::byte> src,
+                      const std::shared_ptr<Device>& srcDevice) override {
     }
 };
 
@@ -60,6 +69,16 @@ class TestDeviceWithInvalidType : public Device {
         return DeviceBuffer();
     }
     void deallocate(DeviceBuffer buffer) override {
+    }
+
+    void copyMemoryFrom(std::span<std::byte> src,
+                        std::span<std::byte> dst,
+                        const std::shared_ptr<Device>& dstDevice) override {
+    }
+
+    void copyMemoryTo(std::span<std::byte> src,
+                      std::span<std::byte> dst,
+                      const std::shared_ptr<Device>& srcDevice) override {
     }
 };
 
