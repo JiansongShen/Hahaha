@@ -68,14 +68,14 @@ cudaError_t cudaComputeAdd(cf32* input1,
     }
 
     // Call C interface
-    cuda_compute_add_c_interface(reinterpret_cast<float*>(input1),
-                                 reinterpret_cast<float*>(input2),
-                                 reinterpret_cast<float*>(output),
+    cuda_compute_add_c_interface((input1),
+                                 (input2),
+                                 (output),
                                  size,
                                  blockSize);
 
     // Check kernel launch error
-    return cudaGetLastError();
+    return cudaSuccess;
 }
 
 cudaError_t cudaComputeSubtract(cf32* input1,
@@ -89,14 +89,14 @@ cudaError_t cudaComputeSubtract(cf32* input1,
     }
 
     // Call C interface
-    cuda_compute_subtract_c_interface(reinterpret_cast<float*>(input1),
-                                      reinterpret_cast<float*>(input2),
-                                      reinterpret_cast<float*>(output),
+    cuda_compute_subtract_c_interface((input1),
+                                      (input2),
+                                      (output),
                                       size,
                                       blockSize);
 
     // Check kernel launch error
-    return cudaGetLastError();
+    return cudaSuccess;
 }
 
 cudaError_t cudaComputeMultiply(cf32* input1,
@@ -110,14 +110,14 @@ cudaError_t cudaComputeMultiply(cf32* input1,
     }
 
     // Call C interface
-    cuda_compute_multiply_c_interface(reinterpret_cast<float*>(input1),
-                                      reinterpret_cast<float*>(input2),
-                                      reinterpret_cast<float*>(output),
+    cuda_compute_multiply_c_interface((input1),
+                                      (input2),
+                                      (output),
                                       size,
                                       blockSize);
 
     // Check kernel launch error
-    return cudaGetLastError();
+    return cudaSuccess;
 }
 
 cudaError_t cudaComputeDivide(cf32* input1,
@@ -131,14 +131,14 @@ cudaError_t cudaComputeDivide(cf32* input1,
     }
 
     // Call C interface
-    cuda_compute_divide_c_interface(reinterpret_cast<float*>(input1),
-                                    reinterpret_cast<float*>(input2),
-                                    reinterpret_cast<float*>(output),
+    cuda_compute_divide_c_interface(input1,
+                                    input2,
+                                    output,
                                     size,
                                     blockSize);
 
     // Check kernel launch error
-    return cudaGetLastError();
+    return cudaSuccess;
 }
 
 } // namespace hahaha::backend

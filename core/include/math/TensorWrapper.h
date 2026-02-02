@@ -158,7 +158,7 @@ template <typename T> class TensorWrapper {
      * @brief Get the GPU pointer.
      * @return std::uintptr_t of GPU pointer.
      */
-    std::uintptr_t getRawGpuPtr() const {
+    [[nodiscard]] std::uintptr_t getRawGpuPtr() const {
         return data_.gpuPtr;
     }
 
@@ -240,8 +240,7 @@ template <typename T> class TensorWrapper {
 #ifdef HAHAHA_USE_CUDA
 #if __has_include(<driver_types.h>)
             // CPU to GPU transfer: copy data to GPU
-            const size_t totalSize = getTotalSize();
-            if (totalSize == 0) {
+            if (const size_t totalSize = getTotalSize(); totalSize == 0) {
                 data_.setDevice(targetDevice);
                 return;
             }
@@ -411,9 +410,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
-
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
         auto res = backend::dispatchAdd<T>(
             data_.getDevice()->getType(), *this, other, result);
 
@@ -467,8 +468,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchSub<T>(
             data_.getDevice()->getType(), *this, other, result);
@@ -521,8 +525,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchMul<T>(
             data_.getDevice()->getType(), *this, other, result);
@@ -580,8 +587,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchDiv<T>(
             data_.getDevice()->getType(), *this, other, result);
@@ -602,8 +612,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchAdd(
             data_.getDevice()->getType(), *this, scalar, result);
@@ -623,8 +636,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchSub(
             data_.getDevice()->getType(), *this, scalar, result);
@@ -644,8 +660,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchMul(
             data_.getDevice()->getType(), *this, scalar, result);
@@ -667,8 +686,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchDiv(
             data_.getDevice()->getType(), *this, scalar, result);
@@ -688,8 +710,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchSub(
             data_.getDevice()->getType(), scalar, *this, result);
@@ -710,8 +735,11 @@ template <typename T> class TensorWrapper {
         TensorWrapper result;
         result.data_.setShape(data_.getShape());
         result.data_.setStride(data_.getStride());
-        result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
 
         auto res = backend::dispatchDiv(
             data_.getDevice()->getType(), scalar, *this, result);

@@ -60,7 +60,7 @@ class CudaMemoryPool {
     static constexpr size_t BaseMemoryBlockSize = 32;                 // 32B
     static constexpr size_t SingleSmallObjectPoolMaxSize = 512 << 20; // 512MB
     static constexpr size_t MaxSmallObjectPoolListSize =
-        log2(SingleSmallObjectPoolMaxSize / BaseMemoryBlockSize);
+        log2(SingleSmallObjectPoolMaxSize / BaseMemoryBlockSize) + 1;
 
     static constexpr size_t BigMemoryBlockMaxLiveTimes = 3;
 
@@ -73,6 +73,11 @@ class CudaMemoryPool {
      * @brief Destructor to clean up the memory pool.
      */
     ~CudaMemoryPool();
+
+    CudaMemoryPool(const CudaMemoryPool&) = delete;
+    CudaMemoryPool& operator=(const CudaMemoryPool&) = delete;
+    CudaMemoryPool(CudaMemoryPool&&) = delete;
+    CudaMemoryPool& operator=(CudaMemoryPool&&) = delete;
 
     /**
      * @brief Check if free block list exists for given size.

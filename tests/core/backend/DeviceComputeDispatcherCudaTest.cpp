@@ -129,7 +129,7 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchDiv_CUDA_WorksForDenseTensors) {
     EXPECT_NEAR(res.at({1, 1}), 10.0f, 1e-5f);
 }
 
-// Test CUDA dispatch with non-contiguous data (should fall back to CPU)
+// Test CUDA dispatch with non-contiguous data (should return error)
 TEST_F(DeviceComputeDispatcherCudaTest,
        DispatchAdd_CUDA_NonContiguous_ThrowError) {
     TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
@@ -142,10 +142,10 @@ TEST_F(DeviceComputeDispatcherCudaTest,
     b_broadcasted.to(cudaDevice_);
     res.to(cudaDevice_);
 
-    // Non-contiguous data should fall back to CPU
-    EXPECT_THROW(auto result = hahaha::backend::dispatchAdd(
-                     DeviceType::CUDA, a, b_broadcasted, res),
-                 std::runtime_error);
+    // Non-contiguous data should return error
+    auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b_broadcasted, res);
+    EXPECT_FALSE(result.has_value());
+    EXPECT_EQ(result.error().code, hahaha::common::ErrorCode::InvalidArgument);
 }
 
 // Test CUDA dispatch with large tensors
@@ -164,6 +164,9 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchAdd_CUDA_LargeTensor) {
 
     auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b, res);
     EXPECT_TRUE(result.has_value());
+    a.to(hahaha::backend::getCPUDevice());
+    b.to(hahaha::backend::getCPUDevice());
+    res.to(hahaha::backend::getCPUDevice());
 
     // Check a few elements
     EXPECT_NEAR(res.at({0}), 3.0f, 1e-5f);
@@ -184,6 +187,7 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchAdd_CUDA_ScalarTensor) {
     auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b, res);
     EXPECT_TRUE(result.has_value());
 
+    res.to(hahaha::backend::getCPUDevice());
     EXPECT_NEAR(res.at({}), 5.0f, 1e-5f);
 }
 
@@ -199,6 +203,24 @@ TEST_F(DeviceComputeDispatcherCudaTest,
     badRes.to(cudaDevice_);
 
     auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b, badRes);
+    EXPECT_FALSE(result.has_value());
+    EXPECT_EQ(result.error().code, hahaha::common::ErrorCode::InvalidArgument);
+}
+
+// Test that non-contiguous (e.g. broadcasted) tensors on CUDA return error
+TEST_F(DeviceComputeDispatcherCudaTest,
+       DispatchAdd_CUDA_NonContiguous_ReturnsError) {
+    TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    TensorWrapper<float> b(NestedData<float>{{10.0f}, {20.0f}});
+    TensorWrapper<float> b_broadcasted = b.broadcastTo(TensorShape({2, 2}));
+    TensorWrapper<float> res(TensorShape({2, 2}), 0.0f);
+
+    a.to(cudaDevice_);
+    b_broadcasted.to(cudaDevice_);
+    res.to(cudaDevice_);
+
+    auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a,
+                                               b_broadcasted, res);
     EXPECT_FALSE(result.has_value());
     EXPECT_EQ(result.error().code, hahaha::common::ErrorCode::InvalidArgument);
 }

@@ -84,9 +84,9 @@ void cuda_compute_add_c_interface(float* input1,
                                   size_t size,
                                   unsigned int blockSize) {
     unsigned int gridSize = (size + blockSize - 1) / blockSize;
-    compute_add<<<gridSize, blockSize>>>(reinterpret_cast<cf32*>(input1),
-                                         reinterpret_cast<cf32*>(input2),
-                                         reinterpret_cast<cf32*>(output),
+    compute_add<<<gridSize, blockSize>>>(input1,
+                                         input2,
+                                         output,
                                          size);
 }
 
@@ -96,9 +96,9 @@ void cuda_compute_subtract_c_interface(float* input1,
                                        size_t size,
                                        unsigned int blockSize) {
     unsigned int gridSize = (size + blockSize - 1) / blockSize;
-    compute_subtract<<<gridSize, blockSize>>>(reinterpret_cast<cf32*>(input1),
-                                              reinterpret_cast<cf32*>(input2),
-                                              reinterpret_cast<cf32*>(output),
+    compute_subtract<<<gridSize, blockSize>>>((input1),
+                                              (input2),
+                                              (output),
                                               size);
 }
 
@@ -108,9 +108,9 @@ void cuda_compute_multiply_c_interface(float* input1,
                                        size_t size,
                                        unsigned int blockSize) {
     unsigned int gridSize = (size + blockSize - 1) / blockSize;
-    compute_multiply<<<gridSize, blockSize>>>(reinterpret_cast<cf32*>(input1),
-                                              reinterpret_cast<cf32*>(input2),
-                                              reinterpret_cast<cf32*>(output),
+    compute_multiply<<<gridSize, blockSize>>>((input1),
+                                              (input2),
+                                              (output),
                                               size);
 }
 
@@ -120,9 +120,9 @@ void cuda_compute_divide_c_interface(float* input1,
                                      size_t size,
                                      unsigned int blockSize) {
     unsigned int gridSize = (size + blockSize - 1) / blockSize;
-    compute_divide<<<gridSize, blockSize>>>(reinterpret_cast<cf32*>(input1),
-                                            reinterpret_cast<cf32*>(input2),
-                                            reinterpret_cast<cf32*>(output),
+    compute_divide<<<gridSize, blockSize>>>((input1),
+                                            (input2),
+                                            (output),
                                             size);
 }
 
