@@ -25,9 +25,7 @@
 
 namespace hahaha::backend {
 
-CudaDevice::~CudaDevice() {
-    // prop_ is managed externally, no need to delete
-}
+
 
 } // namespace hahaha::backend
 

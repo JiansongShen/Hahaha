@@ -279,3 +279,6 @@ subprojects/packagecache/
 
 vcpkg/*
 temp/
+Testing/
+out/
+builddir/

@@ -19,7 +19,6 @@
 #define HAHAHA_BACKEND_DEVICE_REGISTRY_H
 
 #include <memory>
-#include <mutex>
 #include <unordered_map>
 
 #include "backend/Device.h"
@@ -72,8 +71,7 @@ class DeviceRegistry {
                       0) const { // NOLINT(*-convert-member-functions-to-static)
 #ifdef HAHAHA_USE_CUDA
 #if __has_include(<driver_types.h>)
-        auto it = cudaDevices_.find(deviceId);
-        if (it != cudaDevices_.end()) {
+        if (const auto it = cudaDevices_.find(deviceId); it != cudaDevices_.end()) {
             return it->second;
         }
 #endif
@@ -204,7 +202,7 @@ inline std::shared_ptr<Device> getCPUDevice() {
  * @param deviceId CUDA device ID (default: 0).
  * @return Shared pointer to the CUDA device, or nullptr if not available.
  */
-inline std::shared_ptr<Device> getCudaDevice(std::uint8_t deviceId = 0) {
+inline std::shared_ptr<Device> getCudaDevice(const std::uint8_t deviceId = 0) {
     return DeviceRegistry::getInstance().getCudaDevice(deviceId);
 }
 
@@ -214,8 +212,8 @@ inline std::shared_ptr<Device> getCudaDevice(std::uint8_t deviceId = 0) {
  * @param deviceId Device ID (default: 0).
  * @return Shared pointer to the device, or nullptr if not available.
  */
-inline std::shared_ptr<Device> getDevice(DeviceType type,
-                                         std::uint8_t deviceId = 0) {
+inline std::shared_ptr<Device> getDevice(const DeviceType type,
+                                         const std::uint8_t deviceId = 0) {
     return DeviceRegistry::getInstance().getDevice(type, deviceId);
 }
 

@@ -20,65 +20,94 @@ loops, together with **visualization tooling** so learners can *see* what happen
 - **Visualization + educational UX**:
   - ImGui-based visualizer and demos under `examples/` to show training dynamics.
   - Code is intentionally written to be readable and traceable, with tests as executable documentation.
-- **Tooling**: CMake + vcpkg build, GoogleTest, formatting script `python3 dev/format.py`.
+- **Tooling**: CMake + vcpkg, GoogleTest; format code with `python3 dev/format.py`.
 
 ## Build and run
 
-### 1. One-Click Environment Setup (Recommended)
+### 1. Prerequisites
 
-We provide a Python script to automatically set up the complete development environment.
+- **Compiler**: C++23 (GCC 13+ or Clang 16+; on Windows, MSVC)
+- **Build**: [CMake](https://cmake.org/) 3.20+ and [Ninja](https://ninja-build.org/)
+- **vcpkg**: Use a **system or repo-local vcpkg**; this repo does not embed or manage vcpkg itself.  
+  - Install: <https://vcpkg.io/en/docs/getting-started.html>  
+  - Dependencies (`gtest`, `glfw3`, `imgui`) are declared in the root `vcpkg.json` and installed automatically by vcpkg in **manifest mode** when you configure.
 
-```bash
-python3 dev/setup_dev_env.py
+### 2. Build (Windows and Linux)
+
+vcpkg recommends **not** setting the toolchain inside `CMakeLists.txt`; pass it via the command line or CMake Presets. This project uses **CMake Presets** for vcpkg.
+
+Set the vcpkg path first, using either:
+
+- **Recommended**: Set the `VCPKG_ROOT` environment variable (e.g. repo-local `<repo>/vcpkg/vcpkg_root` or your system vcpkg path), then use a preset.
+- Or pass the toolchain when configuring: `-DCMAKE_TOOLCHAIN_FILE=<vcpkg>/scripts/buildsystems/vcpkg.cmake`
+
+#### Windows (PowerShell):
+
+```powershell
+# Using CMake Presets (recommended): set VCPKG_ROOT first
+$env:VCPKG_ROOT = "D:\projects\Hahaha\vcpkg\vcpkg_root"   # or your vcpkg path
+
+cmake --preset vcpkg-windows
+cmake --build --preset vcpkg-windows
+ctest --test-dir cmake-build-vcpkg-windows --output-on-failure
 ```
 
-**What this script does:**
+Or specify the toolchain directly (without preset):
 
-- 📦 **Installs System Dependencies**: Automatically detects your package manager (`apt` for Debian/Ubuntu, `pacman` for Arch Linux) and installs compilers, build tools, and graphics libraries.
-- 🔧 **Sets up Build Tools**: Installs or configures **CMake**, **Ninja**, and **Python** tools.
-- ⚓ **Configures Git Hooks**: Sets up **pre-commit** to ensure code quality before you commit.
-- 📥 **Manages Dependencies**: Bootstraps **vcpkg** and installs dependencies like **GoogleTest**, **GLFW**, and **ImGui**.
-- ✅ **Verifies Installation**: Checks that all required tools are present and correctly configured.
-
-### 2. Manual Prerequisites (If not using the script)
-
-If you prefer to set up manually or use a different OS:
-
-- **Compiler**: C++23 compliant (GCC 13+ or Clang 16+)
-- **Build System**: [CMake](https://cmake.org/) 3.20+ and [Ninja](https://ninja-build.org/)
-- **Package Manager**: [vcpkg](https://vcpkg.io/) (repo-local at `vcpkg/vcpkg_root/`)
-- **Libraries** (installed via vcpkg):
-  - `gtest`, `glfw3`, `imgui` (for visualization)
-- **Tools**: `git`, `python3`, `pre-commit`
-
-### 3. Build (native)
-
-```bash
-# Setup vcpkg (first time only)
-# If vcpkg/vcpkg_root doesn't exist, clone it:
-if [ ! -d "vcpkg/vcpkg_root" ]; then
-  git clone https://github.com/microsoft/vcpkg.git vcpkg/vcpkg_root
-fi
-
-# Bootstrap vcpkg and install dependencies
-./vcpkg/vcpkg_root/bootstrap-vcpkg.sh  # or bootstrap-vcpkg.bat on Windows
-
-# Install dependencies
-# Linux/macOS:
-./vcpkg/vcpkg_root/vcpkg install gtest glfw3 imgui
-
-# Windows (use static triplet to avoid DLL issues):
-# .\vcpkg\vcpkg_root\vcpkg.exe install gtest glfw3 imgui --triplet x64-windows-static
-
-# Configure and build
-cmake -S . -B builddir -G Ninja -DCMAKE_BUILD_TYPE=Debug
-cmake --build builddir --parallel
-ctest --test-dir builddir --output-on-failure
+```powershell
+cmake -S . -B builddir -G Ninja -DCMAKE_BUILD_TYPE=Debug `
+  -DCMAKE_TOOLCHAIN_FILE=<place to Hahaha>/vcpkg/vcpkg_root/scripts/buildsystems/vcpkg.cmake
+cmake --build builddir
 ```
 
-### 4. Run examples
+#### Linux (bash):
 
-After building, you can run:
+On Linux you need a C++23 compiler (GCC 13+ or Clang 16+), Ninja, and vcpkg. To build the ImGui/GLFW visualizer example, add `-DHAHAHA_DISPLAY=ON` when configuring (vcpkg provides GLFW/OpenGL; no extra system packages required if using vcpkg).
+
+```bash
+# One-time: clone and bootstrap vcpkg (or use system vcpkg)
+python3 dev/dev_env_setup.py
+
+# Set VCPKG_ROOT to your vcpkg root (repo-local or system)
+export VCPKG_ROOT="$(pwd)/vcpkg/vcpkg_root"   # or e.g. /opt/vcpkg
+
+cmake --preset vcpkg-linux
+cmake --build --preset vcpkg-linux
+ctest --test-dir cmake-build-vcpkg-linux --output-on-failure
+```
+
+Or without presets:
+
+```bash
+cmake -S . -B builddir -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+cmake --build builddir
+```
+
+#### Using the provided build scripts:
+
+We've included automated build scripts to simplify the build process:
+
+For PowerShell:
+```powershell
+.\build.ps1
+```
+
+For Command Prompt:
+```cmd
+build.bat
+```
+
+These scripts will:
+- Check for required tools (CMake, Ninja)
+- Locate your vcpkg installation
+- Configure the project with the correct toolchain
+- Build the project
+- Run tests
+
+### 3. Run examples
+
+After building, run from your build directory (e.g. `builddir`, `cmake-build-vcpkg-windows`, or `cmake-build-vcpkg-linux`):
 
 ```bash
 # Basic tensor usage
@@ -90,9 +119,35 @@ After building, you can run:
 # ML training demo (CLI)
 ./builddir/examples/hahaha_example_ml_basic_usage
 
-# Visualization demo (requires GLFW/OpenGL but not very nice)
+# Visualization demo (requires GLFW/OpenGL)
 ./builddir/examples/hahaha_example_ml_visualizer
 ```
+
+## Troubleshooting
+
+If you encounter build issues:
+
+1. Make sure vcpkg dependencies are installed:
+   ```bash
+   cd <path-to-vcpkg>
+   ./vcpkg install
+   ```
+
+2. Ensure you're using the correct triplet (x64-windows-static for the library, x64-windows for the host):
+   ```bash
+   ./vcpkg install --triplet=x64-windows-static
+   ```
+
+3. If you get linker errors, ensure the runtime library settings match:
+   - For static linking, use MultiThreaded runtime
+   - For dynamic linking, use MultiThreadedDLL runtime
+
+## Where to look (recommended reading order)
+
+- **Tensor & shape/stride**: `core/include/math/TensorWrapper.h`, `core/include/math/ds/*`
+- **Compute graph & autograd**: `core/include/compute/graph/*`, especially `ComputeNode` and `compute_funs/*`
+- **Visualization**: `core/src/display/*` and `examples/ml_visualizer/*`
+- **Tests as documentation**: `tests/core/*` (broadcast + autograd tests show expected behavior)
 
 ## Minimal usage example
 
@@ -117,13 +172,6 @@ int main() {
 }
 ```
 
-## Where to look (recommended reading order)
-
-- **Tensor & shape/stride**: `core/include/math/TensorWrapper.h`, `core/include/math/ds/*`
-- **Compute graph & autograd**: `core/include/compute/graph/*`, especially `ComputeNode` and `compute_funs/*`
-- **Visualization**: `core/src/display/*` and `examples/ml_visualizer/*`
-- **Tests as documentation**: `tests/core/*` (broadcast + autograd tests show expected behavior)
-
 ## Contributing
 
 Contributions are welcome! Please follow these guidelines:
@@ -134,7 +182,7 @@ Contributions are welcome! Please follow these guidelines:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a pull request
 
-refer to [how-to-contribute](https://github.com/JiansongShen/HahahaDevDocument/blob/main/src/en/developers/how-to-contribute.md)
+See [how-to-contribute](https://github.com/JiansongShen/HahahaDevDocument/blob/main/src/en/developers/how-to-contribute.md) for details.
 
 Please ensure your code follows the project's coding standards by running `python3 dev/format.py` before submitting.
 

@@ -19,6 +19,7 @@
 #ifndef HAHAHA_MATH_DS_TENSOR_DATA_H
 #define HAHAHA_MATH_DS_TENSOR_DATA_H
 
+#include <expected>
 #include <memory>
 #include <stdexcept>
 #include <utility>
@@ -26,9 +27,14 @@
 #include "backend/DeviceRegistry.h"
 #include "backend/cpu/CPUDevice.h"
 #include "backend/gpu/cuda/cuda_compute_fun.h"
+#include "common/errors/Error.h"
 #include "math/ds/NestedData.h"
 #include "math/ds/TensorShape.h"
 #include "math/ds/TensorStride.h"
+
+namespace hahaha::common {
+    struct Error;
+}
 
 namespace hahaha::math {
 
@@ -203,7 +209,7 @@ template <typename T> class TensorData {
 
     std::expected<void, common::Error>
     copyFromCpuToCuda(const std::shared_ptr<backend::Device>& targetDevice) {
-        auto byteSize = sizeof(T) * shape_.getTotalSize();
+        const auto byteSize = sizeof(T) * shape_.getTotalSize();
         const auto targetBuffer = targetDevice->allocate(byteSize);
         if (targetBuffer.address() == 0) {
             return std::unexpected(common::CudaDeviceOutOfMemoryError());

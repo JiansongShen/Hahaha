@@ -75,7 +75,7 @@ compute_divide(cf32* input1, cf32* input2, cf32* output, size_t size) {
     }
 }
 
-// C接口函数，用于从C++代码调用CUDA内核
+
 extern "C" {
 
 void cuda_compute_add_c_interface(float* input1,

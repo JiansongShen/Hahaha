@@ -64,19 +64,19 @@ class CudaDevice : public GPUDevice {
     /**
      * @brief Destructor.
      */
-    ~CudaDevice() override;
+    ~CudaDevice() override = default;
 
     /**
-     * @brief Allocate memory on device.
+     * @brief Allocate memory on a device.
      * @param size Size in bytes.
      * @return DeviceBuffer.
      */
-    DeviceBuffer allocate(size_t size) override {
+    DeviceBuffer allocate(const size_t size) override {
         return memory_.allocate(size);
     }
 
     /**
-     * @brief Deallocate memory on device.
+     * @brief Deallocate memory on a device.
      * @param buffer Buffer to deallocate.
      */
     void deallocate(DeviceBuffer buffer) override {

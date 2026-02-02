@@ -19,6 +19,7 @@
 //
 
 #ifdef HAHAHA_USE_CUDA
+
 #if __has_include(<driver_types.h>)
 
 #include "backend/gpu/cuda/CudaMemoryPool.h"
@@ -375,14 +376,13 @@ void CudaMemoryPool::free(void* ptr) {
 
     // If we have a free block at max level, free it
     // This helps prevent memory accumulation at the highest level
-    auto* block = freeSmallBlocks_[MaxSmallObjectPoolListSize - 1];
-    if (block && !block->isAllocated) {
-        // Find and remove from smallBlockStorage_ linked list
+    if (auto* block = freeSmallBlocks_[MaxSmallObjectPoolListSize - 1]; block && !block->isAllocated) {
+        // Find and remove from the smallBlockStorage _ linked list
         SmallBlockMetadata* current = smallBlockStorage_;
         SmallBlockMetadata* prev = nullptr;
         while (current) {
             if (current->gpuPtr == block->gpuPtr) {
-                // Remove from linked list
+                // Remove from the linked list
                 if (prev) {
                     prev->next = current->next;
                     if (current->next) {
@@ -432,8 +432,8 @@ size_t CudaMemoryPool::getBlockIndexOfSize(const size_t size) {
     size_t currentSize = BaseMemoryBlockSize;
 
     while (size > currentSize
-           && idx
-               < MaxSmallObjectPoolListSize) { // Limit to prevent infinite loop
+           &&
+           idx < MaxSmallObjectPoolListSize) { // Limit to prevent infinite loop
         currentSize *= 2;
         ++idx;
     }

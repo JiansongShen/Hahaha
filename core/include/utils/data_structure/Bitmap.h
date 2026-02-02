@@ -21,6 +21,7 @@
 #ifndef HAHAHA_BITMAP_H_02E01C69C9A3452CA7AA2F7B776598B6
 #define HAHAHA_BITMAP_H_02E01C69C9A3452CA7AA2F7B776598B6
 #include <algorithm>
+#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -235,9 +236,9 @@ class Bitmap {
         const sizeT numWords = (size_ + wordSize - 1) / wordSize;
         const sizeT lastWordBits = size_ % wordSize;
 
-        // Count bits in all complete words
+        // Count bits in all complete words (population count per word)
         for (sizeT i = 0; i < (lastWordBits ? numWords - 1 : numWords); ++i) {
-            result += __builtin_popcountll(words_[i]);
+            result += static_cast<sizeT>(std::popcount(words_[i]));
         }
 
         // Handle the last partial word if needed
@@ -245,7 +246,7 @@ class Bitmap {
             const wordType lastWord = words_[numWords - 1];
             const wordType mask =
                 (static_cast<wordType>(1) << lastWordBits) - 1;
-            result += __builtin_popcountll(lastWord & mask);
+            result += static_cast<sizeT>(std::popcount(lastWord & mask));
         }
 
         return result;
@@ -394,15 +395,18 @@ class Bitmap {
             const sizeT lastNewBit = newSize % wordSize;
 
             if (lastOldBit > 0) {
-                // Update the last word that had old bits
+                // Update the last word that had old bits: set new bits in that word to 1
                 const sizeT lastOldWordIdx = oldSize / wordSize;
                 const wordType oldMask =
                     (static_cast<wordType>(1) << lastOldBit) - 1;
-                const wordType newMask =
-                    (static_cast<wordType>(1) << std::min(wordSize, lastNewBit))
-                    - 1;
+                const sizeT validBitsInWord = std::min(
+                    wordSize,
+                    newSize - lastOldWordIdx * wordSize);
+                const wordType newMask = (validBitsInWord == wordSize)
+                    ? ~static_cast<wordType>(0)
+                    : (static_cast<wordType>(1) << validBitsInWord) - 1;
                 newWords[lastOldWordIdx] =
-                    newWords[lastOldWordIdx] & oldMask | newMask & ~oldMask;
+                    (newWords[lastOldWordIdx] & oldMask) | (newMask & ~oldMask);
             }
 
             // Set remaining words to all 1s if expanding

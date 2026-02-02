@@ -37,22 +37,22 @@ namespace hahaha::backend {
 
 // Forward declarations for CUDA functions
 template <typename T>
-void cuda_add(std::span<const T> a, std::span<const T> b, std::span<T> out) {
+void cuda_add(std::span<const T> /*a*/, std::span<const T> /*b*/, std::span<T> /*out*/) {
     std::unreachable();
 }
 
 template <typename T>
-void cuda_sub(std::span<const T> a, std::span<const T> b, std::span<T> out) {
+void cuda_sub(std::span<const T> /*a*/, std::span<const T> /*b*/, std::span<T> /*out*/) {
     std::unreachable();
 }
 
 template <typename T>
-void cuda_mul(std::span<const T> a, std::span<const T> b, std::span<T> out) {
+void cuda_mul(std::span<const T> /*a*/, std::span<const T> /*b*/, std::span<T> /*out*/) {
     std::unreachable();
 }
 
 template <typename T>
-void cuda_div(std::span<const T> a, std::span<const T> b, std::span<T> out) {
+void cuda_div(std::span<const T> /*a*/, std::span<const T> /*b*/, std::span<T> /*out*/) {
     std::unreachable();
 }
 

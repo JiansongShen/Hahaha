@@ -205,8 +205,8 @@ inline void cuda_add<float>(std::span<const float> a,
     const size_t bytes = size * sizeof(float);
     // Launch kernel
     const unsigned int blockSize = 256;
-    cudaError_t err = cudaComputeAdd((cf32*) (a.data()),
-                                     (cf32*) (b.data()),
+    cudaError_t err = cudaComputeAdd(const_cast<cf32 *>(a.data()),
+                                     const_cast<cf32 *>(b.data()),
                                      (cf32*) (out.data()),
                                      size,
                                      blockSize);
@@ -240,11 +240,11 @@ inline void cuda_sub<float>(std::span<const float> a,
 
     cudaMem.copyHostToDevice(
         bufA,
-        std::span<const std::byte>(reinterpret_cast<const std::byte*>(a.data()),
+        std::span(reinterpret_cast<const std::byte*>(a.data()),
                                    bytes));
     cudaMem.copyHostToDevice(
         bufB,
-        std::span<const std::byte>(reinterpret_cast<const std::byte*>(b.data()),
+        std::span(reinterpret_cast<const std::byte*>(b.data()),
                                    bytes));
 
     const unsigned int blockSize = 256;

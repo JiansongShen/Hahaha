@@ -80,7 +80,7 @@ class CudaMemory : public GPUMemory {
      */
     void memset(DeviceBuffer& dst, int value, size_t count) override;
 
-    size_t getSmallBlockThreshold() const {
+    [[nodiscard]] size_t getSmallBlockThreshold() const {
         return smallMemoryBlockThreshold_;
     }
 

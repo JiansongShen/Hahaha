@@ -14,8 +14,8 @@
 
 #include <gtest/gtest.h>
 
-#include "../../core/include/public/Tensor.h"
 #include "backend/gpu/GPUDevice.h"
+#include "public/Tensor.h"
 
 using hahaha::Tensor;
 using hahaha::common::f32;

@@ -22,6 +22,8 @@ endif()
 
 if (HAHAHA_USE_CUDA)
   message("Using cuda to compile")
+  # CUDA host_config.h only officially supports VS 2019/2022; newer MSVC needs this flag
+  set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -allow-unsupported-compiler")
   enable_language(CUDA)
   set(CMAKE_CUDA_STANDARD 20)
   set(CMAKE_CUDA_STANDARD_REQUIRED ON)

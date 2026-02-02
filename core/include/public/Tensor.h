@@ -24,7 +24,6 @@
 #include <vector>
 
 #include "backend/Device.h"
-#include "backend/cpu/CPUDevice.h"
 #include "math/TensorWrapper.h"
 #include "math/ds/TensorData.h"
 #include "ml/compute/graph/ComputeFun.h"
