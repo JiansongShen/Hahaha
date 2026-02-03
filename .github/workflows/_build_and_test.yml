@@ -146,6 +146,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cd "${{ github.workspace }}"
           VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
           BASELINE=$(python -c "import json; print(json.load(open('vcpkg.json')).get('builtin-baseline',''))" 2>/dev/null || true)
           if [ -n "$BASELINE" ]; then
@@ -156,9 +157,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cd "${{ github.workspace }}"
           VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
           TRIPLET="${{ matrix.triplet }}"
           export VCPKG_ROOT
+          if [ ! -f vcpkg.json ]; then
+            echo "error: vcpkg.json not found in $(pwd)"
+            exit 1
+          fi
           if [ "$RUNNER_OS" = "Windows" ]; then
             "$VCPKG_ROOT/vcpkg.exe" install --triplet "$TRIPLET"
           else

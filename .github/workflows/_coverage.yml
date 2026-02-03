@@ -41,6 +41,7 @@ jobs:
       - name: Fetch vcpkg baseline (manifest builtin-baseline)
         run: |
           set -euo pipefail
+          cd "${{ github.workspace }}"
           VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
           BASELINE=$(python -c "import json; print(json.load(open('vcpkg.json')).get('builtin-baseline',''))" 2>/dev/null || true)
           if [ -n "$BASELINE" ]; then
@@ -50,8 +51,13 @@ jobs:
       - name: Install dependencies via vcpkg (manifest mode)
         run: |
           set -euo pipefail
+          cd "${{ github.workspace }}"
           VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
           export VCPKG_ROOT
+          if [ ! -f vcpkg.json ]; then
+            echo "error: vcpkg.json not found in $(pwd)"
+            exit 1
+          fi
           "$VCPKG_ROOT/vcpkg" install --triplet x64-linux
 
       - name: Run coverage (coverage.sh with vcpkg env)
