@@ -10,7 +10,9 @@
 /buildDir/
 /builddir/
 /build*/
-
+doc/doxygen/html/
+doc/doxygen/xml/
+doc/doxygen/latex/
 
 # IDE and Editor files
 .vscode/settings.jso
@@ -22,6 +24,13 @@
 Thumbs.db
 *.VSCodeCounter/
 .vs/
+*.ipch
+*.suo
+*.user
+*.vcxproj.user
+Debug/
+Release/
+x64/
 
 # C++ specific
 *.o
