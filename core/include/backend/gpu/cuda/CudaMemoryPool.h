@@ -80,21 +80,21 @@ class CudaMemoryPool {
     CudaMemoryPool& operator=(CudaMemoryPool&&) = delete;
 
     /**
-     * @brief Check if free block list exists for given size.
+     * @brief Check if free blocklist exists for given size.
      * @param blockIdx Block size index.
      * @return Error if invalid, Success otherwise.
      */
     [[nodiscard]] static common::Error checkFreeBlockListExist(size_t blockIdx);
 
     /**
-     * @brief Allocate small memory block (< threshold).
+     * @brief Allocate a small memory block (< threshold).
      * @param size Size in bytes.
      * @return Pointer to allocated GPU memory or error.
      */
     std::expected<void*, common::Error> allocateSmall(size_t size);
 
     /**
-     * @brief Allocate large memory block (>= threshold).
+     * @brief Allocate a large memory block (>= threshold).
      * @param size Size in bytes.
      * @return Pointer to allocated GPU memory or error.
      */
@@ -113,7 +113,7 @@ class CudaMemoryPool {
     struct SmallBlockMetadata {
         void* gpuPtr;    // GPU memory pointer
         size_t size;     // Block size in bytes
-        size_t blockIdx; // Block index in free list
+        size_t blockIdx; // Block index in a free list
         SmallBlockMetadata* prev;
         SmallBlockMetadata* next;
         bool isAllocated; // Allocation state

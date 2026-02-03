@@ -21,6 +21,7 @@
 .DS_Store
 Thumbs.db
 *.VSCodeCounter/
+.vs/
 
 # C++ specific
 *.o

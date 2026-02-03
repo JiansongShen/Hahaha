@@ -15,26 +15,28 @@ jobs:
             runs_on: ubuntu-24.04
             os: linux
             compiler: gcc
+            triplet: x64-linux
           - name: ubuntu-x64-clang
             runs_on: ubuntu-24.04
             os: linux
             compiler: clang
+            triplet: x64-linux
           - name: macos-arm64-llvm
             runs_on: macos-latest
             os: macos
             compiler: llvm
+            triplet: arm64-osx
           - name: windows-x64-msvc
             runs_on: windows-2022
             os: windows
             compiler: msvc
-#          - name: windows-x64-clangcl
-#            runs_on: windows-2022
-#            os: windows
-#            compiler: clang-cl
+            triplet: x64-windows-static
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -60,11 +62,9 @@ jobs:
           sudo cp /tmp/llvm-snapshot.gpg.key /etc/apt/trusted.gpg.d/llvm-snapshot.asc
           if echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble main" | sudo tee /etc/apt/sources.list.d/llvm.list 2>/dev/null; then
             echo "deb-src http://apt.llvm.org/noble/ llvm-toolchain-noble main" | sudo tee -a /etc/apt/sources.list.d/llvm.list
-            REPO_CODENAME="noble"
           else
             echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main" | sudo tee /etc/apt/sources.list.d/llvm.list
             echo "deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy main" | sudo tee -a /etc/apt/sources.list.d/llvm.list
-            REPO_CODENAME="jammy"
           fi
           sudo apt-get update
           INSTALLED_VERSION=""
@@ -78,7 +78,7 @@ jobs:
             sudo apt-get install -y --no-install-recommends clang
             INSTALLED_VERSION="default"
           fi
-          if [ "$INSTALLED_VERSION" != "default" ] && [ "$INSTALLED_VERSION" != "" ]; then
+          if [ "$INSTALLED_VERSION" != "default" ] && [ -n "$INSTALLED_VERSION" ]; then
             sudo update-alternatives --remove-all clang 2>/dev/null || true
             sudo update-alternatives --remove-all clang++ 2>/dev/null || true
             sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$INSTALLED_VERSION 100
@@ -108,9 +108,7 @@ jobs:
           echo "${LLVM_PATH}/bin" >> $GITHUB_PATH
           echo "CC=${LLVM_PATH}/bin/clang" >> $GITHUB_ENV
           echo "CXX=${LLVM_PATH}/bin/clang++" >> $GITHUB_ENV
-          # Prefer Homebrew LLVM libc++ headers (for C++23 facilities on macOS).
           echo "CPPFLAGS=-I${LLVM_PATH}/include -isystem ${LLVM_PATH}/include/c++/v1" >> $GITHUB_ENV
-          # Link against Homebrew LLVM libc++ + unwind (some C++23 facilities may depend on unwind).
           echo "LDFLAGS=-L${LLVM_PATH}/lib -L${LLVM_PATH}/lib/c++ -L${LLVM_PATH}/lib/unwind -lunwind -Wl,-rpath,${LLVM_PATH}/lib/c++ -Wl,-rpath,${LLVM_PATH}/lib/unwind" >> $GITHUB_ENV
 
       - name: Install Ninja (Windows, pip)
@@ -121,79 +119,80 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install ninja
 
-      - name: Install LLVM (Windows, clang-cl builds)
-        if: runner.os == 'Windows' && matrix.compiler == 'clang-cl'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          choco install llvm -y
-          echo "C:\\Program Files\\LLVM\\bin" >> $env:GITHUB_PATH
-
       - name: Set up MSVC (Windows)
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1.13.0
 
-      - name: Setup vcpkg + install dependencies (Linux)
-        if: runner.os == 'Linux'
+      - name: Setup vcpkg (clone + bootstrap)
         shell: bash
         run: |
           set -euo pipefail
-          if [ ! -d "vcpkg/vcpkg_root" ]; then
-            git clone https://github.com/microsoft/vcpkg.git vcpkg/vcpkg_root
+          VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
+          echo "VCPKG_ROOT=$VCPKG_ROOT" >> $GITHUB_ENV
+          if [ ! -d "$VCPKG_ROOT" ]; then
+            git clone --depth 1 https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
           fi
-          ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh -disableMetrics
-          ./vcpkg/vcpkg_root/vcpkg install gtest --triplet x64-linux
+          if [ -f "$VCPKG_ROOT/vcpkg" ] || [ -f "$VCPKG_ROOT/vcpkg.exe" ]; then
+            echo "vcpkg binary already present"
+          else
+            if [ "$RUNNER_OS" = "Windows" ]; then
+              "$VCPKG_ROOT/bootstrap-vcpkg.bat" -disableMetrics
+            else
+              "$VCPKG_ROOT/bootstrap-vcpkg.sh" -disableMetrics
+            fi
+          fi
 
-      - name: Setup vcpkg + install dependencies (macOS)
-        if: runner.os == 'macOS'
+      - name: Fetch vcpkg baseline (manifest builtin-baseline)
         shell: bash
         run: |
           set -euo pipefail
-          if [ ! -d "vcpkg/vcpkg_root" ]; then
-            git clone https://github.com/microsoft/vcpkg.git vcpkg/vcpkg_root
+          VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
+          BASELINE=$(python -c "import json; print(json.load(open('vcpkg.json')).get('builtin-baseline',''))" 2>/dev/null || true)
+          if [ -n "$BASELINE" ]; then
+            git -C "$VCPKG_ROOT" fetch origin "$BASELINE" || git -C "$VCPKG_ROOT" fetch --unshallow origin || true
           fi
-          ./vcpkg/vcpkg_root/bootstrap-vcpkg.sh -disableMetrics
-          TRIPLET="arm64-osx"
-          if [ "$(uname -m)" = "x86_64" ]; then
-            TRIPLET="x64-osx"
-          fi
-          ./vcpkg/vcpkg_root/vcpkg install gtest --triplet $TRIPLET
 
-      - name: Setup vcpkg + install dependencies (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
+      - name: Install dependencies via vcpkg (manifest mode)
+        shell: bash
         run: |
-          $ErrorActionPreference = 'Stop'
-          if (-Not (Test-Path "vcpkg\vcpkg_root")) {
-            git clone https://github.com/microsoft/vcpkg.git vcpkg\vcpkg_root
-          }
-          .\vcpkg\vcpkg_root\bootstrap-vcpkg.bat -disableMetrics
-          .\vcpkg\vcpkg_root\vcpkg.exe install gtest --triplet x64-windows-static
+          set -euo pipefail
+          VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
+          TRIPLET="${{ matrix.triplet }}"
+          export VCPKG_ROOT
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            "$VCPKG_ROOT/vcpkg.exe" install --triplet "$TRIPLET"
+          else
+            "$VCPKG_ROOT/vcpkg" install --triplet "$TRIPLET"
+          fi
 
-      - name: Configure CMake (headless) (Linux/macOS)
+      - name: Configure CMake (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
         run: |
           set -euo pipefail
+          VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
+          export VCPKG_ROOT
+          export CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
           if [ "${{ matrix.compiler }}" = "clang" ]; then
             export CC=clang
             export CXX=clang++
           fi
           cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
             -DHAHAHA_DISPLAY=OFF \
             -DHAHAHA_BUILD_TESTS=ON \
             -DHAHAHA_BUILD_EXAMPLES=ON
 
-      - name: Configure CMake (headless) (Windows)
+      - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $extra = @()
-          if ("${{ matrix.compiler }}" -eq "clang-cl") {
-            $extra += "-DCMAKE_CXX_COMPILER=clang-cl"
-          }
-          cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja @extra `
+          $env:VCPKG_ROOT = "${{ github.workspace }}\vcpkg\vcpkg_root"
+          $env:CMAKE_TOOLCHAIN_FILE = "$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake"
+          cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja `
+            -DCMAKE_BUILD_TYPE=Debug `
+            -DVCPKG_TARGET_TRIPLET=x64-windows-static `
             -DHAHAHA_DISPLAY=OFF `
             -DHAHAHA_BUILD_TESTS=ON `
             -DHAHAHA_BUILD_EXAMPLES=ON

@@ -16,34 +16,32 @@
 # Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
 # jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 #
+# Dev environment setup: install gcovr, clone vcpkg, install deps from vcpkg.json,
+# and configure CMake presets (VCPKG_ROOT).
 
 import argparse
 import json
 import logging
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Optional, Tuple
 
 VcpkgRepoUrl = "https://github.com/Microsoft/vcpkg"
-Dependencies = [
-    "gtest",
-    "imgui[glfw-binding,opengl3-binding]",
-]
-
 VcpkgRootDirName = "vcpkg_root"
 
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 default_workdir = os.path.join(script_path, "..")
 
+
 def _git_clone_repo(
-        url: str,
-        depth: int = 1,
-        dest_dir: Path = Path("."),
+    url: str,
+    depth: int = 1,
+    dest_dir: Path = Path("."),
 ) -> bool:
     result = True
     command = [
@@ -52,7 +50,7 @@ def _git_clone_repo(
         "--depth",
         str(depth),
         url,
-        dest_dir,
+        str(dest_dir),
     ]
     command_res = subprocess.run(
         command,
@@ -63,10 +61,27 @@ def _git_clone_repo(
     command_stderr = command_res.stderr.decode("utf-8") if command_res.stderr else ""
     if command_res.returncode != 0:
         result = False
-        logger.error(f"Failed to clone repo: {url},"
-                      f"stdout of git clone command: \n\t{command_stdout}, \n"
-                      f"stderr of git clone command: \n\t{command_stderr}")
+        logger.error(
+            f"Failed to clone repo: {url}, "
+            f"stdout of git clone command: \n\t{command_stdout}, \n"
+            f"stderr of git clone command: \n\t{command_stderr}"
+        )
     return result
+
+
+def _install_gcovr() -> bool:
+    """Install gcovr (for coverage). Prefer pip so it works on Windows/Linux/macOS."""
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "--upgrade", "gcovr"],
+            capture_output=True,
+            check=True,
+        )
+        logger.info("gcovr installed via pip.")
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.warning(f"Could not install gcovr via pip: {e}. Install manually (e.g. apt install gcovr).")
+        return False
 
 
 def _download_vcpkg_root_repo(vcpkg_root_path: Path) -> None:
@@ -75,6 +90,7 @@ def _download_vcpkg_root_repo(vcpkg_root_path: Path) -> None:
         logger.info(f"vcpkg root directory already exists: {dest}")
         return
 
+    logger.info(f"Cloning vcpkg into {dest} ...")
     _git_clone_repo(
         VcpkgRepoUrl,
         depth=1,
@@ -89,29 +105,27 @@ def _check_and_bootstrap_vcpkg(vcpkg_root_path: Path) -> bool:
     local_vcpkg_root = vcpkg_root_path / VcpkgRootDirName
 
     local_vcpkg_exe = local_vcpkg_root / "vcpkg"
-    if os.name == 'nt':
+    if os.name == "nt":
         local_vcpkg_exe = local_vcpkg_root / "vcpkg.exe"
 
-    # 1. Check if we have a local vcpkg repo
     if not local_vcpkg_root.exists():
-        # If no local repo, we can't bootstrap.
         logger.error(f"vcpkg not found. Local repo not at {local_vcpkg_root}.")
         return False
 
-    # 2. Local repo exists. Check for binary.
     if not local_vcpkg_exe.exists():
-        logger.info(f"Local vcpkg repo found at {local_vcpkg_root}, but 'vcpkg' binary is missing. Bootstrapping...")
-
+        logger.info(
+            f"Local vcpkg repo found at {local_vcpkg_root}, but 'vcpkg' binary is missing. Bootstrapping..."
+        )
         bootstrap_script = "./bootstrap-vcpkg.sh"
-        if os.name == 'nt':
+        if os.name == "nt":
             bootstrap_script = ".\\bootstrap-vcpkg.bat"
 
         try:
             subprocess.run(
-                args=[bootstrap_script, "--vcpkg-root", str(local_vcpkg_root)],
+                [bootstrap_script, "--vcpkg-root", str(local_vcpkg_root)],
                 shell=True,
                 check=True,
-                cwd=str(local_vcpkg_root)
+                cwd=str(local_vcpkg_root),
             )
             logger.info("vcpkg bootstrapped successfully.")
         except subprocess.CalledProcessError as e:
@@ -171,7 +185,9 @@ def _ensure_vcpkg_baseline_fetched(work_dir: Path, vcpkg_root_path: Path) -> boo
 def _get_vcpkg_exe_and_root(vcpkg_root_path: Path) -> Tuple[str, Path]:
     """Return (vcpkg executable path or 'vcpkg', vcpkg root path)."""
     local_vcpkg_root = vcpkg_root_path / VcpkgRootDirName
-    local_vcpkg_exe = local_vcpkg_root / "vcpkg.exe" if os.name == "nt" else local_vcpkg_root / "vcpkg"
+    local_vcpkg_exe = (
+        local_vcpkg_root / "vcpkg.exe" if os.name == "nt" else local_vcpkg_root / "vcpkg"
+    )
     vcpkg_cmd = str(local_vcpkg_exe) if local_vcpkg_exe.exists() else "vcpkg"
     return vcpkg_cmd, local_vcpkg_root
 
@@ -185,12 +201,13 @@ def _vcpkg_install_manifest_mode(work_dir: Path, vcpkg_root_path: Path) -> bool:
     command = [
         vcpkg_cmd,
         "install",
-        "--vcpkg-root", str(local_vcpkg_root),
+        "--vcpkg-root",
+        str(local_vcpkg_root),
     ]
     command_env = os.environ.copy()
     command_env["VCPKG_ROOT"] = str(local_vcpkg_root)
 
-    logger.info(f"running: {command} (cwd={work_dir})")
+    logger.info(f"Running: {' '.join(command)} (cwd={work_dir})")
     res = subprocess.run(
         command,
         shell=False,
@@ -213,35 +230,6 @@ def _vcpkg_install_manifest_mode(work_dir: Path, vcpkg_root_path: Path) -> bool:
     return False
 
 
-def _vcpkg_install_pkg(pkg_name: str, vcpkg_root_path: Path) -> bool:
-    """Classic mode: install a single package by name."""
-    vcpkg_cmd, local_vcpkg_root = _get_vcpkg_exe_and_root(vcpkg_root_path)
-    command = [vcpkg_cmd, "install", pkg_name, "--recurse", "--vcpkg-root", str(local_vcpkg_root)]
-    command_env = os.environ.copy()
-    command_env["VCPKG_ROOT"] = str(local_vcpkg_root)
-
-    logger.info(f"running: {command}")
-    res = subprocess.run(
-        command,
-        shell=False,
-        check=False,
-        env=command_env,
-        capture_output=True,
-    )
-    if res.returncode == 0:
-        logger.info(f"Successfully installed [{pkg_name}]")
-        return True
-
-    res_stdout = res.stdout.decode("utf-8") if res.stdout else ""
-    res_stderr = res.stderr.decode("utf-8") if res.stderr else ""
-    logger.error(
-        f"Failed to install [{pkg_name}] \n"
-        f"stdout of vcpkg command: \n\t{res_stdout}, \n"
-        f"stderr of vcpkg command: \n\t{res_stderr}  \n"
-    )
-    return False
-
-
 def _download_dependencies_via_vcpkg(work_dir: Path, vcpkg_root_path: Path) -> bool:
     if not _check_and_bootstrap_vcpkg(vcpkg_root_path):
         return False
@@ -249,42 +237,75 @@ def _download_dependencies_via_vcpkg(work_dir: Path, vcpkg_root_path: Path) -> b
     if manifest_path.exists():
         _ensure_vcpkg_baseline_fetched(work_dir, vcpkg_root_path)
         return _vcpkg_install_manifest_mode(work_dir, vcpkg_root_path)
-    for pkg_name in Dependencies:
-        if not _vcpkg_install_pkg(pkg_name, vcpkg_root_path):
-            return False
-    return True
+    logger.error("No vcpkg.json found; cannot install dependencies in manifest mode.")
+    return False
+
+
+def _print_preset_instructions(work_dir: Path, vcpkg_root_path: Path) -> None:
+    """Print how to set VCPKG_ROOT and use CMake presets."""
+    local_vcpkg_root = vcpkg_root_path / VcpkgRootDirName
+    vcpkg_root_abs = local_vcpkg_root.resolve()
+    work_dir_abs = work_dir.resolve()
+
+    logger.info("")
+    logger.info("=" * 60)
+    logger.info("CMake presets (CMakePresets.json) are configured.")
+    logger.info("Set VCPKG_ROOT and then use a preset:")
+    logger.info("")
+    if os.name == "nt":
+        logger.info(f"  $env:VCPKG_ROOT = \"{vcpkg_root_abs}\"")
+        logger.info("  cmake --preset vcpkg-windows")
+        logger.info("  cmake --build cmake-build-vcpkg-windows")
+    else:
+        logger.info(f"  export VCPKG_ROOT=\"{vcpkg_root_abs}\"")
+        logger.info("  cmake --preset vcpkg-linux   # or vcpkg-macos on macOS")
+        logger.info("  cmake --build cmake-build-vcpkg-linux")
+    logger.info("")
+    logger.info("For coverage (Linux/macOS):")
+    logger.info(f"  export VCPKG_ROOT=\"{vcpkg_root_abs}\"")
+    logger.info("  python dev/coverage.py builddir-coverage --no-cuda")
+    logger.info("")
+    logger.info("=" * 60)
 
 
 def main() -> None:
-
-    logger.info("Start to setup develop environments")
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--workdir",
-                        default=default_workdir,
-                        help="Working directory, "
-                             "if you are using devcontainer, then it is /workspace, "
-                             "otherwise, it will be the path that you clone the repo to "
-                             "e.g. (/home/username/project/Hahaha)")
-
+    logger.info("Setting up development environment")
+    parser = argparse.ArgumentParser(
+        description="Setup dev environment: gcovr, vcpkg (clone + manifest install), CMake presets."
+    )
+    parser.add_argument(
+        "--workdir",
+        default=default_workdir,
+        help="Project root (repo root). Default: directory containing dev/.",
+    )
     parser.add_argument(
         "--vcpkg-root",
-        default=default_workdir + "/vcpkg/",
-        help="Path to vcpkg root directory, "
-             "if you are using devcontainer, then it is /workspace/vcpkg, "
-             "otherwise, it will be the path that you clone the repo to "
-             "e.g. (/home/username/project/Hahaha/vcpkg)"
-             ", you can set up this by yourself",
+        default=os.path.join(default_workdir, "vcpkg"),
+        help="Parent directory for vcpkg clone (vcpkg_root will be created inside). "
+        "Default: <workdir>/vcpkg",
+    )
+    parser.add_argument(
+        "--skip-gcovr",
+        action="store_true",
+        help="Skip installing gcovr (e.g. if already installed via system).",
     )
 
     args = parser.parse_args()
-    work_dir = Path(args.workdir)
-    vcpkg_root_path = Path(args.vcpkg_root)
+    work_dir = Path(args.workdir).resolve()
+    vcpkg_root_path = Path(args.vcpkg_root).resolve()
 
     logger.info(f"Working directory: {work_dir}")
-    logger.info(f"Vcpkg root directory: {vcpkg_root_path}")
+    logger.info(f"Vcpkg root parent: {vcpkg_root_path}")
+
+    if not args.skip_gcovr:
+        _install_gcovr()
 
     _download_vcpkg_root_repo(vcpkg_root_path)
-    _download_dependencies_via_vcpkg(work_dir, vcpkg_root_path)
+    ok = _download_dependencies_via_vcpkg(work_dir, vcpkg_root_path)
+    if not ok:
+        sys.exit(1)
+
+    _print_preset_instructions(work_dir, vcpkg_root_path)
 
 
 if __name__ == "__main__":

@@ -72,6 +72,12 @@ cmake_args=(
   -DHAHAHA_ENABLE_COVERAGE=ON
 )
 
+# Use vcpkg toolchain when VCPKG_ROOT is set (e.g. CI or after dev_env_setup)
+if [ -n "${VCPKG_ROOT:-}" ] && [ -f "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" ]; then
+  cmake_args+=(-DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+  [ -n "${VCPKG_TARGET_TRIPLET:-}" ] && cmake_args+=(-DVCPKG_TARGET_TRIPLET="${VCPKG_TARGET_TRIPLET}")
+fi
+
 if [ "$ENABLE_CUDA" = "on" ]; then
   cmake_args+=(-DHAHAHA_USE_CUDA=ON)
   echo "Building with CUDA support enabled."
