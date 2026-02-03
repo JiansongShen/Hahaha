@@ -22,7 +22,8 @@
 #define HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7
 
 #ifdef HAHAHA_USE_CUDA
-#if __has_include(<driver_types.h>)
+#if __has_include(<driver_types.h>) && __has_include(<cuda_runtime_api.h>)
+#include <cuda_runtime_api.h>
 #include <driver_types.h>
 
 namespace hahaha::backend {
@@ -43,6 +44,19 @@ cudaError_t cudaMemoryAllocate(size_t size, void** ptr);
 cudaError_t cudaMemoryFree(void* ptr);
 
 /**
+ * @brief Copy memory (host/device) on CUDA.
+ * @param dst Destination pointer.
+ * @param src Source pointer.
+ * @param count Number of bytes to copy.
+ * @param kind Copy direction (e.g. cudaMemcpyHostToDevice, cudaMemcpyDeviceToHost).
+ * @return CUDA error code.
+ */
+cudaError_t cudaMemoryCopy(void* dst,
+                           const void* src,
+                           size_t count,
+                           cudaMemcpyKind kind);
+
+/**
  * @brief Set memory to a value on CUDA device.
  * @param ptr Pointer to memory.
  * @param value Value to set.
@@ -53,7 +67,7 @@ cudaError_t cudaMemorySet(void* ptr, int value, size_t count);
 
 } // namespace hahaha::backend
 
-#endif // __has_include(<driver_types.h>)
+#endif // __has_include(<driver_types.h>) && __has_include(<cuda_runtime_api.h>)
 #endif // HAHAHA_USE_CUDA
 
 #endif // HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7

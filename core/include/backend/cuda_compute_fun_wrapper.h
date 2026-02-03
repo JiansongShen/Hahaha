@@ -30,7 +30,6 @@
 #include <span>
 #include <utility>
 
-#include "gpu/cuda/CudaMemory.h"
 #include "gpu/cuda/cuda_compute_fun.h"
 
 namespace hahaha::backend {
@@ -68,20 +67,12 @@ inline void cuda_add<float>(const std::span<const float> a,
     if (size == 0) {
         return;
     }
-
-    // Allocate GPU memory
-    CudaMemory cudaMem;
-    const size_t bytes = size * sizeof(float);
-
-    // Launch kernel
     const unsigned int blockSize = 256;
     const cudaError_t err =
         cudaComputeAdd(a.data(), b.data(), out.data(), size, blockSize);
     if (err != cudaSuccess) {
         throw std::runtime_error("CUDA kernel launch failed");
     }
-
-    // Synchronize and copy result back
     cudaDeviceSynchronize();
 }
 
@@ -97,11 +88,6 @@ inline void cuda_sub<float>(const std::span<const float> a,
     if (size == 0) {
         return;
     }
-
-    CudaMemory cudaMem;
-    const size_t bytes = size * sizeof(float);
-
-    // Launch kernel
     const unsigned int blockSize = 256;
     const cudaError_t err =
         cudaComputeSubtract(a.data(), b.data(), out.data(), size, blockSize);
@@ -123,23 +109,10 @@ inline void cuda_mul<float>(const std::span<const float> a,
     if (size == 0) {
         return;
     }
-
-    CudaMemory cudaMem;
-    const size_t bytes = size * sizeof(float);
-    DeviceBuffer bufA = cudaMem.allocate(bytes);
-    DeviceBuffer bufB = cudaMem.allocate(bytes);
-    DeviceBuffer bufOut = cudaMem.allocate(bytes);
-
-    cudaMem.copyHostToDevice(bufA, std::span<char>((char*) (a.data()), bytes));
-    cudaMem.copyHostToDevice(bufB, std::span<char>((char*) (b.data()), bytes));
-
     const unsigned int blockSize = 256;
     const cudaError_t err =
-        cudaComputeMultiply((a.data()), b.data(), out.data(), size, blockSize);
+        cudaComputeMultiply(a.data(), b.data(), out.data(), size, blockSize);
     if (err != cudaSuccess) {
-        cudaMem.free(bufA);
-        cudaMem.free(bufB);
-        cudaMem.free(bufOut);
         throw std::runtime_error("CUDA kernel launch failed");
     }
     cudaDeviceSynchronize();
@@ -156,22 +129,10 @@ inline void cuda_div<float>(const std::span<const float> a,
     if (size == 0) {
         return;
     }
-    CudaMemory cudaMem;
-    const size_t bytes = size * sizeof(float);
-    DeviceBuffer bufA = cudaMem.allocate(bytes);
-    DeviceBuffer bufB = cudaMem.allocate(bytes);
-    DeviceBuffer bufOut = cudaMem.allocate(bytes);
-
-    cudaMem.copyHostToDevice(bufA, std::span<char>((char*) (a.data()), bytes));
-    cudaMem.copyHostToDevice(bufB, std::span<char>((char*) (b.data()), bytes));
-
     const unsigned int blockSize = 256;
     const cudaError_t err =
         cudaComputeDivide(a.data(), b.data(), out.data(), size, blockSize);
     if (err != cudaSuccess) {
-        cudaMem.free(bufA);
-        cudaMem.free(bufB);
-        cudaMem.free(bufOut);
         throw std::runtime_error("CUDA kernel launch failed");
     }
     cudaDeviceSynchronize();

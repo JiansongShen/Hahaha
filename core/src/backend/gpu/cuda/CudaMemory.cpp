@@ -23,7 +23,6 @@
 
 #include "backend/gpu/cuda/CudaMemory.h"
 
-#include <cuda_runtime_api.h>
 #include <driver_types.h>
 #include <span>
 #include <stdexcept>
@@ -62,10 +61,10 @@ void CudaMemory::copyDeviceToHost(std::span<std::byte> dst,
     }
 
     const cudaError_t err =
-        cudaMemcpy(dst.data(),
-                   reinterpret_cast<const void*>(src.address()),
-                   src.size(),
-                   cudaMemcpyDeviceToHost);
+        cudaMemoryCopy(dst.data(),
+                       reinterpret_cast<const void*>(src.address()),
+                       src.size(),
+                       cudaMemcpyDeviceToHost);
 
     if (err != cudaSuccess) {
         throw std::runtime_error("CUDA device to host copy failed");
@@ -111,10 +110,11 @@ void CudaMemory::copyHostToDevice(DeviceBuffer& dst,
         throw std::runtime_error("Host to device copy size mismatch");
     }
 
-    const cudaError_t err = cudaMemcpy(reinterpret_cast<void*>(dst.address()),
-                                       src.data(),
-                                       src.size(),
-                                       cudaMemcpyHostToDevice);
+    const cudaError_t err =
+        cudaMemoryCopy(reinterpret_cast<void*>(dst.address()),
+                       src.data(),
+                       src.size(),
+                       cudaMemcpyHostToDevice);
 
     if (err != cudaSuccess) {
         throw std::runtime_error("CUDA host to device copy failed");
@@ -123,5 +123,5 @@ void CudaMemory::copyHostToDevice(DeviceBuffer& dst,
 
 } // namespace hahaha::backend
 
-#endif // __has_include(<driver_types.h>)
+#endif // __has_include(<driver_types.h>) && __has_include(<cuda_runtime_api.h>)
 #endif // HAHAHA_USE_CUDA
