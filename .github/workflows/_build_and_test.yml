@@ -180,15 +180,19 @@ jobs:
           VCPKG_ROOT="${{ github.workspace }}/vcpkg/vcpkg_root"
           export VCPKG_ROOT
           export CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+          EXTRA_CMAKE=()
           if [ "${{ matrix.compiler }}" = "clang" ]; then
             export CC=clang
             export CXX=clang++
+            # FindThreads needs -pthread with Clang on Linux; CMake's detection can fail otherwise
+            EXTRA_CMAKE+=(-DCMAKE_CXX_FLAGS="-pthread" -DCMAKE_EXE_LINKER_FLAGS="-pthread" -DCMAKE_SHARED_LINKER_FLAGS="-pthread")
           fi
           cmake -S . -B "build-cmake-${{ matrix.name }}" -G Ninja \
             -DCMAKE_BUILD_TYPE=Debug \
             -DHAHAHA_DISPLAY=OFF \
             -DHAHAHA_BUILD_TESTS=ON \
-            -DHAHAHA_BUILD_EXAMPLES=ON
+            -DHAHAHA_BUILD_EXAMPLES=ON \
+            "${EXTRA_CMAKE[@]}"
 
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
