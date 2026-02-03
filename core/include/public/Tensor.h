@@ -246,7 +246,7 @@ template <typename T> class Tensor {
      * @brief Move the tensor to a different device.
      * @param device The target device.
      */
-    void to(const backend::Device& device) {
+    void to(std::shared_ptr<backend::Device> device) {
         computeNode_->getData()->to(device);
     }
 
@@ -313,21 +313,20 @@ template <typename T> class Tensor {
 
     /**
      * @brief Creates a new Tensor of the same shape, initialized with zeros.
-     * * This method requests a zero-filled data container from the current 
+     * * This method requests a zero-filled data container from the current
      * device and wraps it in a new @ref compute::ComputeNode.
      * * @return Tensor A new tensor instance with all elements set to 0.
      */
     Tensor zeros() const {
         Tensor newTensor;
         newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
-            computeNode_->getData()->zeros()
-        );
+            computeNode_->getData()->zeros());
         return newTensor;
     }
 
     /**
      * @brief Creates a new Tensor of the same shape, initialized with ones.
-     * * This method requests a ones-filled data container from the current 
+     * * This method requests a ones-filled data container from the current
      * device and wraps it in a new @ref compute::ComputeNode.
      * * @return Tensor A new tensor instance with all elements set to 1.
      */
@@ -339,15 +338,15 @@ template <typename T> class Tensor {
     }
 
     /**
-     * @brief Creates a new Tensor of the same shape, initialized with a specific value.
+     * @brief Creates a new Tensor of the same shape, initialized with a
+     * specific value.
      * * @param initValue The value to fill the new tensor with.
      * @return Tensor A new tensor instance where every element is @p initValue.
      */
     Tensor sameShapeWithValue(T initValue) {
         Tensor newTensor;
         newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
-            computeNode_->getData()->sameShapeWithValue(initValue)
-        );
+            computeNode_->getData()->sameShapeWithValue(initValue));
         return newTensor;
     }
 

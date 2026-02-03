@@ -26,7 +26,7 @@
 namespace hahaha::backend {
 
 // Forward declaration
-class GpuMemory;
+class GPUMemory;
 
 /**
  * @brief RAII handle for a GPU device buffer.
@@ -109,7 +109,7 @@ class DeviceBuffer {
 
     // GpuMemory needs to be able to create DeviceBuffer instances and access
     // private members
-    friend class GpuMemory;
+    friend class GPUMemory;
 };
 
 } // namespace hahaha::backend

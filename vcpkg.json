@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "hahaha-project",
+  "version": "0.0.1",
+  "description": "Hahaha project dependencies",
+  "dependencies": [
+    "glfw3",
+    "imgui",
+    "gtest"
+  ],
+  "builtin-baseline": "b1b19307e2d2ec1eefbdb7ea069de7d4bcd31f01"
+}

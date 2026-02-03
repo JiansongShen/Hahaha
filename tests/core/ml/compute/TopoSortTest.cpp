@@ -28,16 +28,17 @@ using namespace hahaha::math;
 class TopoSortTest : public ::testing::Test {
   protected:
     // Helper to create a dummy leaf node
-    std::shared_ptr<ComputeNode<float>> createLeaf(float val = 0.0f) {
+    static std::shared_ptr<ComputeNode<float>> createLeaf(float val = 0.0f) {
         auto shape = TensorShape({1});
         auto data = std::make_shared<TensorWrapper<float>>(shape, val);
         return std::make_shared<ComputeNode<float>>(data);
     }
 
     // Helper to check if a node appears before another in the list
-    bool isBefore(const std::vector<std::shared_ptr<ComputeNode<float>>>& list,
-                  const std::shared_ptr<ComputeNode<float>>& before,
-                  const std::shared_ptr<ComputeNode<float>>& after) {
+    static bool
+    isBefore(const std::vector<std::shared_ptr<ComputeNode<float>>>& list,
+             const std::shared_ptr<ComputeNode<float>>& before,
+             const std::shared_ptr<ComputeNode<float>>& after) {
         size_t beforeIdx = list.size(), afterIdx = list.size();
         for (size_t i = 0; i < list.size(); ++i) {
             if (list[i] == before)

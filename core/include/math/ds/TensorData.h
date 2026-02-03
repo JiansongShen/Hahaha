@@ -19,13 +19,22 @@
 #ifndef HAHAHA_MATH_DS_TENSOR_DATA_H
 #define HAHAHA_MATH_DS_TENSOR_DATA_H
 
+#include <expected>
 #include <memory>
 #include <stdexcept>
+#include <utility>
 
-#include "backend/Device.h"
+#include "backend/DeviceRegistry.h"
+#include "backend/cpu/CPUDevice.h"
+#include "backend/gpu/cuda/cuda_compute_fun.h"
+#include "common/errors/Error.h"
 #include "math/ds/NestedData.h"
 #include "math/ds/TensorShape.h"
 #include "math/ds/TensorStride.h"
+
+namespace hahaha::common {
+    struct Error;
+}
 
 namespace hahaha::math {
 
@@ -59,11 +68,11 @@ template <typename T> class TensorData {
      */
     TensorData(const TensorShape& shape,
                T initValue,
-               const backend::Device device = backend::Device())
+               const std::shared_ptr<backend::Device>& device =
+                   backend::getCPUDevice())
         : shape_(shape), stride_(shape), device_(device) {
         size_t size = shape_.getTotalSize();
-        if (device_.type == backend::DeviceType::CPU
-            || device_.type == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU) {
             data_ = std::make_shared<T[]>(size);
             std::fill(data_.get(), data_.get() + size, initValue);
         } else {
@@ -79,11 +88,11 @@ template <typename T> class TensorData {
      * @param device The device where the data should reside.
      */
     explicit TensorData(const TensorShape& shape,
-                        const backend::Device device = backend::Device())
+                        const std::shared_ptr<backend::Device>& device =
+                            backend::getCPUDevice())
         : shape_(shape), stride_(shape), device_(device) {
         const size_t size = shape_.getTotalSize();
-        if (device_.type == backend::DeviceType::CPU
-            || device_.type == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU) {
             data_ = std::make_shared<T[]>(size);
         } else {
             // TODO: Handle GPU allocation using compute::gpu::GpuMemory
@@ -98,8 +107,7 @@ template <typename T> class TensorData {
     TensorData(const TensorData& other)
         : shape_(other.shape_), stride_(other.stride_), device_(other.device_) {
         size_t size = shape_.getTotalSize();
-        if (device_.type == backend::DeviceType::CPU
-            || device_.type == backend::DeviceType::SIMD) {
+        if (device_->getType() == backend::DeviceType::CPU) {
             data_ = std::make_shared<T[]>(size);
             std::copy(other.data_.get(), other.data_.get() + size, data_.get());
         } else {
@@ -115,7 +123,7 @@ template <typename T> class TensorData {
      */
     TensorData(TensorData&& other) noexcept
         : data_(std::move(other.data_)), shape_(std::move(other.shape_)),
-          stride_(std::move(other.stride_)), device_(other.device_) {
+          stride_(std::move(other.stride_)), device_(std::move(other.device_)) {
     }
 
     /**
@@ -128,6 +136,7 @@ template <typename T> class TensorData {
           shape_(TensorShape(std::vector<size_t>{initVec.size()})) {
         stride_ = TensorStride(shape_);
         std::copy(initVec.begin(), initVec.end(), data_.get());
+        device_ = backend::getCPUDevice();
     }
 
     /**
@@ -171,7 +180,14 @@ template <typename T> class TensorData {
     /**
      * @brief Destructor. Automatically releases the shared_ptr.
      */
-    ~TensorData() = default;
+    ~TensorData() {
+        if (device_ && device_->getType() == backend::DeviceType::CUDA) {
+            if (gpuPtr) {
+                device_->deallocate(backend::DeviceBuffer(
+                    gpuPtr, sizeof(T) * shape_.getTotalSize()));
+            }
+        }
+    };
 
     /**
      * @brief Construct from flattened nested data (e.g., from initializer
@@ -179,8 +195,7 @@ template <typename T> class TensorData {
      * @param data The NestedData object containing flattened data and shape.
      */
     explicit TensorData(NestedData<T>&& data) : shape_(data.getShape()) {
-        size_t size = data.getFlatData().size();
-        if (size > 0) {
+        if (const size_t size = data.getFlatData().size(); size > 0) {
             data_ = std::make_shared<T[]>(size);
             std::copy(data.getFlatData().begin(),
                       data.getFlatData().end(),
@@ -189,6 +204,67 @@ template <typename T> class TensorData {
             data_ = nullptr; // Explicitly null for truly empty tensors
         }
         stride_ = TensorStride(shape_);
+        device_ = backend::getCPUDevice();
+    }
+
+    std::expected<void, common::Error>
+    copyFromCpuToCuda(const std::shared_ptr<backend::Device>& targetDevice) {
+        const auto byteSize = sizeof(T) * shape_.getTotalSize();
+        const auto targetBuffer = targetDevice->allocate(byteSize);
+        if (targetBuffer.address() == 0) {
+            return std::unexpected(common::CudaDeviceOutOfMemoryError());
+        }
+
+        targetDevice->copyMemoryToThis(
+            std::span(reinterpret_cast<std::byte*>(this->data_.get()),
+                      byteSize),
+            std::span(reinterpret_cast<std::byte*>(targetBuffer.address()),
+                      byteSize),
+            device_);
+
+        gpuPtr = targetBuffer.address();
+
+        return {};
+    }
+
+    std::expected<void, common::Error>
+    moveFromCudaToCpu(const std::shared_ptr<backend::Device>& targetDevice) {
+        auto byteSize = sizeof(T) * shape_.getTotalSize();
+        const auto targetBuffer = backend::DeviceBuffer(
+            reinterpret_cast<uintptr_t>(this->getData().get()), byteSize);
+        if (targetBuffer.address() == 0) {
+            return std::unexpected(common::CudaDeviceOutOfMemoryError());
+        }
+
+        device_->copyMemoryFromThis(
+            std::span(reinterpret_cast<std::byte*>(this->gpuPtr), byteSize),
+            std::span(reinterpret_cast<std::byte*>(targetBuffer.address()),
+                      byteSize),
+            targetDevice);
+
+        device_->deallocate(backend::DeviceBuffer(gpuPtr, byteSize));
+        gpuPtr = 0;
+
+        return {};
+    }
+
+    std::expected<void, common::Error>
+    copyOrMoveToDevice(std::shared_ptr<backend::Device> targetDevice) {
+        if (*this->device_ == *targetDevice) {
+            return {};
+        }
+
+        if (this->device_->getType() == backend::DeviceType::CPU
+            && targetDevice->getType() == backend::DeviceType::CUDA) {
+            return copyFromCpuToCuda(targetDevice);
+        }
+
+        if (this->device_->getType() == backend::DeviceType::CUDA
+            && targetDevice->getType() == backend::DeviceType::CPU) {
+            return moveFromCudaToCpu(targetDevice);
+        }
+
+        return {};
     }
 
     /**
@@ -260,7 +336,7 @@ template <typename T> class TensorData {
      * @brief Get the device where the data is stored.
      * @return Const reference to the device.
      */
-    [[nodiscard]] const backend::Device& getDevice() const {
+    [[nodiscard]] std::shared_ptr<backend::Device> getDevice() const {
         return device_;
     }
 
@@ -268,15 +344,18 @@ template <typename T> class TensorData {
      * @brief Set the device for this tensor data.
      * @param device New device.
      */
-    void setDevice(const backend::Device& device) {
-        device_ = device;
+    void setDevice(std::shared_ptr<backend::Device> device) {
+        device_ = std::move(device);
     }
 
   private:
     std::shared_ptr<T[]> data_; /**< Raw heap-allocated data array. */
     TensorShape shape_;         /**< Dimensionality metadata. */
     TensorStride stride_;       /**< Memory skip values for indexing. */
-    backend::Device device_;    /**< Device where data resides. */
+    std::shared_ptr<backend::Device> device_ =
+        backend::getCPUDevice(); /**< Device where data resides. */
+
+    std::uintptr_t gpuPtr = 0;
 
     friend class TensorWrapper<T>;
 };

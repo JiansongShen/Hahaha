@@ -38,6 +38,7 @@ class LoggerTest : public ::testing::Test {
     }
 
     void TearDown() override {
+
         if (std::filesystem::exists("test_log.txt")) {
             std::filesystem::remove("test_log.txt");
         }
@@ -203,6 +204,7 @@ TEST_F(LoggerTest, LoggerWithTimeEnabled) {
     }
 }
 
+// TODO: sometimes, it stucked
 TEST_F(LoggerTest, LoggerOutputDisabled) {
     if (std::filesystem::exists("test_log_none.txt")) {
         std::filesystem::remove("test_log_none.txt");
