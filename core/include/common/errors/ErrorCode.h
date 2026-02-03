@@ -35,6 +35,7 @@ enum class ErrorCode : std::size_t {
     InternalError,      ///< An internal logic error occurred.
 
     InvalidDataset,     ///< Invalid dataset provided.
+    DatasetLoadFailed,  ///< Failed to load dataset.
 
     Count               ///< Number of error codes (for bounds checking).
 };
@@ -48,7 +49,8 @@ constexpr const char* ErrorMessages[] = {
     "Device unsupported",
     "Numerical overflow",
     "Internal error",
-    "Invalid dataset"
+    "Invalid dataset",
+    "Dataset load failed",
 };
 
 } // namespace hahaha::common

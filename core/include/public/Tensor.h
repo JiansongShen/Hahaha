@@ -32,6 +32,9 @@
 
 namespace hahaha {
 
+
+
+//TODO: Make sure the check of nullptr of compute node
 /**
  * @brief High-level User Interface for Tensor operations and Autograd.
  *
@@ -59,6 +62,12 @@ template <typename T> class Tensor {
     explicit Tensor(const math::TensorWrapper<T>& data)
         : computeNode_(std::make_shared<compute::ComputeNode<T>>(
               std::make_shared<math::TensorWrapper<T>>(data))) {
+    }
+    /**
+     * @brief Default tensor constructor
+     */
+    Tensor () {
+        computeNode_ = nullptr;
     }
 
     /**
@@ -93,6 +102,15 @@ template <typename T> class Tensor {
             std::make_shared<math::TensorWrapper<T>>(vec));
         return Tensor(computeNode);
     }
+
+    static Tensor buildFromShape(std::initializer_list<size_t> shape) {
+        math::TensorShape tensorShape(shape);
+        auto computeNode = std::make_shared<compute::ComputeNode<T>>(
+            std::make_shared<math::TensorWrapper<T>>(tensorShape));
+
+        return Tensor(computeNode);
+    }
+
 
     /** @brief Addition operator. Builds an 'Add' node. */
     Tensor operator+(const Tensor& other) const {

@@ -38,12 +38,12 @@ public:
             if (s[i] == delimiter) {
                 // like a ','[postBegin] ','[i];
                 if (i - posBegin == 1 && keepBlankValue) {
-                    elems.push_back("");
+                    elems.emplace_back("");
                     posBegin = i + 1;
                     continue;
                 }
 
-                const auto substr = s.substr(posBegin, i - posBegin - 1);
+                const auto substr = s.substr(posBegin, i - posBegin);
                 if (isBlank(substr) && keepBlankValue) {
                     elems.push_back(substr);
                     continue;
@@ -52,6 +52,7 @@ public:
                 posBegin = i + 1;
             }
         }
+        elems.push_back(s.substr(posBegin, s.length() - posBegin));
 
         return elems;
     }

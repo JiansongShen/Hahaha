@@ -66,6 +66,9 @@ inline constexpr Error InvalidDatasetError() {
     return Error{ErrorCode::InvalidDataset};
 }
 
+inline constexpr Error DatasetLoadFailedError() {
+    return Error{ErrorCode::DatasetLoadFailed};
+}
 } // namespace hahaha::common
 
 #endif // HAHAHA_ERROR_H_053340FD56184B63A68D6CE6E15C8175

@@ -20,13 +20,18 @@
 #define HAHAHA_DATASETINNERLOADER_H_A4976991CB27480FA1D8C8FD93AE7B12
 #include <expected>
 #include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
 
 #include "DatasetInner.h"
 #include "common/errors/Error.h"
+#include "math/TensorWrapper.h"
+#include "math/ds/TensorShape.h"
 #include "ml/dataset/DatasetHandleBlankStrategy.h"
 #include "ml/dataset/DatasetTypeUnifyStrategy.h"
+#include "ml/dataset/dataset_format.h"
+#include "utils/common/HelperStruct.h"
 #include "utils/common/StringUtils.h"
 #include "utils/log/Logger.h"
 
@@ -37,7 +42,8 @@ class DatasetInnerLoader {
 
   public:
     template <typename T>
-    void loadFromCSVTo(const std::string& pathString, DatasetInner<T>& dataset) {
+    void loadFromCSVTo(const std::string& pathString,
+                       DatasetInner<T>& dataset) {
         currFile_ = pathString;
         currLine_ = 1;
         checkPathExist(pathString);
@@ -47,42 +53,27 @@ class DatasetInnerLoader {
             throw std::runtime_error(pathString);
         }
 
-        auto line = std::string{};
-        std::getline(ifs, line);
-        auto features = utils::StringUtils::split(line, CSVLineDelimiter);
-        dataset.features_ = features;
-        currLine_ = 1;
-
-        std::vector<std::vector<T>> dataList;
-
-        while (std::getline(ifs, line)) {
-            auto datas = handleOneLine<T>(line);
-            if (datas.size() == 0) {
-                continue;
-            }
-            dataList.push_back(datas);
-        }
-
-        Tensor<T> xTensor({dataList.size(), dataList[0].size() - 1});
-        Tensor<T> yTensor({dataList.size(), 1});
-
-        for (size_t i = 0; i < dataList.size(); ++i) {
-            for (size_t j = 0; j < dataList[i].size() - 1; ++j) {
-
-                xTensor.getComputeNode()
-                    ->getData()
-                    ->getRawData()[i * dataList[0].size() + j] = dataList[i][j];
-            }
-
-            yTensor.getComputeNode()
-                ->getData()
-                ->getRawData()[dataList[0].size()] =
-                dataList[i][dataList[i].size() - 1];
-        }
-
+        setUpColumnNames<T>(ifs, dataset);
+        setUpData<T>(ifs, dataset);
         dataset.datasetName_ = pathString;
-        dataset.x = xTensor;
-        dataset.y = yTensor;
+    }
+
+    template <typename T>
+    void loadFromCSVTo(const std::string& pathString,
+                       DatasetInner<T>& dataset,
+                       CSVDatasetFormat format) {
+        currFile_ = pathString;
+        currLine_ = 1;
+        checkPathExist(pathString);
+        std::ifstream ifs(pathString);
+        if (!ifs.is_open()) {
+            error(std::format("file can not open: {}", pathString));
+            throw std::runtime_error(pathString);
+        }
+
+        setUpColumnNames<T>(ifs, dataset);
+        setUpData<T>(ifs, dataset);
+        dataset.datasetName_ = pathString;
     }
 
     static void checkPathExist(const std::string& pathString) {
@@ -92,14 +83,37 @@ class DatasetInnerLoader {
         }
     }
 
+    void setHandleBlankStrategy(DatasetHandleBlankStrategy strategy) {
+        datasetHandleBlankStrategy_ = strategy;
+    }
+
   private:
+    template <typename T>
+    std::expected<void, common::Error> setUpData(std::ifstream& ifs,
+                                                 DatasetInner<T>& dataset) {
+        auto line = std::string{};
+
+        std::vector<std::vector<T>> dataList;
+        while (std::getline(ifs, line)) {
+            auto datas = handleOneLine<T>(line);
+            if (!datas.has_value() || datas.value().size() == 0) {
+                continue;
+            }
+            dataList.push_back(datas.value());
+        }
+
+        fillData(dataList, dataset);
+        return {};
+    }
+
     template <typename T>
     std::expected<std::vector<T>, common::Error>
     handleOneLine(const std::string& line) {
         const auto strVec =
             utils::StringUtils::split(line, CSVLineDelimiter, true);
         auto res = std::vector<T>{};
-        if (strVec.size() != featureNum_) {
+
+        if (strVec.size() != columnNum_) {
             error(std::format("error: when parsing the line:{} at file {}:{}",
                               line,
                               currFile_,
@@ -110,23 +124,93 @@ class DatasetInnerLoader {
         res.resize(strVec.size());
 
         for (size_t i = 0; i < strVec.size(); ++i) {
-            res[i] = utils::StringUtils::to<T>(strVec[i]);
+            auto valRes = handleOneValue<T>(strVec[i]);
+            if (!valRes) {
+                error(
+                    std::format("error: when parsing the line:{} at file {}:{}",
+                                line,
+                                currFile_,
+                                static_cast<int>(currLine_)));
+                return std::unexpected(common::InvalidDatasetError());
+            }
+            res[i] = valRes.value();
         }
 
         return res;
     }
+
+    template <typename T>
+    std::expected<T, common::Error> handleOneValue(const std::string& str) {
+        if (utils::StringUtils::isBlank(str)) {
+            switch (datasetHandleBlankStrategy_) {
+            case hahaha::ml::DatasetHandleBlankStrategy::SetNan:
+                if constexpr (utils::isLegalFloatType<T>::value) {
+                    return static_cast<T>(std::numeric_limits<T>::quiet_NaN());
+                } else {
+                    error("Invalid dataset value type for SetNan strategy");
+                    return std::unexpected(common::InvalidDatasetError());
+                }
+                break;
+
+            case hahaha::ml::DatasetHandleBlankStrategy::UseZero:
+                return static_cast<T>(0);
+                break;
+
+            default:
+                error("Invalid dataset handle blank strategy");
+                return std::unexpected(common::InvalidDatasetError());
+            }
+        }
+        return utils::StringUtils::to<T>(str);
+    }
+
+    template <typename T>
+    void setUpColumnNames(std::ifstream& ifs, DatasetInner<T>& dataset) {
+        auto line = std::string{};
+        std::getline(ifs, line);
+        auto columns = utils::StringUtils::split(line, CSVLineDelimiter);
+        columnNum_ = columns.size();
+        dataset.features_ = std::move(columns);
+    }
+
+    template <typename T>
+    void fillData(std::vector<std::vector<T>>& dataList,
+                  DatasetInner<T>& dataset) {
+        if (dataList.empty()) {
+            dataset.x = Tensor<T>(std::make_shared<math::TensorWrapper<T>>());
+            dataset.y = Tensor<T>(std::make_shared<math::TensorWrapper<T>>());
+            return;
+        }
+
+        Tensor<T> xTensor = Tensor<T>::buildFromShape(
+            {dataList.size(), dataList[0].size() - 1});
+        Tensor<T> yTensor(std::make_shared<math::TensorWrapper<T>>(
+            math::TensorShape({dataList.size(), 1}), T(0)));
+        for (size_t i = 0; i < dataList.size(); ++i) {
+            for (size_t j = 0; j < dataList[i].size() - 1; ++j) {
+
+                xTensor.getComputeNode()
+                    ->getData()
+                    ->getRawData()[i * dataList[0].size() + j] = dataList[i][j];
+            }
+
+            yTensor.getComputeNode()->getData()->getRawData()[i] =
+                dataList[i][dataList[i].size() - 1];
+        }
+
+        dataset.x = xTensor;
+        dataset.y = yTensor;
+    }
+
     void clearStatus() {
-        featureNum_ = 0;
+        columnNum_ = 0;
         currLine_ = 1;
         currFile_ = "";
     }
 
-    size_t featureNum_ = 0;
-    std::string currFile_ = "";
+    size_t columnNum_ = 0;
+    std::string currFile_;
     size_t currLine_ = 0;
-
-    DatasetTypeUnifyStrategy datasetTypeUnifyStrategy_ =
-        getDefaultDatasetTypeUnifyStrategy();
 
     DatasetHandleBlankStrategy datasetHandleBlankStrategy_ =
         getDefaultDatasetHandleBlankStrategy();

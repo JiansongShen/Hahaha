@@ -19,9 +19,11 @@
 
 #ifndef HAHAHA_DATASET_INNER_H_4B71BF801C8A477CABA1DCC84944450E
 #define HAHAHA_DATASET_INNER_H_4B71BF801C8A477CABA1DCC84944450E
+#include <memory>
 #include <utility>
 
 #include "DatasetTypeUnifyStrategy.h"
+#include "math/TensorWrapper.h"
 #include "public/Tensor.h"
 
 namespace hahaha::ml {
@@ -30,15 +32,22 @@ class DatasetInnerLoader;
 template <typename T> class DatasetInner {
 
   public:
+    DatasetInner()
+        : typeUnifyStrategy_(getDefaultDatasetTypeUnifyStrategy()),
+          x(Tensor<T>(std::make_shared<math::TensorWrapper<T>>())),
+          y(Tensor<T>(std::make_shared<math::TensorWrapper<T>>())) {
+    }
+
     DatasetInner(const std::vector<std::string>& features,
                  std::string datasetName,
                  const std::vector<std::string>& labels,
-                 const DatasetTypeUnifyStrategy& datasetTypeUnifyStrategy,
-                 Tensor<T> x,
-                 Tensor<T> y)
-        : datasetName_(std::move(datasetName)), features_(features),
-          labels_(labels),
-          typeUnifyStrategy_(getDefaultDatasetTypeUnifyStrategy()) {
+                 const DatasetTypeUnifyStrategy& datasetTypeUnifyStrategy =
+                     getDefaultDatasetTypeUnifyStrategy(),
+                 Tensor<T> x = Tensor<T>(std::make_shared<math::TensorWrapper<T>>()),
+                 Tensor<T> y = Tensor<T>(std::make_shared<math::TensorWrapper<T>>()))
+        : datasetName_(std::move(datasetName)), columns_(features),
+          labels_(labels), typeUnifyStrategy_(datasetTypeUnifyStrategy), x(x),
+          y(y) {
     }
 
     [[nodiscard]] std::string getDatasetName() const {
@@ -50,7 +59,7 @@ template <typename T> class DatasetInner {
     }
 
     [[nodiscard]] std::vector<std::string> getFeatures() const {
-        return features_;
+        return columns_;
     }
 
     [[nodiscard]] DatasetTypeUnifyStrategy getDatasetTypeUnifyStrategy() const {
@@ -67,7 +76,7 @@ template <typename T> class DatasetInner {
 
   private:
     std::string datasetName_;
-    std::vector<std::string> features_;
+    std::vector<std::string> columns_;
     std::vector<std::string> labels_;
 
     DatasetTypeUnifyStrategy typeUnifyStrategy_;
