@@ -204,7 +204,6 @@ graph_info.json
 
 # Vcpkg (C++ package manager)
 vcpkg_installed/
-vcpkg.json
 
 # Hunter (C++ package manager)
 .hunter/
