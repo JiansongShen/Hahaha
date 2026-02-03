@@ -10,7 +10,9 @@
 /buildDir/
 /builddir/
 /build*/
-
+doc/doxygen/html/
+doc/doxygen/xml/
+doc/doxygen/latex/
 
 # IDE and Editor files
 .vscode/settings.jso
@@ -21,6 +23,14 @@
 .DS_Store
 Thumbs.db
 *.VSCodeCounter/
+.vs/
+*.ipch
+*.suo
+*.user
+*.vcxproj.user
+Debug/
+Release/
+x64/
 
 # C++ specific
 *.o
@@ -194,7 +204,6 @@ graph_info.json
 
 # Vcpkg (C++ package manager)
 vcpkg_installed/
-vcpkg.json
 
 # Hunter (C++ package manager)
 .hunter/
@@ -277,4 +286,8 @@ subprojects/*
 !subprojects/packagefiles/**
 subprojects/packagecache/
 
-vcpkg/
+vcpkg/*
+temp/
+Testing/
+out/
+builddir/

@@ -22,6 +22,8 @@
 #include <vector>
 
 #include "backend/Device.h"
+#include "backend/cpu/CPUDevice.h"
+#include "backend/gpu/GPUDevice.h"
 
 class TensorDataTest : public ::testing::Test {
   protected:
@@ -69,18 +71,16 @@ TEST_F(TensorDataTest, ShapeOnlyConstructor_DefaultDeviceAllocates) {
 
 TEST_F(TensorDataTest, ShapeValueConstructor_GpuDevice_ThrowsRuntimeError) {
     hahaha::math::TensorShape shape({2, 2});
-    EXPECT_THROW(TensorData<int>(shape,
-                                 1,
-                                 hahaha::backend::Device(
-                                     hahaha::backend::DeviceType::GPU, 0)),
-                 std::runtime_error);
+    EXPECT_THROW(
+        TensorData<int>(
+            shape, 1, (std::make_shared<hahaha::backend::GPUDevice>())),
+        std::runtime_error);
 }
 
 TEST_F(TensorDataTest, ShapeOnlyConstructor_GpuDevice_ThrowsRuntimeError) {
     hahaha::math::TensorShape shape({2, 2});
-    EXPECT_THROW(TensorData<int>(shape,
-                                 hahaha::backend::Device(
-                                     hahaha::backend::DeviceType::GPU, 0)),
+    EXPECT_THROW(TensorData<int>(
+                     shape, (std::make_shared<hahaha::backend::GPUDevice>())),
                  std::runtime_error);
 }
 
@@ -191,9 +191,9 @@ TEST_F(TensorDataTest, Share_SharesBufferButCopiesMetadata) {
 
 TEST_F(TensorDataTest, Device_GetSet_Works) {
     TensorData<int> td(hahaha::math::TensorShape({1}), 1);
-    EXPECT_EQ(td.getDevice().type, hahaha::backend::DeviceType::CPU);
-    td.setDevice(hahaha::backend::Device(hahaha::backend::DeviceType::SIMD, 0));
-    EXPECT_EQ(td.getDevice().type, hahaha::backend::DeviceType::SIMD);
+    EXPECT_EQ(td.getDevice()->getType(), hahaha::backend::DeviceType::CPU);
+    td.setDevice((std::make_shared<hahaha::backend::GPUDevice>()));
+    EXPECT_EQ(td.getDevice()->getType(), hahaha::backend::DeviceType::CUDA);
 }
 
 TEST_F(TensorDataTest, OperatorIndex_ReferencesUnderlyingData) {
@@ -202,35 +202,35 @@ TEST_F(TensorDataTest, OperatorIndex_ReferencesUnderlyingData) {
     EXPECT_EQ(td.getData()[1], 123);
 }
 
-TEST_F(TensorDataTest, CopyConstructor_SIMDDevice) {
-    hahaha::math::TensorShape shape({2, 2});
-    hahaha::backend::Device simdDevice(hahaha::backend::DeviceType::SIMD, 0);
-    TensorData<int> original(shape, 10, simdDevice);
-    TensorData<int> copied(original);
+// TEST_F(TensorDataTest, CopyConstructor_SIMDDevice) {
+//     hahaha::math::TensorShape shape({2, 2});
+//     TensorData<int> original(shape, 10,
+//     (std::make_shared<hahaha::backend::CPUDevice>())); TensorData<int>
+//     copied(original);
+//
+//     EXPECT_EQ(copied.getDevice()->getType(),
+//     hahaha::backend::DeviceType::SIMD); EXPECT_EQ(copied.getData()[0], 10);
+// }
 
-    EXPECT_EQ(copied.getDevice().type, hahaha::backend::DeviceType::SIMD);
-    EXPECT_EQ(copied.getData()[0], 10);
-}
-
-TEST_F(TensorDataTest, CopyConstructor_GpuDevice_Throws) {
-    hahaha::math::TensorShape shape({1});
-    TensorData<int> original;
-    // Hack to set device to GPU since constructor throws
-    original.setDevice(
-        hahaha::backend::Device(hahaha::backend::DeviceType::GPU, 0));
-
-    // We can't easily populate data for GPU yet as it's not implemented,
-    // but the copy constructor should check device type first.
-    // However, original.data_ will be null. Let's see if we can trigger the
-    // throw.
-
-    // Actually, looking at TensorData.h:
-    // TensorData(const TensorData& other) : ... {
-    //    if (device_.type == CPU || SIMD) { ... } else { throw ... }
-    // }
-
-    EXPECT_THROW(TensorData<int> copied(original), std::runtime_error);
-}
+// TEST_F(TensorDataTest, CopyConstructor_GpuDevice_Throws) {
+//     hahaha::math::TensorShape shape({1});
+//     TensorData<int> original;
+//     // Hack to set device to GPU since constructor throws
+//     original.setDevice(std::make_shared<hahaha::backend::CPUDevice>(
+//         hahaha::backend::CPUDevice()));
+//
+//     // We can't easily populate data for GPU yet as it's not implemented,
+//     // but the copy constructor should check device->getType() first.
+//     // However, original.data_ will be null. Let's see if we can trigger the
+//     // throw.
+//
+//     // Actually, looking at TensorData.h:
+//     // TensorData(const TensorData& other) : ... {
+//     //    if (device_->getType() == CPU || SIMD) { ... } else { throw ... }
+//     // }
+//
+//     EXPECT_THROW(TensorData<int> copied(original), std::runtime_error);
+// }
 
 TEST_F(TensorDataTest, Share_NullData) {
     TensorData<int> original;
@@ -368,5 +368,58 @@ TEST_F(TensorDataTest, ShapeValueConstructor_3D_Tensor) {
     EXPECT_EQ(td3D.getShape().getTotalSize(), 8);
     for (size_t i = 0; i < 8; ++i) {
         EXPECT_EQ(td3D.getData()[i], 9);
+    }
+}
+
+TEST_F(TensorDataTest, CopyConstructor_GpuDevice_ThrowsRuntimeError) {
+    hahaha::math::TensorShape shape({1});
+    TensorData<int> original(shape);
+    original.setDevice(std::make_shared<hahaha::backend::GPUDevice>());
+
+    EXPECT_THROW(TensorData<int> copied(original), std::runtime_error);
+}
+
+TEST_F(TensorDataTest, MoveConstructor_PreservesAllData) {
+    hahaha::math::TensorShape shape({2, 3});
+    TensorData<int> original(shape, 42);
+    auto originalShape = original.getShape();
+    auto originalStride = original.getStride();
+    auto originalDevice = original.getDevice();
+
+    TensorData<int> moved(std::move(original));
+
+    EXPECT_EQ(moved.getShape(), originalShape);
+    EXPECT_EQ(moved.getStride().toString(), originalStride.toString());
+    EXPECT_EQ(moved.getDevice(), originalDevice);
+    EXPECT_EQ(moved.getShape().getTotalSize(), 6);
+}
+
+TEST_F(TensorDataTest, Share_PreservesOriginalState) {
+    hahaha::math::TensorShape shape({2, 2});
+    TensorData<int> original(shape, 10);
+
+    auto shared = original.share();
+
+    // Verify shared data is the same
+    EXPECT_EQ(shared.getData().get(), original.getData().get());
+    EXPECT_EQ(shared.getShape(), original.getShape());
+    EXPECT_EQ(shared.getStride().toString(), original.getStride().toString());
+
+    // Modify shared and verify original is affected
+    shared.getData()[0] = 99;
+    EXPECT_EQ(original.getData()[0], 99);
+}
+
+TEST_F(TensorDataTest, SetData_ReplaceCorrectly) {
+    TensorData<int> td;
+    auto newData = std::make_shared<int[]>(5);
+    for (int i = 0; i < 5; ++i) {
+        newData[i] = i + 10;
+    }
+
+    td.setData(newData);
+
+    for (int i = 0; i < 5; ++i) {
+        EXPECT_EQ(td.getData()[i], i + 10);
     }
 }

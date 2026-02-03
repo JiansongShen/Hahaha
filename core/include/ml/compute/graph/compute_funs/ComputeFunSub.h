@@ -76,8 +76,8 @@ sub(const std::shared_ptr<ComputeNode<T>>& lhs,
                 lhs->accumulateGrad(gradPtr);
             }
             if (rhs->getRequiresGrad()) {
-                auto negGrad =
-                    std::make_shared<math::TensorWrapper<T>>(-(*gradPtr));
+                auto var = -(*gradPtr);
+                auto negGrad = std::make_shared<math::TensorWrapper<T>>(var);
                 rhs->accumulateGrad(negGrad);
             }
         }

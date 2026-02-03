@@ -20,6 +20,8 @@
 #define HAHAHA_BACKEND_DEVICE_H
 
 #include <cstdint>
+#include <memory>
+#include <span>
 #include <string>
 
 #include "DeviceBuffer.h"
@@ -30,24 +32,23 @@ namespace hahaha::backend {
  * @brief Types of devices supported for computation.
  */
 enum class DeviceType : std::uint8_t {
-    CPU,  /**< Standard Central Processing Unit. */
-    GPU,  /**< Graphics Processing Unit. */
-    CUDA, /**< NVIDIA CUDA Device. */
-    SIMD  /**< Single Instruction, Multiple Data (vectorized CPU instructions).
-           */
+    CPU = 0,
+    CUDA = 1, // NVIDIA GPUs
+    HIP = 2,  // AMD GPUs
+    MPS = 3,  // Apple Silicon
+    XLA = 4,  // TPUs / OpenXLA
+    COMPILE_TIME_MAX = 5
 };
 
 /**
  * @brief Represents a compute device where data resides and operations occur.
  */
 class alignas(8) Device {
-  public:
-    DeviceType type = DeviceType::CPU; /**< Type of the device. */
-    std::uint8_t id =
-        0; /**< Unique identifier for multiple devices of the same type. */
 
-    /** @brief Default constructor (CPU, ID 0). */
-    Device() = default;
+    class DeviceRegistry;
+
+  public:
+    virtual ~Device() = default;
 
     /**
      * @brief Construct a Device with type and ID.
@@ -56,12 +57,12 @@ class alignas(8) Device {
      */
     explicit Device(const DeviceType deviceType,
                     const std::uint8_t deviceId = 0)
-        : type(deviceType), id(deviceId) {
+        : type_(deviceType), id_(deviceId) {
     }
 
     /** @brief Check if two devices are identical. */
     bool operator==(const Device& other) const {
-        return type == other.type && id == other.id;
+        return type_ == other.type_ && id_ == other.id_;
     }
 
     /** @brief Check if two devices are different. */
@@ -72,29 +73,59 @@ class alignas(8) Device {
     /** @brief Get a string representation of the device. */
     [[nodiscard]] std::string toString() const {
         std::string deviceName;
-        switch (type) {
+        switch (type_) {
         case DeviceType::CPU:
             deviceName = "CPU";
-            break;
-        case DeviceType::GPU:
-            deviceName = "GPU";
             break;
         case DeviceType::CUDA:
             deviceName = "CUDA";
             break;
-        case DeviceType::SIMD:
-            deviceName = "SIMD";
+        case DeviceType::HIP:
+            deviceName = "HIP";
+            break;
+        case DeviceType::MPS:
+            deviceName = "MPS";
+            break;
+        case DeviceType::XLA:
+            deviceName = "XLA";
+            break;
+        default:
+            deviceName = "Unknown";
             break;
         }
-        return deviceName + ":" + std::to_string(id);
+        return deviceName + ":" + std::to_string(id_);
     }
 
-    DeviceBuffer allocate(size_t size) {
-        return DeviceBuffer();
+    virtual DeviceBuffer allocate(size_t size) = 0;
+
+    virtual void deallocate(DeviceBuffer buffer) = 0;
+
+    virtual void copyMemoryToThis(std::span<std::byte> src,
+                                  std::span<std::byte> dst,
+                                  const std::shared_ptr<Device>& srcDevice) = 0;
+
+    virtual void
+    copyMemoryFromThis(std::span<std::byte> src,
+                       std::span<std::byte> dst,
+                       const std::shared_ptr<Device>& dstDevice) = 0;
+
+    [[nodiscard]] DeviceType getType() const {
+        return type_;
     }
-    DeviceBuffer deallocate(DeviceBuffer buffer) {
-        return DeviceBuffer();
+
+    [[nodiscard]] std::uint8_t getId() const {
+        return id_;
     }
+
+  protected:
+    DeviceType type_ = DeviceType::CPU; /**< Type of the device. */
+    std::uint8_t id_ =
+        0; /**< Unique identifier for multiple devices of the same type. */
+
+    /** @brief Default constructor (CPU, ID 0). */
+    Device() = default;
+
+    friend class DeviceRegistry;
 };
 
 } // namespace hahaha::backend

@@ -276,3 +276,39 @@ TEST_F(NestedDataTest, ThreeDimension_IrregularShape) {
     EXPECT_THROW((NestedData<int>{{{{1, 2}, {3}}, {{4, 5}, {6}}}}),
                  std::invalid_argument);
 }
+
+TEST_F(NestedDataTest, EmptyNestedDataConstruction) {
+    // Test construction with completely empty nested data
+    NestedData<int> nd({});
+    ASSERT_EQ(nd.getFlatData().size(), 0);
+    ASSERT_EQ(nd.getShape().size(), 0);
+}
+
+TEST_F(NestedDataTest, ConsistencyCheckInConstructor) {
+    // Additional test for consistency checking
+    EXPECT_THROW((NestedData<int>{{1, 2, 3}, {4, 5}}), std::invalid_argument);
+    EXPECT_THROW((NestedData<int>{{{1, 2}}, {{3, 4, 5}}}),
+                 std::invalid_argument);
+}
+
+TEST_F(NestedDataTest, ComplexNestedStructure) {
+    // Test with more complex nested structures
+    NestedData<int> nd = {
+        {{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
+    ASSERT_EQ(nd.getFlatData().size(), 12);
+    ASSERT_EQ(nd.getShape().size(), 3);
+    ASSERT_EQ(nd.getShape()[0], 3); // 3 major groups
+    ASSERT_EQ(nd.getShape()[1], 2); // 2 rows in each group
+    ASSERT_EQ(nd.getShape()[2], 2); // 2 elements in each row
+}
+
+TEST_F(NestedDataTest, GettersAccessors) {
+    // Test the const getter accessors
+    const NestedData<int> nd({1, 2, 3, 4});
+    const auto& flatData = nd.getFlatData();
+    const auto& shape = nd.getShape();
+
+    ASSERT_EQ(flatData.size(), 4);
+    ASSERT_EQ(shape.size(), 1);
+    ASSERT_EQ(shape[0], 4);
+}

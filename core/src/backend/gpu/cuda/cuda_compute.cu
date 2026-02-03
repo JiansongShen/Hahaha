@@ -1,4 +1,5 @@
-//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
+//  Copyright (c) 2025 - 2026 Contributors of
+//  Hahaha(https://github.com/Napbad/Hahaha)
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -13,11 +14,16 @@
 //  limitations under the License.
 //
 //  Contributors:
-//  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
+//  Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 //
 
-#ifndef HAHAHA_GPU_MEMORY_H_8D60664C7DC2476F894F2E21EB3CEE0C
-#define HAHAHA_GPU_MEMORY_H_8D60664C7DC2476F894F2E21EB3CEE0C
+#include "backend/gpu/cuda/cuda_compute.cuh"
 
-#endif // HAHAHA_GPU_MEMORY_H_8D60664C7DC2476F894F2E21EB3CEE0C
+__global__ void cuda_compute(
+
+    int* a,
+    int* b,
+    int* c,
+    int n) {
+}

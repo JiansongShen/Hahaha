@@ -19,19 +19,40 @@
 
 #ifndef HAHAHA_GPUDEVICE_H_331F2FFB5CF742BB836F988DD6080929
 #define HAHAHA_GPUDEVICE_H_331F2FFB5CF742BB836F988DD6080929
-#include "GpuMemory.h"
+#include "GPUMemory.h"
 #include "backend/Device.h"
 
 namespace hahaha::backend {
 
-class GpuDevice : public Device {
+class GPUDevice : public Device {
   public:
-    DeviceBuffer allocate(const size_t size) override {
-        return GpuMemory::allocate(size);
+    explicit GPUDevice(const DeviceType type = DeviceType::CUDA) {
+        this->type_ = type;
+        this->id_ = 0;
     }
 
-    DeviceBuffer deallocate(DeviceBuffer buffer) override {
-        return GpuMemory::deallocate(buffer);
+    GPUDevice(const DeviceType type, const std::uint8_t deviceId) {
+        this->type_ = type;
+        this->id_ = deviceId;
+    }
+
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+    DeviceBuffer allocate(const size_t size) override {
+        std::unreachable();
+    }
+
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+    void deallocate(DeviceBuffer buffer) override {
+        std::unreachable();
+    }
+    void copyMemoryFromThis(std::span<std::byte> src,
+                            std::span<std::byte> dst,
+                            const std::shared_ptr<Device>& dstDevice) override {
+    }
+
+    void copyMemoryToThis(std::span<std::byte> src,
+                          std::span<std::byte> dst,
+                          const std::shared_ptr<Device>& srcDevice) override {
     }
 };
 

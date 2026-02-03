@@ -7,9 +7,9 @@
       "TARGETARCH": "amd64"
     }
   },
-  "mounts": [
-    "type=bind,source=${localWorkspaceFolder},target=/workspace"
-  ],
+  // "mounts": [
+  //   "type=bind,source=${localWorkspaceFolder},target=/workspace"
+  // ],
   "customizations": {
     // Configure JetBrains IDE-specific properties
     "jetbrains": {

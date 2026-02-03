@@ -241,3 +241,53 @@ TEST_F(TensorStrideTest, Reverse_AllDimensions) {
     EXPECT_EQ(stride3D[1], 4);
     EXPECT_EQ(stride3D[2], 12);
 }
+
+TEST_F(TensorStrideTest, LargeDimensions) {
+    // Test with larger dimensions
+    std::vector<size_t> dims = {1000, 1000};
+    TensorStride stride(dims);
+    EXPECT_EQ(stride[0], 1000); // stride for first dimension
+    EXPECT_EQ(stride[1], 1);    // stride for second dimension
+}
+
+TEST_F(TensorStrideTest, BoundaryAccess) {
+    TensorStride stride(std::vector<size_t>{2, 3});
+
+    // Valid access
+    EXPECT_EQ(stride[0], 3);
+    EXPECT_EQ(stride[1], 1);
+
+    // Out of bounds access with at() method
+    EXPECT_THROW((void) stride.at(2), std::out_of_range);
+
+    const TensorStride constStride(std::vector<size_t>{2, 3});
+    EXPECT_THROW((void) constStride.at(2), std::out_of_range);
+}
+
+TEST_F(TensorStrideTest, DefaultConstructor) {
+    TensorStride defaultStride;
+    EXPECT_EQ(defaultStride.getStrideSize(), 0);
+    EXPECT_EQ(defaultStride.toString(), "[]");
+}
+
+TEST_F(TensorStrideTest, FromDifferentTypes) {
+    // Test with different numeric types
+    std::vector<int> intDims = {2, 3};
+    TensorStride strideInt(intDims);
+    EXPECT_EQ(strideInt[0], 3);
+    EXPECT_EQ(strideInt[1], 1);
+
+    std::vector<long> longDims = {3, 4};
+    TensorStride strideLong(longDims);
+    EXPECT_EQ(strideLong[0], 4);
+    EXPECT_EQ(strideLong[1], 1);
+}
+
+TEST_F(TensorStrideTest, GetStridesNonConstAccess) {
+    TensorStride stride(std::vector<size_t>{2, 3});
+    auto& stridesRef = stride.getStrides();
+    stridesRef[0] = 10;
+
+    EXPECT_EQ(stride[0], 10);
+    EXPECT_EQ(stride.getStrides()[0], 10);
+}

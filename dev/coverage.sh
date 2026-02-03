@@ -2,33 +2,104 @@
 set -euo pipefail
 
 # Usage:
-#   ./dev/coverage.sh [builddir] [--clean]
+#   ./dev/coverage.sh [builddir] [--clean] [--cuda|--no-cuda]
 #
 # Policy:
 # - Focus on "core" and exclude display (UI/visualization) code from coverage.
 # - Use gcovr merge options to avoid double-counting template instantiations
 #   across multiple translation units.
 # --clean means clean the builddir before running.
+# --cuda enables CUDA support for coverage testing.
+# --no-cuda disables CUDA support for coverage testing.
+# Default behavior: auto-detect CUDA availability and enable if possible.
 
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BUILD_DIR="${1:-builddir}"
+BUILD_DIR="builddir"
+ENABLE_CUDA="auto"
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --clean)
+      CLEAN=true
+      shift
+      ;;
+    --cuda)
+      ENABLE_CUDA="on"
+      shift
+      ;;
+    --no-cuda)
+      ENABLE_CUDA="off"
+      shift
+      ;;
+    *)
+      BUILD_DIR="$1"
+      shift
+      ;;
+  esac
+done
 
 cd "${ROOT_DIR}"
 
-if [ -d "${BUILD_DIR}" ]; then
+# Auto-detect CUDA availability if not specified
+if [ "$ENABLE_CUDA" = "auto" ]; then
+  if command -v nvcc &>/dev/null && [ -d "/opt/cuda" ]; then
+    ENABLE_CUDA="on"
+    echo "CUDA detected, enabling CUDA support for coverage testing."
+  else
+    ENABLE_CUDA="off"
+    echo "CUDA not detected, disabling CUDA support for coverage testing."
+  fi
+fi
+
+if [ "${CLEAN:-false}" = true ] && [ -d "${BUILD_DIR}" ]; then
   rm -rf "${BUILD_DIR}"
 fi
 
-cmake -S . -B "${BUILD_DIR}" -G Ninja \
-  -DCMAKE_BUILD_TYPE=Debug \
-  -DHAHAHA_DISPLAY=OFF \
-  -DHAHAHA_BUILD_TESTS=ON \
-  -DHAHAHA_BUILD_EXAMPLES=OFF \
+# Create build directory if it doesn't exist
+mkdir -p "${BUILD_DIR}"
+
+# Configure with appropriate CUDA settings
+cmake_args=(
+  -S .
+  -B "${BUILD_DIR}"
+  -G Ninja
+  -DCMAKE_BUILD_TYPE=Debug
+  -DHAHAHA_DISPLAY=OFF
+  -DHAHAHA_BUILD_TESTS=ON
+  -DHAHAHA_BUILD_EXAMPLES=OFF
   -DHAHAHA_ENABLE_COVERAGE=ON
+)
+
+# Use vcpkg toolchain when VCPKG_ROOT is set (e.g. CI or after dev_env_setup)
+if [ -n "${VCPKG_ROOT:-}" ] && [ -f "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" ]; then
+  cmake_args+=(-DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+  [ -n "${VCPKG_TARGET_TRIPLET:-}" ] && cmake_args+=(-DVCPKG_TARGET_TRIPLET="${VCPKG_TARGET_TRIPLET}")
+fi
+
+if [ "$ENABLE_CUDA" = "on" ]; then
+  cmake_args+=(-DHAHAHA_USE_CUDA=ON)
+  echo "Building with CUDA support enabled."
+else
+  cmake_args+=(-DHAHAHA_USE_CUDA=OFF)
+  echo "Building without CUDA support."
+fi
+
+cmake "${cmake_args[@]}"
 
 cmake --build "${BUILD_DIR}" --parallel 8
-ctest --test-dir "${BUILD_DIR}" --output-on-failure
+
+# Run tests based on CUDA availability
+if [ "$ENABLE_CUDA" = "on" ]; then
+  echo "Running tests with CUDA enabled..."
+  # Run all tests including CUDA tests
+  ctest --test-dir "${BUILD_DIR}" --output-on-failure
+else
+  echo "Running tests without CUDA..."
+  # Run tests excluding CUDA-specific tests (if any filtering is needed)
+  ctest --test-dir "${BUILD_DIR}" --output-on-failure
+fi
 
 GCOVR_COMMON_ARGS=(
   -r .
@@ -40,6 +111,7 @@ GCOVR_COMMON_ARGS=(
   --exclude 'examples/.'
   --exclude 'core/src/display/.'
   --exclude 'core/include/display/.'
+#  -j $(nproc)
   # --html-details
   # -o cover/coverage.html
 )
@@ -49,4 +121,11 @@ gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric line --fail-under-line 80
 
 echo
 echo "== branch coverage (core, exclude display) =="
-gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric branch --fail-under-branch 35
+# For CUDA builds, we expect higher branch coverage due to additional CUDA code paths
+# if [ "$ENABLE_CUDA" = "on" ]; then
+  # With CUDA enabled, aim for higher branch coverage since CUDA code adds more branches
+  # gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric branch --fail-under-branch 50
+# else
+#   # Without CUDA, use the original threshold
+  gcovr "${GCOVR_COMMON_ARGS[@]}" --txt-metric branch --fail-under-branch 35
+# fi

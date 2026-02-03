@@ -25,6 +25,8 @@
 #include <vector>
 
 #include "backend/Device.h"
+#include "backend/cpu/CpuElementwiseKernels.h"
+#include "backend/gpu/cuda/CudaElementwiseKernels.h"
 #include "common/error_handler.h"
 
 namespace hahaha::math {
@@ -39,158 +41,78 @@ using common::Error;
 using common::ErrorCode;
 using common::InvalidArgumentError;
 
-/**
- * @brief Stride-aware elementwise iterator.
- */
-template <typename T, typename Fn>
-void forEachElement(const std::vector<size_t>& shape,
-                    const std::vector<size_t>& lhsStride,
-                    const std::vector<size_t>& rhsStride,
-                    std::span<const T> lhsBuf,
-                    std::span<const T> rhsBuf,
-                    std::span<T> outBuf,
-                    Fn&& fn) {
-    const size_t rank = shape.size();
-    if (rank == 0) {
-        // scalar
-        outBuf[0] = fn(lhsBuf[0], rhsBuf[0]);
-        return;
-    }
-
-    std::vector<size_t> coord(rank, 0);
-    size_t lhsOff = 0;
-    size_t rhsOff = 0;
-
-    const size_t total = [&] {
-        size_t prod = 1;
-        for (const size_t d : shape)
-            prod *= d;
-        return prod;
-    }();
-
-    for (size_t outIdx = 0; outIdx < total; ++outIdx) {
-        outBuf[outIdx] = fn(lhsBuf[lhsOff], rhsBuf[rhsOff]);
-
-        // advance coordinate + offsets
-        for (long dim = static_cast<long>(rank) - 1; dim >= 0; --dim) {
-            coord[static_cast<size_t>(dim)]++;
-            if (coord[static_cast<size_t>(dim)]
-                == shape[static_cast<size_t>(dim)]) {
-                coord[static_cast<size_t>(dim)] = 0;
-                lhsOff -= lhsStride[static_cast<size_t>(dim)]
-                    * (shape[static_cast<size_t>(dim)] - 1);
-                rhsOff -= rhsStride[static_cast<size_t>(dim)]
-                    * (shape[static_cast<size_t>(dim)] - 1);
-                continue;
-            }
-            lhsOff += lhsStride[static_cast<size_t>(dim)];
-            rhsOff += rhsStride[static_cast<size_t>(dim)];
-            break;
-        }
-    }
-}
-
-// --- CPU Kernels ---
-
-template <typename T>
-void cpu_add(const std::vector<size_t>& shape,
-             const std::vector<size_t>& lStride,
-             const std::vector<size_t>& rStride,
-             std::span<const T> a,
-             std::span<const T> b,
-             std::span<T> out) {
-    forEachElement<T>(
-        shape, lStride, rStride, a, b, out, [](T x, T y) { return x + y; });
-}
-
-template <typename T>
-void cpu_sub(const std::vector<size_t>& shape,
-             const std::vector<size_t>& lStride,
-             const std::vector<size_t>& rStride,
-             std::span<const T> a,
-             std::span<const T> b,
-             std::span<T> out) {
-    forEachElement<T>(
-        shape, lStride, rStride, a, b, out, [](T x, T y) { return x - y; });
-}
-
-template <typename T>
-void cpu_mul(const std::vector<size_t>& shape,
-             const std::vector<size_t>& lStride,
-             const std::vector<size_t>& rStride,
-             std::span<const T> a,
-             std::span<const T> b,
-             std::span<T> out) {
-    forEachElement<T>(
-        shape, lStride, rStride, a, b, out, [](T x, T y) { return x * y; });
-}
-
-template <typename T>
-void cpu_div(const std::vector<size_t>& shape,
-             const std::vector<size_t>& lStride,
-             const std::vector<size_t>& rStride,
-             std::span<const T> a,
-             std::span<const T> b,
-             std::span<T> out) {
-    forEachElement<T>(shape, lStride, rStride, a, b, out, [](T x, T y) {
-        if (y == T(0))
-            throw std::runtime_error("Division by zero");
-        return x / y;
-    });
-}
-
-// --- CUDA Kernels (Stubs) ---
-
-template <typename T>
-void cuda_sub(std::span<const T> /* a */,
-              std::span<const T> /* b*/,
-              std::span<T> /*out*/) {
-}
-template <typename T>
-void cuda_add(std::span<const T> /* a */,
-              std::span<const T> /* b*/,
-              std::span<T> /*out*/) {
-}
-template <typename T>
-void cuda_mul(std::span<const T> /* a */,
-              std::span<const T> /* b*/,
-              std::span<T> /*out*/) {
-}
-template <typename T>
-void cuda_div(std::span<const T> /* a */,
-              std::span<const T> /* b*/,
-              std::span<T> /*out*/) {
-}
-
 // --- Specific Dispatch Functions ---
+// Implemented via class template partial specialization (MSVC-compatible;
+// function template partial specialization is not allowed in C++).
 
 // --- Add ---
+
+template <typename T, DeviceType dev>
+struct DispatchAddImpl {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        (void)lhs;
+        (void)rhs;
+        (void)res;
+        return std::unexpected(DeviceNotSupportedError());
+    }
+};
+
+template <typename T>
+struct DispatchAddImpl<T, DeviceType::CPU> {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        const auto& shape = lhs.getShape();
+        if (shape != rhs.getShape() || shape != res.getShape()) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        const auto& lStride = lhs.getStride().getStrides();
+        const auto& rStride = rhs.getStride().getStrides();
+        auto lRaw = lhs.getRawData();
+        auto rRaw = rhs.getRawData();
+        auto resRaw = res.getRawData();
+        std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
+        std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());
+        std::span<T> resBuf(resRaw.get(), res.getTotalSize());
+        cpu_add(shape, lStride, rStride, lBuf, rBuf, resBuf);
+        return {};
+    }
+};
+
+template <typename T>
+struct DispatchAddImpl<T, DeviceType::CUDA> {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        const auto& shape = lhs.getShape();
+        if (shape != rhs.getShape() || shape != res.getShape()) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        const auto& lStride = lhs.getStride().getStrides();
+        const auto& rStride = rhs.getStride().getStrides();
+        const auto& resStride = res.getStride().getStrides();
+        if (!isContiguous(shape, lStride) || !isContiguous(shape, rStride)
+            || !isContiguous(shape, resStride)) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        auto lRaw = lhs.getRawGpuPtr();
+        auto rRaw = rhs.getRawGpuPtr();
+        auto resRaw = res.getRawGpuPtr();
+        std::span<T> lBuf(reinterpret_cast<T*>(lRaw), lhs.getTotalSize());
+        std::span<T> rBuf(reinterpret_cast<T*>(rRaw), rhs.getTotalSize());
+        std::span<T> resBuf(reinterpret_cast<T*>(resRaw), res.getTotalSize());
+        cuda_add(lBuf, rBuf, resBuf);
+        return {};
+    }
+};
 
 template <typename T, const DeviceType dev>
 std::expected<void, Error> dispatchAdd(const math::TensorWrapper<T>& lhs,
                                        const math::TensorWrapper<T>& rhs,
                                        math::TensorWrapper<T>& res) {
-    const auto& shape = lhs.getShape();
-    if (shape != rhs.getShape() || shape != res.getShape()) {
-        return std::unexpected(InvalidArgumentError());
-    }
-    const auto& lStride = lhs.getStride().getStrides();
-    const auto& rStride = rhs.getStride().getStrides();
-    auto lRaw = lhs.getRawData();
-    auto rRaw = rhs.getRawData();
-    auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
-    std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
-    std::span<T> resBuf(resRaw.get(), res.getTotalSize());
-
-    if constexpr (dev == DeviceType::CPU) {
-        cpu_add(shape, lStride, rStride, lBuf, rBuf, resBuf);
-        return {};
-    } else if constexpr (dev == DeviceType::CUDA || dev == DeviceType::GPU) {
-        cuda_add(lBuf, rBuf, resBuf);
-        return {};
-    }
-    return std::unexpected(InvalidArgumentError());
+    return DispatchAddImpl<T, dev>::call(lhs, rhs, res);
 }
 
 template <typename T>
@@ -202,7 +124,6 @@ std::expected<void, Error> dispatchAdd(const DeviceType dev,
     case DeviceType::CPU:
         return dispatchAdd<T, DeviceType::CPU>(lhs, rhs, res);
     case DeviceType::CUDA:
-    case DeviceType::GPU:
         return dispatchAdd<T, DeviceType::CUDA>(lhs, rhs, res);
     default:
         return std::unexpected(DeviceNotSupportedError());
@@ -222,7 +143,7 @@ std::expected<void, Error> dispatchAdd(const DeviceType dev,
     const auto& lStride = lhs.getStride().getStrides();
     auto lRaw = lhs.getRawData();
     auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
+    std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
     std::span<T> resBuf(resRaw.get(), res.getTotalSize());
     forEachElement(
         shape, lStride, lStride, lBuf, lBuf, resBuf, [rhs](T a, T /*unused*/) {
@@ -241,31 +162,72 @@ std::expected<void, Error> dispatchAdd(const DeviceType dev,
 
 // --- Sub ---
 
+template <typename T, DeviceType>
+struct DispatchSubImpl {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        (void)lhs;
+        (void)rhs;
+        (void)res;
+        return std::unexpected(DeviceNotSupportedError());
+    }
+};
+
+template <typename T>
+struct DispatchSubImpl<T, DeviceType::CPU> {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        const auto& shape = lhs.getShape();
+        if (shape != rhs.getShape() || shape != res.getShape()) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        const auto& lStride = lhs.getStride().getStrides();
+        const auto& rStride = rhs.getStride().getStrides();
+        auto lRaw = lhs.getRawData();
+        auto rRaw = rhs.getRawData();
+        auto resRaw = res.getRawData();
+        std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
+        std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());
+        std::span<T> resBuf(resRaw.get(), res.getTotalSize());
+        cpu_sub(shape, lStride, rStride, lBuf, rBuf, resBuf);
+        return {};
+    }
+};
+
+template <typename T>
+struct DispatchSubImpl<T, DeviceType::CUDA> {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        const auto& shape = lhs.getShape();
+        if (shape != rhs.getShape() || shape != res.getShape()) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        const auto& lStride = lhs.getStride().getStrides();
+        const auto& rStride = rhs.getStride().getStrides();
+        const auto& resStride = res.getStride().getStrides();
+        if (!isContiguous(shape, lStride) || !isContiguous(shape, rStride)
+            || !isContiguous(shape, resStride)) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        auto lRaw = lhs.getRawGpuPtr();
+        auto rRaw = rhs.getRawGpuPtr();
+        auto resRaw = res.getRawGpuPtr();
+        std::span<T> lBuf(reinterpret_cast<T*>(lRaw), lhs.getTotalSize());
+        std::span<T> rBuf(reinterpret_cast<T*>(rRaw), rhs.getTotalSize());
+        std::span<T> resBuf(reinterpret_cast<T*>(resRaw), res.getTotalSize());
+        cuda_sub(lBuf, rBuf, resBuf);
+        return {};
+    }
+};
+
 template <typename T, const DeviceType dev>
 std::expected<void, Error> dispatchSub(const math::TensorWrapper<T>& lhs,
                                        const math::TensorWrapper<T>& rhs,
                                        math::TensorWrapper<T>& res) {
-    const auto& shape = lhs.getShape();
-    if (shape != rhs.getShape() || shape != res.getShape()) {
-        return std::unexpected(InvalidArgumentError());
-    }
-    const auto& lStride = lhs.getStride().getStrides();
-    const auto& rStride = rhs.getStride().getStrides();
-    auto lRaw = lhs.getRawData();
-    auto rRaw = rhs.getRawData();
-    auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
-    std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
-    std::span<T> resBuf(resRaw.get(), res.getTotalSize());
-
-    if constexpr (dev == DeviceType::CPU) {
-        cpu_sub(shape, lStride, rStride, lBuf, rBuf, resBuf);
-        return {};
-    } else if constexpr (dev == DeviceType::CUDA || dev == DeviceType::GPU) {
-        cuda_sub(lBuf, rBuf, resBuf);
-        return {};
-    }
-    return std::unexpected(InvalidArgumentError());
+    return DispatchSubImpl<T, dev>::call(lhs, rhs, res);
 }
 
 template <typename T>
@@ -277,7 +239,6 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
     case DeviceType::CPU:
         return dispatchSub<T, DeviceType::CPU>(lhs, rhs, res);
     case DeviceType::CUDA:
-    case DeviceType::GPU:
         return dispatchSub<T, DeviceType::CUDA>(lhs, rhs, res);
     default:
         return std::unexpected(DeviceNotSupportedError());
@@ -297,7 +258,7 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
     const auto& lStride = lhs.getStride().getStrides();
     auto lRaw = lhs.getRawData();
     auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
+    std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
     std::span<T> resBuf(resRaw.get(), res.getTotalSize());
     forEachElement(
         shape, lStride, lStride, lBuf, lBuf, resBuf, [rhs](T a, T /*unused*/) {
@@ -319,7 +280,7 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
     const auto& rStride = rhs.getStride().getStrides();
     auto rRaw = rhs.getRawData();
     auto resRaw = res.getRawData();
-    std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
+    std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());
     std::span<T> resBuf(resRaw.get(), res.getTotalSize());
     forEachElement(
         shape, rStride, rStride, rBuf, rBuf, resBuf, [lhs](T a, T /*unused*/) {
@@ -330,31 +291,72 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
 
 // --- Mul ---
 
+template <typename T, DeviceType dev>
+struct DispatchMulImpl {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        (void)lhs;
+        (void)rhs;
+        (void)res;
+        return std::unexpected(DeviceNotSupportedError());
+    }
+};
+
+template <typename T>
+struct DispatchMulImpl<T, DeviceType::CPU> {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        const auto& shape = lhs.getShape();
+        if (shape != rhs.getShape() || shape != res.getShape()) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        const auto& lStride = lhs.getStride().getStrides();
+        const auto& rStride = rhs.getStride().getStrides();
+        auto lRaw = lhs.getRawData();
+        auto rRaw = rhs.getRawData();
+        auto resRaw = res.getRawData();
+        std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
+        std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());
+        std::span<T> resBuf(resRaw.get(), res.getTotalSize());
+        cpu_mul(shape, lStride, rStride, lBuf, rBuf, resBuf);
+        return {};
+    }
+};
+
+template <typename T>
+struct DispatchMulImpl<T, DeviceType::CUDA> {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        const auto& shape = lhs.getShape();
+        if (shape != rhs.getShape() || shape != res.getShape()) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        const auto& lStride = lhs.getStride().getStrides();
+        const auto& rStride = rhs.getStride().getStrides();
+        const auto& resStride = res.getStride().getStrides();
+        if (!isContiguous(shape, lStride) || !isContiguous(shape, rStride)
+            || !isContiguous(shape, resStride)) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        auto lRaw = lhs.getRawGpuPtr();
+        auto rRaw = rhs.getRawGpuPtr();
+        auto resRaw = res.getRawGpuPtr();
+        std::span<T> lBuf(reinterpret_cast<T*>(lRaw), lhs.getTotalSize());
+        std::span<T> rBuf(reinterpret_cast<T*>(rRaw), rhs.getTotalSize());
+        std::span<T> resBuf(reinterpret_cast<T*>(resRaw), res.getTotalSize());
+        cuda_mul(lBuf, rBuf, resBuf);
+        return {};
+    }
+};
+
 template <typename T, const DeviceType dev>
 std::expected<void, Error> dispatchMul(const math::TensorWrapper<T>& lhs,
                                        const math::TensorWrapper<T>& rhs,
                                        math::TensorWrapper<T>& res) {
-    const auto& shape = lhs.getShape();
-    if (shape != rhs.getShape() || shape != res.getShape()) {
-        return std::unexpected(InvalidArgumentError());
-    }
-    const auto& lStride = lhs.getStride().getStrides();
-    const auto& rStride = rhs.getStride().getStrides();
-    auto lRaw = lhs.getRawData();
-    auto rRaw = rhs.getRawData();
-    auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
-    std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
-    std::span<T> resBuf(resRaw.get(), res.getTotalSize());
-
-    if constexpr (dev == DeviceType::CPU) {
-        cpu_mul(shape, lStride, rStride, lBuf, rBuf, resBuf);
-        return {};
-    } else if constexpr (dev == DeviceType::CUDA || dev == DeviceType::GPU) {
-        cuda_mul(lBuf, rBuf, resBuf);
-        return {};
-    }
-    return std::unexpected(InvalidArgumentError());
+    return DispatchMulImpl<T, dev>::call(lhs, rhs, res);
 }
 
 template <typename T>
@@ -366,7 +368,6 @@ std::expected<void, Error> dispatchMul(const DeviceType dev,
     case DeviceType::CPU:
         return dispatchMul<T, DeviceType::CPU>(lhs, rhs, res);
     case DeviceType::CUDA:
-    case DeviceType::GPU:
         return dispatchMul<T, DeviceType::CUDA>(lhs, rhs, res);
     default:
         return std::unexpected(DeviceNotSupportedError());
@@ -386,7 +387,7 @@ std::expected<void, Error> dispatchMul(const DeviceType dev,
     const auto& lStride = lhs.getStride().getStrides();
     auto lRaw = lhs.getRawData();
     auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
+    std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
     std::span<T> resBuf(resRaw.get(), res.getTotalSize());
     forEachElement(
         shape, lStride, lStride, lBuf, lBuf, resBuf, [rhs](T a, T /*unused*/) {
@@ -405,31 +406,72 @@ std::expected<void, Error> dispatchMul(const DeviceType dev,
 
 // --- Div ---
 
+template <typename T, DeviceType dev>
+struct DispatchDivImpl {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        (void)lhs;
+        (void)rhs;
+        (void)res;
+        return std::unexpected(DeviceNotSupportedError());
+    }
+};
+
+template <typename T>
+struct DispatchDivImpl<T, DeviceType::CPU> {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        const auto& shape = lhs.getShape();
+        if (shape != rhs.getShape() || shape != res.getShape()) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        const auto& lStride = lhs.getStride().getStrides();
+        const auto& rStride = rhs.getStride().getStrides();
+        auto lRaw = lhs.getRawData();
+        auto rRaw = rhs.getRawData();
+        auto resRaw = res.getRawData();
+        std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
+        std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());
+        std::span<T> resBuf(resRaw.get(), res.getTotalSize());
+        cpu_div(shape, lStride, rStride, lBuf, rBuf, resBuf);
+        return {};
+    }
+};
+
+template <typename T>
+struct DispatchDivImpl<T, DeviceType::CUDA> {
+    static std::expected<void, Error> call(const math::TensorWrapper<T>& lhs,
+                                           const math::TensorWrapper<T>& rhs,
+                                           math::TensorWrapper<T>& res) {
+        const auto& shape = lhs.getShape();
+        if (shape != rhs.getShape() || shape != res.getShape()) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        const auto& lStride = lhs.getStride().getStrides();
+        const auto& rStride = rhs.getStride().getStrides();
+        const auto& resStride = res.getStride().getStrides();
+        if (!isContiguous(shape, lStride) || !isContiguous(shape, rStride)
+            || !isContiguous(shape, resStride)) {
+            return std::unexpected(InvalidArgumentError());
+        }
+        auto lRaw = lhs.getRawGpuPtr();
+        auto rRaw = rhs.getRawGpuPtr();
+        auto resRaw = res.getRawGpuPtr();
+        std::span<T> lBuf(reinterpret_cast<T*>(lRaw), lhs.getTotalSize());
+        std::span<T> rBuf(reinterpret_cast<T*>(rRaw), rhs.getTotalSize());
+        std::span<T> resBuf(reinterpret_cast<T*>(resRaw), res.getTotalSize());
+        cuda_div(lBuf, rBuf, resBuf);
+        return {};
+    }
+};
+
 template <typename T, const DeviceType dev>
 std::expected<void, Error> dispatchDiv(const math::TensorWrapper<T>& lhs,
                                        const math::TensorWrapper<T>& rhs,
                                        math::TensorWrapper<T>& res) {
-    const auto& shape = lhs.getShape();
-    if (shape != rhs.getShape() || shape != res.getShape()) {
-        return std::unexpected(InvalidArgumentError());
-    }
-    const auto& lStride = lhs.getStride().getStrides();
-    const auto& rStride = rhs.getStride().getStrides();
-    auto lRaw = lhs.getRawData();
-    auto rRaw = rhs.getRawData();
-    auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
-    std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
-    std::span<T> resBuf(resRaw.get(), res.getTotalSize());
-
-    if constexpr (dev == DeviceType::CPU) {
-        cpu_div(shape, lStride, rStride, lBuf, rBuf, resBuf);
-        return {};
-    } else if constexpr (dev == DeviceType::CUDA || dev == DeviceType::GPU) {
-        cuda_div(lBuf, rBuf, resBuf);
-        return {};
-    }
-    return std::unexpected(InvalidArgumentError());
+    return DispatchDivImpl<T, dev>::call(lhs, rhs, res);
 }
 
 template <typename T>
@@ -441,7 +483,6 @@ std::expected<void, Error> dispatchDiv(const DeviceType dev,
     case DeviceType::CPU:
         return dispatchDiv<T, DeviceType::CPU>(lhs, rhs, res);
     case DeviceType::CUDA:
-    case DeviceType::GPU:
         return dispatchDiv<T, DeviceType::CUDA>(lhs, rhs, res);
     default:
         return std::unexpected(DeviceNotSupportedError());
@@ -463,7 +504,7 @@ std::expected<void, Error> dispatchDiv(const DeviceType dev,
     const auto& lStride = lhs.getStride().getStrides();
     auto lRaw = lhs.getRawData();
     auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
+    std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
     std::span<T> resBuf(resRaw.get(), res.getTotalSize());
     forEachElement(
         shape, lStride, lStride, lBuf, lBuf, resBuf, [rhs](T a, T /*unused*/) {
@@ -485,7 +526,7 @@ std::expected<void, Error> dispatchDiv(const DeviceType dev,
     const auto& rStride = rhs.getStride().getStrides();
     auto rRaw = rhs.getRawData();
     auto resRaw = res.getRawData();
-    std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
+    std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());
     std::span<T> resBuf(resRaw.get(), res.getTotalSize());
     forEachElement(
         shape, rStride, rStride, rBuf, rBuf, resBuf, [lhs](T a, T /*unused*/) {
@@ -514,8 +555,8 @@ std::expected<void, Error> dispatchMatMul(const DeviceType dev,
     auto lRaw = lhs.getRawData();
     auto rRaw = rhs.getRawData();
     auto resRaw = res.getRawData();
-    std::span<const T> lBuf(lRaw.get(), lhs.getTotalSize());
-    std::span<const T> rBuf(rRaw.get(), rhs.getTotalSize());
+    std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
+    std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());
     std::span<T> resBuf(resRaw.get(), res.getTotalSize());
 
     for (size_t i = 0; i < rows; ++i) {
@@ -543,7 +584,7 @@ std::expected<void, Error> dispatchAxpy(const DeviceType dev,
     const size_t size = res_tensor.getTotalSize();
     auto xRaw = x_tensor.getRawData();
     auto resRaw = res_tensor.getRawData();
-    std::span<const T> xBuf(xRaw.get(), x_tensor.getTotalSize());
+    std::span<T> xBuf(xRaw.get(), x_tensor.getTotalSize());
     std::span<T> resBuf(resRaw.get(), res_tensor.getTotalSize());
     for (size_t i = 0; i < size; ++i) {
         resBuf[i] += alpha * xBuf[i];
