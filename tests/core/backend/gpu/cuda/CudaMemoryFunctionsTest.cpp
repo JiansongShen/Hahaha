@@ -1,8 +1,9 @@
 #include <cstring>
 #include <gtest/gtest.h>
+#include <vector>
 
 #ifdef HAHAHA_USE_CUDA
-#if __has_include(<driver_types.h>)
+#if __has_include(<driver_types.h>) && __has_include(<cuda_runtime_api.h>)
 
 #include "backend/gpu/cuda/cuda_memory.cuh"
 
@@ -280,7 +281,102 @@ TEST_F(CudaMemoryFunctionsTest, SingleByteMemset) {
     }
 }
 
+// --- cudaMemoryCopy tests ---
+
+// Test basic host-to-device copy
+TEST_F(CudaMemoryFunctionsTest, BasicCopyHostToDevice) {
+    const size_t size = 1024;
+    std::vector<std::byte> host_src(size);
+    for (size_t i = 0; i < size; ++i) {
+        host_src[i] = static_cast<std::byte>(i % 256);
+    }
+
+    void* device_ptr = nullptr;
+    cudaError_t alloc_result = cudaMemoryAllocate(size, &device_ptr);
+    ASSERT_EQ(alloc_result, cudaSuccess);
+    ASSERT_NE(device_ptr, nullptr);
+
+    cudaError_t copy_result = cudaMemoryCopy(
+        device_ptr, host_src.data(), size, cudaMemcpyHostToDevice);
+    EXPECT_EQ(copy_result, cudaSuccess);
+
+    cudaError_t free_result = cudaMemoryFree(device_ptr);
+    EXPECT_EQ(free_result, cudaSuccess);
+}
+
+// Test basic device-to-host copy (round-trip: host -> device -> host)
+TEST_F(CudaMemoryFunctionsTest, BasicCopyDeviceToHost) {
+    const size_t size = 1024;
+    std::vector<std::byte> host_src(size);
+    for (size_t i = 0; i < size; ++i) {
+        host_src[i] = static_cast<std::byte>(i % 256);
+    }
+
+    void* device_ptr = nullptr;
+    cudaError_t alloc_result = cudaMemoryAllocate(size, &device_ptr);
+    ASSERT_EQ(alloc_result, cudaSuccess);
+    ASSERT_NE(device_ptr, nullptr);
+
+    cudaError_t to_device = cudaMemoryCopy(
+        device_ptr, host_src.data(), size, cudaMemcpyHostToDevice);
+    ASSERT_EQ(to_device, cudaSuccess);
+
+    std::vector<std::byte> host_dst(size);
+    cudaError_t to_host = cudaMemoryCopy(
+        host_dst.data(), device_ptr, size, cudaMemcpyDeviceToHost);
+    EXPECT_EQ(to_host, cudaSuccess);
+
+    for (size_t i = 0; i < size; ++i) {
+        EXPECT_EQ(host_src[i], host_dst[i]);
+    }
+
+    cudaError_t free_result = cudaMemoryFree(device_ptr);
+    EXPECT_EQ(free_result, cudaSuccess);
+}
+
+// Test zero-count copy returns success
+TEST_F(CudaMemoryFunctionsTest, CopyZeroCount) {
+    void* device_ptr = nullptr;
+    cudaError_t alloc_result = cudaMemoryAllocate(256, &device_ptr);
+    ASSERT_EQ(alloc_result, cudaSuccess);
+    ASSERT_NE(device_ptr, nullptr);
+
+    std::vector<std::byte> host_buf(256);
+    cudaError_t copy_result = cudaMemoryCopy(
+        device_ptr, host_buf.data(), 0, cudaMemcpyHostToDevice);
+    EXPECT_EQ(copy_result, cudaSuccess);
+
+    copy_result = cudaMemoryCopy(
+        host_buf.data(), device_ptr, 0, cudaMemcpyDeviceToHost);
+    EXPECT_EQ(copy_result, cudaSuccess);
+
+    cudaError_t free_result = cudaMemoryFree(device_ptr);
+    EXPECT_EQ(free_result, cudaSuccess);
+}
+
+// Test null destination returns invalid value
+TEST_F(CudaMemoryFunctionsTest, CopyNullDst) {
+    std::vector<std::byte> host_src(64);
+    cudaError_t result = cudaMemoryCopy(
+        nullptr, host_src.data(), 64, cudaMemcpyHostToDevice);
+    EXPECT_EQ(result, cudaErrorInvalidValue);
+}
+
+// Test null source returns invalid value
+TEST_F(CudaMemoryFunctionsTest, CopyNullSrc) {
+    void* device_ptr = nullptr;
+    cudaError_t alloc_result = cudaMemoryAllocate(64, &device_ptr);
+    ASSERT_EQ(alloc_result, cudaSuccess);
+    ASSERT_NE(device_ptr, nullptr);
+
+    cudaError_t result = cudaMemoryCopy(
+        device_ptr, nullptr, 64, cudaMemcpyHostToDevice);
+    EXPECT_EQ(result, cudaErrorInvalidValue);
+
+    cudaMemoryFree(device_ptr);
+}
+
 } // namespace hahaha::backend::test
 
-#endif // __has_include(<driver_types.h>)
+#endif // __has_include(<driver_types.h>) && __has_include(<cuda_runtime_api.h>)
 #endif // HAHAHA_USE_CUDA
