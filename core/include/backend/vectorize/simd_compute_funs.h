@@ -22,5 +22,4 @@
 // just include other implementations
 
 
-
 #endif //HAHAHA_SIMD_COMPUTE_FUNS_H_7F6243BB8DF1454D92CC725AE19AEDEC
