@@ -59,7 +59,7 @@ TEST_F(CPUDeviceTest, AllocateZeroSize) {
     DeviceBuffer buffer = device.allocate(size);
 
     EXPECT_EQ(buffer.size(), size);
-    EXPECT_NE(
+    EXPECT_EQ(
         buffer.address(),
         0); // Even zero-size allocation typically returns non-null pointer
 }

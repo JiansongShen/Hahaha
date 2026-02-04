@@ -29,11 +29,12 @@ namespace hahaha::backend {
 class GPUMemory;
 
 /**
- * @brief RAII handle for a GPU device buffer.
+ * @brief Handle for a device buffer (CPU or GPU).
  *
  * This stores the device address as an integer to avoid exposing raw
- * pointers in the backend public API. The buffer is automatically
- * deallocated when the DeviceBuffer is destroyed or moved from.
+ * pointers in the backend public API. This class is not RAII: the destructor
+ * does not deallocate. The caller must call Device::deallocate(buffer) when
+ * the buffer is no longer needed, or memory will leak.
  */
 class DeviceBuffer {
   public:
@@ -52,8 +53,8 @@ class DeviceBuffer {
     }
 
     /**
-     * @brief Destructor. Automatically deallocates the GPU memory if the
-     *        buffer is valid (address != 0).
+     * @brief Destructor. Does not deallocate; caller must call
+     *        Device::deallocate(buffer) to free the memory.
      */
     ~DeviceBuffer() noexcept;
 
@@ -79,13 +80,24 @@ class DeviceBuffer {
     }
 
     /**
-     * @brief Move assignment operator. Transfers ownership and deallocates
-     *        the previous buffer if it exists.
+     * @brief Move assignment operator. Transfers ownership (does not
+     *        deallocate the previous buffer; caller is responsible for
+     *        deallocation).
      * @param other The source DeviceBuffer to move from. After move, other
      *              will have a null address and zero size.
      * @return DeviceBuffer& Reference to this.
      */
     DeviceBuffer& operator=(DeviceBuffer&& other) noexcept;
+
+    /**
+     * @brief Clear this handle to empty without deallocating. Call
+     *        Device::deallocate(buffer) (or Memory::free(buffer)) before
+     *        reset() to avoid leaking memory.
+     */
+    void reset() noexcept {
+        address_ = 0;
+        size_ = 0;
+    }
 
     /**
      * @brief Get the device address of the buffer.
@@ -107,8 +119,6 @@ class DeviceBuffer {
     std::uintptr_t address_ = 0;
     size_t size_ = 0;
 
-    // GpuMemory needs to be able to create DeviceBuffer instances and access
-    // private members
     friend class GPUMemory;
 };
 

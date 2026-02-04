@@ -20,9 +20,11 @@
 
 #ifndef HAHAHA_CPUDEVICE_H_4C28A153F750404B93237EDDBE6463C1
 #define HAHAHA_CPUDEVICE_H_4C28A153F750404B93237EDDBE6463C1
+
 #include <cstring>
 
 #include "backend/Device.h"
+#include "backend/cpu/CpuMemory.h"
 
 namespace hahaha::backend {
 class CPUDevice : public Device {
@@ -33,11 +35,11 @@ class CPUDevice : public Device {
     }
 
     DeviceBuffer allocate(const size_t size) override {
-        return {reinterpret_cast<std::uintptr_t>(new char[size]), size};
+        return memory_.allocate(size);
     }
 
-    void deallocate(const DeviceBuffer buffer) override {
-        delete[] reinterpret_cast<char*>(buffer.address());
+    void deallocate(DeviceBuffer buffer) override {
+        memory_.free(buffer);
     }
 
     ~CPUDevice() override = default;
@@ -61,6 +63,9 @@ class CPUDevice : public Device {
             srcDevice->copyMemoryFromThis(src, dst, srcDevice);
         }
     }
+
+  private:
+    CpuMemory memory_;
 };
 } // namespace hahaha::backend
 

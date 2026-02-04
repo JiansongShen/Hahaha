@@ -89,7 +89,6 @@ inline void cuda_sub<float>(std::span<float> a,
         return;
     }
 
-    CudaMemory cudaMem;
     const unsigned int blockSize = 256;
     cudaError_t err =
         cudaComputeSubtract(reinterpret_cast<cf32*>(a.data()),
@@ -118,7 +117,6 @@ inline void cuda_mul<float>(std::span<float> a,
         return;
     }
 
-    CudaMemory cudaMem;
     const unsigned int blockSize = 256;
     cudaError_t err =
         cudaComputeMultiply(reinterpret_cast<cf32*>(a.data()),
@@ -146,7 +144,6 @@ inline void cuda_div<float>(std::span<float> a,
         return;
     }
 
-    CudaMemory cudaMem;
     const unsigned int blockSize = 256;
     cudaError_t err =
         cudaComputeDivide(reinterpret_cast<cf32*>(a.data()),

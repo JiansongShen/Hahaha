@@ -123,14 +123,14 @@ class CudaDevice : public GPUDevice {
         std::unreachable();
     }
 
-    void copyMemoryFrom(std::span<std::byte> src,
-                        std::span<std::byte> dst,
-                        const std::shared_ptr<Device>& dstDevice) override {
+    void copyMemoryFromThis(std::span<std::byte> /* src */,
+                            std::span<std::byte> /* dst */,
+                            const std::shared_ptr<Device>& /* dstDevice */) override {
     }
 
-    void copyMemoryTo(std::span<std::byte> src,
-                      std::span<std::byte> dst,
-                      const std::shared_ptr<Device>& srcDevice) override {
+    void copyMemoryToThis(std::span<std::byte> /* src */,
+                          std::span<std::byte> /* dst */,
+                          const std::shared_ptr<Device>& /* srcDevice */) override {
     }
 };
 #endif // __has_include(<driver_types.h>)
@@ -147,14 +147,14 @@ class CudaDevice : public GPUDevice {
         std::unreachable();
     }
 
-    void copyMemoryFrom(std::span<std::byte> src,
-                        std::span<std::byte> dst,
-                        const std::shared_ptr<Device>& dstDevice) override {
+    void copyMemoryFromThis(std::span<std::byte> /* src */,
+                            std::span<std::byte> /* dst */,
+                            const std::shared_ptr<Device>& /* dstDevice */) override {
     }
 
-    void copyMemoryTo(std::span<std::byte> src,
-                      std::span<std::byte> dst,
-                      const std::shared_ptr<Device>& srcDevice) override {
+    void copyMemoryToThis(std::span<std::byte> /* src */,
+                          std::span<std::byte> /* dst */,
+                          const std::shared_ptr<Device>& /* srcDevice */) override {
     }
 };
 #endif // HAHAHA_USE_CUDA
