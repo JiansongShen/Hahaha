@@ -40,7 +40,11 @@ class GPUMemory : public Memory {
      */
     [[nodiscard]] DeviceBuffer allocate(size_t size) override {
         std::unreachable();
-    };
+    }
+
+    void free(DeviceBuffer&) override {
+        std::unreachable();
+    }
 
     /**
      * @brief Copies data from host memory to device memory.
