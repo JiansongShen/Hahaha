@@ -49,6 +49,13 @@ class Memory {
     [[nodiscard]] virtual DeviceBuffer allocate(size_t size) = 0;
 
     /**
+     * @brief Frees a device buffer and clears the handle.
+     * @param buffer The buffer to free. After the call, the handle is reset
+     *               (address 0, size 0); caller must not use it for deallocation again.
+     */
+    virtual void free(DeviceBuffer& buffer) = 0;
+
+    /**
      * @brief Copies data from host memory to device memory.
      * @param dst The destination device buffer.
      * @param src The source host memory span.

@@ -23,6 +23,7 @@
 
 #include "backend/gpu/cuda/CudaMemory.h"
 
+#include <cuda_runtime_api.h>
 #include <driver_types.h>
 #include <span>
 #include <stdexcept>
@@ -39,7 +40,7 @@ void CudaMemory::free(DeviceBuffer& deviceBuffer) {
 
     void* ptr = reinterpret_cast<void*>(deviceBuffer.address());
     memoryPool_.free(ptr);
-    deviceBuffer = DeviceBuffer(); // Reset to empty
+    deviceBuffer.reset();
 }
 
 DeviceBuffer CudaMemory::allocate(size_t size) {
@@ -67,7 +68,8 @@ void CudaMemory::copyDeviceToHost(std::span<std::byte> dst,
                        cudaMemcpyDeviceToHost);
 
     if (err != cudaSuccess) {
-        throw std::runtime_error("CUDA device to host copy failed");
+        throw std::runtime_error(std::string("CUDA device to host copy failed: ")
+                                 + cudaGetErrorString(err));
     }
 }
 
@@ -80,7 +82,8 @@ void CudaMemory::memset(DeviceBuffer& dst, int value, size_t count) {
         cudaMemorySet(reinterpret_cast<void*>(dst.address()), value, count);
 
     if (err != cudaSuccess) {
-        throw std::runtime_error("CUDA memset failed");
+        throw std::runtime_error(std::string("CUDA memset failed: ")
+                                 + cudaGetErrorString(err));
     }
 }
 
@@ -90,7 +93,7 @@ DeviceBuffer CudaMemory::allocateSmall(size_t size) {
                             size};
     }
 
-    warn(std::format("CUDA has no enough memory, need {}", size));
+    warn(std::format("CUDA has not enough memory, need {}", size));
     return {};
 }
 
@@ -100,7 +103,7 @@ DeviceBuffer CudaMemory::allocateBig(size_t size) {
                             size};
     }
 
-    warn(std::format("CUDA has no enough memory, need {}", size));
+    warn(std::format("CUDA has not enough memory, need {}", size));
     return {};
 }
 
@@ -117,7 +120,8 @@ void CudaMemory::copyHostToDevice(DeviceBuffer& dst,
                        cudaMemcpyHostToDevice);
 
     if (err != cudaSuccess) {
-        throw std::runtime_error("CUDA host to device copy failed");
+        throw std::runtime_error(std::string("CUDA host to device copy failed: ")
+                                 + cudaGetErrorString(err));
     }
 }
 

@@ -45,9 +45,9 @@ class CudaMemory : public GPUMemory {
 
     /**
      * @brief Free a device buffer.
-     * @param deviceBuffer The buffer to free.
+     * @param deviceBuffer The buffer to free. The handle is reset after free.
      */
-    void free(DeviceBuffer& deviceBuffer);
+    void free(DeviceBuffer& deviceBuffer) override;
 
     /**
      * @brief Allocates a block of memory on the device.
@@ -116,8 +116,6 @@ class CudaMemory : public GPUMemory {
     }
     void copyDeviceToHost(std::span<std::byte>, const DeviceBuffer&) override {
     }
-    void copyDeviceToDevice(DeviceBuffer&, const DeviceBuffer&) override {
-    }
     void memset(DeviceBuffer&, int, size_t) override {
     }
 };
@@ -135,8 +133,6 @@ class CudaMemory : public GPUMemory {
     void copyHostToDevice(DeviceBuffer&, std::span<const std::byte>) override {
     }
     void copyDeviceToHost(std::span<std::byte>, const DeviceBuffer&) override {
-    }
-    void copyDeviceToDevice(DeviceBuffer&, const DeviceBuffer&) override {
     }
     void memset(DeviceBuffer&, int, size_t) override {
     }
