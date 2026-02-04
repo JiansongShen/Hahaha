@@ -64,7 +64,7 @@ if (HAHAHA_USE_CUDA)
     add_library(hahaha STATIC ${HAHAHA_CPP_SOURCES} ${HAHAHA_CUDA_SOURCES})
     add_compile_definitions(HAHAHA_USE_CUDA)
 else ()
-    add_library(hahaha STATIC ${HAHAHA_CPP_SOURCES} )
+    add_library(hahaha STATIC ${HAHAHA_CPP_SOURCES})
 endif ()
 add_library(hahaha::hahaha ALIAS hahaha)
 
