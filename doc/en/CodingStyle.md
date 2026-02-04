@@ -14,16 +14,16 @@ This document is the single reference for project coding standards. It is derive
 
 ## 2. Formatting (authoritative: .clang-format)
 
-| Item | Rule | Notes |
-|------|------|--------|
-| Indent | 4 spaces | `UseTab: Never` |
-| Line length | 80 columns | `ColumnLimit: 80` |
-| Braces | Attach (opening brace on same line) | `BreakBeforeBraces: Attach` → `void f() {` |
-| Pointer/reference alignment | Left | `int* p;`, `int& r;` (`PointerAlignment: Left`) |
-| Binary operator line break | Before non-assignment operators | `BreakBeforeBinaryOperators: NonAssignment` |
-| Includes | Sorted and grouped | `SortIncludes: true`, system headers first |
-| Space after C-style cast | Yes | `SpaceAfterCStyleCast: true` |
-| Space before assignment | Yes | `SpaceBeforeAssignmentOperators: true` |
+| Item                        | Rule                                | Notes                                           |
+|-----------------------------|-------------------------------------|-------------------------------------------------|
+| Indent                      | 4 spaces                            | `UseTab: Never`                                 |
+| Line length                 | 80 columns                          | `ColumnLimit: 80`                               |
+| Braces                      | Attach (opening brace on same line) | `BreakBeforeBraces: Attach` → `void f() {`      |
+| Pointer/reference alignment | Left                                | `int* p;`, `int& r;` (`PointerAlignment: Left`) |
+| Binary operator line break  | Before non-assignment operators     | `BreakBeforeBinaryOperators: NonAssignment`     |
+| Includes                    | Sorted and grouped                  | `SortIncludes: true`, system headers first      |
+| Space after C-style cast    | Yes                                 | `SpaceAfterCStyleCast: true`                    |
+| Space before assignment     | Yes                                 | `SpaceBeforeAssignmentOperators: true`          |
 
 **Before committing, run**:
 
@@ -37,18 +37,19 @@ Or use pre-commit if installed: it will run `clang-format -i --style=file` on C/
 
 ## 3. Naming conventions
 
-| Kind | Convention | Examples |
-|------|------------|----------|
-| Classes / structs / types | PascalCase | `TensorWrapper`, `ComputeNode`, `DeviceBuffer` |
-| Functions / methods | camelCase | `forward()`, `getShape()`, `cpuAdd` |
-| Variables / parameters | camelCase | `inputData`, `learningRate`, `batchSize` |
-| Public members | camelCase | `size` |
-| Private members | camelCase + suffix `_` | `data_`, `shape_`, `requiresGrad_` |
-| Constants (constexpr/static) | snake_case or PascalCase | `default_init_value`, `MaxBatchSize` |
-| Enums and enum values | PascalCase | `enum class DeviceType { CPU, CUDA };` |
-| Namespaces | lowercase or hierarchical | `hahaha::backend`, `hahaha::math` |
-| Header guards | UPPER_SNAKE, project path or UUID | `HAHAHA_BACKEND_DEVICE_H`, `HAHAHA_BACKEND_CPU_CPU_ELEMENTWISE_KERNELS_H`, or `HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7` |
-| File names | PascalCase (single-class) or snake_case (other) | `TensorWrapper.h`, `cuda_memory.cuh` |
+| Kind                         | Convention                                                 | Examples                                                                                                                                |
+|------------------------------|------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| Classes / structs / types    | PascalCase                                                 | `TensorWrapper`, `ComputeNode`, `DeviceBuffer`                                                                                          |
+| Functions / methods          | camelCase                                                  | `forward()`, `getShape()`, `cpuAdd`                                                                                                     |
+| Variables / parameters       | camelCase                                                  | `inputData`, `learningRate`, `batchSize`                                                                                                |
+| Public members               | camelCase                                                  | `size`                                                                                                                                  |
+| Private members              | camelCase + suffix `_`                                     | `data_`, `shape_`, `requiresGrad_`                                                                                                      |
+| Constants (constexpr/static) | snake_case or PascalCase                                   | `default_init_value`, `MaxBatchSize`                                                                                                    |
+| Enums and enum values        | PascalCase                                                 | `enum class DeviceType { CPU, CUDA };`                                                                                                  |
+| Namespaces                   | lowercase or hierarchical                                  | `hahaha::backend`, `hahaha::math`                                                                                                       |
+| Header guards                | UPPER_SNAKE, project path or UUID                          | `HAHAHA_BACKEND_DEVICE_H`, `HAHAHA_BACKEND_CPU_CPU_ELEMENTWISE_KERNELS_H`, or `HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7` |
+| File names                   | PascalCase (single-class) or snake_case (other)            | `TensorWrapper.h`, `cuda_memory.cuh`                                                                                                    |
+| Macros                       | PascalCase (Function like) or ALL_UPPER_CASE (declaration) | `ComputeSth()`, `ARCH_X86_64`                                                                                                           |
 
 **Exception**: Symbols that interface with C/CUDA or third-party code (e.g. backend kernel names) may keep snake_case for consistency, e.g. `cpu_add`, `cuda_add`.
 
@@ -168,12 +169,12 @@ Run clang-tidy locally or in CI and address fixable warnings.
 
 ## 12. Reference files
 
-| File | Purpose |
-|------|---------|
-| `.clang-format` | Formatting rules (authoritative) |
-| `.clang-tidy` | Static analysis rules |
+| File                      | Purpose                                                           |
+|---------------------------|-------------------------------------------------------------------|
+| `.clang-format`           | Formatting rules (authoritative)                                  |
+| `.clang-tidy`             | Static analysis rules                                             |
 | `.pre-commit-config.yaml` | Pre-commit hooks (large files, trailing whitespace, clang-format) |
-| `doc/en/Develop.md` | Development guide (more naming and examples) |
-| `dev/format.py` | One-shot formatting script |
+| `doc/en/Develop.md`       | Development guide (more naming and examples)                      |
+| `dev/format.py`           | One-shot formatting script                                        |
 
 In case of conflict with other docs, follow `.clang-format`, `.clang-tidy`, and the current repository layout.

@@ -23,7 +23,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "utils/Macros.h"
+#include "common/macros.h"
 
 // Forward declaration for friend class template
 class NestedDataTest;

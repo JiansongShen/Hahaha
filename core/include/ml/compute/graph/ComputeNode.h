@@ -27,7 +27,7 @@
 #include "TopoSort.h"
 #include "common/Operator.h"
 #include "math/TensorWrapper.h"
-#include "utils/common/HelperStruct.h"
+#include "utils/common/helper_structs.h"
 
 namespace hahaha {
 /**

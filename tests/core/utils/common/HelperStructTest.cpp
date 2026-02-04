@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <initializer_list>
 
-#include "utils/common/HelperStruct.h"
+#include "utils/common/helper_structs.h"
 
 using namespace hahaha::utils;
 

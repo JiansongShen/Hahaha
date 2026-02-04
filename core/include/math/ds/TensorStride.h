@@ -24,7 +24,7 @@
 
 #include "common/definitions.h"
 #include "math/ds/TensorShape.h"
-#include "utils/Macros.h"
+#include "common/macros.h"
 
 namespace hahaha::math {
 using common::u32;

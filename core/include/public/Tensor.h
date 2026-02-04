@@ -28,7 +28,7 @@
 #include "math/ds/TensorData.h"
 #include "ml/compute/graph/ComputeFun.h"
 #include "ml/compute/graph/ComputeNode.h"
-#include "utils/common/HelperStruct.h"
+#include "utils/common/helper_structs.h"
 
 namespace hahaha {
 
