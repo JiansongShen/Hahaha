@@ -100,7 +100,7 @@ void forEachElement(const std::vector<size_t>& shape,
 // --- CPU element-wise kernels ---
 
 template <typename T>
-void cpu_add(const std::vector<size_t>& shape,
+void cpuAdd(const std::vector<size_t>& shape,
              const std::vector<size_t>& lStride,
              const std::vector<size_t>& rStride,
              std::span<T> a,
@@ -111,7 +111,7 @@ void cpu_add(const std::vector<size_t>& shape,
 }
 
 template <typename T>
-void cpu_sub(const std::vector<size_t>& shape,
+void cpuSub(const std::vector<size_t>& shape,
              const std::vector<size_t>& lStride,
              const std::vector<size_t>& rStride,
              std::span<T> a,
@@ -122,7 +122,7 @@ void cpu_sub(const std::vector<size_t>& shape,
 }
 
 template <typename T>
-void cpu_mul(const std::vector<size_t>& shape,
+void cpuMul(const std::vector<size_t>& shape,
              const std::vector<size_t>& lStride,
              const std::vector<size_t>& rStride,
              std::span<T> a,
@@ -133,7 +133,7 @@ void cpu_mul(const std::vector<size_t>& shape,
 }
 
 template <typename T>
-void cpu_div(const std::vector<size_t>& shape,
+void cpuDiv(const std::vector<size_t>& shape,
              const std::vector<size_t>& lStride,
              const std::vector<size_t>& rStride,
              std::span<T> a,

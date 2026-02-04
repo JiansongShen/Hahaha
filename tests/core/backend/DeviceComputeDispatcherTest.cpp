@@ -106,7 +106,7 @@ TEST(DeviceComputeDispatcherTest, DispatchBinary_DivisionByZero_Throws) {
                              0.0f,
                              std::make_shared<hahaha::backend::CPUDevice>());
 
-    // Note: cpu_div still throws runtime_error currently, but we catch it or
+    // Note: cpuDiv still throws runtime_error currently, but we catch it or
     // expect it
     EXPECT_THROW(hahaha::backend::dispatchDiv(DeviceType::CPU, b, a, res),
                  std::runtime_error);
