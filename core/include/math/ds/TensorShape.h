@@ -26,7 +26,7 @@
 #include <vector>
 
 #include "common/definitions.h"
-#include "utils/Macros.h"
+#include "common/macros.h"
 
 class TensorShapeTest;
 

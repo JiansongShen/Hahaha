@@ -16,10 +16,5 @@
 //  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
 //
 
-#ifndef HAHAHA_SIMD_COMPUTE_FUNS_H_7F6243BB8DF1454D92CC725AE19AEDEC
-#define HAHAHA_SIMD_COMPUTE_FUNS_H_7F6243BB8DF1454D92CC725AE19AEDEC
+#include "backend/vectorize/simd_compute_funs.h"
 
-// just include other implementations
-#include "backend/vectorize/simd_vec.h"
-
-#endif //HAHAHA_SIMD_COMPUTE_FUNS_H_7F6243BB8DF1454D92CC725AE19AEDEC

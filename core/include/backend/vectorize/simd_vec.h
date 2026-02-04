@@ -19,8 +19,27 @@
 #ifndef HAHAHA_SIMDVEC_H_B878DE32A18743769333838EF65ACE5E
 #define HAHAHA_SIMDVEC_H_B878DE32A18743769333838EF65ACE5E
 
-namespace hahaha::backend
-{
+#include <format>
+
+#include "utils/common/helper_structs.h"
+#include "utils/common/support_types.h"
+
+namespace hahaha::backend {
+template <typename T, size_t N>
+struct SimdVec {
+    static_assert(utils::isLegalDataType<T>::value
+        && std::format(
+            "the data type of simd vector is not legal: current is {},"
+            " but only supports: {}",
+            typeid(T).name(), utils::getLegalDataTypeString()
+            ).data());
+
+    static_assert(N == 128 || N == 256 || N == 512
+        && std::format(
+            "the size of simd vector is not supported: {}"
+            "currently only 128, 256, 512 are supported", N
+            ).data());
+};
 
 }
 
