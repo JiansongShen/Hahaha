@@ -121,7 +121,7 @@ struct DispatchAddImpl<T, DeviceType::CPU> {
                const std::vector<size_t>& rs,
                std::span<T> lb,
                std::span<T> rb,
-               std::span<T> ob) { cpu_add(s, ls, rs, lb, rb, ob); });
+               std::span<T> ob) { cpuAdd(s, ls, rs, lb, rb, ob); });
     }
 };
 
@@ -214,7 +214,7 @@ struct DispatchSubImpl<T, DeviceType::CPU> {
                const std::vector<size_t>& rs,
                std::span<T> lb,
                std::span<T> rb,
-               std::span<T> ob) { cpu_sub(s, ls, rs, lb, rb, ob); });
+               std::span<T> ob) { cpuSub(s, ls, rs, lb, rb, ob); });
     }
 };
 
@@ -321,7 +321,7 @@ struct DispatchMulImpl<T, DeviceType::CPU> {
                const std::vector<size_t>& rs,
                std::span<T> lb,
                std::span<T> rb,
-               std::span<T> ob) { cpu_mul(s, ls, rs, lb, rb, ob); });
+               std::span<T> ob) { cpuMul(s, ls, rs, lb, rb, ob); });
     }
 };
 
@@ -414,7 +414,7 @@ struct DispatchDivImpl<T, DeviceType::CPU> {
                const std::vector<size_t>& rs,
                std::span<T> lb,
                std::span<T> rb,
-               std::span<T> ob) { cpu_div(s, ls, rs, lb, rb, ob); });
+               std::span<T> ob) { cpuDiv(s, ls, rs, lb, rb, ob); });
     }
 };
 
