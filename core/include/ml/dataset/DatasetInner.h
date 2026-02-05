@@ -19,6 +19,7 @@
 
 #ifndef HAHAHA_DATASET_INNER_H_4B71BF801C8A477CABA1DCC84944450E
 #define HAHAHA_DATASET_INNER_H_4B71BF801C8A477CABA1DCC84944450E
+
 #include <memory>
 #include <utility>
 
@@ -33,21 +34,16 @@ template <typename T> class DatasetInner {
 
   public:
     DatasetInner()
-        : typeUnifyStrategy_(getDefaultDatasetTypeUnifyStrategy()),
-          x(Tensor<T>(std::make_shared<math::TensorWrapper<T>>())),
-          y(Tensor<T>(std::make_shared<math::TensorWrapper<T>>())) {
+        : typeUnifyStrategy_(getDefaultDatasetTypeUnifyStrategy()) {
     }
 
     DatasetInner(const std::vector<std::string>& features,
                  std::string datasetName,
                  const std::vector<std::string>& labels,
                  const DatasetTypeUnifyStrategy& datasetTypeUnifyStrategy =
-                     getDefaultDatasetTypeUnifyStrategy(),
-                 Tensor<T> x = Tensor<T>(std::make_shared<math::TensorWrapper<T>>()),
-                 Tensor<T> y = Tensor<T>(std::make_shared<math::TensorWrapper<T>>()))
-        : datasetName_(std::move(datasetName)), columns_(features),
-          labels_(labels), typeUnifyStrategy_(datasetTypeUnifyStrategy), x(x),
-          y(y) {
+                     getDefaultDatasetTypeUnifyStrategy())
+                 : datasetName_(std::move(datasetName)), columns_(features),
+          labels_(labels), typeUnifyStrategy_(datasetTypeUnifyStrategy){
     }
 
     [[nodiscard]] std::string getDatasetName() const {
@@ -66,12 +62,7 @@ template <typename T> class DatasetInner {
         return typeUnifyStrategy_;
     }
 
-    Tensor<T> getX() const {
-        return x;
-    }
-
-    Tensor<T> getY() const {
-        return y;
+    Tensor<T> getItem(size_t idx) {
     }
 
   private:
@@ -81,8 +72,7 @@ template <typename T> class DatasetInner {
 
     DatasetTypeUnifyStrategy typeUnifyStrategy_;
 
-    Tensor<T> x;
-    Tensor<T> y;
+    Tensor<T> samples_;
 
     friend class DatasetInnerLoader;
 };

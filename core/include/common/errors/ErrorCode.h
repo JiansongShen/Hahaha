@@ -34,6 +34,7 @@ enum class ErrorCode : std::size_t {
     Overflow,           ///< Numerical overflow occurred.
     InternalError,      ///< An internal logic error occurred.
 
+    InvalidDataset,
     CudaDeviceOutOfMemory,
     CudaSmallObjectMemoryPoolFull,
     Count ///< Number of error codes (for bounds checking).
@@ -48,6 +49,7 @@ constexpr const char* ErrorMessages[] = {
     "Device unsupported",
     "Numerical overflow",
     "Internal error",
+    "Invalid dataset",
     "Cuda device out of memory",
     "CUDA small object memory pool full"};
 

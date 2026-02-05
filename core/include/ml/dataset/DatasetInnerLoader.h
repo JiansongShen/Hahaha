@@ -143,7 +143,7 @@ class DatasetInnerLoader {
     std::expected<T, common::Error> handleOneValue(const std::string& str) {
         if (utils::StringUtils::isBlank(str)) {
             switch (datasetHandleBlankStrategy_) {
-            case hahaha::ml::DatasetHandleBlankStrategy::SetNan:
+            case DatasetHandleBlankStrategy::SetNan:
                 if constexpr (utils::isLegalFloatType<T>::value) {
                     return static_cast<T>(std::numeric_limits<T>::quiet_NaN());
                 } else {
@@ -152,7 +152,7 @@ class DatasetInnerLoader {
                 }
                 break;
 
-            case hahaha::ml::DatasetHandleBlankStrategy::UseZero:
+            case DatasetHandleBlankStrategy::UseZero:
                 return static_cast<T>(0);
                 break;
 
@@ -177,29 +177,22 @@ class DatasetInnerLoader {
     void fillData(std::vector<std::vector<T>>& dataList,
                   DatasetInner<T>& dataset) {
         if (dataList.empty()) {
-            dataset.x = Tensor<T>(std::make_shared<math::TensorWrapper<T>>());
-            dataset.y = Tensor<T>(std::make_shared<math::TensorWrapper<T>>());
+            dataset.sample = Tensor<T>();
             return;
         }
 
-        Tensor<T> xTensor = Tensor<T>::buildFromShape(
-            {dataList.size(), dataList[0].size() - 1});
-        Tensor<T> yTensor(std::make_shared<math::TensorWrapper<T>>(
-            math::TensorShape({dataList.size(), 1}), T(0)));
-        for (size_t i = 0; i < dataList.size(); ++i) {
-            for (size_t j = 0; j < dataList[i].size() - 1; ++j) {
+        Tensor<T> sampleTensor =
+            Tensor<T>::buildFromShape({dataList.size(), dataList[0].size()});
 
-                xTensor.getComputeNode()
+        for (size_t i = 0; i < dataList.size(); ++i) {
+            for (size_t j = 0; j < dataList[i].size(); ++j) {
+                sampleTensor.getComputeNode()
                     ->getData()
                     ->getRawData()[i * dataList[0].size() + j] = dataList[i][j];
             }
-
-            yTensor.getComputeNode()->getData()->getRawData()[i] =
-                dataList[i][dataList[i].size() - 1];
         }
 
-        dataset.x = xTensor;
-        dataset.y = yTensor;
+        dataset.sample = sampleTensor;
     }
 
     void clearStatus() {

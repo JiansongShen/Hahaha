@@ -28,12 +28,24 @@ namespace hahaha {
 
 template <typename T>
 class Dataset {
+
+    using Interator = std::vector<T>;
 public:
     static Dataset loadFromCSV(const std::string &filePath) {
         Dataset dataset;
         ml::DatasetInnerLoader().loadFromCSVTo<T>(filePath, dataset);
         return dataset;
     }
+
+    Tensor<T> getItem(size_t idx) {
+        return datasetInner_->getItem(idx);
+    }
+
+    void shuffleDataset() {
+        datasetInner_->shuffleDataset();
+    }
+
+
 
 private:
     Dataset() {}

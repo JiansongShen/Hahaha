@@ -67,7 +67,9 @@ template <typename T> class Tensor {
      * @brief Default tensor constructor
      */
     Tensor () {
-        computeNode_ = nullptr;
+        computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+            std::make_shared<math::TensorWrapper<T>>()
+        );
     }
 
     /**
@@ -348,6 +350,10 @@ template <typename T> class Tensor {
         newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
             computeNode_->getData()->sameShapeWithValue(initValue));
         return newTensor;
+    }
+
+    Tensor slice() {
+
     }
 
   private:
