@@ -49,7 +49,7 @@ Or use pre-commit if installed: it will run `clang-format -i --style=file` on C/
 | Namespaces                   | lowercase or hierarchical                                  | `hahaha::backend`, `hahaha::math`                                                                                                       |
 | Header guards                | UPPER_SNAKE, project path or UUID                          | `HAHAHA_BACKEND_DEVICE_H`, `HAHAHA_BACKEND_CPU_CPU_ELEMENTWISE_KERNELS_H`, or `HAHAHA_CUDA_MEMORY_CUH_9F482603BCCC4C15924721026F992DB7` |
 | File names                   | PascalCase (single-class) or snake_case (other)            | `TensorWrapper.h`, `cuda_memory.cuh`                                                                                                    |
-| Macros                       | PascalCase (Function like) or ALL_UPPER_CASE (declaration) | `ComputeSth()`, `ARCH_X86_64`                                                                                                           |
+| Macros                       | PascalCase (Function like) or ALL_UPPER_CASE (declaration) | `ComputeSth()`, `HAHAHA_ARCH_X86_64`                                                                                                           |
 
 **Exception**: Symbols that interface with C/CUDA or third-party code (e.g. backend kernel names) may keep snake_case for consistency, e.g. `cpu_add`, `cuda_add`.
 

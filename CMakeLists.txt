@@ -38,6 +38,50 @@ if (MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
 
+#=========================== Architecture Detection ===================================
+# Detect architecture and define macros (fallback to macros.h if not detected here)
+# These definitions are checked with #ifndef in macros.h, so macros.h serves as fallback
+
+# Determine bitness
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(HAHAHA_ARCH_BITS 64)
+elseif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(HAHAHA_ARCH_BITS 32)
+else ()
+    set(HAHAHA_ARCH_BITS 0)
+endif ()
+
+# Detect architecture based on CMAKE_SYSTEM_PROCESSOR
+string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" _processor_lower)
+
+if (_processor_lower MATCHES "^(amd64|x86_64|x64|amd64)")
+    set(HAHAHA_ARCH_X86_64 1)
+    set(HAHAHA_ARCH_IS_X86_FAMILY 1)
+    set(HAHAHA_ARCH_NAME "x86-64")
+elseif (_processor_lower MATCHES "^(i[3-6]86|x86|i86pc)")
+    set(HAHAHA_ARCH_X86_32 1)
+    set(HAHAHA_ARCH_IS_X86_FAMILY 1)
+    set(HAHAHA_ARCH_NAME "x86")
+elseif (_processor_lower MATCHES "^(aarch64|arm64|armv8)")
+    set(HAHAHA_ARCH_ARM64 1)
+    set(HAHAHA_ARCH_NAME "arm64")
+elseif (_processor_lower MATCHES "^(arm|armv7|armv6|armv5)")
+    set(HAHAHA_ARCH_ARM32 1)
+    set(HAHAHA_ARCH_NAME "arm32")
+elseif (_processor_lower MATCHES "^(ppc64|powerpc64)")
+    set(HAHAHA_ARCH_PPC64 1)
+    set(HAHAHA_ARCH_NAME "ppc64")
+elseif (_processor_lower MATCHES "^(riscv64|rv64)")
+    set(HAHAHA_ARCH_RISCV64 1)
+    set(HAHAHA_ARCH_NAME "riscv64")
+else ()
+    message(WARNING "Unknown architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+    set(HAHAHA_ARCH_UNKNOWN 1)
+    set(HAHAHA_ARCH_NAME "unknown")
+endif ()
+
+# Architecture macros will be added to target after it's created (see below)
+
 #=========================== Dependencies Management ===================================
 # ---- core library ----
 # Full configuration: include all source files
@@ -74,7 +118,49 @@ target_include_directories(hahaha
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_compile_definitions(hahaha PUBLIC)
+# Define architecture macros via compile definitions
+# Note: macros.h will check #ifndef and skip redefinition, so it serves as fallback
+if (HAHAHA_ARCH_X86_64)
+    target_compile_definitions(hahaha PUBLIC
+            ARCH_X86_64=1
+            ARCH_IS_X86_FAMILY=1
+            ARCH_BITS=${HAHAHA_ARCH_BITS}
+            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+    )
+elseif (HAHAHA_ARCH_X86_32)
+    target_compile_definitions(hahaha PUBLIC
+            ARCH_X86_32=1
+            ARCH_IS_X86_FAMILY=1
+            ARCH_BITS=${HAHAHA_ARCH_BITS}
+            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+    )
+elseif (HAHAHA_ARCH_ARM64)
+    target_compile_definitions(hahaha PUBLIC
+            ARCH_ARM64=1
+            ARCH_BITS=${HAHAHA_ARCH_BITS}
+            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+    )
+elseif (HAHAHA_ARCH_ARM32)
+    target_compile_definitions(hahaha PUBLIC
+            ARCH_ARM32=1
+            ARCH_BITS=${HAHAHA_ARCH_BITS}
+            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+    )
+elseif (HAHAHA_ARCH_PPC64)
+    target_compile_definitions(hahaha PUBLIC
+            ARCH_PPC64=1
+            ARCH_BITS=${HAHAHA_ARCH_BITS}
+            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+    )
+elseif (HAHAHA_ARCH_RISCV64)
+    target_compile_definitions(hahaha PUBLIC
+            ARCH_RISCV64=1
+            ARCH_BITS=${HAHAHA_ARCH_BITS}
+            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+    )
+elseif (HAHAHA_ARCH_UNKNOWN)
+    target_compile_definitions(hahaha PUBLIC ARCH_UNKNOWN=1)
+endif ()
 
 # dl (Linux/Unix) - harmless elsewhere.
 if (CMAKE_DL_LIBS)
