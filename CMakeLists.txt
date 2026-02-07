@@ -94,6 +94,8 @@ file(
         "${PROJECT_SOURCE_DIR}/core/src/*.cu"
 )
 
+include_directories("${PROJECT_SOURCE_DIR}/core/include")
+
 # Enable CUDA language before any target uses .cu sources (required for CMAKE_CUDA_COMPILE_OBJECT etc.)
 if (HAHAHA_USE_CUDA)
     if (MSVC)
