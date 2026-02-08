@@ -15,19 +15,10 @@
 //  Contributors:
 //  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
 //
-//  x86 SIMD implementation: SSE2 (128-bit), AVX (256-bit), optional AVX-512 (512-bit).
-//  Implementations are split by width to keep each file manageable.
-//
 
-#ifndef HAHAHA_SIMD_VEC_IMPL_H_92AB0F5E920442FC95C08FE4487A6DE8
-#define HAHAHA_SIMD_VEC_IMPL_H_92AB0F5E920442FC95C08FE4487A6DE8
+#ifndef HAHAHA_SIMD_IMPL_H_C3F7A2EAA66241AD897FE4708725625D
+#define HAHAHA_SIMD_IMPL_H_C3F7A2EAA66241AD897FE4708725625D
 
-#if defined(HAHAHA_ARCH_IS_X86_FAMILY) && HAHAHA_ARCH_IS_X86_FAMILY
+#include "backend/vectorize/arch/x86/simd_vec_impl.h"
 
-#include "backend/vectorize/arch/x86/simd_vec_impl_128.h"
-#include "backend/vectorize/arch/x86/simd_vec_impl_256.h"
-#include "backend/vectorize/arch/x86/simd_vec_impl_512.h"
-
-#endif // HAHAHA_ARCH_IS_X86_FAMILY
-
-#endif // HAHAHA_SIMD_VEC_IMPL_H_92AB0F5E920442FC95C08FE4487A6DE8
+#endif //HAHAHA_SIMD_IMPL_H_C3F7A2EAA66241AD897FE4708725625D

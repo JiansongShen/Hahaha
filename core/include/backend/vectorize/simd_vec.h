@@ -25,7 +25,12 @@
 #include "utils/common/support_types.h"
 
 namespace hahaha::backend {
-template <typename T, size_t N>
+
+/**
+ * @brief SIMD vector type: T is element type, N is width in bits (128, 256, or 512).
+ * Arch-specific specializations (e.g. x86 SSE/AVX) provide load/store and arithmetic.
+ */
+template <typename T, std::size_t N>
 struct SimdVec {
     static_assert(utils::isLegalDataType<T>::value
         && std::format(
