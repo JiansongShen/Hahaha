@@ -110,7 +110,8 @@ if (HAHAHA_USE_CUDA)
     add_library(hahaha STATIC ${HAHAHA_CPP_SOURCES} ${HAHAHA_CUDA_SOURCES})
     add_compile_definitions(HAHAHA_USE_CUDA)
 else ()
-    add_library(hahaha STATIC ${HAHAHA_CPP_SOURCES})
+    add_library(hahaha STATIC ${HAHAHA_CPP_SOURCES}
+            core/include/backend/vectorize/arch/simd_impl.h)
 endif ()
 add_library(hahaha::hahaha ALIAS hahaha)
 
@@ -124,44 +125,60 @@ target_include_directories(hahaha
 # Note: macros.h will check #ifndef and skip redefinition, so it serves as fallback
 if (HAHAHA_ARCH_X86_64)
     target_compile_definitions(hahaha PUBLIC
-            ARCH_X86_64=1
-            ARCH_IS_X86_FAMILY=1
-            ARCH_BITS=${HAHAHA_ARCH_BITS}
-            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+            HAHAHA_ARCH_X86_64=1
+            HAHAHA_ARCH_IS_X86_FAMILY=1
+            HAHAHA_ARCH_BITS=${HAHAHA_ARCH_BITS}
+            HAHAHA_ARCH_NAME="${HAHAHA_ARCH_NAME}"
     )
 elseif (HAHAHA_ARCH_X86_32)
     target_compile_definitions(hahaha PUBLIC
-            ARCH_X86_32=1
-            ARCH_IS_X86_FAMILY=1
-            ARCH_BITS=${HAHAHA_ARCH_BITS}
-            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+            HAHAHA_ARCH_X86_32=1
+            HAHAHA_ARCH_IS_X86_FAMILY=1
+            HAHAHA_ARCH_BITS=${HAHAHA_ARCH_BITS}
+            HAHAHA_ARCH_NAME="${HAHAHA_ARCH_NAME}"
     )
 elseif (HAHAHA_ARCH_ARM64)
     target_compile_definitions(hahaha PUBLIC
-            ARCH_ARM64=1
-            ARCH_BITS=${HAHAHA_ARCH_BITS}
-            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+            HAHAHA_ARCH_ARM64=1
+            HAHAHA_ARCH_BITS=${HAHAHA_ARCH_BITS}
+            HAHAHA_ARCH_NAME="${HAHAHA_ARCH_NAME}"
     )
 elseif (HAHAHA_ARCH_ARM32)
     target_compile_definitions(hahaha PUBLIC
-            ARCH_ARM32=1
-            ARCH_BITS=${HAHAHA_ARCH_BITS}
-            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+            HAHAHA_ARCH_ARM32=1
+            HAHAHA_ARCH_BITS=${HAHAHA_ARCH_BITS}
+            HAHAHA_ARCH_NAME="${HAHAHA_ARCH_NAME}"
     )
 elseif (HAHAHA_ARCH_PPC64)
     target_compile_definitions(hahaha PUBLIC
-            ARCH_PPC64=1
-            ARCH_BITS=${HAHAHA_ARCH_BITS}
-            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+            HAHAHA_ARCH_PPC64=1
+            HAHAHA_ARCH_BITS=${HAHAHA_ARCH_BITS}
+            HAHAHA_ARCH_NAME="${HAHAHA_ARCH_NAME}"
     )
 elseif (HAHAHA_ARCH_RISCV64)
     target_compile_definitions(hahaha PUBLIC
-            ARCH_RISCV64=1
-            ARCH_BITS=${HAHAHA_ARCH_BITS}
-            ARCH_NAME="${HAHAHA_ARCH_NAME}"
+            HAHAHA_ARCH_RISCV64=1
+            HAHAHA_ARCH_BITS=${HAHAHA_ARCH_BITS}
+            HAHAHA_ARCH_NAME="${HAHAHA_ARCH_NAME}"
     )
 elseif (HAHAHA_ARCH_UNKNOWN)
-    target_compile_definitions(hahaha PUBLIC ARCH_UNKNOWN=1)
+    target_compile_definitions(hahaha PUBLIC HAHAHA_ARCH_UNKNOWN=1)
+endif ()
+
+# ---- x86 SIMD (optional): SSE2 is baseline on x64; enable AVX/AVX2 for 256-bit and integer ----
+if (HAHAHA_ARCH_X86_64 OR HAHAHA_ARCH_X86_32)
+    set(HAHAHA_SIMD_AVX OFF CACHE BOOL "Enable AVX/AVX2 for 256-bit SIMD (requires CPU support)")
+    if (HAHAHA_SIMD_AVX)
+        if (MSVC)
+            target_compile_options(hahaha PUBLIC /arch:AVX2)
+        else ()
+            target_compile_options(hahaha PUBLIC -mavx2 -mfma)
+        endif ()
+    endif ()
+    # SSE2 is default on x86-64; x86-32 may need -msse2
+    if (HAHAHA_ARCH_X86_32 AND NOT MSVC)
+        target_compile_options(hahaha PUBLIC -msse2)
+    endif ()
 endif ()
 
 # dl (Linux/Unix) - harmless elsewhere.
