@@ -4,13 +4,32 @@ if (MSVC)
     set(ENV{VSLANG} "1033")
 endif ()
 
-if (NOT DEFINED CMAKE_TOOLCHAIN_FILE OR CMAKE_TOOLCHAIN_FILE STREQUAL "")
-    message(FATAL_ERROR
-            "vcpkg toolchain not set. Please either:\n"
-            "  1) Use a CMake preset: cmake --preset <preset-name>\n"
-            "     (set VCPKG_ROOT to your vcpkg root, e.g. <repo>/vcpkg/vcpkg_root)\n"
-            "  2) Pass the toolchain: -DCMAKE_TOOLCHAIN_FILE=<vcpkg-root>/scripts/buildsystems/vcpkg.cmake"
-    )
+# ---- vcpkg toolchain detection ----
+# Prefer repo-local vcpkg (created by ./dev/dev_env_setup.py), but allow users to
+# pass -DCMAKE_TOOLCHAIN_FILE=... or set VCPKG_ROOT.
+#
+# Note: This must run before project()/enable_language() so the toolchain can
+# affect compiler detection.
+if ((NOT DEFINED CMAKE_TOOLCHAIN_FILE OR CMAKE_TOOLCHAIN_FILE STREQUAL "") OR (DEFINED CMAKE_TOOLCHAIN_FILE AND NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}"))
+    if (DEFINED CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE AND NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
+        message(WARNING "CMAKE_TOOLCHAIN_FILE does not exist: '${CMAKE_TOOLCHAIN_FILE}'")
+    endif ()
+
+    set(_repo_vcpkg_toolchain "${CMAKE_CURRENT_LIST_DIR}/vcpkg/vcpkg_root/scripts/buildsystems/vcpkg.cmake")
+    if (EXISTS "${_repo_vcpkg_toolchain}")
+        set(CMAKE_TOOLCHAIN_FILE "${_repo_vcpkg_toolchain}" CACHE FILEPATH "vcpkg toolchain file" FORCE)
+        message(STATUS "Using repo-local vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
+    elseif (DEFINED ENV{VCPKG_ROOT} AND EXISTS "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+        set(CMAKE_TOOLCHAIN_FILE "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "vcpkg toolchain file" FORCE)
+        message(STATUS "Using vcpkg toolchain from VCPKG_ROOT: ${CMAKE_TOOLCHAIN_FILE}")
+    else ()
+        message(FATAL_ERROR
+                "vcpkg toolchain not set or not found. Please either:\n"
+                "  1) Run ./dev/dev_env_setup.py (creates <repo>/vcpkg/vcpkg_root)\n"
+                "  2) Set VCPKG_ROOT to your vcpkg root (e.g. <repo>/vcpkg/vcpkg_root)\n"
+                "  3) Pass the toolchain: -DCMAKE_TOOLCHAIN_FILE=<vcpkg-root>/scripts/buildsystems/vcpkg.cmake"
+        )
+    endif ()
 endif ()
 
 # Use static triplet on Windows so vcpkg builds GTest (and deps) with static CRT.
@@ -39,16 +58,11 @@ if (MSVC)
 endif ()
 
 #=========================== Architecture Detection ===================================
-<<<<<<< HEAD
 # Detect architecture and define macros (fallback to macros.h if not detected here).
 # When cross-compiling, CMAKE_SYSTEM_PROCESSOR is the *target* arch; you can also
 # explicitly set HAHAHA_TARGET_ARCH (e.g. "aarch64", "x86_64") to override.
-# Example: build for ARM64 on x86 host:
-#   cmake --preset cross-arm64-linux   # uses toolchain + vcpkg arm64-linux triplet
-#   or: -DHAHAHA_TARGET_ARCH=aarch64 -DCMAKE_TOOLCHAIN_FILE=.../aarch64-linux-gcc.cmake
-
 set(HAHAHA_TARGET_ARCH "" CACHE STRING
-    "Override target architecture (e.g. aarch64, x86_64). Empty = use CMAKE_SYSTEM_PROCESSOR (normal for cross-compile).")
+        "Override target architecture (e.g. aarch64, x86_64). Empty = use CMAKE_SYSTEM_PROCESSOR (normal for cross-compile).")
 
 set(_arch_to_use "${CMAKE_SYSTEM_PROCESSOR}")
 if (HAHAHA_TARGET_ARCH)
@@ -67,32 +81,28 @@ endif ()
 # Detect architecture from target processor (or override)
 string(TOLOWER "${_arch_to_use}" _processor_lower)
 
-if (_processor_lower MATCHES "^(amd64|x86_64|x64)")
-# Detect architecture based on CMAKE_SYSTEM_PROCESSOR
-string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" _processor_lower)
-
-if (_processor_lower MATCHES "^(amd64|x86_64|x64)")
+if (_processor_lower MATCHES "^(amd64|x86_64|x64)$")
     set(HAHAHA_ARCH_X86_64 1)
     set(HAHAHA_ARCH_IS_X86_FAMILY 1)
     set(HAHAHA_ARCH_NAME "x86-64")
-elseif (_processor_lower MATCHES "^(i[3-6]86|x86|i86pc)")
+elseif (_processor_lower MATCHES "^(i[3-6]86|x86|i86pc)$")
     set(HAHAHA_ARCH_X86_32 1)
     set(HAHAHA_ARCH_IS_X86_FAMILY 1)
     set(HAHAHA_ARCH_NAME "x86")
-elseif (_processor_lower MATCHES "^(aarch64|arm64|armv8)")
+elseif (_processor_lower MATCHES "^(aarch64|arm64|armv8)$")
     set(HAHAHA_ARCH_ARM64 1)
     set(HAHAHA_ARCH_NAME "arm64")
-elseif (_processor_lower MATCHES "^(arm|armv7|armv6|armv5)")
+elseif (_processor_lower MATCHES "^(arm|armv7|armv6|armv5)$")
     set(HAHAHA_ARCH_ARM32 1)
     set(HAHAHA_ARCH_NAME "arm32")
-elseif (_processor_lower MATCHES "^(ppc64|powerpc64)")
+elseif (_processor_lower MATCHES "^(ppc64|powerpc64)$")
     set(HAHAHA_ARCH_PPC64 1)
     set(HAHAHA_ARCH_NAME "ppc64")
-elseif (_processor_lower MATCHES "^(riscv64|rv64)")
+elseif (_processor_lower MATCHES "^(riscv64|rv64)$")
     set(HAHAHA_ARCH_RISCV64 1)
     set(HAHAHA_ARCH_NAME "riscv64")
 else ()
-    message(WARNING "Unknown architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+    message(WARNING "Unknown architecture: ${_arch_to_use}")
     set(HAHAHA_ARCH_UNKNOWN 1)
     set(HAHAHA_ARCH_NAME "unknown")
 endif ()
