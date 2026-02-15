@@ -56,12 +56,6 @@ if (HAHAHA_TARGET_ARCH)
 endif ()
 
 # Determine bitness (target pointer size when cross-compiling)
-=======
-# Detect architecture and define macros (fallback to macros.h if not detected here)
-# These definitions are checked with #ifndef in macros.h, so macros.h serves as fallback
-
-# Determine bitness
->>>>>>> 4eec268a1d6499ba4a793abce1491018797319e7
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(HAHAHA_ARCH_BITS 64)
 elseif (CMAKE_SIZEOF_VOID_P EQUAL 4)
@@ -70,17 +64,14 @@ else ()
     set(HAHAHA_ARCH_BITS 0)
 endif ()
 
-<<<<<<< HEAD
 # Detect architecture from target processor (or override)
 string(TOLOWER "${_arch_to_use}" _processor_lower)
 
 if (_processor_lower MATCHES "^(amd64|x86_64|x64)")
-=======
 # Detect architecture based on CMAKE_SYSTEM_PROCESSOR
 string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" _processor_lower)
 
-if (_processor_lower MATCHES "^(amd64|x86_64|x64|amd64)")
->>>>>>> 4eec268a1d6499ba4a793abce1491018797319e7
+if (_processor_lower MATCHES "^(amd64|x86_64|x64)")
     set(HAHAHA_ARCH_X86_64 1)
     set(HAHAHA_ARCH_IS_X86_FAMILY 1)
     set(HAHAHA_ARCH_NAME "x86-64")
