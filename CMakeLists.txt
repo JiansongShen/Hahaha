@@ -39,10 +39,22 @@ if (MSVC)
 endif ()
 
 #=========================== Architecture Detection ===================================
-# Detect architecture and define macros (fallback to macros.h if not detected here)
-# These definitions are checked with #ifndef in macros.h, so macros.h serves as fallback
+# Detect architecture and define macros (fallback to macros.h if not detected here).
+# When cross-compiling, CMAKE_SYSTEM_PROCESSOR is the *target* arch; you can also
+# explicitly set HAHAHA_TARGET_ARCH (e.g. "aarch64", "x86_64") to override.
+# Example: build for ARM64 on x86 host:
+#   cmake --preset cross-arm64-linux   # uses toolchain + vcpkg arm64-linux triplet
+#   or: -DHAHAHA_TARGET_ARCH=aarch64 -DCMAKE_TOOLCHAIN_FILE=.../aarch64-linux-gcc.cmake
 
-# Determine bitness
+set(HAHAHA_TARGET_ARCH "" CACHE STRING
+    "Override target architecture (e.g. aarch64, x86_64). Empty = use CMAKE_SYSTEM_PROCESSOR (normal for cross-compile).")
+
+set(_arch_to_use "${CMAKE_SYSTEM_PROCESSOR}")
+if (HAHAHA_TARGET_ARCH)
+    set(_arch_to_use "${HAHAHA_TARGET_ARCH}")
+endif ()
+
+# Determine bitness (target pointer size when cross-compiling)
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(HAHAHA_ARCH_BITS 64)
 elseif (CMAKE_SIZEOF_VOID_P EQUAL 4)
@@ -51,10 +63,10 @@ else ()
     set(HAHAHA_ARCH_BITS 0)
 endif ()
 
-# Detect architecture based on CMAKE_SYSTEM_PROCESSOR
-string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" _processor_lower)
+# Detect architecture from target processor (or override)
+string(TOLOWER "${_arch_to_use}" _processor_lower)
 
-if (_processor_lower MATCHES "^(amd64|x86_64|x64|amd64)")
+if (_processor_lower MATCHES "^(amd64|x86_64|x64)")
     set(HAHAHA_ARCH_X86_64 1)
     set(HAHAHA_ARCH_IS_X86_FAMILY 1)
     set(HAHAHA_ARCH_NAME "x86-64")

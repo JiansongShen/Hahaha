@@ -128,6 +128,92 @@ struct SimdVec<f64, 512> {
     SimdVec& operator/=(SimdVec const& other) { v_ = _mm512_div_pd(v_, other.v_); return *this; }
 };
 
+// AVX-512F includes integer operations
+template <>
+struct SimdVec<i32, 512> {
+    using scalar_type = i32;
+    static constexpr std::size_t kBits = 512;
+    static constexpr std::size_t kLanes = 16;
+
+    __m512i v_{};
+
+    SimdVec() = default;
+    explicit SimdVec(__m512i v) : v_(v) {}
+
+    static SimdVec load(i32 const* ptr) {
+        return SimdVec(_mm512_loadu_si512(reinterpret_cast<__m512i const*>(ptr)));
+    }
+    static SimdVec load_aligned(i32 const* ptr) {
+        return SimdVec(_mm512_load_si512(reinterpret_cast<__m512i const*>(ptr)));
+    }
+    void store(i32* ptr) const {
+        _mm512_storeu_si512(reinterpret_cast<__m512i*>(ptr), v_);
+    }
+    void store_aligned(i32* ptr) const {
+        _mm512_store_si512(reinterpret_cast<__m512i*>(ptr), v_);
+    }
+
+    SimdVec operator-() const {
+        return SimdVec(_mm512_sub_epi32(_mm512_setzero_si512(), v_));
+    }
+    SimdVec operator+(SimdVec const& other) const {
+        return SimdVec(_mm512_add_epi32(v_, other.v_));
+    }
+    SimdVec operator-(SimdVec const& other) const {
+        return SimdVec(_mm512_sub_epi32(v_, other.v_));
+    }
+    SimdVec operator*(SimdVec const& other) const {
+        return SimdVec(_mm512_mullo_epi32(v_, other.v_));
+    }
+    SimdVec& operator+=(SimdVec const& other) { v_ = _mm512_add_epi32(v_, other.v_); return *this; }
+    SimdVec& operator-=(SimdVec const& other) { v_ = _mm512_sub_epi32(v_, other.v_); return *this; }
+    SimdVec& operator*=(SimdVec const& other) { v_ = _mm512_mullo_epi32(v_, other.v_); return *this; }
+};
+
+template <>
+struct SimdVec<i64, 512> {
+    using scalar_type = i64;
+    static constexpr std::size_t kBits = 512;
+    static constexpr std::size_t kLanes = 8;
+
+    __m512i v_{};
+
+    SimdVec() = default;
+    explicit SimdVec(__m512i v) : v_(v) {}
+
+    static SimdVec load(i64 const* ptr) {
+        return SimdVec(_mm512_loadu_si512(reinterpret_cast<__m512i const*>(ptr)));
+    }
+    static SimdVec load_aligned(i64 const* ptr) {
+        return SimdVec(_mm512_load_si512(reinterpret_cast<__m512i const*>(ptr)));
+    }
+    void store(i64* ptr) const {
+        _mm512_storeu_si512(reinterpret_cast<__m512i*>(ptr), v_);
+    }
+    void store_aligned(i64* ptr) const {
+        _mm512_store_si512(reinterpret_cast<__m512i*>(ptr), v_);
+    }
+
+    SimdVec operator-() const {
+        return SimdVec(_mm512_sub_epi64(_mm512_setzero_si512(), v_));
+    }
+    SimdVec operator+(SimdVec const& other) const {
+        return SimdVec(_mm512_add_epi64(v_, other.v_));
+    }
+    SimdVec operator-(SimdVec const& other) const {
+        return SimdVec(_mm512_sub_epi64(v_, other.v_));
+    }
+#if defined(__AVX512DQ__)
+    // AVX-512DQ provides 64-bit integer multiplication
+    SimdVec operator*(SimdVec const& other) const {
+        return SimdVec(_mm512_mullo_epi64(v_, other.v_));
+    }
+    SimdVec& operator*=(SimdVec const& other) { v_ = _mm512_mullo_epi64(v_, other.v_); return *this; }
+#endif
+    SimdVec& operator+=(SimdVec const& other) { v_ = _mm512_add_epi64(v_, other.v_); return *this; }
+    SimdVec& operator-=(SimdVec const& other) { v_ = _mm512_sub_epi64(v_, other.v_); return *this; }
+};
+
 } // namespace hahaha::backend
 
 #endif // __AVX512F__
