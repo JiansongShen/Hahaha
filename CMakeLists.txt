@@ -73,20 +73,27 @@ file(GLOB_RECURSE HAHAHA_SOURCES CONFIGURE_DEPENDS
   "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
 )
 
-if(NOT HAHAHA_DISPLAY)
-  # Headless build: drop display sources that depend on GLFW/OpenGL/ImGui.
-  set(_filtered_sources "")
-  foreach(_src IN LISTS HAHAHA_SOURCES)
-    string(REPLACE "\\" "/" _src_norm "${_src}")
-    if(NOT _src_norm MATCHES "/core/src/display/")
-      list(APPEND _filtered_sources "${_src}")
-    endif()
-  endforeach()
-  set(HAHAHA_SOURCES "${_filtered_sources}"
-          core/include/ml/dataset/DatasetInnerLoader.h)
-endif()
+file(
+        GLOB_RECURSE HAHAHA_CUDA_SOURCES CONFIGURE_DEPENDS
+        "${PROJECT_SOURCE_DIR}/core/src/*.cu"
+)
 
-add_library(hahaha STATIC ${HAHAHA_SOURCES})
+# Enable CUDA language before any target uses .cu sources (required for CMAKE_CUDA_COMPILE_OBJECT etc.)
+if (HAHAHA_USE_CUDA)
+    if (MSVC)
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -allow-unsupported-compiler")
+    endif ()
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 20)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+endif ()
+
+if (HAHAHA_USE_CUDA)
+    add_library(hahaha STATIC ${HAHAHA_CPP_SOURCES} ${HAHAHA_CUDA_SOURCES})
+    add_compile_definitions(HAHAHA_USE_CUDA)
+else ()
+    add_library(hahaha STATIC ${HAHAHA_CPP_SOURCES})
+endif ()
 add_library(hahaha::hahaha ALIAS hahaha)
 
 if(HAHAHA_ENABLE_COVERAGE)

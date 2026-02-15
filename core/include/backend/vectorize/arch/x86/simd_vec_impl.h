@@ -1,5 +1,4 @@
-//  Copyright (c) 2025 - 2026 Contributors of
-//  Hahaha(https://github.com/Napbad/Hahaha)
+//  Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,8 +13,17 @@
 //  limitations under the License.
 //
 //  Contributors:
-//  Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
-//
+//  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
 //
 
-#include "CpuMemory.h"
+#ifndef HAHAHA_SIMD_VEC_IMPL_H_92AB0F5E920442FC95C08FE4487A6DE8
+#define HAHAHA_SIMD_VEC_IMPL_H_92AB0F5E920442FC95C08FE4487A6DE8
+
+#ifdef
+
+namespace hahaha::backend {
+
+}
+
+
+#endif //HAHAHA_SIMD_VEC_IMPL_H_92AB0F5E920442FC95C08FE4487A6DE8

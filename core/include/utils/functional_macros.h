@@ -19,18 +19,5 @@
 #ifndef HAHAHA_UTILS_MACROS_H
 #define HAHAHA_UTILS_MACROS_H
 
-#if defined(_MSC_VER)
-#define HAHAHA_PRAGMA_UNROLL(n)
-#elif defined(__clang__)
-#define HAHAHA_STR(x) #x
-#define HAHAHA_XSTR(x) HAHAHA_STR(x)
-#define HAHAHA_PRAGMA_UNROLL(n) _Pragma(HAHAHA_XSTR(unroll n))
-#elif defined(__GNUC__)
-#define HAHAHA_STR(x) #x
-#define HAHAHA_XSTR(x) HAHAHA_STR(x)
-#define HAHAHA_PRAGMA_UNROLL(n) _Pragma(HAHAHA_XSTR(GCC unroll n))
-#else
-#define HAHAHA_PRAGMA_UNROLL(n)
-#endif
 
 #endif // HAHAHA_UTILS_MACROS_H

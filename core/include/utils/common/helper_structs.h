@@ -26,16 +26,16 @@
 
 namespace hahaha::utils {
 
-using hahaha::common::f32;
-using hahaha::common::f64;
-using hahaha::common::i16;
-using hahaha::common::i32;
-using hahaha::common::i64;
-using hahaha::common::i8;
-using hahaha::common::u16;
-using hahaha::common::u32;
-using hahaha::common::u64;
-using hahaha::common::u8;
+using common::f32;
+using common::f64;
+using common::i16;
+using common::i32;
+using common::i64;
+using common::i8;
+using common::u16;
+using common::u32;
+using common::u64;
+using common::u8;
 
 /**
  * @brief Type trait to check if a type is std::initializer_list.
