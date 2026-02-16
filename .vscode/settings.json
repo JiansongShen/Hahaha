@@ -61,6 +61,14 @@
     // Auto insert header on new files and update year range on save
     "psi-header.changes-tracking": {
         "autoHeader": "autoSave"
-    }
+    },
 
+    "clangd.arguments": [
+        "--compile-commands-dir=cmake-build-debugwithcuda",
+        "--compile-commands-dir=cmake-build-debug",
+        "--compile-commands-dir=build",
+        "--compile-commands-dir=builddir",
+        "--compile-commands-dir=buildDir",
+        "--compile-commands-dir=cmake-build"
+    ]
 }

@@ -8,7 +8,6 @@
       }
     },
     "runArgs": [
-      "--network=host",
       "--privileged"
     ],
     "mounts": [
