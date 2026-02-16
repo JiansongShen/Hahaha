@@ -117,13 +117,13 @@ TEST_F(SGDOptimizerTest, ZeroGrad) {
         std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}),
                                                      1.0f));
 
-    ASSERT_NE(w.grad(), nullptr);
+    ASSERT_FALSE(w.grad().isEmpty());
     opt.zeroGrad();
 
     // After zeroGrad, the grad tensor should exist but be all zeros
     auto g = w.grad();
-    ASSERT_NE(g, nullptr);
-    EXPECT_FLOAT_EQ(g->at({0}), 0.0f);
+    ASSERT_FALSE(g.isEmpty());
+    EXPECT_FLOAT_EQ(g.at({0}), 0.0f);
 }
 
 TEST_F(SGDOptimizerTest, Step_WithNullGrad) {

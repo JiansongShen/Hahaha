@@ -57,9 +57,9 @@ TYPED_TEST(TensorApiTest, Data_ReturnsSharedPtr) {
     EXPECT_EQ(data->at({}), TypeParam(3));
 }
 
-TYPED_TEST(TensorApiTest, Grad_WhenNoBackward_ReturnsNullptr) {
+TYPED_TEST(TensorApiTest, Grad_WhenNoBackward_ReturnsEmpty) {
     Tensor<TypeParam> t(3);
-    EXPECT_EQ(t.grad(), nullptr);
+    EXPECT_TRUE(t.grad().isEmpty());
 }
 
 TYPED_TEST(TensorApiTest, Clear_ResetsUnderlyingData) {

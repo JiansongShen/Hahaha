@@ -32,7 +32,7 @@
 #include "ml/dataset/DatasetHandleBlankStrategy.h"
 #include "ml/dataset/DatasetTypeUnifyStrategy.h"
 #include "ml/dataset/dataset_format.h"
-#include "utils/common/HelperStruct.h"
+#include "utils/common/helper_structs.h"
 #include "utils/common/StringUtils.h"
 #include "utils/log/Logger.h"
 
@@ -171,14 +171,14 @@ class DatasetInnerLoader {
         std::getline(ifs, line);
         auto columns = utils::StringUtils::split(line, CSVLineDelimiter);
         columnNum_ = columns.size();
-        dataset.features_ = std::move(columns);
+        dataset.columns_ = std::move(columns);
     }
 
     template <typename T>
     void fillData(std::vector<std::vector<T>>& dataList,
                   DatasetInner<T>& dataset) {
         if (dataList.empty()) {
-            dataset.sample = Tensor<T>();
+            dataset.samples_ = Tensor<T>();
             return;
         }
 
@@ -193,7 +193,7 @@ class DatasetInnerLoader {
             }
         }
 
-        dataset.sample = sampleTensor;
+        dataset.samples_ = sampleTensor;
     }
 
     void clearStatus() {

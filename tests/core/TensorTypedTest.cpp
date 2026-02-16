@@ -498,11 +498,11 @@ TYPED_TEST(TensorTypedTest, Backward_SimpleAddition_GradientPropagation) {
         auto c = a + b;
         c.backward();
 
-        ASSERT_NE(a.grad(), nullptr);
-        ASSERT_NE(b.grad(), nullptr);
+        ASSERT_FALSE(a.grad().isEmpty());
+        ASSERT_FALSE(b.grad().isEmpty());
         // Gradient should be 1 for addition
-        this->expectNear(T(1.0), a.grad()->at({0, 0}));
-        this->expectNear(T(1.0), b.grad()->at({0, 0}));
+        this->expectNear(T(1.0), a.grad().at({0, 0}));
+        this->expectNear(T(1.0), b.grad().at({0, 0}));
     }
 }
 
@@ -517,11 +517,11 @@ TYPED_TEST(TensorTypedTest, Backward_Multiplication_GradientPropagation) {
         auto c = a * b;
         c.backward();
 
-        ASSERT_NE(a.grad(), nullptr);
-        ASSERT_NE(b.grad(), nullptr);
+        ASSERT_FALSE(a.grad().isEmpty());
+        ASSERT_FALSE(b.grad().isEmpty());
         // dc/da = b = 3, dc/db = a = 2
-        this->expectNear(T(3.0), a.grad()->at({0, 0}));
-        this->expectNear(T(2.0), b.grad()->at({0, 0}));
+        this->expectNear(T(3.0), a.grad().at({0, 0}));
+        this->expectNear(T(2.0), b.grad().at({0, 0}));
     }
 }
 
@@ -679,7 +679,7 @@ TYPED_TEST(TensorTypedTest, Clear_ResetsUnderlyingData) {
 TYPED_TEST(TensorTypedTest, Grad_WhenNoBackward_ReturnsNullptr) {
     using T = TestFixture::Type;
     Tensor<T> t(T(3));
-    EXPECT_EQ(t.grad(), nullptr);
+    EXPECT_TRUE(t.grad().isEmpty());
 }
 
 TYPED_TEST(TensorTypedTest, RequiresGrad_FlagIsStoredOnNode) {

@@ -48,13 +48,13 @@ template <typename T> class SGDOptimizer : public Optimizer<T> {
             }
 
             auto grad = param.grad();
-            if (!grad) {
+            if (grad.isEmpty()) {
                 continue;
             }
 
             // theta = theta - learningRate * gradient
             // Use TensorWrapper's axpy for device-neutral in-place update
-            param.data()->axpy(-learningRate, *(grad->data()));
+            param.data()->axpy(-learningRate, *(grad.data()));
         }
     }
 };

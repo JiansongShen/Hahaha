@@ -218,11 +218,19 @@ template <typename T> class Tensor {
      * @brief Get the managed gradient as a Tensor.
      * @return Tensor containing the accumulated gradients.
      */
-    [[nodiscard]] std::shared_ptr<Tensor> grad() const {
+    [[nodiscard]] Tensor grad() const {
         if (computeNode_->getGrad()) {
-            return std::make_shared<Tensor>(computeNode_->getGrad());
+            return Tensor(computeNode_->getGrad());
         }
-        return nullptr;
+        return Tensor();
+    }
+
+    /**
+     * @brief Check if the tensor is empty.
+     * @return true if the tensor is empty.
+     */
+    [[nodiscard]] bool isEmpty() const {
+        return getTotalSize() == 0;
     }
 
     /**

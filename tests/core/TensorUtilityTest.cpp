@@ -79,7 +79,7 @@ TYPED_TEST(TensorUtilityTypedTest, Grad_WhenNoBackward_ReturnsNullptr) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
     Tensor<T> a(val);
-    EXPECT_EQ(a.grad(), nullptr);
+    EXPECT_TRUE(a.grad().isEmpty());
 }
 
 TYPED_TEST(TensorUtilityTypedTest, ClearGrad_ResetsGradient) {
@@ -95,7 +95,7 @@ TYPED_TEST(TensorUtilityTypedTest, ClearGrad_ResetsGradient) {
     a.setRequiresGrad(true);
     auto b = a * multiplier;
     b.backward();
-    EXPECT_NE(a.grad(), nullptr);
+    EXPECT_FALSE(a.grad().isEmpty());
 
     a.clearGrad();
     // In current implementation clearGrad() keeps grad buffers but zeros them

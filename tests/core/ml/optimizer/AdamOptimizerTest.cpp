@@ -249,7 +249,7 @@ TYPED_TEST(AdamOptimizerTest, ZeroGrad_Functionality) {
     AdamOptimizer<T> opt({w}, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.zeroGrad();
-    EXPECT_EQ(w.grad()->at({}), T(0.0));
+    EXPECT_EQ(w.grad().at({}), T(0.0));
 }
 
 TYPED_TEST(AdamOptimizerTest, AddParameter_0D_BeforeStep) {

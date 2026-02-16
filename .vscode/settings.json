@@ -64,8 +64,10 @@
     },
     "clangd.arguments": [
         "--compile-commands-dir=cmake-build-vcpkg-linux",
-        "--compile-commands-dir=builddir",
         "--completion-style=detailed"
     ],
     "clangd.path": "/usr/bin/clangd",
+    "clangd.fallbackFlags": [
+        "-std=c++23"
+    ],
 }
