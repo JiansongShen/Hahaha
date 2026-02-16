@@ -9,7 +9,6 @@
       }
     },
     "runArgs": [
-      "--network=host",
       "--gpus", "all",
       "--privileged"
     ],
