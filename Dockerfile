@@ -131,6 +131,7 @@ RUN pipx install pre-commit
 
 ENV PATH=/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+ENV VCPKG_ROOT=/workspace/vcpkg/vcpkg_root
 
 WORKDIR /workspace
 

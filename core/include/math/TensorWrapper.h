@@ -1,22 +1,3 @@
-//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//       https://www.apache.org/licenses/LICENSE-2.0
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-//  Contributors:
-//  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
-//  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
-//
-
 #ifndef HAHAHA_MATH_TENSOR_WRAPPER_H
 #define HAHAHA_MATH_TENSOR_WRAPPER_H
 
@@ -31,7 +12,6 @@
 #include "backend/Device.h"
 #include "backend/DeviceComputeDispatcher.h"
 #include "backend/DeviceRegistry.h"
-#include "slice_setting.h"
 #ifdef HAHAHA_USE_CUDA
 #if __has_include(<driver_types.h>)
 #include <cuda_runtime.h>
@@ -350,13 +330,37 @@ template <typename T> class TensorWrapper {
      * @param newShape Vector of new dimension sizes.
      * @return TensorWrapper A new tensor with reshaped dimensions.
      */
-    TensorWrapper reshape(const std::vector<size_t>& newShape) const;
+    TensorWrapper reshape(const std::vector<size_t>& newShape) const {
+        const size_t totalSize = std::accumulate(
+            newShape.begin(), newShape.end(), 1ULL, std::multiplies());
+        if (totalSize != getTotalSize()) {
+            throw std::invalid_argument("New shape total size ("
+                                        + std::to_string(totalSize)
+                                        + ") must match current size ("
+                                        + std::to_string(getTotalSize()) + ")");
+        }
+
+        TensorWrapper result;
+        result.data_.setShape(TensorShape(newShape));
+        result.data_.setStride(TensorStride(result.data_.getShape()));
+
+        size_t currentSize = getTotalSize();
+        result.data_.setData(std::shared_ptr<T[]>(new T[currentSize]));
+        result.data_.setDevice(data_.getDevice());
+        std::copy(data_.getData().get(),
+                  data_.getData().get() + currentSize,
+                  result.data_.getData().get());
+
+        return result;
+    }
 
     /**
      * @brief Number of dimensions.
      * @return size_t dimension count.
      */
-    [[nodiscard]] size_t getDimensions() const;
+    [[nodiscard]] size_t getDimensions() const {
+        return data_.getShape().getDims().size();
+    }
 
     /**
      * @brief Element-wise addition.
@@ -377,7 +381,49 @@ template <typename T> class TensorWrapper {
      * @param other The tensor to add (B).
      * @return TensorWrapper Result tensor (C).
      */
-    TensorWrapper add(const TensorWrapper& other) const;
+    TensorWrapper add(const TensorWrapper& other) const {
+        checkSameDevice(other);
+
+        if (getTotalSize() == 1 && other.getTotalSize() > 1) {
+            return other.add(data_.getData()[0]);
+        }
+        if (other.getTotalSize() == 1 && getTotalSize() > 1) {
+            return add(other.data_.getData()[0]);
+        }
+
+        if (getTotalSize() == 1 && other.getTotalSize() == 1) {
+            TensorWrapper result;
+            result.data_.setShape(data_.getShape());
+            result.data_.setStride(data_.getStride());
+            result.data_.setDevice(data_.getDevice());
+            result.data_.setData(std::shared_ptr<T[]>(new T[1]));
+            result.data_.getData()[0] =
+                data_.getData()[0] + other.data_.getData()[0];
+            return result;
+        }
+
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument(
+                "Tensors must have the same shape for addition");
+        }
+
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+        auto res = backend::dispatchAdd<T>(
+            data_.getDevice()->getType(), *this, other, result);
+
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise subtraction.
@@ -394,7 +440,49 @@ template <typename T> class TensorWrapper {
      * @param other The tensor to subtract (B).
      * @return TensorWrapper Result tensor (C).
      */
-    TensorWrapper subtract(const TensorWrapper& other) const;
+    TensorWrapper subtract(const TensorWrapper& other) const {
+        checkSameDevice(other);
+
+        if (getTotalSize() == 1 && other.getTotalSize() > 1) {
+            return other.subtractFrom(data_.getData()[0]);
+        }
+        if (other.getTotalSize() == 1 && getTotalSize() > 1) {
+            return subtract(other.data_.getData()[0]);
+        }
+        if (getTotalSize() == 1 && other.getTotalSize() == 1) {
+            TensorWrapper result;
+            result.data_.setShape(data_.getShape());
+            result.data_.setStride(data_.getStride());
+            result.data_.setDevice(data_.getDevice());
+            result.data_.setData(std::shared_ptr<T[]>(new T[1]));
+            result.data_.getData()[0] =
+                data_.getData()[0] - other.data_.getData()[0];
+            return result;
+        }
+
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument(
+                "Tensors must have the same shape for subtraction");
+        }
+
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchSub<T>(
+            data_.getDevice()->getType(), *this, other, result);
+
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise multiplication.
@@ -410,7 +498,48 @@ template <typename T> class TensorWrapper {
      * @param other The tensor to multiply (B).
      * @return TensorWrapper Result tensor (C).
      */
-    TensorWrapper multiply(const TensorWrapper& other) const;
+    TensorWrapper multiply(const TensorWrapper& other) const {
+        checkSameDevice(other);
+        if (getTotalSize() == 1 && other.getTotalSize() > 1) {
+            return other.multiply(data_.getData()[0]);
+        }
+        if (other.getTotalSize() == 1 && getTotalSize() > 1) {
+            return multiply(other.data_.getData()[0]);
+        }
+        if (getTotalSize() == 1 && other.getTotalSize() == 1) {
+            TensorWrapper result;
+            result.data_.setShape(data_.getShape());
+            result.data_.setStride(data_.getStride());
+            result.data_.setDevice(data_.getDevice());
+            result.data_.setData(std::shared_ptr<T[]>(new T[1]));
+            result.data_.getData()[0] =
+                data_.getData()[0] * other.data_.getData()[0];
+            return result;
+        }
+
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument(
+                "Tensors must have the same shape for multiplication");
+        }
+
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchMul<T>(
+            data_.getDevice()->getType(), *this, other, result);
+
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise division.
@@ -427,28 +556,124 @@ template <typename T> class TensorWrapper {
      * @param other The tensor to divide (B).
      * @return TensorWrapper Result tensor (C).
      */
-    TensorWrapper divide(const TensorWrapper& other) const;
+    TensorWrapper divide(const TensorWrapper& other) const {
+        checkSameDevice(other);
+
+        if (getTotalSize() == 1 && other.getTotalSize() > 1) {
+            return other.divideInto(data_.getData()[0]);
+        }
+        if (other.getTotalSize() == 1 && getTotalSize() > 1) {
+            return divide(other.data_.getData()[0]);
+        }
+        if (getTotalSize() == 1 && other.getTotalSize() == 1) {
+            if (other.data_.getData()[0] == T(0)) {
+                throw std::runtime_error("Division by zero");
+            }
+            TensorWrapper result;
+            result.data_.setShape(data_.getShape());
+            result.data_.setStride(data_.getStride());
+            result.data_.setDevice(data_.getDevice());
+            result.data_.setData(std::shared_ptr<T[]>(new T[1]));
+            result.data_.getData()[0] =
+                data_.getData()[0] / other.data_.getData()[0];
+            return result;
+        }
+
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument(
+                "Tensors must have the same shape for division");
+        }
+
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchDiv<T>(
+            data_.getDevice()->getType(), *this, other, result);
+
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise scalar addition.
      * @param scalar The scalar value to add to each element.
      * @return TensorWrapper Result tensor with same shape as this.
      */
-    TensorWrapper add(T scalar) const;
+    TensorWrapper add(T scalar) const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchAdd(
+            data_.getDevice()->getType(), *this, scalar, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise scalar subtraction.
      * @param scalar The scalar value to subtract from each element.
      * @return TensorWrapper Result tensor with same shape as this.
      */
-    TensorWrapper subtract(T scalar) const;
+    TensorWrapper subtract(T scalar) const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchSub(
+            data_.getDevice()->getType(), *this, scalar, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise scalar multiplication.
      * @param scalar The scalar value to multiply each element by.
      * @return TensorWrapper Result tensor with same shape as this.
      */
-    TensorWrapper multiply(T scalar) const;
+    TensorWrapper multiply(T scalar) const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchMul(
+            data_.getDevice()->getType(), *this, scalar, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise scalar division.
@@ -457,14 +682,48 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper Result tensor with same shape as this.
      * @throws std::runtime_error if scalar is zero.
      */
-    TensorWrapper divide(T scalar) const;
+    TensorWrapper divide(T scalar) const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchDiv(
+            data_.getDevice()->getType(), *this, scalar, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise subtraction from scalar (scalar - tensor).
      * @param scalar The scalar value to subtract this tensor from.
      * @return TensorWrapper Result tensor with same shape as this.
      */
-    TensorWrapper subtractFrom(T scalar) const;
+    TensorWrapper subtractFrom(T scalar) const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchSub(
+            data_.getDevice()->getType(), scalar, *this, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Element-wise division into scalar (scalar / tensor).
@@ -472,7 +731,24 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper Result tensor with same shape as this.
      * @throws std::runtime_error if any element of this tensor is zero.
      */
-    TensorWrapper divideInto(T scalar) const;
+    TensorWrapper divideInto(T scalar) const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
+            result.to(data_.getDevice());
+        }
+        result.data_.setDevice(data_.getDevice());
+
+        auto res = backend::dispatchDiv(
+            data_.getDevice()->getType(), scalar, *this, result);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Matrix multiplication (for 2D tensors).
@@ -487,7 +763,43 @@ template <typename T> class TensorWrapper {
      * @param other The tensor to multiply with (B).
      * @return TensorWrapper Result tensor (C).
      */
-    TensorWrapper matmul(const TensorWrapper& other) const;
+    TensorWrapper matmul(const TensorWrapper& other) const {
+        if (getDimensions() != 2 || other.getDimensions() != 2) {
+            throw std::invalid_argument(
+                "matmul is only implemented for 2D tensors");
+        }
+
+        checkSameDevice(other);
+
+        const auto& thisDims = data_.getShape().getDims();
+        const auto& otherDims = other.data_.getShape().getDims();
+
+        if (thisDims[1] != otherDims[0]) {
+            throw std::invalid_argument(
+                "Matrix dimensions mismatch for matmul: ("
+                + std::to_string(thisDims[0]) + "x"
+                + std::to_string(thisDims[1]) + ") and ("
+                + std::to_string(otherDims[0]) + "x"
+                + std::to_string(otherDims[1]) + ")");
+        }
+
+        size_t rows = thisDims[0];
+        size_t cols = otherDims[1];
+
+        TensorWrapper result;
+        result.data_.setShape(TensorShape({rows, cols}));
+        result.data_.setStride(TensorStride(result.data_.getShape()));
+        result.data_.setDevice(data_.getDevice());
+        result.data_.setData(std::shared_ptr<T[]>(new T[rows * cols]));
+
+        auto result_val = backend::dispatchMatMul(
+            data_.getDevice()->getType(), *this, other, result);
+        if (!result_val) {
+            throw std::runtime_error(result_val.error().message());
+        }
+
+        return result;
+    }
 
     /**
      * @brief Transpose operation (for 2D tensors).
@@ -496,19 +808,60 @@ template <typename T> class TensorWrapper {
      *
      * @return TensorWrapper transposed tensor.
      */
-    TensorWrapper transpose() const;
+    TensorWrapper transpose() const {
+        if (getDimensions() != 2) {
+            throw std::invalid_argument(
+                "transpose is only implemented for 2D tensors for now");
+        }
+
+        const auto& shapeDims = data_.getShape().getDims();
+        size_t rows = shapeDims[0];
+        size_t cols = shapeDims[1];
+
+        TensorWrapper result;
+        result.data_.setShape(TensorShape({cols, rows}));
+        result.data_.setStride(TensorStride(result.data_.getShape()));
+        result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
+        result.data_.setDevice(data_.getDevice());
+
+        for (size_t i = 0; i < rows; ++i) {
+            for (size_t j = 0; j < cols; ++j) {
+                result.data_.getData()[j * rows + i] =
+                    data_.getData()[i * cols + j];
+            }
+        }
+
+        return result;
+    }
 
     /**
      * @brief Sum all elements in the tensor.
      * @return T The sum of all tensor elements.
      */
-    T sum() const;
+    T sum() const {
+        T result = T(0);
+        const auto totalSize = getTotalSize();
+        for (size_t i = 0; i < totalSize; ++i) {
+            result += data_[i];
+        }
+        return result;
+    }
 
     /**
      * @brief Create a deep copy of this tensor.
      * @return TensorWrapper A new tensor with copied data.
      */
-    TensorWrapper clone() const;
+    TensorWrapper clone() const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        result.data_.setDevice(data_.getDevice());
+        result.data_.setData(std::make_shared<T[]>(getTotalSize()));
+        for (size_t i = 0; i < getTotalSize(); ++i) {
+            result.data_.getData()[i] = data_[i];
+        }
+        return result;
+    }
 
     /**
      * @brief Sum tensor elements along specified axes.
@@ -519,13 +872,118 @@ template <typename T> class TensorWrapper {
      * @throws std::invalid_argument if any axis is out of bounds.
      */
     TensorWrapper sum(std::vector<size_t> axes,
-                      const bool keepDims = false) const;
+                      const bool keepDims = false) const {
+        if (axes.empty()) {
+            return this->clone();
+        }
+
+        std::ranges::sort(axes);
+        axes.erase(std::ranges::unique(axes).begin(), axes.end());
+
+        // 1. get target shape
+        std::vector<bool> isReduced;
+        const std::vector<size_t>& srcShape = getShape();
+        std::vector<size_t> resShape;
+
+        isReduced.resize(srcShape.size(), false);
+        for (const unsigned long axe : axes) {
+            if (static_cast<long>(axe)
+                > static_cast<long>(isReduced.size()) - 1) {
+                throw std::invalid_argument("axis is too big!");
+            }
+            isReduced[axe] = true;
+        }
+
+        if (axes.size() == this->getShape().size()) {
+            TensorWrapper result;
+            result.data_.setShape(TensorShape({}));
+            result.data_.setStride(TensorStride(result.data_.getShape()));
+            result.data_.setData(std::make_shared<T[]>(1));
+            result.data_.setDevice(data_.getDevice());
+            result.getRawData().get()[0] = this->sum();
+            return result;
+        }
+
+        if (this->getShape().size() == 0) {
+            return this->clone();
+        }
+
+        for (size_t i = 0; i < srcShape.size(); ++i) {
+            // if sum for this dim, then remove it or set 1 in resShape
+            if (isReduced[i]) {
+                if (keepDims) {
+                    resShape.push_back(1);
+                }
+            } else {
+                // if not then just add dim
+                resShape.push_back(srcShape[i]);
+            }
+        }
+
+        // 2. calculate necessary datas
+        // need to calculate
+        // a. how many should dstIdx reduce when it needs to reduce
+        //      when coord carries at a position(current value on position is a)
+        //          if this pos is not reduced, then dstIdx should minus
+        //              a * correspondStride
+        //          if this pos is reduced, then do nothing,
+        // b. how many value should dstIdx add when it needs to add
+        //      when coord increases at a position,
+        //          if this pos is not reduced, then dstIdx should add a value
+        //              equals to the stride
+        //          if this pos is reduced, then dstIdx will add nothing
+        std::vector<size_t> resStride(srcShape.size(), 0);
+        TensorWrapper result((TensorShape(resShape)));
+        auto resultStride = result.getStride().getStrides();
+        size_t resultStrideIdx = 0;
+        for (size_t i = 0; i < srcShape.size(); ++i) {
+            if (isReduced[i]) {
+                if (keepDims) {
+                    resultStrideIdx++;
+                }
+            } else {
+                resStride[i] = resultStride[resultStrideIdx++];
+            }
+        }
+
+        // 3. calculate data to result
+        const std::shared_ptr<T[]> srcPtr = getRawData();
+        std::shared_ptr<T[]> resPtr = result.getRawData();
+        std::vector<size_t> coord(srcShape.size(), 0);
+        size_t dstIdx = 0;
+
+        for (size_t srcIdx = 0; srcIdx < getTotalSize(); ++srcIdx) {
+            resPtr[dstIdx] += srcPtr[srcIdx];
+
+            for (long i = static_cast<long>(coord.size() - 1); i >= 0; --i) {
+                ++coord[i];
+                // need to carry, next value on position will add one
+                if (coord[i] == srcShape[i]) {
+                    coord[i] = 0;
+                    dstIdx -= resStride[i] * (srcShape[i] - 1);
+                    continue;
+                }
+                dstIdx += resStride[i];
+                break;
+            }
+        }
+
+        return result;
+    }
 
     /**
      * @brief Clear all values in the tensor, setting them to default value
      * (likely 0).
      */
-    void clear();
+    void clear() {
+        if (data_.getData() == nullptr) {
+            return;
+        }
+        const auto totalSize = getTotalSize();
+        for (size_t i = 0; i < totalSize; ++i) {
+            data_[i] = T();
+        }
+    }
 
     /**
      * @brief Broadcast tensor to match the shape of another tensor.
@@ -548,118 +1006,279 @@ template <typename T> class TensorWrapper {
      * @throws std::invalid_argument if newShape is not broadcast-compatible,
      *         or if newShape rank is smaller than current rank.
      */
-    TensorWrapper broadcastTo(const TensorShape& newShape);
+    TensorWrapper broadcastTo(const TensorShape& newShape) {
+        auto broadcasted =
+            TensorShape::broadcastShape(this->data_.getShape(), newShape);
+        if (!broadcasted.has_value() || TensorShape(*broadcasted) != newShape) {
+            throw std::invalid_argument("Cannot broadcast shape "
+                                        + this->data_.getShape().toString()
+                                        + " to " + newShape.toString());
+        }
+
+        TensorWrapper result;
+        result.data_ = this->data_.share();
+        if (newShape.getDims().size() < this->getShape().size()) {
+            throw std::invalid_argument(
+                "invalid argument of broadcastTo(), the target shape is "
+                + newShape.toString() + " but current shape is "
+                + this->data_.getShape().toString());
+        }
+
+        TensorStride newStride = this->data_.getStride();
+        auto shapeDiff = newShape.getDims().size() - this->getShape().size();
+        newStride.getStrides().insert(
+            newStride.getStrides().begin(), shapeDiff, 0);
+
+        long newShapeIdx = static_cast<long>(newShape.getDims().size() - 1);
+        long selfShapeIdx = static_cast<long>(this->getShape().size() - 1);
+
+        while (selfShapeIdx >= 0) {
+            if (newShape.getDims()[newShapeIdx] != 1
+                && getShape()[selfShapeIdx] == 1) {
+                newStride.getStrides()[newShapeIdx] = 0;
+            }
+
+            --newShapeIdx;
+            --selfShapeIdx;
+        }
+
+        result.data_.setShape(newShape);
+        result.data_.setStride(newStride);
+        result.data_.setDevice(data_.getDevice());
+
+        return result;
+    }
 
     /**
      * @brief Addition operator (tensor + tensor).
      * @param other The tensor to add.
      * @return TensorWrapper Result of addition.
      */
-    TensorWrapper operator+(const TensorWrapper& other) const;
+    TensorWrapper operator+(const TensorWrapper& other) const {
+        return add(other);
+    }
 
     /**
      * @brief Subtraction operator (tensor - tensor).
      * @param other The tensor to subtract.
      * @return TensorWrapper Result of subtraction.
      */
-    TensorWrapper operator-(const TensorWrapper& other) const;
+    TensorWrapper operator-(const TensorWrapper& other) const {
+        return subtract(other);
+    }
 
     /**
      * @brief Multiplication operator (tensor * tensor).
      * @param other The tensor to multiply.
      * @return TensorWrapper Result of multiplication.
      */
-    TensorWrapper operator*(const TensorWrapper& other) const;
+    TensorWrapper operator*(const TensorWrapper& other) const {
+        return multiply(other);
+    }
 
     /**
      * @brief Division operator (tensor / tensor).
      * @param other The tensor to divide by.
      * @return TensorWrapper Result of division.
      */
-    TensorWrapper operator/(const TensorWrapper& other) const;
+    TensorWrapper operator/(const TensorWrapper& other) const {
+        return divide(other);
+    }
 
     /**
      * @brief Addition operator (tensor + scalar).
      * @param scalar The scalar value to add.
      * @return TensorWrapper Result of addition.
      */
-    TensorWrapper operator+(T scalar) const;
+    TensorWrapper operator+(T scalar) const {
+        return add(scalar);
+    }
 
     /**
      * @brief Subtraction operator (tensor - scalar).
      * @param scalar The scalar value to subtract.
      * @return TensorWrapper Result of subtraction.
      */
-    TensorWrapper operator-(T scalar) const;
+    TensorWrapper operator-(T scalar) const {
+        return subtract(scalar);
+    }
 
     /**
      * @brief Multiplication operator (tensor * scalar).
      * @param scalar The scalar value to multiply.
      * @return TensorWrapper Result of multiplication.
      */
-    TensorWrapper operator*(T scalar) const;
+    TensorWrapper operator*(T scalar) const {
+        return multiply(scalar);
+    }
 
     /**
      * @brief Division operator (tensor / scalar).
      * @param scalar The scalar value to divide by.
      * @return TensorWrapper Result of division.
      */
-    TensorWrapper operator/(T scalar) const;
+    TensorWrapper operator/(T scalar) const {
+        return divide(scalar);
+    }
 
     /**
      * @brief Unary negation operator (-tensor).
      * @return TensorWrapper Negated tensor.
      */
-    TensorWrapper operator-() const;
+    TensorWrapper operator-() const {
+        TensorWrapper result;
+        result.data_.setShape(data_.getShape());
+        result.data_.setStride(data_.getStride());
+        const size_t tensorSize = getTotalSize();
+        result.data_.setData(std::shared_ptr<T[]>(new T[tensorSize]));
+        result.data_.setDevice(data_.getDevice());
+        for (size_t i = 0; i < tensorSize; ++i) {
+            result.data_.getData()[i] = -data_.getData()[i];
+        }
+        return result;
+    }
 
     /**
      * @brief In-place addition operator (tensor += tensor).
      * @param other The tensor to add.
      * @return TensorWrapper& Reference to this.
      */
-    TensorWrapper& operator+=(const TensorWrapper& other);
+    TensorWrapper& operator+=(const TensorWrapper& other) {
+        if (other.getTotalSize() == 1) {
+            return *this += other.data_.getData()[0];
+        }
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument(
+                "Tensors must have the same shape for addition");
+        }
+
+        checkSameDevice(other);
+
+        const size_t tensorSize = getTotalSize();
+
+        for (size_t i = 0; i < tensorSize; ++i) {
+            data_.getData()[i] = data_.getData()[i] + other.data_.getData()[i];
+        }
+
+        return *this;
+    }
 
     /**
      * @brief In-place subtraction operator (tensor -= tensor).
      * @param other The tensor to subtract.
      * @return TensorWrapper& Reference to this.
      */
-    TensorWrapper& operator-=(const TensorWrapper& other);
+    TensorWrapper& operator-=(const TensorWrapper& other) {
+        if (other.getTotalSize() == 1) {
+            return *this -= other.data_.getData()[0];
+        }
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument(
+                "Tensors must have the same shape for subtraction");
+        }
+
+        checkSameDevice(other);
+
+        const size_t tensorSize = getTotalSize();
+
+        for (size_t i = 0; i < tensorSize; ++i) {
+            data_.getData()[i] = data_.getData()[i] - other.data_.getData()[i];
+        }
+
+        return *this;
+    }
 
     /**
      * @brief In-place multiplication operator (tensor *= tensor).
      * @param other The tensor to multiply.
      * @return TensorWrapper& Reference to this.
      */
-    TensorWrapper& operator*=(const TensorWrapper& other);
+    TensorWrapper& operator*=(const TensorWrapper& other) {
+        if (other.getTotalSize() == 1) {
+            return *this *= other.data_.getData()[0];
+        }
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument(
+                "Tensors must have the same shape for multiplication");
+        }
+
+        checkSameDevice(other);
+
+        const size_t tensorSize = getTotalSize();
+
+        for (size_t i = 0; i < tensorSize; ++i) {
+            data_.getData()[i] = data_.getData()[i] * other.data_.getData()[i];
+        }
+
+        return *this;
+    }
 
     /**
      * @brief In-place division operator (tensor /= tensor).
      * @param other The tensor to divide by.
      * @return TensorWrapper& Reference to this.
      */
-    TensorWrapper& operator/=(const TensorWrapper& other);
+    TensorWrapper& operator/=(const TensorWrapper& other) {
+        if (other.getTotalSize() == 1) {
+            return *this /= other.data_.getData()[0];
+        }
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument(
+                "Tensors must have the same shape for division");
+        }
+
+        checkSameDevice(other);
+
+        const size_t tensorSize = getTotalSize();
+
+        for (size_t i = 0; i < tensorSize; ++i) {
+            if (other.data_.getData()[i] == T(0)) {
+                throw std::runtime_error("Division by zero");
+            }
+            data_.getData()[i] = data_.getData()[i] / other.data_.getData()[i];
+        }
+
+        return *this;
+    }
 
     /**
      * @brief In-place addition operator (tensor += scalar).
      * @param scalar The scalar value to add.
      * @return TensorWrapper& Reference to this.
      */
-    TensorWrapper& operator+=(T scalar);
+    TensorWrapper& operator+=(T scalar) {
+        const size_t tensorSize = getTotalSize();
+        for (size_t i = 0; i < tensorSize; ++i) {
+            data_.getData()[i] += scalar;
+        }
+        return *this;
+    }
 
     /**
      * @brief In-place subtraction operator (tensor -= scalar).
      * @param scalar The scalar value to subtract.
      * @return TensorWrapper& Reference to this.
      */
-    TensorWrapper& operator-=(T scalar);
+    TensorWrapper& operator-=(T scalar) {
+        const size_t tensorSize = getTotalSize();
+        for (size_t i = 0; i < tensorSize; ++i) {
+            data_.getData()[i] -= scalar;
+        }
+        return *this;
+    }
 
     /**
      * @brief In-place multiplication operator (tensor *= scalar).
      * @param scalar The scalar value to multiply.
      * @return TensorWrapper& Reference to this.
      */
-    TensorWrapper& operator*=(T scalar);
+    TensorWrapper& operator*=(T scalar) {
+        const size_t tensorSize = getTotalSize();
+        for (size_t i = 0; i < tensorSize; ++i) {
+            data_.getData()[i] *= scalar;
+        }
+        return *this;
+    }
 
     /**
      * @brief In-place division operator (tensor /= scalar).
@@ -667,7 +1286,16 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper& Reference to this.
      * @throws std::runtime_error if scalar is zero.
      */
-    TensorWrapper& operator/=(T scalar);
+    TensorWrapper& operator/=(T scalar) {
+        if (scalar == T(0)) {
+            throw std::runtime_error("Division by zero");
+        }
+        const size_t tensorSize = getTotalSize();
+        for (size_t i = 0; i < tensorSize; ++i) {
+            data_.getData()[i] /= scalar;
+        }
+        return *this;
+    }
 
     /**
      * @brief In-place update: y = y + alpha * x
@@ -677,7 +1305,19 @@ template <typename T> class TensorWrapper {
      * @param alpha Scaling factor.
      * @param other Other tensor (x).
      */
-    void axpy(T alpha, const TensorWrapper& other);
+    void axpy(T alpha, const TensorWrapper& other) {
+        if (getShape() != other.getShape()) {
+            throw std::invalid_argument("Shape mismatch in axpy");
+        }
+        checkSameDevice(other);
+
+        // Dispatch to backend for hardware-specific optimization
+        auto res = backend::dispatchAxpy(
+            data_.getDevice()->getType(), alpha, other, *this);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+    }
 
     /**
      * @brief Creates a new tensor of the same shape and device filled with
@@ -685,7 +1325,11 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper A new tensor where every element is initialized
      * to 1.
      */
-    TensorWrapper ones() const;
+    TensorWrapper ones() const {
+        TensorWrapper res(
+            TensorShape(this->getShape()), T(1), this->getDevice());
+        return res;
+    }
 
     /**
      * @brief Creates a new tensor of the same shape and device filled with
@@ -693,7 +1337,11 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper A new tensor where every element is initialized to
      * 0.
      */
-    TensorWrapper zeros() const;
+    TensorWrapper zeros() const {
+        TensorWrapper res(
+            TensorShape(this->getShape()), T(0), this->getDevice());
+        return res;
+    }
 
     /**
      * @brief Creates a new tensor of the same shape and device filled with a
@@ -703,9 +1351,11 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper A new tensor where every element is initialized to
      * @p initValue.
      */
-    TensorWrapper sameShapeWithValue(T initValue) const;
-
-    TensorWrapper slice(SliceSetting requirements);
+    TensorWrapper sameShapeWithValue(T initValue) const {
+        TensorWrapper res(
+            TensorShape(this->getShape()), T(initValue), this->getDevice());
+        return res;
+    }
 
   private:
     TensorData<T> data_; /**< Managed tensor data and metadata. */
@@ -737,7 +1387,9 @@ template <typename T> class TensorWrapper {
  * @return TensorWrapper<T> Result of addition.
  */
 template <typename T>
-TensorWrapper<T> operator+(T scalar, const TensorWrapper<T>& tensor);
+TensorWrapper<T> operator+(T scalar, const TensorWrapper<T>& tensor) {
+    return tensor.add(scalar);
+}
 
 /**
  * @brief Subtraction operator (scalar - tensor).
@@ -747,7 +1399,9 @@ TensorWrapper<T> operator+(T scalar, const TensorWrapper<T>& tensor);
  * @return TensorWrapper<T> Result of subtraction.
  */
 template <typename T>
-TensorWrapper<T> operator-(T scalar, const TensorWrapper<T>& tensor);
+TensorWrapper<T> operator-(T scalar, const TensorWrapper<T>& tensor) {
+    return tensor.subtractFrom(scalar);
+}
 
 /**
  * @brief Multiplication operator (scalar * tensor).
@@ -757,7 +1411,9 @@ TensorWrapper<T> operator-(T scalar, const TensorWrapper<T>& tensor);
  * @return TensorWrapper<T> Result of multiplication.
  */
 template <typename T>
-TensorWrapper<T> operator*(T scalar, const TensorWrapper<T>& tensor);
+TensorWrapper<T> operator*(T scalar, const TensorWrapper<T>& tensor) {
+    return tensor.multiply(scalar);
+}
 
 /**
  * @brief Division operator (scalar / tensor).
@@ -767,14 +1423,9 @@ TensorWrapper<T> operator*(T scalar, const TensorWrapper<T>& tensor);
  * @return TensorWrapper<T> Result of division.
  */
 template <typename T>
-TensorWrapper<T> operator/(T scalar, const TensorWrapper<T>& tensor);
+TensorWrapper<T> operator/(T scalar, const TensorWrapper<T>& tensor) {
+    return tensor.divideInto(scalar);
+}
 } // namespace hahaha::math
-
-// Include implementation files
-#include "math/TensorWrapperArithmetic.inl"
-#include "math/TensorWrapperShapeOps.inl"
-#include "math/TensorWrapperMatrixOps.inl"
-#include "math/TensorWrapperOperators.inl"
-#include "math/TensorWrapperUtilities.inl"
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_H

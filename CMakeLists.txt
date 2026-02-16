@@ -69,7 +69,7 @@ endif()
 
 # ---- core library ----
 
-file(GLOB_RECURSE HAHAHA_SOURCES CONFIGURE_DEPENDS
+file(GLOB_RECURSE HAHAHA_CPP_SOURCES CONFIGURE_DEPENDS
   "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
 )
 
@@ -105,6 +105,8 @@ if(HAHAHA_ENABLE_COVERAGE)
     message(WARNING "HAHAHA_ENABLE_COVERAGE=ON is only supported for GCC/Clang in this CMake setup.")
   endif()
 endif()
+
+include_directories(${PROJECT_SOURCE_DIR}/core/include)
 
 target_include_directories(hahaha
   PUBLIC

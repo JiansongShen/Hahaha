@@ -21,6 +21,8 @@
 
 #include <cstddef> // NOLINT
 
+#include "common/definitions.h"
+
 namespace hahaha::ml {
 struct DatasetFormat {};
 

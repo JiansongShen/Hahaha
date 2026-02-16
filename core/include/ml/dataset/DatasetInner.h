@@ -24,7 +24,6 @@
 #include <utility>
 
 #include "DatasetTypeUnifyStrategy.h"
-#include "math/TensorWrapper.h"
 #include "public/Tensor.h"
 
 namespace hahaha::ml {

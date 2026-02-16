@@ -6,12 +6,11 @@
     "psi-header.variables": [
         ["projectname", "hahaha"],
         ["projecturl", "https://github.com/Napbad/Hahaha"],
-        ["author", "JiansongShen"],
-        ["authoremail", "jason.shen111@outlook.com"],
-        ["authorurl", "https://github.com/jiansongshen"]
+        ["author", "Napbad"],
+        ["authoremail", "napbad.sen@gmail.com"],
+        ["authorurl", "https://github.com/Napbad"]
     ],
 
-    // Language comment configuration: force line comments only
     "psi-header.lang-config": [
         { "language": "c",          "prefix": "// ", "begin": "", "end": "" },
         { "language": "cpp",        "prefix": "// ", "begin": "", "end": "" },
@@ -27,7 +26,6 @@
         { "language": "json",       "prefix": "// ", "begin": "", "end": "" }
     ],
 
-    // Unified header template in English (standard Apache 2.0)
     "psi-header.templates": [
         {
             "language": "*",
@@ -58,14 +56,11 @@
         "blankLinesAfter": 1
     },
 
-    // Auto insert header on new files and update year range on save
     "psi-header.changes-tracking": {
         "autoHeader": "autoSave"
     },
     "clangd.arguments": [
         "--compile-commands-dir=cmake-build-vcpkg-linux",
-        "--compile-commands-dir=builddir",
-        "--completion-style=detailed"
-    ],
-    "clangd.path": "/usr/bin/clangd",
+        "--compile-commands-dir=builddir"
+    ]
 }

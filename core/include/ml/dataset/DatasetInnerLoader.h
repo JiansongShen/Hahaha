@@ -20,6 +20,7 @@
 #define HAHAHA_DATASETINNERLOADER_H_A4976991CB27480FA1D8C8FD93AE7B12
 #include <expected>
 #include <filesystem>
+#include <format>
 #include <fstream>
 #include <string>
 #include <vector>
