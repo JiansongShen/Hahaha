@@ -15,12 +15,6 @@ option(HAHAHA_ENABLE_COVERAGE "Enable coverage flags for tests (gcc/clang)." OFF
 set(HAHAHA_IMGUI_DIR "" CACHE PATH "Path to ImGui source directory (e.g. a git submodule at subprojects/imgui). If empty, CMake will auto-detect.")
 set(HAHAHA_GOOGLETEST_DIR "" CACHE PATH "Path to GoogleTest source directory (e.g. a git submodule at subprojects/googletest). If empty, CMake will auto-detect.")
 
-# ---- vcpkg (repo-local) helper ----
-# Prefer passing the vcpkg toolchain on the CLI:
-#   -DCMAKE_TOOLCHAIN_FILE=<repo>/vcpkg/vcpkg_root/scripts/buildsystems/vcpkg.cmake
-# But for convenience (and to mirror Meson's behavior), we also auto-hint CMAKE_PREFIX_PATH.
-set(HAHAHA_VCPKG_TRIPLET "auto" CACHE STRING "vcpkg triplet under vcpkg/vcpkg_root/installed/<triplet> (auto/x64-linux/arm64-linux/x64-osx/arm64-osx/x64-windows/...).")
-
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -30,44 +24,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if(MSVC)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
-
-set(_HAHAHA_VCPKG_ROOT "${PROJECT_SOURCE_DIR}/vcpkg/vcpkg_root")
-set(_HAHAHA_VCPKG_INSTALLED "${_HAHAHA_VCPKG_ROOT}/installed")
-if(EXISTS "${_HAHAHA_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" AND EXISTS "${_HAHAHA_VCPKG_INSTALLED}")
-  set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "${HAHAHA_VCPKG_TRIPLET}")
-  if(_HAHAHA_VCPKG_TRIPLET_RESOLVED STREQUAL "auto" OR _HAHAHA_VCPKG_TRIPLET_RESOLVED STREQUAL "")
-    # Host-based heuristic (works for native CI runners).
-    # Windows: prefer static triplet to avoid DLL PATH issues in CI/tests
-    if(WIN32)
-      if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64|arm64")
-        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-windows-static")
-      else()
-        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-windows-static")
-      endif()
-    elseif(APPLE)
-      if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
-        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-osx")
-      else()
-        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-osx")
-      endif()
-    else()
-      if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64|arm64")
-        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "arm64-linux")
-      else()
-        set(_HAHAHA_VCPKG_TRIPLET_RESOLVED "x64-linux")
-      endif()
-    endif()
-  endif()
-
-  if(EXISTS "${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
-    list(PREPEND CMAKE_PREFIX_PATH "${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
-    message(STATUS "Using repo-local vcpkg prefix: ${_HAHAHA_VCPKG_INSTALLED}/${_HAHAHA_VCPKG_TRIPLET_RESOLVED}")
-  else()
-    message(STATUS "Repo-local vcpkg detected but triplet '${_HAHAHA_VCPKG_TRIPLET_RESOLVED}' not found under ${_HAHAHA_VCPKG_INSTALLED}. Pass -DHAHAHA_VCPKG_TRIPLET=<triplet> or install it via vcpkg.")
-  endif()
-endif()
-
-# ---- core library ----
 
 file(GLOB_RECURSE HAHAHA_CPP_SOURCES CONFIGURE_DEPENDS
   "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
