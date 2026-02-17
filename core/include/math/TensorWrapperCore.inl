@@ -1,25 +1,8 @@
-//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//       https://www.apache.org/licenses/LICENSE-2.0
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-//  Contributors:
-//  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
-//  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
-//
-#ifndef HAHAHA_MATH_TENSOR_WRAPPER_UTILITIES_INL
-#define HAHAHA_MATH_TENSOR_WRAPPER_UTILITIES_INL
+#ifndef HAHAHA_MATH_TENSOR_WRAPPER_CORE_INL
+#define HAHAHA_MATH_TENSOR_WRAPPER_CORE_INL
 
-#include "math/slice_setting.h"
+#include <stdexcept>
+#include <string>
 
 namespace hahaha::math {
 
@@ -123,45 +106,16 @@ const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) cons
 }
 
 template <typename T>
-void TensorWrapper<T>::axpy(T alpha, const TensorWrapper& other) {
-    if (getShape() != other.getShape()) {
-        throw std::invalid_argument("Shape mismatch in axpy");
+void TensorWrapper<T>::checkSameDevice(const TensorWrapper& other) const {
+    if (*getDevice() != *other.getDevice()) {
+
+        throw std::invalid_argument(
+            "Tensors must be on the same device for this operation (found "
+            + getDevice()->toString() + " and "
+            + other.getDevice()->toString() + ")");
     }
-    checkSameDevice(other);
-
-    // Dispatch to backend for hardware-specific optimization
-    auto res = backend::dispatchAxpy(
-        data_.getDevice()->getType(), alpha, other, *this);
-    if (!res) {
-        throw std::runtime_error(res.error().message());
-    }
-}
-
-template <typename T> TensorWrapper<T> TensorWrapper<T>::ones() const {
-    TensorWrapper res(TensorShape(this->getShape()), T(1), this->getDevice());
-    return res;
-}
-
-template <typename T> TensorWrapper<T> TensorWrapper<T>::zeros() const {
-    TensorWrapper res(TensorShape(this->getShape()), T(0), this->getDevice());
-    return res;
-}
-
-template <typename T>
-TensorWrapper<T> TensorWrapper<T>::sameShapeWithValue(T initValue) const {
-    TensorWrapper res(
-        TensorShape(this->getShape()), T(initValue), this->getDevice());
-    return res;
-}
-
-template <typename T>
-TensorWrapper<T>
-TensorWrapper<T>::slice(SliceSetting requirements) {
-    requirements.sort();
-
-    return {};
 }
 
 } // namespace hahaha::math
 
-#endif // HAHAHA_MATH_TENSOR_WRAPPER_UTILITIES_INL
+#endif // HAHAHA_MATH_TENSOR_WRAPPER_CORE_INL

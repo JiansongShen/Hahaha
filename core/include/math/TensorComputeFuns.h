@@ -26,6 +26,8 @@
 
 namespace hahaha::math {
 
+
+    // TODO: Support cuda
 /**
  * @brief Collection of element-wise mathematical functions for TensorWrapper.
  *

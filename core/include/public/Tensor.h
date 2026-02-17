@@ -328,10 +328,8 @@ template <typename T> class Tensor {
      * * @return Tensor A new tensor instance with all elements set to 0.
      */
     Tensor zeros() const {
-        Tensor newTensor;
-        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
-            computeNode_->getData()->zeros());
-        return newTensor;
+        auto zeroData = std::make_shared<math::TensorWrapper<T>>(computeNode_->getData()->zeros());
+        return Tensor(zeroData);
     }
 
     /**
@@ -341,10 +339,8 @@ template <typename T> class Tensor {
      * * @return Tensor A new tensor instance with all elements set to 1.
      */
     Tensor ones() const {
-        Tensor newTensor;
-        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
-            computeNode_->getData()->ones());
-        return newTensor;
+        auto oneData = std::make_shared<math::TensorWrapper<T>>(computeNode_->getData()->ones());
+        return Tensor(oneData);
     }
 
     /**
@@ -353,15 +349,120 @@ template <typename T> class Tensor {
      * * @param initValue The value to fill the new tensor with.
      * @return Tensor A new tensor instance where every element is @p initValue.
      */
-    Tensor sameShapeWithValue(T initValue) {
-        Tensor newTensor;
-        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
-            computeNode_->getData()->sameShapeWithValue(initValue));
-        return newTensor;
+    Tensor sameShapeWithValue(T initValue) const {
+        auto newData = std::make_shared<math::TensorWrapper<T>>(computeNode_->getData()->sameShapeWithValue(initValue));
+        return Tensor(newData);
+    }
+
+    /**
+     * @brief Create a deep copy of this tensor.
+     * @return Tensor A new tensor with copied data.
+     */
+    Tensor clone() const {
+        auto clonedData = std::make_shared<math::TensorWrapper<T>>(computeNode_->getData()->clone());
+        return Tensor(clonedData);
     }
 
     Tensor slice() {
 
+    }
+
+    /**
+     * @brief In-place addition (tensor += tensor).
+     */
+    Tensor& operator+=(const Tensor& other) {
+        *computeNode_->getData() += *other.computeNode_->getData();
+        return *this;
+    }
+
+    /**
+     * @brief In-place subtraction (tensor -= tensor).
+     */
+    Tensor& operator-=(const Tensor& other) {
+        *computeNode_->getData() -= *other.computeNode_->getData();
+        return *this;
+    }
+
+    /**
+     * @brief In-place multiplication (tensor *= tensor).
+     */
+    Tensor& operator*=(const Tensor& other) {
+        *computeNode_->getData() *= *other.computeNode_->getData();
+        return *this;
+    }
+
+    /**
+     * @brief In-place division (tensor /= tensor).
+     */
+    Tensor& operator/=(const Tensor& other) {
+        *computeNode_->getData() /= *other.computeNode_->getData();
+        return *this;
+    }
+
+    /**
+     * @brief In-place scalar addition (tensor += scalar).
+     */
+    Tensor& operator+=(T scalar) {
+        *computeNode_->getData() += scalar;
+        return *this;
+    }
+
+    /**
+     * @brief In-place scalar subtraction (tensor -= scalar).
+     */
+    Tensor& operator-=(T scalar) {
+        *computeNode_->getData() -= scalar;
+        return *this;
+    }
+
+    /**
+     * @brief In-place scalar multiplication (tensor *= scalar).
+     */
+    Tensor& operator*=(T scalar) {
+        *computeNode_->getData() *= scalar;
+        return *this;
+    }
+
+    /**
+     * @brief In-place scalar division (tensor /= scalar).
+     */
+    Tensor& operator/=(T scalar) {
+        *computeNode_->getData() /= scalar;
+        return *this;
+    }
+
+    /**
+     * @brief Square all elements.
+     * @return Tensor A new tensor with squared elements.
+     * @note This operation currently does not support autograd.
+     */
+    Tensor square() const {
+        auto newData = computeNode_->getData()->clone();
+        newData.squareInPlace();
+        return Tensor(std::make_shared<math::TensorWrapper<T>>(std::move(newData)));
+    }
+
+    /**
+     * @brief Square all elements in place.
+     */
+    void squareInPlace() {
+        computeNode_->getData()->squareInPlace();
+    }
+
+    /**
+     * @brief Square root all elements in place.
+     */
+    void sqrtInPlace() {
+        computeNode_->getData()->sqrtInPlace();
+    }
+
+    /**
+     * @brief In-place update: y = y + alpha * x
+     * @param alpha Scaling factor.
+     * @param other Other tensor (x).
+     */
+    void axpy(T alpha, const Tensor& other) {
+        computeNode_->getData()->axpy(alpha, *other.computeNode_->getData());
     }
 
   private:

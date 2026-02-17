@@ -323,6 +323,18 @@ TensorWrapper<T> TensorWrapper<T>::divideInto(T scalar) const {
     return result;
 }
 
+template <typename T>
+void TensorWrapper<T>::squareInPlace() {
+    *this *= *this;
+}
+
+template <typename T>
+void TensorWrapper<T>::sqrtInPlace() {
+    for (size_t i = 0; i < getTotalSize(); ++i) {
+        data_.getData()[i] = std::sqrt(data_.getData()[i]);
+    }
+}
+
 } // namespace hahaha::math
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_ARITHMETIC_INL
