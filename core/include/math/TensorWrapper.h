@@ -8,7 +8,6 @@
 #include <numeric>
 #include <stdexcept>
 #include <vector>
-
 #include "backend/Device.h"
 #include "backend/DeviceComputeDispatcher.h"
 #include "backend/DeviceRegistry.h"

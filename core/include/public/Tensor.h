@@ -32,6 +32,9 @@
 
 namespace hahaha {
 
+
+
+//TODO: Make sure the check of nullptr of compute node
 /**
  * @brief High-level User Interface for Tensor operations and Autograd.
  *
@@ -59,6 +62,14 @@ template <typename T> class Tensor {
     explicit Tensor(const math::TensorWrapper<T>& data)
         : computeNode_(std::make_shared<compute::ComputeNode<T>>(
               std::make_shared<math::TensorWrapper<T>>(data))) {
+    }
+    /**
+     * @brief Default tensor constructor
+     */
+    Tensor () {
+        computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+            std::make_shared<math::TensorWrapper<T>>()
+        );
     }
 
     /**
@@ -93,6 +104,15 @@ template <typename T> class Tensor {
             std::make_shared<math::TensorWrapper<T>>(vec));
         return Tensor(computeNode);
     }
+
+    static Tensor buildFromShape(std::initializer_list<size_t> shape) {
+        math::TensorShape tensorShape(shape);
+        auto computeNode = std::make_shared<compute::ComputeNode<T>>(
+            std::make_shared<math::TensorWrapper<T>>(tensorShape));
+
+        return Tensor(computeNode);
+    }
+
 
     /** @brief Addition operator. Builds an 'Add' node. */
     Tensor operator+(const Tensor& other) const {
@@ -198,11 +218,19 @@ template <typename T> class Tensor {
      * @brief Get the managed gradient as a Tensor.
      * @return Tensor containing the accumulated gradients.
      */
-    [[nodiscard]] std::shared_ptr<Tensor> grad() const {
+    [[nodiscard]] Tensor grad() const {
         if (computeNode_->getGrad()) {
-            return std::make_shared<Tensor>(computeNode_->getGrad());
+            return Tensor(computeNode_->getGrad());
         }
-        return nullptr;
+        return Tensor();
+    }
+
+    /**
+     * @brief Check if the tensor is empty.
+     * @return true if the tensor is empty.
+     */
+    [[nodiscard]] bool isEmpty() const {
+        return getTotalSize() == 0;
     }
 
     /**
@@ -330,6 +358,10 @@ template <typename T> class Tensor {
         newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
             computeNode_->getData()->sameShapeWithValue(initValue));
         return newTensor;
+    }
+
+    Tensor slice() {
+
     }
 
   private:

@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
+// Copyright (c) 2025 - 2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,13 +87,13 @@ TEST_F(BroadcastTest, Broadcast_Gradient_LeadingDims) {
 
     b.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape().size(), 1);
-    EXPECT_EQ(a.grad()->getShape()[0], 3);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape().size(), 1);
+    EXPECT_EQ(a.grad().getShape()[0], 3);
 
-    EXPECT_FLOAT_EQ(a.grad()->at({0}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({2}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({2}), 2.0f);
 }
 
 TEST_F(BroadcastTest, Broadcast_Gradient_Scalar) {
@@ -110,8 +110,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_Scalar) {
     // dL/da = sum(dL/db) = 1+1+1+1 = 4
     b.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({}), 4.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({}), 4.0f);
 }
 
 TEST_F(BroadcastTest, Broadcast_Gradient_InnerDims) {
@@ -131,13 +131,13 @@ TEST_F(BroadcastTest, Broadcast_Gradient_InnerDims) {
 
     b.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape()[0], 3);
-    EXPECT_EQ(a.grad()->getShape()[1], 1);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape()[0], 3);
+    EXPECT_EQ(a.grad().getShape()[1], 1);
 
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 0}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({2, 0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({2, 0}), 2.0f);
 }
 
 TEST_F(BroadcastTest, Broadcast_Error_Mismatch) {
@@ -163,14 +163,14 @@ TEST_F(BroadcastTest, Broadcast_Gradient_Multiple_LeadingDims) {
 
     b.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape().size(), 1);
-    EXPECT_EQ(a.grad()->getShape()[0], 3);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape().size(), 1);
+    EXPECT_EQ(a.grad().getShape()[0], 3);
 
     // Each element broadcasted 2 * 4 = 8 times
-    EXPECT_FLOAT_EQ(a.grad()->at({0}), 8.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1}), 8.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({2}), 8.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0}), 8.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1}), 8.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({2}), 8.0f);
 }
 
 TEST_F(BroadcastTest, Broadcast_Gradient_Identity_Loop_Check) {
@@ -186,13 +186,13 @@ TEST_F(BroadcastTest, Broadcast_Gradient_Identity_Loop_Check) {
 
     b.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape(), targetShape);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape(), targetShape);
 
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 1}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 1}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 1.0f);
 }
 
 TEST_F(BroadcastTest, Broadcast_Gradient_NonUniform_LeadingDims) {
@@ -209,15 +209,15 @@ TEST_F(BroadcastTest, Broadcast_Gradient_NonUniform_LeadingDims) {
     auto c = b * w;
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape().size(), 1);
-    EXPECT_EQ(a.grad()->getShape()[0], 3);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape().size(), 1);
+    EXPECT_EQ(a.grad().getShape()[0], 3);
 
     // For leading-dim broadcast, grad is summed over axis 0:
     // [[1,2,3],[4,5,6]] -> [5,7,9]
-    EXPECT_FLOAT_EQ(a.grad()->at({0}), 5.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1}), 7.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({2}), 9.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0}), 5.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1}), 7.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({2}), 9.0f);
 }
 
 TEST_F(BroadcastTest, Broadcast_Gradient_NonUniform_InnerDims) {
@@ -235,15 +235,15 @@ TEST_F(BroadcastTest, Broadcast_Gradient_NonUniform_InnerDims) {
     auto c = b * w;
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape().size(), 2);
-    EXPECT_EQ(a.grad()->getShape()[0], 3);
-    EXPECT_EQ(a.grad()->getShape()[1], 1);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape().size(), 2);
+    EXPECT_EQ(a.grad().getShape()[0], 3);
+    EXPECT_EQ(a.grad().getShape()[1], 1);
 
     // Sum over inner axis: [1+2, 3+4, 5+6] = [3, 7, 11], keepDims => (3,1)
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 3.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 0}), 7.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({2, 0}), 11.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 3.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 0}), 7.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({2, 0}), 11.0f);
 }
 
 TEST_F(BroadcastTest, Broadcast_GradFun_NullGrad_DoesNothing) {
@@ -258,7 +258,7 @@ TEST_F(BroadcastTest, Broadcast_GradFun_NullGrad_DoesNothing) {
     ASSERT_NE(broadcastedNode->getGradFun(), nullptr);
 
     EXPECT_NO_THROW(broadcastedNode->getGradFun()());
-    EXPECT_EQ(a.grad(), nullptr);
+    EXPECT_TRUE(a.grad().isEmpty());
 }
 
 TEST_F(BroadcastTest,
@@ -296,16 +296,16 @@ TEST_F(BroadcastTest, AutoBroadcast_Add_VectorToMatrix_ForwardAndGrad) {
     // dL/dw = 1, dL/da = sum over leading axis => [2,2,2]
     c.backward();
 
-    ASSERT_NE(w.grad(), nullptr);
-    EXPECT_EQ(w.grad()->getShape(), (std::vector<size_t>{2, 3}));
-    EXPECT_FLOAT_EQ(w.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(w.grad()->at({1, 2}), 1.0f);
+    ASSERT_FALSE(w.grad().isEmpty());
+    EXPECT_EQ(w.grad().getShape(), (std::vector<size_t>{2, 3}));
+    EXPECT_FLOAT_EQ(w.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(w.grad().at({1, 2}), 1.0f);
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape(), (std::vector<size_t>{3}));
-    EXPECT_FLOAT_EQ(a.grad()->at({0}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({2}), 2.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape(), (std::vector<size_t>{3}));
+    EXPECT_FLOAT_EQ(a.grad().at({0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({2}), 2.0f);
 }
 
 TEST_F(BroadcastTest, AutoBroadcast_Mul_ScalarToMatrix_Grad) {
@@ -316,9 +316,9 @@ TEST_F(BroadcastTest, AutoBroadcast_Mul_ScalarToMatrix_Grad) {
     auto c = w * a; // scalar should broadcast to (2,3)
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
+    ASSERT_FALSE(a.grad().isEmpty());
     // dL/da = sum(w) because upstream grad is ones
-    EXPECT_FLOAT_EQ(a.grad()->at({}), 21.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({}), 21.0f);
 }
 
 TEST_F(BroadcastTest, Broadcast_GradFun_ComplexInners) {
@@ -332,9 +332,9 @@ TEST_F(BroadcastTest, Broadcast_GradFun_ComplexInners) {
 
     bt.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 0, 1}), 2.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 0, 1}), 2.0f);
 }
 
 // ============================================================================

@@ -1,51 +1,19 @@
 cmake_minimum_required(VERSION 3.20)
-if (MSVC)
-    add_compile_options("/execution_charset:utf-8" "/source_charset:utf-8")
-    set(ENV{VSLANG} "1033")
-endif ()
 
-# ---- vcpkg toolchain detection ----
-# Prefer repo-local vcpkg (created by ./dev/dev_env_setup.py), but allow users to
-# pass -DCMAKE_TOOLCHAIN_FILE=... or set VCPKG_ROOT.
-#
-# Note: This must run before project()/enable_language() so the toolchain can
-# affect compiler detection.
-if ((NOT DEFINED CMAKE_TOOLCHAIN_FILE OR CMAKE_TOOLCHAIN_FILE STREQUAL "") OR (DEFINED CMAKE_TOOLCHAIN_FILE AND NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}"))
-    if (DEFINED CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE AND NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
-        message(WARNING "CMAKE_TOOLCHAIN_FILE does not exist: '${CMAKE_TOOLCHAIN_FILE}'")
-    endif ()
-
-    set(_repo_vcpkg_toolchain "${CMAKE_CURRENT_LIST_DIR}/vcpkg/vcpkg_root/scripts/buildsystems/vcpkg.cmake")
-    if (EXISTS "${_repo_vcpkg_toolchain}")
-        set(CMAKE_TOOLCHAIN_FILE "${_repo_vcpkg_toolchain}" CACHE FILEPATH "vcpkg toolchain file" FORCE)
-        message(STATUS "Using repo-local vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
-    elseif (DEFINED ENV{VCPKG_ROOT} AND EXISTS "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
-        set(CMAKE_TOOLCHAIN_FILE "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "vcpkg toolchain file" FORCE)
-        message(STATUS "Using vcpkg toolchain from VCPKG_ROOT: ${CMAKE_TOOLCHAIN_FILE}")
-    else ()
-        message(FATAL_ERROR
-                "vcpkg toolchain not set or not found. Please either:\n"
-                "  1) Run ./dev/dev_env_setup.py (creates <repo>/vcpkg/vcpkg_root)\n"
-                "  2) Set VCPKG_ROOT to your vcpkg root (e.g. <repo>/vcpkg/vcpkg_root)\n"
-                "  3) Pass the toolchain: -DCMAKE_TOOLCHAIN_FILE=<vcpkg-root>/scripts/buildsystems/vcpkg.cmake"
-        )
-    endif ()
-endif ()
-
-# Use static triplet on Windows so vcpkg builds GTest (and deps) with static CRT.
-# This avoids heap corruption (debug_heap _acrt_first_block == header) when the exe
-# uses /MTd and GTest would otherwise be a DLL with /MDd (separate heaps).
-if (WIN32 AND (NOT DEFINED VCPKG_TARGET_TRIPLET OR VCPKG_TARGET_TRIPLET STREQUAL ""))
-    set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "vcpkg triplet (static CRT to match this project)")
-endif ()
-
-#=========================== Project Configuration ===================================
 project(hahaha
-        VERSION 0.0.1
-        LANGUAGES CXX
+  VERSION 0.0.1
+  LANGUAGES CXX
 )
 
 include(GNUInstallDirs)
+
+option(HAHAHA_DISPLAY "Build visualization/display components (GLFW/OpenGL/ImGui). Disable for headless CI." ON)
+option(HAHAHA_BUILD_TESTS "Build unit tests (GoogleTest)." ON)
+option(HAHAHA_BUILD_EXAMPLES "Build example programs." ON)
+option(HAHAHA_ENABLE_COVERAGE "Enable coverage flags for tests (gcc/clang)." OFF)
+
+set(HAHAHA_IMGUI_DIR "" CACHE PATH "Path to ImGui source directory (e.g. a git submodule at subprojects/imgui). If empty, CMake will auto-detect.")
+set(HAHAHA_GOOGLETEST_DIR "" CACHE PATH "Path to GoogleTest source directory (e.g. a git submodule at subprojects/googletest). If empty, CMake will auto-detect.")
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -53,68 +21,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # MSVC: Use static runtime library to match vcpkg x64-windows-static triplet
 # This avoids LNK2038 "RuntimeLibrary mismatch" errors
-if (MSVC)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif ()
+if(MSVC)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
-#=========================== Architecture Detection ===================================
-# Detect architecture and define macros (fallback to macros.h if not detected here).
-# When cross-compiling, CMAKE_SYSTEM_PROCESSOR is the *target* arch; you can also
-# explicitly set HAHAHA_TARGET_ARCH (e.g. "aarch64", "x86_64") to override.
-set(HAHAHA_TARGET_ARCH "" CACHE STRING
-        "Override target architecture (e.g. aarch64, x86_64). Empty = use CMAKE_SYSTEM_PROCESSOR (normal for cross-compile).")
-
-set(_arch_to_use "${CMAKE_SYSTEM_PROCESSOR}")
-if (HAHAHA_TARGET_ARCH)
-    set(_arch_to_use "${HAHAHA_TARGET_ARCH}")
-endif ()
-
-# Determine bitness (target pointer size when cross-compiling)
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(HAHAHA_ARCH_BITS 64)
-elseif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(HAHAHA_ARCH_BITS 32)
-else ()
-    set(HAHAHA_ARCH_BITS 0)
-endif ()
-
-# Detect architecture from target processor (or override)
-string(TOLOWER "${_arch_to_use}" _processor_lower)
-
-if (_processor_lower MATCHES "^(amd64|x86_64|x64)$")
-    set(HAHAHA_ARCH_X86_64 1)
-    set(HAHAHA_ARCH_IS_X86_FAMILY 1)
-    set(HAHAHA_ARCH_NAME "x86-64")
-elseif (_processor_lower MATCHES "^(i[3-6]86|x86|i86pc)$")
-    set(HAHAHA_ARCH_X86_32 1)
-    set(HAHAHA_ARCH_IS_X86_FAMILY 1)
-    set(HAHAHA_ARCH_NAME "x86")
-elseif (_processor_lower MATCHES "^(aarch64|arm64|armv8)$")
-    set(HAHAHA_ARCH_ARM64 1)
-    set(HAHAHA_ARCH_NAME "arm64")
-elseif (_processor_lower MATCHES "^(arm|armv7|armv6|armv5)$")
-    set(HAHAHA_ARCH_ARM32 1)
-    set(HAHAHA_ARCH_NAME "arm32")
-elseif (_processor_lower MATCHES "^(ppc64|powerpc64)$")
-    set(HAHAHA_ARCH_PPC64 1)
-    set(HAHAHA_ARCH_NAME "ppc64")
-elseif (_processor_lower MATCHES "^(riscv64|rv64)$")
-    set(HAHAHA_ARCH_RISCV64 1)
-    set(HAHAHA_ARCH_NAME "riscv64")
-else ()
-    message(WARNING "Unknown architecture: ${_arch_to_use}")
-    set(HAHAHA_ARCH_UNKNOWN 1)
-    set(HAHAHA_ARCH_NAME "unknown")
-endif ()
-
-# Architecture macros will be added to target after it's created (see below)
-
-#=========================== Dependencies Management ===================================
-# ---- core library ----
-# Full configuration: include all source files
 file(GLOB_RECURSE HAHAHA_CPP_SOURCES CONFIGURE_DEPENDS
-        "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
+  "${PROJECT_SOURCE_DIR}/core/src/*.cpp"
 )
+
+if(NOT HAHAHA_DISPLAY)
+  list(FILTER HAHAHA_CPP_SOURCES EXCLUDE REGEX ".*/core/src/display/.*")
+endif()
 
 file(
         GLOB_RECURSE HAHAHA_CUDA_SOURCES CONFIGURE_DEPENDS
@@ -142,10 +59,22 @@ else ()
 endif ()
 add_library(hahaha::hahaha ALIAS hahaha)
 
+if(HAHAHA_ENABLE_COVERAGE)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    # Keep coverage builds debuggable and accurate.
+    target_compile_options(hahaha PRIVATE -O0 -g --coverage)
+    target_link_options(hahaha PRIVATE --coverage)
+  else()
+    message(WARNING "HAHAHA_ENABLE_COVERAGE=ON is only supported for GCC/Clang in this CMake setup.")
+  endif()
+endif()
+
+include_directories(${PROJECT_SOURCE_DIR}/core/include)
+
 target_include_directories(hahaha
-        PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/core/include>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/core/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 # Define architecture macros via compile definitions
@@ -207,68 +136,119 @@ if (HAHAHA_ARCH_X86_64 OR HAHAHA_ARCH_X86_32)
         target_compile_options(hahaha PUBLIC -msse2)
     endif ()
 endif ()
+# Meson used this flag; keep it for compatibility (even if currently unused).
+target_compile_definitions(hahaha PRIVATE BUILDING_MESON_LIBRARY)
 
 # dl (Linux/Unix) - harmless elsewhere.
-if (CMAKE_DL_LIBS)
-    target_link_libraries(hahaha PUBLIC ${CMAKE_DL_LIBS})
-endif ()
+if(CMAKE_DL_LIBS)
+  target_link_libraries(hahaha PUBLIC ${CMAKE_DL_LIBS})
+endif()
 
 # std::stacktrace may require extra libs on some gcc/libstdc++ toolchains.
-foreach (_libname IN ITEMS stdc++_libbacktrace stdc++exp backtrace)
-    find_library(HAHAHA_STACKTRACE_${_libname} NAMES ${_libname})
-    if (HAHAHA_STACKTRACE_${_libname})
-        target_link_libraries(hahaha PUBLIC ${HAHAHA_STACKTRACE_${_libname}})
-    endif ()
-endforeach ()
+foreach(_libname IN ITEMS stdc++_libbacktrace stdc++exp backtrace)
+  find_library(HAHAHA_STACKTRACE_${_libname} NAMES ${_libname})
+  if(HAHAHA_STACKTRACE_${_libname})
+    target_link_libraries(hahaha PUBLIC ${HAHAHA_STACKTRACE_${_libname}})
+  endif()
+endforeach()
 
-# ---- Dependencies (Full Configuration) ----
-# All dependencies are managed via vcpkg.json and will be automatically installed
+if(HAHAHA_DISPLAY)
+  find_package(OpenGL REQUIRED)
 
-# CUDA: when enabled, add toolkit include path so __has_include(<driver_types.h>) works in .cpp
-if (HAHAHA_USE_CUDA)
-    find_package(CUDAToolkit REQUIRED)
-    target_link_libraries(hahaha PUBLIC CUDA::cudart)
-endif ()
-
-# OpenGL
-find_package(OpenGL REQUIRED)
-
-# GLFW3 (via vcpkg)
-find_package(glfw3 CONFIG REQUIRED)
-if (TARGET glfw3::glfw)
-    set(_glfw_target glfw3::glfw)
-elseif (TARGET glfw)
+  # ---- GLFW (try config package, then pkg-config) ----
+  set(_glfw_target "")
+  find_package(glfw3 CONFIG QUIET)
+  if(TARGET glfw)
     set(_glfw_target glfw)
-else ()
-    message(FATAL_ERROR "GLFW3 not found. Please ensure glfw3 is installed via vcpkg.")
-endif ()
+  elseif(TARGET glfw3::glfw)
+    set(_glfw_target glfw3::glfw)
+  endif()
 
-# ImGui (via vcpkg)
-find_package(imgui CONFIG REQUIRED)
+  if(NOT _glfw_target)
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+      pkg_check_modules(GLFW3 QUIET glfw3)
+    endif()
+    if(GLFW3_FOUND)
+      add_library(glfw3_pkg INTERFACE)
+      target_include_directories(glfw3_pkg INTERFACE ${GLFW3_INCLUDE_DIRS})
+      target_link_directories(glfw3_pkg INTERFACE ${GLFW3_LIBRARY_DIRS})
+      target_link_libraries(glfw3_pkg INTERFACE ${GLFW3_LIBRARIES})
+      target_compile_options(glfw3_pkg INTERFACE ${GLFW3_CFLAGS_OTHER})
+      set(_glfw_target glfw3_pkg)
+    endif()
+  endif()
 
-# Link all display dependencies
-target_link_libraries(hahaha PUBLIC
-        ${_glfw_target}
-        imgui::imgui
-        OpenGL::GL
-)
+  if(NOT _glfw_target)
+    message(FATAL_ERROR "GLFW3 not found. Install glfw3 dev package or provide a CMake glfw3 config package, or configure with -DHAHAHA_DISPLAY=OFF.")
+  endif()
+
+  # ---- ImGui ----
+  set(_imgui_target "")
+
+  # Try finding via Config (e.g. vcpkg/Homebrew). Repo-local vcpkg prefix is hinted above.
+  find_package(imgui CONFIG REQUIRED)
+  target_link_libraries(hahaha PUBLIC imgui::imgui)
+
+  # This mirrors Meson's declare_dependency() behavior: downstream targets that
+  # link to hahaha get the needed libs as well.
+  target_link_libraries(hahaha PUBLIC ${_glfw_target} OpenGL::GL)
+endif()
 
 # ---- install ----
 
 install(TARGETS hahaha
-        EXPORT hahahaTargets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  EXPORT hahahaTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/core/include/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 install(EXPORT hahahaTargets
-        NAMESPACE hahaha::
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/hahaha"
+  NAMESPACE hahaha::
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/hahaha"
 )
 
 # ---- subprojects ----
-# Full configuration: build tests and examples
-enable_testing()
-add_subdirectory(tests)
-add_subdirectory(examples)
+if(HAHAHA_BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
+
+if(HAHAHA_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+
+# ---- coverage report (gcovr) ----
+if(HAHAHA_ENABLE_COVERAGE)
+  find_program(GCOVR_EXECUTABLE gcovr)
+  if(GCOVR_EXECUTABLE)
+    set(HAHAHA_GCOVR_COMMON_ARGS
+      -r .
+      --merge-mode-functions=merge-use-line-min
+      --exclude-unreachable-branches
+      --exclude-noncode-lines
+      --filter "core/."
+      --exclude "subprojects/."
+      --exclude "examples/."
+      --exclude "core/src/display/."
+      --exclude "core/include/display/."
+    )
+
+    add_custom_target(coverage
+      COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+      COMMAND ${GCOVR_EXECUTABLE} ${HAHAHA_GCOVR_COMMON_ARGS} --txt-metric line --fail-under-line 80
+      COMMAND ${GCOVR_EXECUTABLE} ${HAHAHA_GCOVR_COMMON_ARGS} --txt-metric branch --fail-under-branch 35
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      COMMENT "Running tests and generating coverage report via gcovr (core only; exclude display/examples/subprojects)"
+      VERBATIM
+    )
+
+    if(TARGET hahaha_tests)
+      add_dependencies(coverage hahaha_tests)
+    endif()
+
+  else()
+    message(STATUS "gcovr not found; coverage target will not be available. Install gcovr (e.g., pacman -S gcovr or pipx install gcovr).")
+  endif()
+endif()

@@ -42,10 +42,10 @@ TEST_F(AutogradTest, SimpleAddition) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({}), 1.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({}), 1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({}), 1.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({}), 1.0f);
 }
 
 TEST_F(AutogradTest, SimpleMultiplication) {
@@ -59,10 +59,10 @@ TEST_F(AutogradTest, SimpleMultiplication) {
 
     z.backward();
 
-    ASSERT_NE(x.grad(), nullptr);
-    ASSERT_NE(y.grad(), nullptr);
-    EXPECT_FLOAT_EQ(x.grad()->at({}), 4.0f); // dz/dx = y = 4
-    EXPECT_FLOAT_EQ(y.grad()->at({}), 3.0f); // dz/dy = x = 3
+    ASSERT_FALSE(x.grad().isEmpty());
+    ASSERT_FALSE(y.grad().isEmpty());
+    EXPECT_FLOAT_EQ(x.grad().at({}), 4.0f); // dz/dx = y = 4
+    EXPECT_FLOAT_EQ(y.grad().at({}), 3.0f); // dz/dy = x = 3
 }
 
 TEST_F(AutogradTest, ChainRule) {
@@ -81,13 +81,13 @@ TEST_F(AutogradTest, ChainRule) {
 
     z.backward();
 
-    ASSERT_NE(x.grad(), nullptr);
-    ASSERT_NE(y.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
+    ASSERT_FALSE(x.grad().isEmpty());
+    ASSERT_FALSE(y.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
 
-    EXPECT_FLOAT_EQ(x.grad()->at({}), 3.0f); // dz/dx = y = 3
-    EXPECT_FLOAT_EQ(y.grad()->at({}), 2.0f); // dz/dy = x = 2
-    EXPECT_FLOAT_EQ(b.grad()->at({}), 1.0f); // dz/db = 1
+    EXPECT_FLOAT_EQ(x.grad().at({}), 3.0f); // dz/dx = y = 3
+    EXPECT_FLOAT_EQ(y.grad().at({}), 2.0f); // dz/dy = x = 2
+    EXPECT_FLOAT_EQ(b.grad().at({}), 1.0f); // dz/db = 1
 }
 
 TEST_F(AutogradTest, NodeReuse) {
@@ -100,9 +100,9 @@ TEST_F(AutogradTest, NodeReuse) {
 
     y.backward();
 
-    ASSERT_NE(x.grad(), nullptr);
+    ASSERT_FALSE(x.grad().isEmpty());
     // dy/dx = x + x = 10
-    EXPECT_FLOAT_EQ(x.grad()->at({}), 10.0f);
+    EXPECT_FLOAT_EQ(x.grad().at({}), 10.0f);
 }
 
 TEST_F(AutogradTest, MatrixMultiplication) {
@@ -121,8 +121,8 @@ TEST_F(AutogradTest, MatrixMultiplication) {
 
     C.backward();
 
-    ASSERT_NE(A.grad(), nullptr);
-    ASSERT_NE(B.grad(), nullptr);
+    ASSERT_FALSE(A.grad().isEmpty());
+    ASSERT_FALSE(B.grad().isEmpty());
 
     // dL/dA = dL/dC @ B^T
     // If dL/dC = [[1, 1], [1, 1]] (since C.backward() starts with 1s)
@@ -130,20 +130,20 @@ TEST_F(AutogradTest, MatrixMultiplication) {
     // dL/dA = [[1, 1], [1, 1]] @ [[5, 7], [6, 8]]
     //       = [[5+6, 7+8], [5+6, 7+8]]
     //       = [[11, 15], [11, 15]]
-    EXPECT_FLOAT_EQ(A.grad()->at({0, 0}), 11.0f);
-    EXPECT_FLOAT_EQ(A.grad()->at({0, 1}), 15.0f);
-    EXPECT_FLOAT_EQ(A.grad()->at({1, 0}), 11.0f);
-    EXPECT_FLOAT_EQ(A.grad()->at({1, 1}), 15.0f);
+    EXPECT_FLOAT_EQ(A.grad().at({0, 0}), 11.0f);
+    EXPECT_FLOAT_EQ(A.grad().at({0, 1}), 15.0f);
+    EXPECT_FLOAT_EQ(A.grad().at({1, 0}), 11.0f);
+    EXPECT_FLOAT_EQ(A.grad().at({1, 1}), 15.0f);
 
     // dL/dB = A^T @ dL/dC
     // A^T = [[1, 3], [2, 4]]
     // dL/dB = [[1, 3], [2, 4]] @ [[1, 1], [1, 1]]
     //       = [[1+3, 1+3], [2+4, 2+4]]
     //       = [[4, 4], [6, 6]]
-    EXPECT_FLOAT_EQ(B.grad()->at({0, 0}), 4.0f);
-    EXPECT_FLOAT_EQ(B.grad()->at({0, 1}), 4.0f);
-    EXPECT_FLOAT_EQ(B.grad()->at({1, 0}), 6.0f);
-    EXPECT_FLOAT_EQ(B.grad()->at({1, 1}), 6.0f);
+    EXPECT_FLOAT_EQ(B.grad().at({0, 0}), 4.0f);
+    EXPECT_FLOAT_EQ(B.grad().at({0, 1}), 4.0f);
+    EXPECT_FLOAT_EQ(B.grad().at({1, 0}), 6.0f);
+    EXPECT_FLOAT_EQ(B.grad().at({1, 1}), 6.0f);
 }
 
 TEST_F(AutogradTest, SimpleSubtraction) {
@@ -157,10 +157,10 @@ TEST_F(AutogradTest, SimpleSubtraction) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({}), 1.0f);  // dc/da = 1
-    EXPECT_FLOAT_EQ(b.grad()->at({}), -1.0f); // dc/db = -1
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({}), 1.0f);  // dc/da = 1
+    EXPECT_FLOAT_EQ(b.grad().at({}), -1.0f); // dc/db = -1
 }
 
 TEST_F(AutogradTest, SimpleDivision) {
@@ -174,10 +174,10 @@ TEST_F(AutogradTest, SimpleDivision) {
 
     z.backward();
 
-    ASSERT_NE(x.grad(), nullptr);
-    ASSERT_NE(y.grad(), nullptr);
-    EXPECT_FLOAT_EQ(x.grad()->at({}), 0.5f);  // dz/dx = 1/y = 1/2 = 0.5
-    EXPECT_FLOAT_EQ(y.grad()->at({}), -2.5f); // dz/dy = -x/(y^2) = -10/4 = -2.5
+    ASSERT_FALSE(x.grad().isEmpty());
+    ASSERT_FALSE(y.grad().isEmpty());
+    EXPECT_FLOAT_EQ(x.grad().at({}), 0.5f);  // dz/dx = 1/y = 1/2 = 0.5
+    EXPECT_FLOAT_EQ(y.grad().at({}), -2.5f); // dz/dy = -x/(y^2) = -10/4 = -2.5
 }
 
 TEST_F(AutogradTest, TwoDim_Addition) {
@@ -192,12 +192,12 @@ TEST_F(AutogradTest, TwoDim_Addition) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 1.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({1, 1}), 1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 1.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({1, 1}), 1.0f);
 }
 
 TEST_F(AutogradTest, TwoDim_Multiplication) {
@@ -214,16 +214,16 @@ TEST_F(AutogradTest, TwoDim_Multiplication) {
 
     z.backward();
 
-    ASSERT_NE(x.grad(), nullptr);
-    ASSERT_NE(y.grad(), nullptr);
-    EXPECT_FLOAT_EQ(x.grad()->at({0, 0}), 5.0f); // dz/dx = y
-    EXPECT_FLOAT_EQ(x.grad()->at({0, 1}), 6.0f);
-    EXPECT_FLOAT_EQ(x.grad()->at({1, 0}), 7.0f);
-    EXPECT_FLOAT_EQ(x.grad()->at({1, 1}), 8.0f);
-    EXPECT_FLOAT_EQ(y.grad()->at({0, 0}), 1.0f); // dz/dy = x
-    EXPECT_FLOAT_EQ(y.grad()->at({0, 1}), 2.0f);
-    EXPECT_FLOAT_EQ(y.grad()->at({1, 0}), 3.0f);
-    EXPECT_FLOAT_EQ(y.grad()->at({1, 1}), 4.0f);
+    ASSERT_FALSE(x.grad().isEmpty());
+    ASSERT_FALSE(y.grad().isEmpty());
+    EXPECT_FLOAT_EQ(x.grad().at({0, 0}), 5.0f); // dz/dx = y
+    EXPECT_FLOAT_EQ(x.grad().at({0, 1}), 6.0f);
+    EXPECT_FLOAT_EQ(x.grad().at({1, 0}), 7.0f);
+    EXPECT_FLOAT_EQ(x.grad().at({1, 1}), 8.0f);
+    EXPECT_FLOAT_EQ(y.grad().at({0, 0}), 1.0f); // dz/dy = x
+    EXPECT_FLOAT_EQ(y.grad().at({0, 1}), 2.0f);
+    EXPECT_FLOAT_EQ(y.grad().at({1, 0}), 3.0f);
+    EXPECT_FLOAT_EQ(y.grad().at({1, 1}), 4.0f);
 }
 
 TEST_F(AutogradTest, TwoDim_ChainRule) {
@@ -243,25 +243,25 @@ TEST_F(AutogradTest, TwoDim_ChainRule) {
 
     d.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
-    ASSERT_NE(c.grad(), nullptr);
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
+    ASSERT_FALSE(c.grad().isEmpty());
 
     // d(d)/da = b (element-wise)
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 5.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 1}), 6.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 0}), 7.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 8.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 5.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 1}), 6.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 0}), 7.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 8.0f);
 
     // d(d)/db = a (element-wise)
-    EXPECT_FLOAT_EQ(b.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({0, 1}), 2.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({1, 0}), 3.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({1, 1}), 4.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({0, 1}), 2.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({1, 0}), 3.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({1, 1}), 4.0f);
 
     // d(d)/dc = 1 (element-wise)
-    EXPECT_FLOAT_EQ(c.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(c.grad()->at({1, 1}), 1.0f);
+    EXPECT_FLOAT_EQ(c.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(c.grad().at({1, 1}), 1.0f);
 }
 
 TEST_F(AutogradTest, TwoDim_AddScalar) {
@@ -275,9 +275,9 @@ TEST_F(AutogradTest, TwoDim_AddScalar) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 1.0f);
 }
 
 TEST_F(AutogradTest, TwoDim_SubtractScalar) {
@@ -291,9 +291,9 @@ TEST_F(AutogradTest, TwoDim_SubtractScalar) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 1.0f);
 }
 
 TEST_F(AutogradTest, TwoDim_MultiplyScalar) {
@@ -307,9 +307,9 @@ TEST_F(AutogradTest, TwoDim_MultiplyScalar) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 3.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 3.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 3.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 3.0f);
 }
 
 TEST_F(AutogradTest, TwoDim_DivideScalar) {
@@ -323,9 +323,9 @@ TEST_F(AutogradTest, TwoDim_DivideScalar) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 0.5f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 0.5f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 0.5f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 0.5f);
 }
 
 TEST_F(AutogradTest, TwoDim_ScalarSubtractTensor) {
@@ -339,9 +339,9 @@ TEST_F(AutogradTest, TwoDim_ScalarSubtractTensor) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), -1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), -1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), -1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), -1.0f);
 }
 
 TEST_F(AutogradTest, TwoDim_ScalarDivideTensor) {
@@ -355,10 +355,10 @@ TEST_F(AutogradTest, TwoDim_ScalarDivideTensor) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
+    ASSERT_FALSE(a.grad().isEmpty());
     // d(scalar/a)/da = -scalar/(a^2)
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), -20.0f / (2.0f * 2.0f));   // -5.0f
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), -20.0f / (10.0f * 10.0f)); // -0.2f
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), -20.0f / (2.0f * 2.0f));   // -5.0f
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), -20.0f / (10.0f * 10.0f)); // -0.2f
 }
 
 TEST_F(AutogradTest, ThreeDim_Addition) {
@@ -375,10 +375,10 @@ TEST_F(AutogradTest, ThreeDim_Addition) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({0, 0, 0}), 1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({0, 0, 0}), 1.0f);
 }
 
 TEST_F(AutogradTest, ThreeDim_Multiplication) {
@@ -395,10 +395,10 @@ TEST_F(AutogradTest, ThreeDim_Multiplication) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 0.1f); // dc/da = b
-    EXPECT_FLOAT_EQ(b.grad()->at({0, 0, 0}), 1.0f); // dc/db = a
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 0.1f); // dc/da = b
+    EXPECT_FLOAT_EQ(b.grad().at({0, 0, 0}), 1.0f); // dc/db = a
 }
 
 TEST_F(AutogradTest, ThreeDim_ComplexChain) {
@@ -432,12 +432,12 @@ TEST_F(AutogradTest, ThreeDim_ComplexChain) {
 
     f.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(c.grad(), nullptr);
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(c.grad().isEmpty());
 
     // d(f)/d(c) = 1 (element-wise), shape {2, 4}
-    EXPECT_FLOAT_EQ(c.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(c.grad()->at({1, 3}), 1.0f);
+    EXPECT_FLOAT_EQ(c.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(c.grad().at({1, 3}), 1.0f);
 
     // d(f)/d(a) chain: d(f)/d(a_transposed) * d(a_transposed)/d(a_reshaped) *
     // d(a_reshaped)/d(a_times_2) * d(a_times_2)/d(a) d(f)/d(a_transposed) is
@@ -449,9 +449,9 @@ TEST_F(AutogradTest, ThreeDim_ComplexChain) {
 
     // So d(f)/d(a) should be a.grad() should be 2.0f everywhere, reshaped and
     // transposed. Result should be 2.0f for each original element of 'a'.
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 1}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1, 1}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 1}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1, 1}), 2.0f);
 }
 
 TEST_F(AutogradTest, ThreeDim_AddScalar) {
@@ -466,9 +466,9 @@ TEST_F(AutogradTest, ThreeDim_AddScalar) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1, 1}), 1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1, 1}), 1.0f);
 }
 
 TEST_F(AutogradTest, ThreeDim_SubtractScalar) {
@@ -483,9 +483,9 @@ TEST_F(AutogradTest, ThreeDim_SubtractScalar) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1, 1}), 1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1, 1}), 1.0f);
 }
 
 TEST_F(AutogradTest, ThreeDim_MultiplyScalar) {
@@ -500,9 +500,9 @@ TEST_F(AutogradTest, ThreeDim_MultiplyScalar) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 3.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1, 1}), 3.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 3.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1, 1}), 3.0f);
 }
 
 TEST_F(AutogradTest, ThreeDim_DivideScalar) {
@@ -517,9 +517,9 @@ TEST_F(AutogradTest, ThreeDim_DivideScalar) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 0.5f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1, 1}), 0.5f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 0.5f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1, 1}), 0.5f);
 }
 
 TEST_F(AutogradTest, ThreeDim_ScalarSubtractTensor) {
@@ -534,9 +534,9 @@ TEST_F(AutogradTest, ThreeDim_ScalarSubtractTensor) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), -1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1, 1}), -1.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), -1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1, 1}), -1.0f);
 }
 
 TEST_F(AutogradTest, ThreeDim_ScalarDivideTensor) {
@@ -551,10 +551,10 @@ TEST_F(AutogradTest, ThreeDim_ScalarDivideTensor) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
+    ASSERT_FALSE(a.grad().isEmpty());
     // d(scalar/a)/da = -scalar/(a^2)
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), -20.0f / (2.0f * 2.0f)); // -5.0f
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1, 1}), -20.0f / (5.0f * 5.0f)); // -0.8f
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), -20.0f / (2.0f * 2.0f)); // -5.0f
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1, 1}), -20.0f / (5.0f * 5.0f)); // -0.8f
 }
 
 TEST_F(AutogradTest, ScalarTensor_Operations) {
@@ -570,15 +570,15 @@ TEST_F(AutogradTest, ScalarTensor_Operations) {
 
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(s.grad(), nullptr);
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(s.grad().isEmpty());
 
     // d(f)/da = s = 2.0
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1, 1}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1, 1}), 2.0f);
 
     // d(f)/ds = sum(a) = 1+2+3+4+5+6+7+8 = 36
-    EXPECT_FLOAT_EQ(s.grad()->at({}), 36.0f);
+    EXPECT_FLOAT_EQ(s.grad().at({}), 36.0f);
 }
 
 TEST_F(AutogradTest, ScalarTensor_NonCommutative) {
@@ -596,9 +596,9 @@ TEST_F(AutogradTest, ScalarTensor_NonCommutative) {
     c.backward();
 
     // d(c)/da = -1
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), -1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), -1.0f);
     // d(c)/ds = sum(1) = 8
-    EXPECT_FLOAT_EQ(s.grad()->at({}), 8.0f);
+    EXPECT_FLOAT_EQ(s.grad().at({}), 8.0f);
 
     a.clearGrad();
     s.clearGrad();
@@ -608,12 +608,12 @@ TEST_F(AutogradTest, ScalarTensor_NonCommutative) {
     d.backward();
 
     // d(d)/da = -s / a^2 = -10 / 1^2 = -10
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0, 0}), -10.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0, 0}), -10.0f);
     // d(d)/ds = sum(1/a) = sum(1/1 + 1/2 + ... + 1/8)
     float expected_s_grad = 0;
     for (int i = 1; i <= 8; ++i)
         expected_s_grad += 1.0f / static_cast<float>(i);
-    EXPECT_NEAR(s.grad()->at({}), expected_s_grad, 1e-5);
+    EXPECT_NEAR(s.grad().at({}), expected_s_grad, 1e-5);
 }
 
 TEST_F(AutogradTest, Backward_NoRequiresGrad_DoesNothing) {
@@ -625,8 +625,8 @@ TEST_F(AutogradTest, Backward_NoRequiresGrad_DoesNothing) {
 
     c.backward();
 
-    EXPECT_EQ(a.grad(), nullptr);
-    EXPECT_EQ(b.grad(), nullptr);
+    EXPECT_TRUE(a.grad().isEmpty());
+    EXPECT_TRUE(b.grad().isEmpty());
 }
 
 TEST_F(AutogradTest, ClearGrad_RecursivelyZeros) {
@@ -638,18 +638,18 @@ TEST_F(AutogradTest, ClearGrad_RecursivelyZeros) {
     auto c = a * b;
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({}), 3.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({}), 2.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({}), 3.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({}), 2.0f);
 
     c.clearGrad();
 
     // clearGrad() keeps grad buffers but zeros them out
-    ASSERT_NE(a.grad(), nullptr);
-    ASSERT_NE(b.grad(), nullptr);
-    EXPECT_FLOAT_EQ(a.grad()->at({}), 0.0f);
-    EXPECT_FLOAT_EQ(b.grad()->at({}), 0.0f);
+    ASSERT_FALSE(a.grad().isEmpty());
+    ASSERT_FALSE(b.grad().isEmpty());
+    EXPECT_FLOAT_EQ(a.grad().at({}), 0.0f);
+    EXPECT_FLOAT_EQ(b.grad().at({}), 0.0f);
 }
 
 TEST_F(AutogradTest, AccumulateGrad_MultiplePaths) {
@@ -664,8 +664,8 @@ TEST_F(AutogradTest, AccumulateGrad_MultiplePaths) {
 
     z.backward();
 
-    ASSERT_NE(x.grad(), nullptr);
-    EXPECT_FLOAT_EQ(x.grad()->at({}), 20.0f);
+    ASSERT_FALSE(x.grad().isEmpty());
+    EXPECT_FLOAT_EQ(x.grad().at({}), 20.0f);
 }
 
 TEST_F(AutogradTest, Reshape_Backward_PropagatesNonUniformGrad) {
@@ -680,20 +680,20 @@ TEST_F(AutogradTest, Reshape_Backward_PropagatesNonUniformGrad) {
     auto c = b * w;
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape().size(), 2);
-    EXPECT_EQ(a.grad()->getShape()[0], 2);
-    EXPECT_EQ(a.grad()->getShape()[1], 3);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape().size(), 2);
+    EXPECT_EQ(a.grad().getShape()[0], 2);
+    EXPECT_EQ(a.grad().getShape()[1], 3);
 
     // b.grad should be w (since d(b*w)/db = w), then reshaped back to (2,3)
     // flatten(w) = [10,20,30,40,50,60] -> reshape(2,3) =
     // [[10,20,30],[40,50,60]]
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 10.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 1}), 20.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 2}), 30.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 0}), 40.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 50.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 2}), 60.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 10.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 1}), 20.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 2}), 30.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 0}), 40.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 50.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 2}), 60.0f);
 }
 
 TEST_F(AutogradTest, Transpose_Backward_PropagatesNonUniformGrad) {
@@ -708,16 +708,16 @@ TEST_F(AutogradTest, Transpose_Backward_PropagatesNonUniformGrad) {
     auto c = b * w;
     c.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    EXPECT_EQ(a.grad()->getShape().size(), 2);
-    EXPECT_EQ(a.grad()->getShape()[0], 2);
-    EXPECT_EQ(a.grad()->getShape()[1], 3);
+    ASSERT_FALSE(a.grad().isEmpty());
+    EXPECT_EQ(a.grad().getShape().size(), 2);
+    EXPECT_EQ(a.grad().getShape()[0], 2);
+    EXPECT_EQ(a.grad().getShape()[1], 3);
 
     // b.grad = w, so a.grad = w.transpose() = [[1,3,5],[2,4,6]]
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 0}), 1.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 1}), 3.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({0, 2}), 5.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 0}), 2.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 1}), 4.0f);
-    EXPECT_FLOAT_EQ(a.grad()->at({1, 2}), 6.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 1.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 1}), 3.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({0, 2}), 5.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 0}), 2.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 1}), 4.0f);
+    EXPECT_FLOAT_EQ(a.grad().at({1, 2}), 6.0f);
 }

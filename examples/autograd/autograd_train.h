@@ -86,9 +86,9 @@ inline void basic_linear_regression_example() {
 
         loss.backward();
 
-        info("grad of    w: " + std::to_string(w.grad()->at({})));
-        info("grad of bias: " + std::to_string(bias.grad()->at({})));
-        info("grad of loss: " + std::to_string(loss.grad()->at({0, 0})));
+        info("grad of    w: " + std::to_string(w.grad().at({})));
+        info("grad of bias: " + std::to_string(bias.grad().at({})));
+        info("grad of loss: " + std::to_string(loss.grad().at({0, 0})));
 
         optimizer.step();
 

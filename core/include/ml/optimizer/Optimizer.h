@@ -22,7 +22,7 @@
 #include <utility>
 #include <vector>
 
-#include "../../public/Tensor.h"
+#include "public/Tensor.h"
 
 namespace hahaha::ml {
 

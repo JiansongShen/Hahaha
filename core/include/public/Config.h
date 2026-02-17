@@ -1,10 +1,10 @@
-// Copyright (c) 2025 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
+// Copyright (c) 2025-2026 Contributors of Hahaha
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      https://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,24 +13,20 @@
 // limitations under the License.
 //
 // Contributors:
-// Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
+// jiansongshen (jason.shen111@outlook.com)
 //
 
-#ifndef HAHAHA_COMMON_CONFIG_H
-#define HAHAHA_COMMON_CONFIG_H
+#ifndef HAHAHA_CONFIG_H_2A94B9BFB5704DE5BEC762932AAB8E2E
+#define HAHAHA_CONFIG_H_2A94B9BFB5704DE5BEC762932AAB8E2E
 
-namespace hahaha::common {
+namespace hahaha {
 
 class Config {
-  public:
-    bool defaultRequiresGrad = true;
+
+public:
+
 };
 
-inline Config& getConfig() {
-    static Config config;
-    return config;
-}
+} // namespace hahaha
 
-} // namespace hahaha::common
-
-#endif
+#endif // HAHAHA_CONFIG_H_2A94B9BFB5704DE5BEC762932AAB8E2E

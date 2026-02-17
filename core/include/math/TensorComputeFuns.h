@@ -16,7 +16,6 @@
 //  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
 //  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
-//
 
 #ifndef HAHAHA_MATH_TENSOR_COMPUTE_FUN_H
 #define HAHAHA_MATH_TENSOR_COMPUTE_FUN_H

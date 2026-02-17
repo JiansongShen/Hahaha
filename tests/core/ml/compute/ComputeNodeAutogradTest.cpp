@@ -109,20 +109,20 @@ TYPED_TEST(ComputeNodeAutogradTypedTest, Backward_MixedRequiresGrad_0D_Scalar) {
     auto f = a * b + c;
     f.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
+    ASSERT_FALSE(a.grad().isEmpty());
     T expected_a_grad = val_b; // df/da = b = 3
-    this->expectNear(a.grad()->at({}), expected_a_grad);
+    this->expectNear(a.grad().at({}), expected_a_grad);
 
-    EXPECT_EQ(b.grad(), nullptr);
+    EXPECT_TRUE(b.grad().isEmpty());
 
-    ASSERT_NE(c.grad(), nullptr);
+    ASSERT_FALSE(c.grad().isEmpty());
     T expected_c_grad;
     if constexpr (TestFixture::isFloatingPoint()) {
         expected_c_grad = T(1.0); // df/dc = 1
     } else {
         expected_c_grad = T(1); // df/dc = 1
     }
-    this->expectNear(c.grad()->at({}), expected_c_grad);
+    this->expectNear(c.grad().at({}), expected_c_grad);
 }
 
 TYPED_TEST(ComputeNodeAutogradTypedTest, Backward_MixedRequiresGrad_1D_Vector) {
@@ -159,21 +159,21 @@ TYPED_TEST(ComputeNodeAutogradTypedTest, Backward_MixedRequiresGrad_1D_Vector) {
     auto f = a * b + c;
     f.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    this->expectNear(a.grad()->at({0}), val_b1);
-    this->expectNear(a.grad()->at({1}), val_b2);
+    ASSERT_FALSE(a.grad().isEmpty());
+    this->expectNear(a.grad().at({0}), val_b1);
+    this->expectNear(a.grad().at({1}), val_b2);
 
-    EXPECT_EQ(b.grad(), nullptr);
+    EXPECT_TRUE(b.grad().isEmpty());
 
-    ASSERT_NE(c.grad(), nullptr);
+    ASSERT_FALSE(c.grad().isEmpty());
     T expected_grad;
     if constexpr (TestFixture::isFloatingPoint()) {
         expected_grad = T(1.0);
     } else {
         expected_grad = T(1);
     }
-    this->expectNear(c.grad()->at({0}), expected_grad);
-    this->expectNear(c.grad()->at({1}), expected_grad);
+    this->expectNear(c.grad().at({0}), expected_grad);
+    this->expectNear(c.grad().at({1}), expected_grad);
 }
 
 TYPED_TEST(ComputeNodeAutogradTypedTest, Backward_MixedRequiresGrad_2D_Matrix) {
@@ -219,23 +219,23 @@ TYPED_TEST(ComputeNodeAutogradTypedTest, Backward_MixedRequiresGrad_2D_Matrix) {
     auto f = a * b + c;
     f.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    this->expectNear(a.grad()->at({0, 0}), val_b1);
-    this->expectNear(a.grad()->at({0, 1}), val_b2);
-    this->expectNear(a.grad()->at({1, 0}), val_b3);
-    this->expectNear(a.grad()->at({1, 1}), val_b4);
+    ASSERT_FALSE(a.grad().isEmpty());
+    this->expectNear(a.grad().at({0, 0}), val_b1);
+    this->expectNear(a.grad().at({0, 1}), val_b2);
+    this->expectNear(a.grad().at({1, 0}), val_b3);
+    this->expectNear(a.grad().at({1, 1}), val_b4);
 
-    EXPECT_EQ(b.grad(), nullptr);
+    EXPECT_TRUE(b.grad().isEmpty());
 
-    ASSERT_NE(c.grad(), nullptr);
+    ASSERT_FALSE(c.grad().isEmpty());
     T expected_grad;
     if constexpr (TestFixture::isFloatingPoint()) {
         expected_grad = T(1.0);
     } else {
         expected_grad = T(1);
     }
-    this->expectNear(c.grad()->at({0, 0}), expected_grad);
-    this->expectNear(c.grad()->at({1, 1}), expected_grad);
+    this->expectNear(c.grad().at({0, 0}), expected_grad);
+    this->expectNear(c.grad().at({1, 1}), expected_grad);
 }
 
 TYPED_TEST(ComputeNodeAutogradTypedTest, Backward_MixedRequiresGrad_3D_Tensor) {
@@ -308,19 +308,19 @@ TYPED_TEST(ComputeNodeAutogradTypedTest, Backward_MixedRequiresGrad_3D_Tensor) {
     auto f = a * b + c;
     f.backward();
 
-    ASSERT_NE(a.grad(), nullptr);
-    this->expectNear(a.grad()->at({0, 0, 0}), val_b1);
-    this->expectNear(a.grad()->at({1, 1, 1}), val_b8);
+    ASSERT_FALSE(a.grad().isEmpty());
+    this->expectNear(a.grad().at({0, 0, 0}), val_b1);
+    this->expectNear(a.grad().at({1, 1, 1}), val_b8);
 
-    EXPECT_EQ(b.grad(), nullptr);
+    EXPECT_TRUE(b.grad().isEmpty());
 
-    ASSERT_NE(c.grad(), nullptr);
+    ASSERT_FALSE(c.grad().isEmpty());
     T expected_grad;
     if constexpr (TestFixture::isFloatingPoint()) {
         expected_grad = T(1.0);
     } else {
         expected_grad = T(1);
     }
-    this->expectNear(c.grad()->at({0, 0, 0}), expected_grad);
-    this->expectNear(c.grad()->at({1, 1, 1}), expected_grad);
+    this->expectNear(c.grad().at({0, 0, 0}), expected_grad);
+    this->expectNear(c.grad().at({1, 1, 1}), expected_grad);
 }

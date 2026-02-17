@@ -76,6 +76,10 @@ constexpr Error CudaDeviceOutOfMemoryError() {
 constexpr Error CudaSmallObjectMemoryPoolFullError() {
     return Error{ErrorCode::CudaSmallObjectMemoryPoolFull};
 }
+
+constexpr Error InvalidDatasetError() {
+    return Error{ErrorCode::InvalidDataset};
+}
 } // namespace hahaha::common
 
 #endif // HAHAHA_ERROR_H_053340FD56184B63A68D6CE6E15C8175

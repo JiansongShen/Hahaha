@@ -85,9 +85,9 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_Full) {
     // Trigger gradFun
     b.getComputeNode()->getGradFun()();
 
-    ASSERT_NE(a.grad(), nullptr);
-    this->expectNear(a.grad()->data()->at({0}), g1);
-    this->expectNear(a.grad()->data()->at({3}), g4);
+    ASSERT_FALSE(a.grad().isEmpty());
+    this->expectNear(a.grad().data()->at({0}), g1);
+    this->expectNear(a.grad().data()->at({3}), g4);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Transpose_Backward_Full) {
@@ -111,8 +111,8 @@ TYPED_TEST(UnaryOpTypedTest, Transpose_Backward_Full) {
 
     b.getComputeNode()->getGradFun()();
 
-    ASSERT_NE(a.grad(), nullptr);
-    this->expectNear(a.grad()->data()->at({0, 1}), g3);
+    ASSERT_FALSE(a.grad().isEmpty());
+    this->expectNear(a.grad().data()->at({0, 1}), g3);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Negate_Backward_Complex) {
@@ -146,10 +146,10 @@ TYPED_TEST(UnaryOpTypedTest, Negate_Backward_Complex) {
         expected_a_grad = T(-3);
         expected_b_grad = T(-2);
     }
-    ASSERT_NE(a.grad(), nullptr);
-    this->expectNear(a.grad()->data()->at({}), expected_a_grad);
-    ASSERT_NE(b.grad(), nullptr);
-    this->expectNear(b.grad()->data()->at({}), expected_b_grad);
+    ASSERT_FALSE(a.grad().isEmpty());
+    this->expectNear(a.grad().data()->at({}), expected_a_grad);
+    ASSERT_FALSE(b.grad().isEmpty());
+    this->expectNear(b.grad().data()->at({}), expected_b_grad);
 }
 
 // ============================================================================
@@ -177,9 +177,9 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_1D_To2D) {
 
     b1.getComputeNode()->getGradFun()();
 
-    ASSERT_NE(a1.grad(), nullptr);
-    this->expectNear(a1.grad()->data()->at({0}), g1);
-    this->expectNear(a1.grad()->data()->at({3}), g4);
+    ASSERT_FALSE(a1.grad().isEmpty());
+    this->expectNear(a1.grad().data()->at({0}), g1);
+    this->expectNear(a1.grad().data()->at({3}), g4);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_2D_To1D) {
@@ -203,9 +203,9 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_2D_To1D) {
 
     b2.getComputeNode()->getGradFun()();
 
-    ASSERT_NE(a2.grad(), nullptr);
-    this->expectNear(a2.grad()->data()->at({0, 0}), g1);
-    this->expectNear(a2.grad()->data()->at({1, 1}), g4);
+    ASSERT_FALSE(a2.grad().isEmpty());
+    this->expectNear(a2.grad().data()->at({0, 0}), g1);
+    this->expectNear(a2.grad().data()->at({1, 1}), g4);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_3D_To1D) {
@@ -237,9 +237,9 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_3D_To1D) {
 
     b3.getComputeNode()->getGradFun()();
 
-    ASSERT_NE(a3.grad(), nullptr);
-    this->expectNear(a3.grad()->data()->at({0, 0, 0}), g1);
-    this->expectNear(a3.grad()->data()->at({1, 1, 1}), g8);
+    ASSERT_FALSE(a3.grad().isEmpty());
+    this->expectNear(a3.grad().data()->at({0, 0, 0}), g1);
+    this->expectNear(a3.grad().data()->at({1, 1, 1}), g8);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_0D_Scalar_To1D) {
@@ -264,8 +264,8 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_0D_Scalar_To1D) {
 
     b0.getComputeNode()->getGradFun()();
 
-    ASSERT_NE(a0.grad(), nullptr);
-    this->expectNear(a0.grad()->data()->at({}), grad_val);
+    ASSERT_FALSE(a0.grad().isEmpty());
+    this->expectNear(a0.grad().data()->at({}), grad_val);
 }
 
 // ============================================================================
@@ -293,9 +293,9 @@ TYPED_TEST(UnaryOpTypedTest, Transpose_Backward_2D_SquareMatrix) {
 
     b2.getComputeNode()->getGradFun()();
 
-    ASSERT_NE(a2.grad(), nullptr);
-    this->expectNear(a2.grad()->data()->at({0, 1}), g3);
-    this->expectNear(a2.grad()->data()->at({1, 0}), g2);
+    ASSERT_FALSE(a2.grad().isEmpty());
+    this->expectNear(a2.grad().data()->at({0, 1}), g3);
+    this->expectNear(a2.grad().data()->at({1, 0}), g2);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Transpose_Backward_2D_RectangularMatrix) {
@@ -323,10 +323,10 @@ TYPED_TEST(UnaryOpTypedTest, Transpose_Backward_2D_RectangularMatrix) {
 
     b2b.getComputeNode()->getGradFun()();
 
-    ASSERT_NE(a2b.grad(), nullptr);
-    this->expectNear(a2b.grad()->data()->at({0, 0}), g1);
-    this->expectNear(a2b.grad()->data()->at({0, 1}), g3);
-    this->expectNear(a2b.grad()->data()->at({0, 2}), g5);
+    ASSERT_FALSE(a2b.grad().isEmpty());
+    this->expectNear(a2b.grad().data()->at({0, 0}), g1);
+    this->expectNear(a2b.grad().data()->at({0, 1}), g3);
+    this->expectNear(a2b.grad().data()->at({0, 2}), g5);
 }
 
 // ============================================================================
@@ -360,10 +360,10 @@ TYPED_TEST(UnaryOpTypedTest, Negate_Backward_0D_Scalar) {
         expected_a_grad = T(-3);
         expected_b_grad = T(-2);
     }
-    ASSERT_NE(a0.grad(), nullptr);
-    this->expectNear(a0.grad()->data()->at({}), expected_a_grad);
-    ASSERT_NE(b0.grad(), nullptr);
-    this->expectNear(b0.grad()->data()->at({}), expected_b_grad);
+    ASSERT_FALSE(a0.grad().isEmpty());
+    this->expectNear(a0.grad().data()->at({}), expected_a_grad);
+    ASSERT_FALSE(b0.grad().isEmpty());
+    this->expectNear(b0.grad().data()->at({}), expected_b_grad);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Negate_Backward_1D_Vector) {
@@ -401,12 +401,12 @@ TYPED_TEST(UnaryOpTypedTest, Negate_Backward_1D_Vector) {
         expected_b1_grad = T(-2);
         expected_b2_grad = T(-3);
     }
-    ASSERT_NE(a1.grad(), nullptr);
-    this->expectNear(a1.grad()->data()->at({0}), expected_a1_grad);
-    this->expectNear(a1.grad()->data()->at({1}), expected_a2_grad);
-    ASSERT_NE(b1.grad(), nullptr);
-    this->expectNear(b1.grad()->data()->at({0}), expected_b1_grad);
-    this->expectNear(b1.grad()->data()->at({1}), expected_b2_grad);
+    ASSERT_FALSE(a1.grad().isEmpty());
+    this->expectNear(a1.grad().data()->at({0}), expected_a1_grad);
+    this->expectNear(a1.grad().data()->at({1}), expected_a2_grad);
+    ASSERT_FALSE(b1.grad().isEmpty());
+    this->expectNear(b1.grad().data()->at({0}), expected_b1_grad);
+    this->expectNear(b1.grad().data()->at({1}), expected_b2_grad);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Negate_Backward_2D_Matrix) {
@@ -453,12 +453,12 @@ TYPED_TEST(UnaryOpTypedTest, Negate_Backward_2D_Matrix) {
         expected_b00_grad = T(-2);
         expected_b11_grad = T(-5);
     }
-    ASSERT_NE(a2.grad(), nullptr);
-    this->expectNear(a2.grad()->data()->at({0, 0}), expected_a00_grad);
-    this->expectNear(a2.grad()->data()->at({1, 1}), expected_a11_grad);
-    ASSERT_NE(b2.grad(), nullptr);
-    this->expectNear(b2.grad()->data()->at({0, 0}), expected_b00_grad);
-    this->expectNear(b2.grad()->data()->at({1, 1}), expected_b11_grad);
+    ASSERT_FALSE(a2.grad().isEmpty());
+    this->expectNear(a2.grad().data()->at({0, 0}), expected_a00_grad);
+    this->expectNear(a2.grad().data()->at({1, 1}), expected_a11_grad);
+    ASSERT_FALSE(b2.grad().isEmpty());
+    this->expectNear(b2.grad().data()->at({0, 0}), expected_b00_grad);
+    this->expectNear(b2.grad().data()->at({1, 1}), expected_b11_grad);
 }
 
 TYPED_TEST(UnaryOpTypedTest, Negate_Backward_3D_Tensor) {
@@ -524,10 +524,10 @@ TYPED_TEST(UnaryOpTypedTest, Negate_Backward_3D_Tensor) {
         expected_b000_grad = T(-2);
         expected_b111_grad = T(-9);
     }
-    ASSERT_NE(a3.grad(), nullptr);
-    this->expectNear(a3.grad()->data()->at({0, 0, 0}), expected_a000_grad);
-    this->expectNear(a3.grad()->data()->at({1, 1, 1}), expected_a111_grad);
-    ASSERT_NE(b3.grad(), nullptr);
-    this->expectNear(b3.grad()->data()->at({0, 0, 0}), expected_b000_grad);
-    this->expectNear(b3.grad()->data()->at({1, 1, 1}), expected_b111_grad);
+    ASSERT_FALSE(a3.grad().isEmpty());
+    this->expectNear(a3.grad().data()->at({0, 0, 0}), expected_a000_grad);
+    this->expectNear(a3.grad().data()->at({1, 1, 1}), expected_a111_grad);
+    ASSERT_FALSE(b3.grad().isEmpty());
+    this->expectNear(b3.grad().data()->at({0, 0, 0}), expected_b000_grad);
+    this->expectNear(b3.grad().data()->at({1, 1, 1}), expected_b111_grad);
 }
