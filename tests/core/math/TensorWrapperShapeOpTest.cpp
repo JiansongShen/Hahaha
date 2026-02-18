@@ -538,19 +538,19 @@ TEST_F(TensorWrapperShapeOpTest, BroadcastTo_PrefixDim_InsertsZeroStride) {
     EXPECT_EQ(view.getShape()[1], 3);
 
     // prefix dim stride is 0, last dim stride is original 1
-    ASSERT_EQ(view.getStride().getStrides().size(), 2);
-    EXPECT_EQ(view.getStride().getStrides()[0], 0);
-    EXPECT_EQ(view.getStride().getStrides()[1], 1);
+    ASSERT_EQ(view.getStride().getStrideVec().size(), 2);
+    EXPECT_EQ(view.getStride().getStrideVec()[0], 0);
+    EXPECT_EQ(view.getStride().getStrideVec()[1], 1);
     EXPECT_EQ(view.getRawData().get(), src.getRawData().get());
 }
 
 TEST_F(TensorWrapperShapeOpTest, BroadcastTo_DimOneGetsZeroStride) {
     TensorWrapper<int> src(NestedData<int>{{1, 2, 3}}); // shape (1,3)
     auto view = src.broadcastTo(TensorShape({2, 3}));   // (2,3)
-    ASSERT_EQ(view.getStride().getStrides().size(), 2);
-    EXPECT_EQ(view.getStride().getStrides()[0], 0);
-    EXPECT_EQ(view.getStride().getStrides()[1],
-              src.getStride().getStrides()[1]);
+    ASSERT_EQ(view.getStride().getStrideVec().size(), 2);
+    EXPECT_EQ(view.getStride().getStrideVec()[0], 0);
+    EXPECT_EQ(view.getStride().getStrideVec()[1],
+              src.getStride().getStrideVec()[1]);
 }
 
 TYPED_TEST(TensorWrapperShapeOpTypedTest,

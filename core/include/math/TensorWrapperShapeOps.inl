@@ -26,6 +26,10 @@ namespace hahaha::math {
 
 template <typename T>
 TensorWrapper<T> TensorWrapper<T>::reshape(const std::vector<size_t>& newShape) const {
+    if (!isContiguous()) {
+        throw std::invalid_argument("reshape is not supported for non-contiguous tensors. Call clone() first.");
+    }
+
     const size_t totalSize = std::accumulate(
         newShape.begin(), newShape.end(), 1ULL, std::multiplies());
     if (totalSize != getTotalSize()) {
@@ -42,8 +46,14 @@ TensorWrapper<T> TensorWrapper<T>::reshape(const std::vector<size_t>& newShape) 
     size_t currentSize = getTotalSize();
     result.data_.setData(std::shared_ptr<T[]>(new T[currentSize]));
     result.data_.setDevice(data_.getDevice());
-    std::copy(data_.getData().get(),
-              data_.getData().get() + currentSize,
+    
+    // Since we checked isContiguous, we can safely copy from data_.getData() + offset
+    // Note: isContiguous() implies strides match shape, but offset might be non-zero if it's a contiguous slice (e.g. narrow).
+    // Wait, narrow usually changes offset but keeps strides same as parent, which might not match the new shape unless it's a specific slice.
+    // But isContiguous() checks if strides match the CURRENT shape.
+    // So if isContiguous() is true, it means the data is packed densely according to current shape.
+    std::copy(data_.getData().get() + data_.getOffset(),
+              data_.getData().get() + data_.getOffset() + currentSize,
               result.data_.getData().get());
 
     return result;
@@ -75,8 +85,8 @@ TensorWrapper<T> TensorWrapper<T>::broadcastTo(const TensorShape& newShape) {
 
     TensorStride newStride = this->data_.getStride();
     auto shapeDiff = newShape.getDims().size() - this->getShape().size();
-    newStride.getStrides().insert(
-        newStride.getStrides().begin(), shapeDiff, 0);
+    newStride.getStrideVec().insert(
+        newStride.getStrideVec().begin(), shapeDiff, 0);
 
     long newShapeIdx = static_cast<long>(newShape.getDims().size() - 1);
     long selfShapeIdx = static_cast<long>(this->getShape().size() - 1);
@@ -84,7 +94,7 @@ TensorWrapper<T> TensorWrapper<T>::broadcastTo(const TensorShape& newShape) {
     while (selfShapeIdx >= 0) {
         if (newShape.getDims()[newShapeIdx] != 1
             && getShape()[selfShapeIdx] == 1) {
-            newStride.getStrides()[newShapeIdx] = 0;
+            newStride.getStrideVec()[newShapeIdx] = 0;
         }
 
         --newShapeIdx;
@@ -102,11 +112,42 @@ template <typename T>
 TensorWrapper<T> TensorWrapper<T>::clone() const {
     TensorWrapper result;
     result.data_.setShape(data_.getShape());
-    result.data_.setStride(data_.getStride());
+    result.data_.setStride(TensorStride(data_.getShape())); // Default contiguous stride
     result.data_.setDevice(data_.getDevice());
     result.data_.setData(std::make_shared<T[]>(getTotalSize()));
-    for (size_t i = 0; i < getTotalSize(); ++i) {
-        result.data_.getData()[i] = data_[i];
+    
+    if (isContiguous()) {
+        // Fast path for contiguous tensors
+        std::copy(data_.getData().get() + data_.getOffset(),
+                  data_.getData().get() + data_.getOffset() + getTotalSize(),
+                  result.data_.getData().get());
+    } else {
+        // Slow path for non-contiguous views
+        const auto& shape = getShape();
+        size_t dims = shape.size();
+        std::vector<size_t> coords(dims, 0);
+        
+        size_t totalSize = getTotalSize();
+        T* resPtr = result.data_.getData().get();
+        const auto& srcStrides = data_.getStride().getStrideVec();
+        
+        for (size_t i = 0; i < totalSize; ++i) {
+            // Reimplement access logic:
+            size_t srcLinearIdx = 0;
+            for(size_t d=0; d<dims; ++d) {
+                srcLinearIdx += coords[d] * srcStrides[d];
+            }
+            resPtr[i] = data_.getData()[data_.getOffset() + srcLinearIdx];
+            
+            // Increment coords (odometer)
+            for (long d = static_cast<long>(dims) - 1; d >= 0; --d) {
+                coords[d]++;
+                if (coords[d] < shape[d]) {
+                    break;
+                }
+                coords[d] = 0;
+            }
+        }
     }
     return result;
 }
@@ -116,14 +157,38 @@ void TensorWrapper<T>::clear() {
     if (data_.getData() == nullptr) {
         return;
     }
-    const auto totalSize = getTotalSize();
-    for (size_t i = 0; i < totalSize; ++i) {
-        data_[i] = T();
+    // If contiguous, we can memset/fill the raw buffer.
+    if (isContiguous()) {
+        const auto totalSize = getTotalSize();
+        std::fill(data_.getData().get() + data_.getOffset(),
+                  data_.getData().get() + data_.getOffset() + totalSize,
+                  T());
+    } else {
+        // Non-contiguous: must iterate
+        const auto& shape = getShape();
+        size_t dims = shape.size();
+        std::vector<size_t> coords(dims, 0);
+        size_t totalSize = getTotalSize();
+        const auto& srcStrides = data_.getStride().getStrideVec();
+        
+        for (size_t i = 0; i < totalSize; ++i) {
+            size_t srcLinearIdx = 0;
+            for(size_t d=0; d<dims; ++d) {
+                srcLinearIdx += coords[d] * srcStrides[d];
+            }
+            data_.getData()[data_.getOffset() + srcLinearIdx] = T();
+            
+            for (long d = static_cast<long>(dims) - 1; d >= 0; --d) {
+                coords[d]++;
+                if (coords[d] < shape[d]) {
+                    break;
+                }
+                coords[d] = 0;
+            }
+        }
     }
 }
 
 } // namespace hahaha::math
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_SHAPE_OPS_INL
-
-

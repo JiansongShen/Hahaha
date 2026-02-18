@@ -373,7 +373,7 @@ template <typename T> class TensorWrapper {
      * @return TensorWrapper Result tensor with summed values.
      * @throws std::invalid_argument if any axis is out of bounds.
      */
-    TensorWrapper sum(std::vector<size_t> axes, const bool keepDims = false) const;
+    TensorWrapper sum(std::vector<size_t> axes, bool keepDims = false) const;
 
     /**
      * @brief Clear all values in the tensor, setting them to default value
@@ -495,9 +495,10 @@ template <typename T> class TensorWrapper {
         std::vector<size_t> newShape = getShape();
         newShape.erase(newShape.begin() + static_cast<int>(dim));
         res.data_.setShape(TensorShape(newShape));
-        std::vector<size_t> newStride = getStride().getStrides();
-        newStride.erase(newStride.begin() + static_cast<int>(dim));
-        res.data_.setStride(TensorStride(newStride));
+        TensorStride newStrideTS = getStride();
+        newStrideTS.getStrideVec().erase(
+            newStrideTS.getStrideVec().begin() + static_cast<int>(dim));
+        res.data_.setStride(newStrideTS);
 
         return res;
     }
@@ -571,9 +572,9 @@ template <typename T> class TensorWrapper {
 
         // Update stride: multiply the original stride by step
         // This is because we're taking every 'step'-th element
-        std::vector<size_t> newStrideVec = getStride().getStrides();
-        newStrideVec[dim] = getStride()[dim] * step;
-        res.data_.setStride(TensorStride(newStrideVec));
+        TensorStride newStrideTS = getStride();
+        newStrideTS.getStrideVec()[dim] = getStride()[dim] * step;
+        res.data_.setStride(newStrideTS);
 
         return res;
     }
@@ -614,7 +615,9 @@ template <typename T> class TensorWrapper {
             throw std::invalid_argument("SliceSetting contains invalid dimension indices");
         }
 
-        TensorWrapper res = *this;
+        // Share data (not deep-copy) so the result is a true view of this tensor
+        TensorWrapper res;
+        res.data_ = data_.share();
         for (const auto& sliceSetting : setting.settings) {
             size_t dim = sliceSetting.first;
             const auto& inner = sliceSetting.second;
@@ -793,6 +796,15 @@ template <typename T> class TensorWrapper {
      */
     TensorWrapper sameShapeWithValue(T initValue) const;
 
+    /**
+     * @brief Check if the tensor data is contiguous in memory.
+     *
+     * A tensor is contiguous if its elements are stored in sequential memory
+     * order without gaps, matching the logical shape.
+     *
+     * @return true if contiguous, false otherwise.
+     */
+    [[nodiscard]] bool isContiguous() const;
 
   private:
     TensorData<T> data_; /**< Managed tensor data and metadata. */

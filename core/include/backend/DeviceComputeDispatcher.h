@@ -53,8 +53,8 @@ std::expected<void, Error> dispatchElementwiseCpu(
     if (shape != rhs.getShape() || shape != res.getShape()) {
         return std::unexpected(InvalidArgumentError());
     }
-    const auto& lStride = lhs.getStride().getStrides();
-    const auto& rStride = rhs.getStride().getStrides();
+    const auto& lStride = lhs.getStride().getStrideVec();
+    const auto& rStride = rhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
     auto rRaw = rhs.getRawData();
     auto resRaw = res.getRawData();
@@ -75,9 +75,9 @@ std::expected<void, Error> dispatchElementwiseCuda(
     if (shape != rhs.getShape() || shape != res.getShape()) {
         return std::unexpected(InvalidArgumentError());
     }
-    const auto& lStride = lhs.getStride().getStrides();
-    const auto& rStride = rhs.getStride().getStrides();
-    const auto& resStride = res.getStride().getStrides();
+    const auto& lStride = lhs.getStride().getStrideVec();
+    const auto& rStride = rhs.getStride().getStrideVec();
+    const auto& resStride = res.getStride().getStrideVec();
     if (!isContiguous(shape, lStride) || !isContiguous(shape, rStride)
         || !isContiguous(shape, resStride)) {
         return std::unexpected(InvalidArgumentError());
@@ -169,7 +169,7 @@ std::expected<void, Error> dispatchAdd(const DeviceType dev,
     const auto& shape = lhs.getShape();
     if (shape != res.getShape())
         return std::unexpected(InvalidArgumentError());
-    const auto& lStride = lhs.getStride().getStrides();
+    const auto& lStride = lhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
     auto resRaw = res.getRawData();
     std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
@@ -262,7 +262,7 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
     const auto& shape = lhs.getShape();
     if (shape != res.getShape())
         return std::unexpected(InvalidArgumentError());
-    const auto& lStride = lhs.getStride().getStrides();
+    const auto& lStride = lhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
     auto resRaw = res.getRawData();
     std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
@@ -284,7 +284,7 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
     const auto& shape = rhs.getShape();
     if (shape != res.getShape())
         return std::unexpected(InvalidArgumentError());
-    const auto& rStride = rhs.getStride().getStrides();
+    const auto& rStride = rhs.getStride().getStrideVec();
     auto rRaw = rhs.getRawData();
     auto resRaw = res.getRawData();
     std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());
@@ -369,7 +369,7 @@ std::expected<void, Error> dispatchMul(const DeviceType dev,
     const auto& shape = lhs.getShape();
     if (shape != res.getShape())
         return std::unexpected(InvalidArgumentError());
-    const auto& lStride = lhs.getStride().getStrides();
+    const auto& lStride = lhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
     auto resRaw = res.getRawData();
     std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
@@ -464,7 +464,7 @@ std::expected<void, Error> dispatchDiv(const DeviceType dev,
     const auto& shape = lhs.getShape();
     if (shape != res.getShape())
         return std::unexpected(InvalidArgumentError());
-    const auto& lStride = lhs.getStride().getStrides();
+    const auto& lStride = lhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
     auto resRaw = res.getRawData();
     std::span<T> lBuf(lRaw.get(), lhs.getTotalSize());
@@ -486,7 +486,7 @@ std::expected<void, Error> dispatchDiv(const DeviceType dev,
     const auto& shape = rhs.getShape();
     if (shape != res.getShape())
         return std::unexpected(InvalidArgumentError());
-    const auto& rStride = rhs.getStride().getStrides();
+    const auto& rStride = rhs.getStride().getStrideVec();
     auto rRaw = rhs.getRawData();
     auto resRaw = res.getRawData();
     std::span<T> rBuf(rRaw.get(), rhs.getTotalSize());

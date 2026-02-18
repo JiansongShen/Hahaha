@@ -106,6 +106,8 @@ template <typename T> class TensorData {
      */
     TensorData(const TensorData& other)
         : shape_(other.shape_), stride_(other.stride_), device_(other.device_) {
+        // Deep copy: allocate fresh storage and copy only the logical view's
+        // elements with offset reset to 0 so the copy is contiguous.
         size_t size = shape_.getTotalSize();
         if (device_->getType() == backend::DeviceType::CPU) {
             data_ = std::make_shared<T[]>(size);
@@ -123,7 +125,8 @@ template <typename T> class TensorData {
      */
     TensorData(TensorData&& other) noexcept
         : data_(std::move(other.data_)), shape_(std::move(other.shape_)),
-          stride_(std::move(other.stride_)), device_(std::move(other.device_)) {
+          stride_(std::move(other.stride_)), device_(std::move(other.device_)),
+          offset_(other.offset_) {
     }
 
     /**
@@ -155,6 +158,7 @@ template <typename T> class TensorData {
             shape_ = std::move(other.shape_);
             stride_ = std::move(other.stride_);
             device_ = other.device_;
+            offset_ = other.offset_;
         }
         return *this;
     }

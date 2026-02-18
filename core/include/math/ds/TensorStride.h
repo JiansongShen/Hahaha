@@ -74,11 +74,11 @@ class TensorStride {
      * @brief Get the strides vector.
      * @return const std::vector<size_t>& strides.
      */
-    [[nodiscard]] const std::vector<size_t>& getStrides() const {
+    [[nodiscard]] const std::vector<size_t>& getStrideVec() const {
         return strides_;
     }
 
-    [[nodiscard]] std::vector<size_t>& getStrides() {
+    [[nodiscard]] std::vector<size_t>& getStrideVec() {
         return strides_;
     }
 

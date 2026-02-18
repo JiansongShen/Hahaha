@@ -19,8 +19,6 @@
 #ifndef HAHAHA_MATH_TENSOR_WRAPPER_UTILITIES_INL
 #define HAHAHA_MATH_TENSOR_WRAPPER_UTILITIES_INL
 
-#include "math/slice_setting.h"
-
 namespace hahaha::math {
 
 template <typename T>
@@ -85,7 +83,7 @@ T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) {
 
     size_t linearIdx = 0;
     const auto* idxIt = indices.begin();
-    const auto& strideDims = data_.getStride().getStrides();
+    const auto& strideDims = data_.getStride().getStrideVec();
 
     auto dimsSize = shapeDims.size();
     for (size_t i = 0; i < dimsSize; ++i) {
@@ -97,7 +95,8 @@ T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) {
         linearIdx += dimIdx * strideDims[i];
         std::advance(idxIt, 1);
     }
-    return data_.getData()[linearIdx];
+    // Add offset for views
+    return data_.getData()[data_.getOffset() + linearIdx];
 }
 
 template <typename T>
@@ -109,7 +108,7 @@ const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) cons
 
     size_t linearIdx = 0;
     const auto* idxIt = indices.begin();
-    const auto& strideDims = data_.getStride().getStrides();
+    const auto& strideDims = data_.getStride().getStrideVec();
 
     for (size_t i = 0; i < shapeDims.size(); ++i) {
         size_t dimIdx = *idxIt;
@@ -119,7 +118,8 @@ const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) cons
         linearIdx += dimIdx * strideDims[i];
         std::advance(idxIt, 1);
     }
-    return data_.getData()[linearIdx];
+    // Add offset for views
+    return data_.getData()[data_.getOffset() + linearIdx];
 }
 
 template <typename T>
@@ -129,11 +129,40 @@ void TensorWrapper<T>::axpy(T alpha, const TensorWrapper& other) {
     }
     checkSameDevice(other);
 
-    // Dispatch to backend for hardware-specific optimization
-    auto res = backend::dispatchAxpy(
-        data_.getDevice()->getType(), alpha, other, *this);
-    if (!res) {
-        throw std::runtime_error(res.error().message());
+    if (isContiguous() && other.isContiguous()) {
+        // Dispatch to backend for hardware-specific optimization
+        auto res = backend::dispatchAxpy(
+            data_.getDevice()->getType(), alpha, other, *this);
+        if (!res) {
+            throw std::runtime_error(res.error().message());
+        }
+    } else {
+        // Slow path for non-contiguous tensors
+        const auto& shape = getShape();
+        std::vector<size_t> coord(shape.size(), 0);
+        const auto& strideA = data_.getStride().getStrideVec();
+        const auto& strideB = other.data_.getStride().getStrideVec();
+        T* ptrA = data_.getData().get();
+        const T* ptrB = other.data_.getData().get();
+        size_t offsetA = data_.getOffset();
+        size_t offsetB = other.data_.getOffset();
+
+        for (size_t i = 0; i < getTotalSize(); ++i) {
+            size_t idxA = 0;
+            size_t idxB = 0;
+            for (size_t d = 0; d < shape.size(); ++d) {
+                idxA += coord[d] * strideA[d];
+                idxB += coord[d] * strideB[d];
+            }
+            ptrA[offsetA + idxA] += alpha * ptrB[offsetB + idxB];
+            
+            for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
+                if (++coord[d] < shape[d]) {
+                    break;
+                }
+                coord[d] = 0;
+            }
+        }
     }
 }
 
@@ -154,9 +183,30 @@ TensorWrapper<T> TensorWrapper<T>::sameShapeWithValue(T initValue) const {
     return res;
 }
 
+template <typename T>
+bool TensorWrapper<T>::isContiguous() const {
+    if (data_.getOffset() != 0) {
+        return false;
+    }
+
+    TensorStride defaultStride(data_.getShape());
+    const auto& currentStrides = data_.getStride().getStrideVec();
+    const auto& defaultStrides = defaultStride.getStrideVec();
+
+    if (currentStrides.size() != defaultStrides.size()) {
+        return false;
+    }
+
+    for (size_t i = 0; i < currentStrides.size(); ++i) {
+        if (currentStrides[i] != defaultStrides[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // slice implementation is now in TensorWrapper.h (inline)
 
 } // namespace hahaha::math
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_UTILITIES_INL
-

@@ -1,10 +1,4 @@
 // Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
-
-#ifndef BFSOPTIMIZER_A2495442_4EF8_4986_A962_762BE0BEC275
-#define BFSOPTIMIZER_A2495442_4EF8_4986_A962_762BE0BEC275
-
-#ifndef LBFSOPTIMIZER_20COPY_BDB3CE50_BF7A_4DF0_8949_413200C7C3B4
-#define LBFSOPTIMIZER_20COPY_BDB3CE50_BF7A_4DF0_8949_413200C7C3B4
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

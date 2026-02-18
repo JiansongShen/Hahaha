@@ -17,8 +17,8 @@
 //
 //
 
-#ifndef HAHAHA_TENSOR_H
-#define HAHAHA_TENSOR_H
+#ifndef TENSOR_DBEC51E9_E535_4335_BA5F_E7C5EC626860
+#define TENSOR_DBEC51E9_E535_4335_BA5F_E7C5EC626860
 
 #include <memory>
 #include <vector>
@@ -471,4 +471,4 @@ template <typename T> class Tensor {
 
 } // namespace hahaha
 
-#endif // HAHAHA_TENSOR_H
+#endif // TENSOR_DBEC51E9_E535_4335_BA5F_E7C5EC626860

@@ -347,8 +347,8 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, GetStride_ReturnsCorrectValues) {
     T v3 = T(3);
     T v4 = T(4);
     TensorWrapper<T> tensor_2d(NestedData<T>{{v1, v2}, {v3, v4}});
-    EXPECT_EQ(tensor_2d.getStride().getStrides()[0], 2);
-    EXPECT_EQ(tensor_2d.getStride().getStrides()[1], 1);
+    EXPECT_EQ(tensor_2d.getStride().getStrideVec()[0], 2);
+    EXPECT_EQ(tensor_2d.getStride().getStrideVec()[1], 1);
 
     T v5 = T(5);
     T v6 = T(6);
@@ -356,9 +356,9 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, GetStride_ReturnsCorrectValues) {
     T v8 = T(8);
     TensorWrapper<T> tensor_3d(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
-    EXPECT_EQ(tensor_3d.getStride().getStrides()[0], 4);
-    EXPECT_EQ(tensor_3d.getStride().getStrides()[1], 2);
-    EXPECT_EQ(tensor_3d.getStride().getStrides()[2], 1);
+    EXPECT_EQ(tensor_3d.getStride().getStrideVec()[0], 4);
+    EXPECT_EQ(tensor_3d.getStride().getStrideVec()[1], 2);
+    EXPECT_EQ(tensor_3d.getStride().getStrideVec()[2], 1);
 }
 
 TYPED_TEST(TensorWrapperConstructionTypedTest,

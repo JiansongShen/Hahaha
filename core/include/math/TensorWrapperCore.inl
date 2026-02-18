@@ -68,7 +68,7 @@ T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) {
 
     size_t linearIdx = 0;
     const auto* idxIt = indices.begin();
-    const auto& strideDims = data_.getStride().getStrides();
+    const auto& strideDims = data_.getStride().getStrideVec();
 
     auto dimsSize = shapeDims.size();
     for (size_t i = 0; i < dimsSize; ++i) {
@@ -92,7 +92,7 @@ const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) cons
 
     size_t linearIdx = 0;
     const auto* idxIt = indices.begin();
-    const auto& strideDims = data_.getStride().getStrides();
+    const auto& strideDims = data_.getStride().getStrideVec();
 
     for (size_t i = 0; i < shapeDims.size(); ++i) {
         size_t dimIdx = *idxIt;
