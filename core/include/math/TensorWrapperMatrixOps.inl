@@ -205,3 +205,4 @@ TensorWrapper<T> TensorWrapper<T>::sum(std::vector<size_t> axes,
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_MATRIX_OPS_INL
 
+

@@ -20,7 +20,6 @@
 #ifndef HAHAHA_DATASET_INNER_H_4B71BF801C8A477CABA1DCC84944450E
 #define HAHAHA_DATASET_INNER_H_4B71BF801C8A477CABA1DCC84944450E
 
-#include <memory>
 #include <utility>
 
 #include "DatasetTypeUnifyStrategy.h"
@@ -62,6 +61,7 @@ template <typename T> class DatasetInner {
     }
 
     Tensor<T> getItem(size_t idx) {
+        Tensor<T> item = samples_.slice(idx);
     }
 
   private:

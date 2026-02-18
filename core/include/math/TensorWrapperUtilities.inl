@@ -154,14 +154,9 @@ TensorWrapper<T> TensorWrapper<T>::sameShapeWithValue(T initValue) const {
     return res;
 }
 
-template <typename T>
-TensorWrapper<T>
-TensorWrapper<T>::slice(SliceSetting requirements) {
-    requirements.sort();
-
-    return {};
-}
+// slice implementation is now in TensorWrapper.h (inline)
 
 } // namespace hahaha::math
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_UTILITIES_INL
+

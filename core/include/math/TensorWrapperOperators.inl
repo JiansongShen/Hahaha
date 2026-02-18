@@ -226,3 +226,4 @@ TensorWrapper<T> operator/(T scalar, const TensorWrapper<T>& tensor) {
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_OPERATORS_INL
 
+

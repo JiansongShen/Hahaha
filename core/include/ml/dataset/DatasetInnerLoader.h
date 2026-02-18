@@ -27,13 +27,9 @@
 
 #include "DatasetInner.h"
 #include "common/errors/Error.h"
-#include "math/TensorWrapper.h"
-#include "math/ds/TensorShape.h"
 #include "ml/dataset/DatasetHandleBlankStrategy.h"
-#include "ml/dataset/DatasetTypeUnifyStrategy.h"
-#include "ml/dataset/dataset_format.h"
-#include "utils/common/helper_structs.h"
 #include "utils/common/StringUtils.h"
+#include "utils/common/helper_structs.h"
 #include "utils/log/Logger.h"
 
 namespace hahaha::ml {
@@ -43,26 +39,7 @@ class DatasetInnerLoader {
 
   public:
     template <typename T>
-    void loadFromCSVTo(const std::string& pathString,
-                       DatasetInner<T>& dataset) {
-        currFile_ = pathString;
-        currLine_ = 1;
-        checkPathExist(pathString);
-        std::ifstream ifs(pathString);
-        if (!ifs.is_open()) {
-            error(std::format("file can not open: {}", pathString));
-            throw std::runtime_error(pathString);
-        }
-
-        setUpColumnNames<T>(ifs, dataset);
-        setUpData<T>(ifs, dataset);
-        dataset.datasetName_ = pathString;
-    }
-
-    template <typename T>
-    void loadFromCSVTo(const std::string& pathString,
-                       DatasetInner<T>& dataset,
-                       CSVDatasetFormat format) {
+    void loadFromCSVTo(const std::string& pathString, DatasetInner<T>& dataset) {
         currFile_ = pathString;
         currLine_ = 1;
         checkPathExist(pathString);
@@ -110,8 +87,7 @@ class DatasetInnerLoader {
     template <typename T>
     std::expected<std::vector<T>, common::Error>
     handleOneLine(const std::string& line) {
-        const auto strVec =
-            utils::StringUtils::split(line, CSVLineDelimiter, true);
+        const auto strVec = utils::StringUtils::split(line, CSVLineDelimiter, true);
         auto res = std::vector<T>{};
 
         if (strVec.size() != columnNum_) {
@@ -127,11 +103,10 @@ class DatasetInnerLoader {
         for (size_t i = 0; i < strVec.size(); ++i) {
             auto valRes = handleOneValue<T>(strVec[i]);
             if (!valRes) {
-                error(
-                    std::format("error: when parsing the line:{} at file {}:{}",
-                                line,
-                                currFile_,
-                                static_cast<int>(currLine_)));
+                error(std::format("error: when parsing the line:{} at file {}:{}",
+                                  line,
+                                  currFile_,
+                                  static_cast<int>(currLine_)));
                 return std::unexpected(common::InvalidDatasetError());
             }
             res[i] = valRes.value();
@@ -175,8 +150,7 @@ class DatasetInnerLoader {
     }
 
     template <typename T>
-    void fillData(std::vector<std::vector<T>>& dataList,
-                  DatasetInner<T>& dataset) {
+    void fillData(std::vector<std::vector<T>>& dataList, DatasetInner<T>& dataset) {
         if (dataList.empty()) {
             dataset.samples_ = Tensor<T>();
             return;

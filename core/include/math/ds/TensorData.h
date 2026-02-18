@@ -174,6 +174,7 @@ template <typename T> class TensorData {
         sharedData.stride_ = stride_;
         sharedData.device_ = device_;
         sharedData.data_ = data_;
+        sharedData.offset_ = offset_;
         return sharedData;
     }
 
@@ -348,12 +349,29 @@ template <typename T> class TensorData {
         device_ = std::move(device);
     }
 
+    /**
+     * @brief Get the offset for view operations.
+     * @return size_t The current offset.
+     */
+    [[nodiscard]] size_t getOffset() const {
+        return offset_;
+    }
+
+    /**
+     * @brief Set the offset for view operations.
+     * @param offset The new offset value.
+     */
+    void setOffset(size_t offset) {
+        offset_ = offset;
+    }
+
   private:
     std::shared_ptr<T[]> data_; /**< Raw heap-allocated data array. */
     TensorShape shape_;         /**< Dimensionality metadata. */
     TensorStride stride_;       /**< Memory skip values for indexing. */
     std::shared_ptr<backend::Device> device_ =
         backend::getCPUDevice(); /**< Device where data resides. */
+    size_t offset_ = 0;
 
     std::uintptr_t gpuPtr = 0;
 
