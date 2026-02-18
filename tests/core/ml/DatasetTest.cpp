@@ -15,6 +15,7 @@
 // Contributors:
 // jiansongshen (jason.shen111@outlook.com)
 //
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -528,4 +529,96 @@ TYPED_TEST(DatasetInnerTypedTest, IteratorDifferenceEqualsSize) {
         writeTempCSV("a,b\n1.0,2.0\n3.0,4.0\n5.0,6.0\n", tag), ds);
     using diff_t = typename DatasetInner<TypeParam>::difference_type;
     EXPECT_EQ(ds.end() - ds.begin(), static_cast<diff_t>(ds.size()));
+}
+
+// --- DatasetInner::shuffle() ------------------------------------------------
+
+class DatasetShuffleTest : public ::testing::Test {
+  protected:
+    void SetUp() override {
+        ds_ = make3x2Dataset<f32>("shuf_");
+    }
+    DatasetInner<f32> ds_;
+};
+
+TEST_F(DatasetShuffleTest, SizeUnchangedAfterShuffle) {
+    ds_.shuffle();
+    EXPECT_EQ(ds_.size(), 3u);
+}
+
+TEST_F(DatasetShuffleTest, AllRowsStillPresentAfterShuffle) {
+    // collect the set of first-column values before and after — must be identical
+    auto collect = [&]() {
+        std::vector<float> vals;
+        vals.reserve(ds_.size());
+        for (size_t i = 0; i < ds_.size(); ++i)
+            vals.push_back(ds_.getItem(i).at({0}));
+        std::sort(vals.begin(), vals.end());
+        return vals;
+    };
+
+    const auto before = collect();
+    ds_.shuffle();
+    const auto after = collect();
+    EXPECT_EQ(before, after);
+}
+
+TEST_F(DatasetShuffleTest, SeededShuffleIsReproducible) {
+    // two datasets shuffled with the same seed must yield the same order
+    auto ds2 = make3x2Dataset<f32>("shuf2_");
+    ds_.shuffle(42u);
+    ds2.shuffle(42u);
+
+    for (size_t i = 0; i < ds_.size(); ++i) {
+        EXPECT_NEAR(ds_.getItem(i).at({0}), ds2.getItem(i).at({0}), 1e-5f);
+    }
+}
+
+TEST_F(DatasetShuffleTest, DifferentSeedsLikelyProduceDifferentOrders) {
+    // with 3 rows there are 6 permutations; seeds 0 and 1 almost certainly differ
+    auto ds2 = make3x2Dataset<f32>("shuf3_");
+    ds_.shuffle(0u);
+    ds2.shuffle(1u);
+
+    std::vector<float> order1, order2;
+    for (size_t i = 0; i < ds_.size(); ++i) {
+        order1.push_back(ds_.getItem(i).at({0}));
+        order2.push_back(ds2.getItem(i).at({0}));
+    }
+    // Not guaranteed but true for any sane RNG with these seeds on 3 elements.
+    EXPECT_NE(order1, order2);
+}
+
+TEST_F(DatasetShuffleTest, IteratorReflectsShuffledOrder) {
+    // iterator must walk rows in the same order as getItem after a shuffle
+    ds_.shuffle(7u);
+    size_t idx = 0;
+    for (auto& row : ds_) {
+        EXPECT_NEAR(row.at({0}), ds_.getItem(idx).at({0}), 1e-5f);
+        ++idx;
+    }
+}
+
+TEST_F(DatasetShuffleTest, ShuffleOnEmptyDatasetIsNoop) {
+    DatasetInner<f32> empty;
+    EXPECT_NO_THROW(empty.shuffle());
+    EXPECT_NO_THROW(empty.shuffle(42u));
+    EXPECT_EQ(empty.size(), 0u);
+}
+
+TEST_F(DatasetShuffleTest, MultipleShufflesKeepAllRows) {
+    auto collect = [&]() {
+        std::vector<float> vals;
+        vals.reserve(ds_.size());
+        for (size_t i = 0; i < ds_.size(); ++i)
+            vals.push_back(ds_.getItem(i).at({0}));
+        std::sort(vals.begin(), vals.end());
+        return vals;
+    };
+    const auto before = collect();
+    ds_.shuffle(1u);
+    ds_.shuffle(2u);
+    ds_.shuffle(3u);
+    const auto after = collect();
+    EXPECT_EQ(after, before);
 }

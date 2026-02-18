@@ -20,7 +20,9 @@
 #ifndef DATASETINNER_E6338AA5_36E3_4139_84AC_2AC08F8DA122
 #define DATASETINNER_E6338AA5_36E3_4139_84AC_2AC08F8DA122
 
+#include <algorithm>
 #include <cstddef>
+#include <random>
 #include <utility>
 
 #include "DatasetTypeUnifyStrategy.h"
@@ -56,7 +58,8 @@ template <typename T> class DatasetInner {
         }
 
         reference operator*() {
-            current_ = dataset_->samples_.select(0, static_cast<size_t>(index_));
+            current_ = dataset_->samples_.select(
+                0, dataset_->indices_[static_cast<size_t>(index_)]);
             return current_;
         }
 
@@ -109,7 +112,8 @@ template <typename T> class DatasetInner {
         }
 
         value_type operator[](difference_type n) const {
-            return dataset_->samples_.select(0, static_cast<size_t>(index_ + n));
+            return dataset_->samples_.select(
+                0, dataset_->indices_[static_cast<size_t>(index_ + n)]);
         }
 
         bool operator==(const iterator& rhs) const noexcept {
@@ -142,7 +146,8 @@ template <typename T> class DatasetInner {
         }
 
         reference operator*() const {
-            current_ = dataset_->samples_.select(0, static_cast<size_t>(index_));
+            current_ = dataset_->samples_.select(
+                0, dataset_->indices_[static_cast<size_t>(index_)]);
             return current_;
         }
 
@@ -195,7 +200,8 @@ template <typename T> class DatasetInner {
         }
 
         value_type operator[](difference_type n) const {
-            return dataset_->samples_.select(0, static_cast<size_t>(index_ + n));
+            return dataset_->samples_.select(
+                0, dataset_->indices_[static_cast<size_t>(index_ + n)]);
         }
 
         bool operator==(const const_iterator& rhs) const noexcept {
@@ -240,15 +246,15 @@ template <typename T> class DatasetInner {
         return typeUnifyStrategy_;
     }
 
+
     /**
-     * @brief Return the sample at index @p idx as a 1-D Tensor (view of row).
-     * @param idx Row index.  Must be < number of samples.
+     * @brief Return the sample at logical index @p idx as a 1-D Tensor view.
+     *
+     * The logical index is remapped through the current permutation, so the
+     * result reflects any prior call to shuffle().
      */
     Tensor<T> getItem(size_t idx) {
-        // BUG FIX: was calling samples_.slice(idx) which does not exist; the
-        // correct call is select(0, idx) to pick the idx-th row.
-        // Also: the original function body was missing a return statement.
-        return samples_.select(0, idx);
+        return samples_.select(0, indices_[idx]);
     }
 
     iterator begin() {
@@ -291,8 +297,23 @@ template <typename T> class DatasetInner {
         return samples_.getShape()[0];
     }
 
+    /**
+     * @brief Randomly permute the iteration order using a non-deterministic seed.
+     *
+     * Only the index mapping is shuffled — the underlying data tensor is never
+     * moved or copied (O(N) time, zero extra memory for data).
+     */
     void shuffle() {
-        // TODO: implement shuffling
+        std::mt19937 rng{std::random_device{}()};
+        std::shuffle(indices_.begin(), indices_.end(), rng);
+    }
+
+    /**
+     * @brief Shuffle with an explicit @p seed for reproducible runs.
+     */
+    void shuffle(unsigned seed) {
+        std::mt19937 rng{seed};
+        std::shuffle(indices_.begin(), indices_.end(), rng);
     }
 
   private:
@@ -303,6 +324,8 @@ template <typename T> class DatasetInner {
     DatasetTypeUnifyStrategy typeUnifyStrategy_;
 
     Tensor<T> samples_;
+    /// Logical-to-physical row mapping. Shuffled by shuffle(); reset by the loader.
+    std::vector<size_t> indices_;
 
     friend class DatasetInnerLoader;
 };

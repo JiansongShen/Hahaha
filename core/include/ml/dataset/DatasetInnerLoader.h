@@ -22,6 +22,7 @@
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -174,6 +175,7 @@ class DatasetInnerLoader {
     void fillData(std::vector<std::vector<T>>& dataList, DatasetInner<T>& dataset) {
         if (dataList.empty()) {
             dataset.samples_ = Tensor<T>();
+            dataset.indices_.clear();
             return;
         }
 
@@ -189,6 +191,10 @@ class DatasetInnerLoader {
         }
 
         dataset.samples_ = sampleTensor;
+
+        // initialise identity permutation — no shuffle yet
+        dataset.indices_.resize(dataList.size());
+        std::iota(dataset.indices_.begin(), dataset.indices_.end(), 0);
     }
 
     void clearStatus() {
