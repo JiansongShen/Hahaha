@@ -40,6 +40,9 @@ template <typename T> class DatasetInner {
     using pointer = Tensor<T>*;
     using const_pointer = const Tensor<T>*;
 
+    // =========================================================================
+    // iterator
+    // =========================================================================
     class iterator {
       public:
         using iterator_category = std::random_access_iterator_tag;
@@ -53,7 +56,8 @@ template <typename T> class DatasetInner {
         }
 
         reference operator*() {
-            return dataset_->samples_.select(0, index_);
+            current_ = dataset_->samples_.select(0, static_cast<size_t>(index_));
+            return current_;
         }
 
         pointer operator->() {
@@ -104,8 +108,8 @@ template <typename T> class DatasetInner {
             return static_cast<difference_type>(index_ - rhs.index_);
         }
 
-        reference operator[](difference_type n) const {
-            return *(*this + n);
+        value_type operator[](difference_type n) const {
+            return dataset_->samples_.select(0, static_cast<size_t>(index_ + n));
         }
 
         bool operator==(const iterator& rhs) const noexcept {
@@ -119,87 +123,93 @@ template <typename T> class DatasetInner {
       private:
         DatasetInner* dataset_;
         long index_;
+        Tensor<T> current_; ///< cached current-row view used by operator*()
     };
 
+    // =========================================================================
+    // const_iterator
+    // =========================================================================
     class const_iterator {
       public:
         using iterator_category = std::random_access_iterator_tag;
         using value_type = typename DatasetInner::value_type;
         using difference_type = typename DatasetInner::difference_type;
-        using pointer = typename DatasetInner::pointer;
-        using reference = typename DatasetInner::reference;
+        using pointer = typename DatasetInner::const_pointer;
+        using reference = typename DatasetInner::const_reference;
 
         const_iterator(const DatasetInner* dataset, long index)
             : dataset_(dataset), index_(index) {
         }
 
         reference operator*() const {
-            return dataset_->samples_.select(0, index_);
+            current_ = dataset_->samples_.select(0, static_cast<size_t>(index_));
+            return current_;
         }
 
         pointer operator->() const {
             return &(operator*());
         }
 
-        iterator& operator++() noexcept {
+        const_iterator& operator++() noexcept {
             ++index_;
             return *this;
         }
 
-        iterator operator++(int) noexcept {
-            iterator tmp = *this;
+        const_iterator operator++(int) noexcept {
+            const_iterator tmp = *this;
             ++(*this);
             return tmp;
         }
 
-        iterator& operator--() noexcept {
+        const_iterator& operator--() noexcept {
             --index_;
             return *this;
         }
 
-        iterator operator--(int) noexcept {
-            iterator tmp = *this;
+        const_iterator operator--(int) noexcept {
+            const_iterator tmp = *this;
             --(*this);
             return tmp;
         }
 
-        iterator& operator+=(difference_type n) noexcept {
+        const_iterator& operator+=(difference_type n) noexcept {
             index_ += n;
             return *this;
         }
 
-        iterator operator+(difference_type n) const noexcept {
-            return iterator(dataset_, index_ + n);
+        const_iterator operator+(difference_type n) const noexcept {
+            return const_iterator(dataset_, index_ + n);
         }
 
-        iterator& operator-=(difference_type n) noexcept {
+        const_iterator& operator-=(difference_type n) noexcept {
             index_ -= n;
             return *this;
         }
 
-        iterator operator-(difference_type n) const noexcept {
-            return iterator(dataset_, index_ - n);
+        const_iterator operator-(difference_type n) const noexcept {
+            return const_iterator(dataset_, index_ - n);
         }
 
-        difference_type operator-(const iterator& rhs) const noexcept {
+        difference_type operator-(const const_iterator& rhs) const noexcept {
             return static_cast<difference_type>(index_ - rhs.index_);
         }
 
-        reference operator[](difference_type n) const {
-            return *(*this + n);
+        value_type operator[](difference_type n) const {
+            return dataset_->samples_.select(0, static_cast<size_t>(index_ + n));
         }
 
-        bool operator==(const iterator& rhs) const noexcept {
+        bool operator==(const const_iterator& rhs) const noexcept {
             return dataset_ == rhs.dataset_ && index_ == rhs.index_;
         }
 
-        bool operator!=(const iterator& rhs) const noexcept {
+        bool operator!=(const const_iterator& rhs) const noexcept {
             return !(*this == rhs);
         }
 
       private:
         const DatasetInner* dataset_;
         long index_;
+        mutable Tensor<T> current_; ///< cached current-row view (mutable for const operator*)
     };
 
     DatasetInner() : typeUnifyStrategy_(getDefaultDatasetTypeUnifyStrategy()) {
@@ -230,24 +240,37 @@ template <typename T> class DatasetInner {
         return typeUnifyStrategy_;
     }
 
+    /**
+     * @brief Return the sample at index @p idx as a 1-D Tensor (view of row).
+     * @param idx Row index.  Must be < number of samples.
+     */
     Tensor<T> getItem(size_t idx) {
-        Tensor<T> item = samples_.slice(idx);
+        // BUG FIX: was calling samples_.slice(idx) which does not exist; the
+        // correct call is select(0, idx) to pick the idx-th row.
+        // Also: the original function body was missing a return statement.
+        return samples_.select(0, idx);
     }
 
     iterator begin() {
-        return iterator(*this, 0);
+        return iterator(this, 0);
     }
 
     iterator end() {
-        return iterator(*this, samples_.getShape()[0]);
+        if (samples_.getDimensions() == 0) {
+            return iterator(this, 0);
+        }
+        return iterator(this, static_cast<long>(samples_.getShape()[0]));
     }
 
     const_iterator begin() const {
-        return const_iterator(*this, 0);
+        return const_iterator(this, 0);
     }
 
     const_iterator end() const {
-        return const_iterator(*this, samples_.getShape()[0]);
+        if (samples_.getDimensions() == 0) {
+            return const_iterator(this, 0);
+        }
+        return const_iterator(this, static_cast<long>(samples_.getShape()[0]));
     }
 
     const_iterator cbegin() const noexcept {
@@ -258,7 +281,18 @@ template <typename T> class DatasetInner {
         return end();
     }
 
+    /**
+     * @brief Return the number of samples in the dataset.
+     */
+    [[nodiscard]] size_type size() const {
+        if (samples_.getDimensions() == 0) {
+            return 0;
+        }
+        return samples_.getShape()[0];
+    }
+
     void shuffle() {
+        // TODO: implement shuffling
     }
 
   private:

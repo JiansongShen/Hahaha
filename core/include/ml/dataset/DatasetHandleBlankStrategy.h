@@ -31,7 +31,7 @@ inline constexpr auto FloatNan = std::numeric_limits<float>::quiet_NaN();
 
 static auto DefaultDatasetHandleBlankStrategy = DatasetHandleBlankStrategy::SetNan;
 
-constexpr DatasetHandleBlankStrategy getDefaultDatasetHandleBlankStrategy()
+inline DatasetHandleBlankStrategy getDefaultDatasetHandleBlankStrategy()
 {
     return DefaultDatasetHandleBlankStrategy;
 }

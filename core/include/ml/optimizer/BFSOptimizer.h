@@ -27,8 +27,6 @@ namespace hahaha::ml {
 template <typename T>
 class BFSOptimizer : public Optimizer<T>{
 public:
-
-
 private:
 };
 }

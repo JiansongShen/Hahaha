@@ -73,6 +73,7 @@ class DatasetInnerLoader {
 
         std::vector<std::vector<T>> dataList;
         while (std::getline(ifs, line)) {
+            ++currLine_; 
             auto datas = handleOneLine<T>(line);
             if (!datas.has_value() || datas.value().size() == 0) {
                 continue;
@@ -103,10 +104,14 @@ class DatasetInnerLoader {
         for (size_t i = 0; i < strVec.size(); ++i) {
             auto valRes = handleOneValue<T>(strVec[i]);
             if (!valRes) {
-                error(std::format("error: when parsing the line:{} at file {}:{}",
-                                  line,
-                                  currFile_,
-                                  static_cast<int>(currLine_)));
+                // JumpOne strategy returns unexpected silently (it is expected
+                // behaviour, not a parse error).  Only log for other causes.
+                if (datasetHandleBlankStrategy_ != DatasetHandleBlankStrategy::JumpOne) {
+                    error(std::format("error: when parsing the line:{} at file {}:{}",
+                                      line,
+                                      currFile_,
+                                      static_cast<int>(currLine_)));
+                }
                 return std::unexpected(common::InvalidDatasetError());
             }
             res[i] = valRes.value();
@@ -132,20 +137,36 @@ class DatasetInnerLoader {
                 return static_cast<T>(0);
                 break;
 
+            case DatasetHandleBlankStrategy::JumpOne:
+
+                return std::unexpected(common::InvalidDatasetError());
+
             default:
                 error("Invalid dataset handle blank strategy");
                 return std::unexpected(common::InvalidDatasetError());
             }
         }
-        return utils::StringUtils::to<T>(str);
+        // to<T>() now returns std::optional; propagate parse failures.
+        auto parsed = utils::StringUtils::to<T>(str);
+        if (!parsed.has_value()) {
+            error(std::format("error: cannot parse value '{}' at file {}:{}",
+                              str,
+                              currFile_,
+                              static_cast<int>(currLine_)));
+            return std::unexpected(common::InvalidDatasetError());
+        }
+        return parsed.value();
     }
 
     template <typename T>
     void setUpColumnNames(std::ifstream& ifs, DatasetInner<T>& dataset) {
         auto line = std::string{};
         std::getline(ifs, line);
-        auto columns = utils::StringUtils::split(line, CSVLineDelimiter);
+        auto columns = utils::StringUtils::split(line, CSVLineDelimiter, true);
         columnNum_ = columns.size();
+        for (auto& column : columns) {
+            column = utils::StringUtils::trimSideBlank(column);
+        }
         dataset.columns_ = std::move(columns);
     }
 
