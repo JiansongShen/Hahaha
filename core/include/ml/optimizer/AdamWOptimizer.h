@@ -23,7 +23,6 @@
 
 #include "Optimizer.h"
 #include "math/TensorComputeFuns.h"
-#include "utils/log/Logger.h"
 
 namespace hahaha::ml {
 
@@ -66,11 +65,12 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
   public:
     /**
      * @brief Construct a new AdamW Optimizer with default hyperparameters.
-     * @param parameters A vector of Tensors to be optimized.
+     * @param parameters A vector of compute nodes to be optimized.
      * @param learningRate The step size used for each iteration.
      */
-    AdamWOptimizer(const std::vector<Tensor<T>>& parameters,
-                  const T learningRate)
+    AdamWOptimizer(
+        const std::vector<std::shared_ptr<compute::ComputeNode<T>>>& parameters,
+        const T learningRate)
         : Optimizer<T>(parameters, learningRate) {
     }
 
@@ -91,33 +91,35 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
 
     /**
      * @brief Construct a new AdamW Optimizer with custom hyperparameters.
-     * @param parameters A vector of Tensors to be optimized.
+     * @param parameters A vector of compute nodes to be optimized.
      * @param learningRate The step size used for each iteration.
      * @param beta1 Exponential decay rate for the first moment estimates.
      * @param beta2 Exponential decay rate for the second-moment estimates.
      * @param epsilon A small constant for numerical stability.
      * @param weightDecay The decoupled weight decay coefficient ($\lambda$).
      */
-    AdamWOptimizer(const std::vector<Tensor<T>>& parameters,
-                  const T& learningRate,
-                  T beta1,
-                  T beta2,
-                  T epsilon,
-                  T weightDecay)
+    AdamWOptimizer(
+        const std::vector<std::shared_ptr<compute::ComputeNode<T>>>& parameters,
+        const T& learningRate,
+        T beta1,
+        T beta2,
+        T epsilon,
+        T weightDecay)
         : Optimizer<T>(parameters, learningRate), beta1_(beta1), beta2_(beta2),
-          epsilon_(epsilon), weightDecay_(weightDecay){
+          epsilon_(epsilon), weightDecay_(weightDecay) {
     }
 
     /**
-     * @brief Adds a parameter to the optimizer and initializes its moment buffers if training has started.
-     * @param param The Tensor parameter to track.
+     * @brief Adds a parameter to the optimizer and initializes its moment buffers if
+     * training has started.
+     * @param param The compute node parameter to track.
      */
-    void addParameter(const Tensor<T>& param) override {
-        if (trainPrepared_) {
-            parametersM_.push_back(param.getComputeNode()->getData()->zeros());
-            parametersV_.push_back(param.getComputeNode()->getData()->zeros());
+    void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) override {
+        if (trainPrepared_ && param) {
+            parametersM_.push_back(param->getData()->zeros());
+            parametersV_.push_back(param->getData()->zeros());
         }
-        this->parameters_.push_back(param);
+        Optimizer<T>::addParameter(std::move(param));
     }
 
     /**
@@ -138,11 +140,12 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
         T lr = this->learningRate_;
 
         for (size_t i = 0; i < parametersM_.size(); ++i) {
-            auto paramNode = this->parameters_[i].getComputeNode();
+            auto paramNode = this->parameters_[i];
             auto& paramM = this->parametersM_[i];
             auto& paramV = this->parametersV_[i];
 
-            if (!paramNode->getRequiresGrad()) continue;
+            if (!paramNode || !paramNode->getRequiresGrad())
+                continue;
             auto grad = paramNode->getGrad();
             if (grad == nullptr) continue;
 
@@ -186,10 +189,10 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
         parametersV_.resize(paramSize);
         turn_ = 0;
         for (size_t i = 0; i < paramSize; ++i) {
-            parametersM_[i] =
-                this->parameters_[i].getComputeNode()->getData()->zeros();
-            parametersV_[i] =
-                this->parameters_[i].getComputeNode()->getData()->zeros();
+            if (this->parameters_[i]) {
+                parametersM_[i] = this->parameters_[i]->getData()->zeros();
+                parametersV_[i] = this->parameters_[i]->getData()->zeros();
+            }
         }
 
         trainPrepared_ = true;

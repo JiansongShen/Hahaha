@@ -80,8 +80,8 @@ template <typename T> class BFGSOptimizer : public Optimizer<T> {
     /**
      * @brief Construct a new BFGS Optimizer.
      *
-     * @param parameters List of tensors to optimize (should have requiresGrad =
-     * true).
+     * @param parameters List of compute nodes to optimize (should have requiresGrad
+     * = true).
      * @param initialStepSize Initial step size for line search (default: 1.0).
      *                        This is the starting alpha in line search.
      * @param lineSearchTolerance Tolerance for line search convergence (default:
@@ -89,7 +89,7 @@ template <typename T> class BFGSOptimizer : public Optimizer<T> {
      * @param maxLineSearchIterations Maximum iterations for line search (default:
      * 20).
      */
-    BFGSOptimizer(std::vector<Tensor<T>> parameters,
+    BFGSOptimizer(std::vector<std::shared_ptr<compute::ComputeNode<T>>> parameters,
                   T initialStepSize = DefaultInitialStepSize,
                   T lineSearchTolerance = DefaultLineSearchTolerance,
                   size_t maxLineSearchIterations = DefaultMaxLineSearchIterations)
@@ -190,18 +190,18 @@ template <typename T> class BFGSOptimizer : public Optimizer<T> {
                                std::vector<size_t>& paramSizes) {
 
         for (auto& param : this->getParameters()) {
-            if (!param.getRequiresGrad()) {
+            if (!param || !param->getRequiresGrad()) {
                 continue;
             }
 
-            auto grad = param.grad();
-            if (grad.isEmpty()) {
+            auto grad = param->getGrad();
+            if (!grad) {
                 continue;
             }
 
-            paramTensors.push_back(param.data().get());
-            gradTensors.push_back(grad.data().get());
-            paramSizes.push_back(param.data()->getTotalSize());
+            paramTensors.push_back(*param->getData());
+            gradTensors.push_back(*grad);
+            paramSizes.push_back(param->getData()->getTotalSize());
         }
     }
 

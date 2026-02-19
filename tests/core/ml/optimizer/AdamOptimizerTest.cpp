@@ -55,7 +55,8 @@ TYPED_TEST(AdamOptimizerTest, Constructor_Standard) {
     using T = TypeParam;
     Tensor<T> w1(T(1.0));
     Tensor<T> w2(T(2.0));
-    std::vector<Tensor<T>> params = {w1, w2};
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode(), w2.getComputeNode()};
     T lr = T(0.01);
 
     AdamOptimizer<T> opt(params, lr);
@@ -67,8 +68,10 @@ TYPED_TEST(AdamOptimizerTest, Constructor_Standard) {
 TYPED_TEST(AdamOptimizerTest, Constructor_Copy) {
     using T = TypeParam;
     Tensor<T> w(T(1.0));
-    AdamOptimizer<T> opt1({w}, T(0.1));
-    
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt1(params, T(0.1));
+
     // Copy using the explicit Optimizer constructor
     AdamOptimizer<T> opt2(static_cast<const Optimizer<T>&>(opt1));
 
@@ -79,8 +82,10 @@ TYPED_TEST(AdamOptimizerTest, Constructor_Copy) {
 TYPED_TEST(AdamOptimizerTest, Constructor_Move) {
     using T = TypeParam;
     Tensor<T> w(T(1.0));
-    AdamOptimizer<T> opt1({w}, T(0.1));
-    
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt1(params, T(0.1));
+
     // Move using the explicit Optimizer constructor
     AdamOptimizer<T> opt2(std::move(opt1));
 
@@ -97,7 +102,9 @@ TYPED_TEST(AdamOptimizerTest, Update_0D_Scalar) {
     using T = TypeParam;
     Tensor<T> w(T(10.0));
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.step();
     this->expectNear(T(9.9), w.at({}));
@@ -107,7 +114,9 @@ TYPED_TEST(AdamOptimizerTest, Update_1D_Vector) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{T(1.0), T(2.0), T(3.0)});
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({3}, T(0.5)));
     opt.step();
     this->expectNear(T(0.9), w.at({0}));
@@ -119,7 +128,9 @@ TYPED_TEST(AdamOptimizerTest, Update_2D_Matrix) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{{T(1.0), T(2.0)}, {T(3.0), T(4.0)}});
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.01));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.01));
     w.getComputeNode()->accumulateGrad(this->createGrad({2, 2}, T(0.2)));
     opt.step();
     this->expectNear(T(0.99), w.at({0, 0}));
@@ -130,7 +141,9 @@ TYPED_TEST(AdamOptimizerTest, Update_3D_Tensor) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{{{T(1), T(1)}}, {{T(1), T(1)}}});
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({2, 1, 2}, T(1.0)));
     opt.step();
     this->expectNear(T(0.9), w.at({0, 0, 0}));
@@ -145,7 +158,9 @@ TYPED_TEST(AdamOptimizerTest, RequiresGradFalse_0D) {
     using T = TypeParam;
     Tensor<T> w(T(10.0));
     w.setRequiresGrad(false);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.step();
     EXPECT_EQ(w.at({}), T(10.0));
@@ -155,7 +170,9 @@ TYPED_TEST(AdamOptimizerTest, RequiresGradFalse_1D) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{T(1.0), T(2.0)});
     w.setRequiresGrad(false);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({2}, T(1.0)));
     opt.step();
     EXPECT_EQ(w.at({0}), T(1.0));
@@ -166,7 +183,9 @@ TYPED_TEST(AdamOptimizerTest, RequiresGradFalse_2D) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{{T(1.0)}, {T(2.0)}});
     w.setRequiresGrad(false);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({2, 1}, T(1.0)));
     opt.step();
     EXPECT_EQ(w.at({0, 0}), T(1.0));
@@ -177,7 +196,9 @@ TYPED_TEST(AdamOptimizerTest, RequiresGradFalse_3D) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{{{T(1.0)}}});
     w.setRequiresGrad(false);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 1}, T(1.0)));
     opt.step();
     EXPECT_EQ(w.at({0, 0, 0}), T(1.0));
@@ -191,7 +212,9 @@ TYPED_TEST(AdamOptimizerTest, NullGrad_0D) {
     using T = TypeParam;
     Tensor<T> w(T(10.0));
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     EXPECT_NO_THROW(opt.step());
     EXPECT_EQ(w.at({}), T(10.0));
 }
@@ -200,7 +223,9 @@ TYPED_TEST(AdamOptimizerTest, NullGrad_1D) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{T(1.0)});
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     EXPECT_NO_THROW(opt.step());
     EXPECT_EQ(w.at({0}), T(1.0));
 }
@@ -209,7 +234,9 @@ TYPED_TEST(AdamOptimizerTest, NullGrad_2D) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{{T(1.0)}});
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     EXPECT_NO_THROW(opt.step());
     EXPECT_EQ(w.at({0, 0}), T(1.0));
 }
@@ -218,7 +245,9 @@ TYPED_TEST(AdamOptimizerTest, NullGrad_3D) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{{{T(1.0)}}});
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     EXPECT_NO_THROW(opt.step());
     EXPECT_EQ(w.at({0, 0, 0}), T(1.0));
 }
@@ -231,7 +260,9 @@ TYPED_TEST(AdamOptimizerTest, LearningRateChange) {
     using T = TypeParam;
     Tensor<T> w(T(10.0));
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.step(); // turn 1 -> w ≈ 9.9
 
@@ -246,7 +277,9 @@ TYPED_TEST(AdamOptimizerTest, ZeroGrad_Functionality) {
     using T = TypeParam;
     Tensor<T> w(T(1.0));
     w.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.zeroGrad();
     EXPECT_EQ(w.grad().at({}), T(0.0));
@@ -255,41 +288,53 @@ TYPED_TEST(AdamOptimizerTest, ZeroGrad_Functionality) {
 TYPED_TEST(AdamOptimizerTest, AddParameter_0D_BeforeStep) {
     using T = TypeParam;
     Tensor<T> w1(T(10.0));
-    AdamOptimizer<T> opt({w1}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     Tensor<T> w2(T(20.0));
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
     EXPECT_EQ(opt.getParameters().size(), 2);
-    EXPECT_EQ(opt.getParameters()[1].at({}), T(20.0));
+    auto paramNode = opt.getParameters()[1];
+    EXPECT_EQ(paramNode->getData()->at({}), T(20.0));
 }
 
 TYPED_TEST(AdamOptimizerTest, AddParameter_1D_BeforeStep) {
     using T = TypeParam;
     Tensor<T> w1(math::NestedData<T>{T(1.0)});
-    AdamOptimizer<T> opt({w1}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     Tensor<T> w2(math::NestedData<T>{T(2.0), T(3.0)});
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
     EXPECT_EQ(opt.getParameters().size(), 2);
-    EXPECT_EQ(opt.getParameters()[1].at({0}), T(2.0));
+    auto paramNode = opt.getParameters()[1];
+    EXPECT_EQ(paramNode->getData()->at({0}), T(2.0));
 }
 
 TYPED_TEST(AdamOptimizerTest, AddParameter_2D_BeforeStep) {
     using T = TypeParam;
     Tensor<T> w1(math::NestedData<T>{{T(1.0)}});
-    AdamOptimizer<T> opt({w1}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     Tensor<T> w2(math::NestedData<T>{{T(2.0), T(3.0)}, {T(4.0), T(5.0)}});
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
     EXPECT_EQ(opt.getParameters().size(), 2);
-    EXPECT_EQ(opt.getParameters()[1].at({1, 1}), T(5.0));
+    auto paramNode = opt.getParameters()[1];
+    EXPECT_EQ(paramNode->getData()->at({1, 1}), T(5.0));
 }
 
 TYPED_TEST(AdamOptimizerTest, AddParameter_3D_BeforeStep) {
     using T = TypeParam;
     Tensor<T> w1(math::NestedData<T>{{{T(1.0)}}});
-    AdamOptimizer<T> opt({w1}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     Tensor<T> w2(math::NestedData<T>{{{T(1.0), T(2.0)}}, {{T(3.0), T(4.0)}}});
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
     EXPECT_EQ(opt.getParameters().size(), 2);
-    EXPECT_EQ(opt.getParameters()[1].at({1, 0, 1}), T(4.0));
+    auto paramNode = opt.getParameters()[1];
+    EXPECT_EQ(paramNode->getData()->at({1, 0, 1}), T(4.0));
 }
 
 
@@ -297,13 +342,15 @@ TYPED_TEST(AdamOptimizerTest, AddParameter_0D_AfterStep) {
     using T = TypeParam;
     Tensor<T> w1(T(10.0));
     w1.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w1}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w1.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.step(); // turn 变为 1
 
     Tensor<T> w2(T(20.0));
     w2.setRequiresGrad(true);
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
 
     w2.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.step(); // turn 变为 2
@@ -317,13 +364,15 @@ TYPED_TEST(AdamOptimizerTest, AddParameter_1D_AfterStep) {
     using T = TypeParam;
     Tensor<T> w1(math::NestedData<T>{T(1.0)});
     w1.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w1}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w1.getComputeNode()->accumulateGrad(this->createGrad({1}, T(1.0)));
     opt.step();
 
     Tensor<T> w2(math::NestedData<T>{T(10.0), T(20.0)});
     w2.setRequiresGrad(true);
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
 
     w2.getComputeNode()->accumulateGrad(this->createGrad({2}, T(1.0)));
     opt.step();
@@ -338,13 +387,15 @@ TYPED_TEST(AdamOptimizerTest, AddParameter_2D_AfterStep) {
     using T = TypeParam;
     Tensor<T> w1(math::NestedData<T>{{T(1.0)}});
     w1.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w1}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w1.getComputeNode()->accumulateGrad(this->createGrad({1, 1}, T(1.0)));
     opt.step();
 
     Tensor<T> w2(math::NestedData<T>{{T(10.0), T(20.0)}, {T(30.0), T(40.0)}});
     w2.setRequiresGrad(true);
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
 
     w2.getComputeNode()->accumulateGrad(this->createGrad({2, 2}, T(1.0)));
     opt.step();
@@ -358,13 +409,15 @@ TYPED_TEST(AdamOptimizerTest, AddParameter_3D_AfterStep) {
     using T = TypeParam;
     Tensor<T> w1(math::NestedData<T>{{{T(1.0)}}});
     w1.setRequiresGrad(true);
-    AdamOptimizer<T> opt({w1}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    AdamOptimizer<T> opt(params, T(0.1));
     w1.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 1}, T(1.0)));
     opt.step();
 
     Tensor<T> w2(math::NestedData<T>{{{T(10.0), T(20.0)}}});
     w2.setRequiresGrad(true);
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
 
     w2.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 2}, T(1.0)));
     opt.step();

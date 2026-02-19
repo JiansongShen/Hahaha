@@ -71,7 +71,10 @@ inline void basic_adam_optimizer_example() {
     Tensor<f32> loss(1);
     loss.setRequiresGrad(true);
 
-    auto optimizer = hahaha::ml::AdamOptimizer<f32>({w}, 0.1);
+    // Optimizer operates on compute nodes, not tensors.
+    std::vector<std::shared_ptr<hahaha::compute::ComputeNode<f32>>> params = {
+        w.getComputeNode()};
+    auto optimizer = hahaha::ml::AdamOptimizer<f32>(params, 0.1f);
 
     for (int i = 0; i < TrainLoop; ++i) {
         optimizer.zeroGrad();

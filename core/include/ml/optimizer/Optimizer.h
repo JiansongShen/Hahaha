@@ -16,13 +16,13 @@
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
-#ifndef HAHAHA_ML_OPTIMIZER_OPTIMIZER_H
-#define HAHAHA_ML_OPTIMIZER_OPTIMIZER_H
+#ifndef OPTIMIZER_B8596AC9_CA72_40A7_A99C_9A73CB770A4B
+#define OPTIMIZER_B8596AC9_CA72_40A7_A99C_9A73CB770A4B
 
-#include <utility>
+#include <memory>
 #include <vector>
 
-#include "public/Tensor.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
 
@@ -40,10 +40,11 @@ template <typename T> class Optimizer {
     /**
      * @brief Construct a new Optimizer.
      *
-     * @param parameters List of tensors to optimize.
+     * @param parameters List of compute nodes to optimize.
      * @param learningRate Learning rate for the updates.
      */
-    Optimizer(std::vector<Tensor<T>> parameters, T learningRate)
+    Optimizer(std::vector<std::shared_ptr<compute::ComputeNode<T>>> parameters,
+              T learningRate)
         : parameters_(std::move(parameters)), learningRate_(learningRate) {
     }
 
@@ -70,7 +71,9 @@ template <typename T> class Optimizer {
      */
     virtual void zeroGrad() {
         for (auto& param : parameters_) {
-            param.clearGrad();
+            if (param) {
+                param->clearGrad();
+            }
         }
     }
 
@@ -92,25 +95,34 @@ template <typename T> class Optimizer {
 
     /**
      * @brief Adds a parameter to the optimizer's tracking list.
-     * @param param The tensor to be optimized.
+     * @param param The compute node to be optimized.
      */
-    virtual void addParameter(const Tensor<T>& param) {
-        parameters_.push_back(param);
+    virtual void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) {
+        parameters_.push_back(std::move(param));
     }
 
     /**
-     * @brief Gets the list of parameters (for subclasses).
-     * @return std::vector<Tensor<T>>& Reference to parameters.
+     * @brief Add a high-level `Tensor` to the optimizer.
      */
-    std::vector<Tensor<T>>& getParameters() {
+    virtual void addParameter(const hahaha::Tensor<T>& tensor) {
+        addParameter(tensor.getComputeNode());
+    }
+
+    /**
+     * @brief Gets the list of compute nodes (for subclasses).
+     * @return std::vector<std::shared_ptr<compute::ComputeNode<T>>>& Reference to
+     * compute nodes.
+     */
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>>& getParameters() {
         return parameters_;
     }
 
   protected:
-    std::vector<Tensor<T>> parameters_; /**< List of parameters to optimize. */
-    T learningRate_;                    /**< Learning rate. */
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>>
+        parameters_; /**< List of compute nodes to optimize. */
+    T learningRate_; /**< Learning rate. */
 };
 
 } // namespace hahaha::ml
 
-#endif // HAHAHA_ML_OPTIMIZER_OPTIMIZER_H
+#endif // OPTIMIZER_B8596AC9_CA72_40A7_A99C_9A73CB770A4B

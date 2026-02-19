@@ -36,6 +36,18 @@
 
 namespace hahaha {
 
+// Helper: convert public Tensor list to internal ComputeNode list.
+template <typename T>
+std::vector<std::shared_ptr<compute::ComputeNode<T>>>
+toComputeNodes(const std::vector<Tensor<T>>& tensors) {
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> nodes;
+    nodes.reserve(tensors.size());
+    for (const auto& t : tensors) {
+        nodes.push_back(t.getComputeNode());
+    }
+    return nodes;
+}
+
 /**
  * @brief Public handle for all optimizers (pimpl).
  *
@@ -65,8 +77,10 @@ class Optimizer {
     /** @brief Register an additional parameter for optimization. */
     void addParameter(const Tensor<T>& param) { impl_->addParameter(param); }
 
-    /** @brief Mutable access to the tracked parameter list. */
-    std::vector<Tensor<T>>& getParameters() { return impl_->getParameters(); }
+    /** @brief Mutable access to the tracked parameter list (internal nodes). */
+    auto& getParameters() {
+        return impl_->getParameters();
+    }
 
   protected:
     explicit Optimizer(std::shared_ptr<ml::Optimizer<T>> impl)
@@ -86,7 +100,8 @@ class SGDOptimizer : public Optimizer<T> {
   public:
     SGDOptimizer(std::vector<Tensor<T>> params, T lr)
         : Optimizer<T>(
-              std::make_shared<ml::SGDOptimizer<T>>(std::move(params), lr)) {}
+              std::make_shared<ml::SGDOptimizer<T>>(toComputeNodes(params), lr)) {
+    }
 };
 
 // ---------------------------------------------------------------------------
@@ -97,11 +112,11 @@ class SGDOptimizer : public Optimizer<T> {
 template <typename T>
 class SGDMOptimizer : public Optimizer<T> {
   public:
-    SGDMOptimizer(std::vector<Tensor<T>> params,
-                  T lr,
-                  T momentum = T(0.9))
-        : Optimizer<T>(std::make_shared<ml::SGDMOptimizer<T>>(
-              std::move(params), lr, momentum)) {}
+    SGDMOptimizer(std::vector<Tensor<T>> params, T lr, T momentum = T(0.9))
+        : Optimizer<T>(std::make_shared<ml::SGDMOptimizer<T>>(toComputeNodes(params),
+                                                              lr,
+                                                              momentum)) {
+    }
 };
 
 // ---------------------------------------------------------------------------
@@ -117,15 +132,20 @@ class AdamOptimizer : public Optimizer<T> {
   public:
     explicit AdamOptimizer(const std::vector<Tensor<T>>& params, T lr)
         : Optimizer<T>(
-              std::make_shared<ml::AdamOptimizer<T>>(params, lr)) {}
+              std::make_shared<ml::AdamOptimizer<T>>(toComputeNodes(params), lr)) {
+    }
 
     AdamOptimizer(const std::vector<Tensor<T>>& params,
                   T lr,
                   T beta1,
                   T beta2,
                   T eps)
-        : Optimizer<T>(std::make_shared<ml::AdamOptimizer<T>>(
-              params, lr, beta1, beta2, eps)) {}
+        : Optimizer<T>(std::make_shared<ml::AdamOptimizer<T>>(toComputeNodes(params),
+                                                              lr,
+                                                              beta1,
+                                                              beta2,
+                                                              eps)) {
+    }
 };
 
 // ---------------------------------------------------------------------------
@@ -141,7 +161,8 @@ class AdamWOptimizer : public Optimizer<T> {
   public:
     explicit AdamWOptimizer(const std::vector<Tensor<T>>& params, T lr)
         : Optimizer<T>(
-              std::make_shared<ml::AdamWOptimizer<T>>(params, lr)) {}
+              std::make_shared<ml::AdamWOptimizer<T>>(toComputeNodes(params), lr)) {
+    }
 
     AdamWOptimizer(const std::vector<Tensor<T>>& params,
                    T lr,
@@ -149,8 +170,14 @@ class AdamWOptimizer : public Optimizer<T> {
                    T beta2,
                    T eps,
                    T weightDecay)
-        : Optimizer<T>(std::make_shared<ml::AdamWOptimizer<T>>(
-              params, lr, beta1, beta2, eps, weightDecay)) {}
+        : Optimizer<T>(
+              std::make_shared<ml::AdamWOptimizer<T>>(toComputeNodes(params),
+                                                      lr,
+                                                      beta1,
+                                                      beta2,
+                                                      eps,
+                                                      weightDecay)) {
+    }
 };
 
 // ---------------------------------------------------------------------------
@@ -168,9 +195,12 @@ class AdadeltaOptimizer : public Optimizer<T> {
   public:
     explicit AdadeltaOptimizer(std::vector<Tensor<T>> params,
                                T decayRate = T(0.9),
-                               T epsilon   = T(1e-6))
-        : AdadeltaOptimizer(std::make_shared<ml::AdadeltaOptimizer<T>>(
-              std::move(params), decayRate, epsilon)) {}
+                               T epsilon = T(1e-6))
+        : AdadeltaOptimizer(
+              std::make_shared<ml::AdadeltaOptimizer<T>>(toComputeNodes(params),
+                                                         decayRate,
+                                                         epsilon)) {
+    }
 
     /** @brief Decay rate ρ used to accumulate E[g²]. */
     [[nodiscard]] T getDecayRate() const { return adaImpl_->getDecayRate(); }
