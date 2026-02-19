@@ -20,7 +20,6 @@
 #define HAHAHA_ADADELTAOPTIMIZER_H_525358001A394D618AF4F91698E27EB7
 
 #include "Optimizer.h"
-#include "math/TensorWrapper.h"
 
 namespace hahaha::ml {
 template<typename T>
