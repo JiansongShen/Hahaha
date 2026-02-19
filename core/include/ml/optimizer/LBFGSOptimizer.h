@@ -16,15 +16,14 @@
 // JiansongShen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 // 
 
-#ifndef LBFSOPTIMIZER_C2943B5C_EA80_4C9F_B889_0C288819F3A1
-#define LBFSOPTIMIZER_C2943B5C_EA80_4C9F_B889_0C288819F3A1
+#ifndef LBFGSOPTIMIZER_C2943B5C_EA80_4C9F_B889_0C288819F3A1
+#define LBFGSOPTIMIZER_C2943B5C_EA80_4C9F_B889_0C288819F3A1
 
 #include "ml/optimizer/Optimizer.h"
-#include "public/Tensor.h"
 namespace hahaha::ml {
 
 template <typename T>
-class LBFSOptimizer : public Optimizer<T>{
+class LBFGSOptimizer : public Optimizer<T>{
 public:
 
 
@@ -33,4 +32,4 @@ private:
 }
 
 
-#endif // LBFSOPTIMIZER_C2943B5C_EA80_4C9F_B889_0C288819F3A1
+#endif // LBFGSOPTIMIZER_C2943B5C_EA80_4C9F_B889_0C288819F3A1

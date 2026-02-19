@@ -28,6 +28,8 @@
 
 #include "DatasetInner.h"
 #include "common/errors/Error.h"
+#include "math/TensorWrapper.h"
+#include "math/ds/TensorShape.h"
 #include "ml/dataset/DatasetHandleBlankStrategy.h"
 #include "utils/common/StringUtils.h"
 #include "utils/common/helper_structs.h"
@@ -108,10 +110,10 @@ class DatasetInnerLoader {
                 // JumpOne strategy returns unexpected silently (it is expected
                 // behaviour, not a parse error).  Only log for other causes.
                 if (datasetHandleBlankStrategy_ != DatasetHandleBlankStrategy::JumpOne) {
-                    error(std::format("error: when parsing the line:{} at file {}:{}",
-                                      line,
-                                      currFile_,
-                                      static_cast<int>(currLine_)));
+                error(std::format("error: when parsing the line:{} at file {}:{}",
+                                  line,
+                                  currFile_,
+                                  static_cast<int>(currLine_)));
                 }
                 return std::unexpected(common::InvalidDatasetError());
             }
@@ -174,23 +176,21 @@ class DatasetInnerLoader {
     template <typename T>
     void fillData(std::vector<std::vector<T>>& dataList, DatasetInner<T>& dataset) {
         if (dataList.empty()) {
-            dataset.samples_ = Tensor<T>();
+            dataset.samples_ = math::TensorWrapper<T>();
             dataset.indices_.clear();
             return;
         }
 
-        Tensor<T> sampleTensor =
-            Tensor<T>::buildFromShape({dataList.size(), dataList[0].size()});
+        math::TensorWrapper<T> sampleTensor(
+            math::TensorShape(std::vector<size_t>{dataList.size(), dataList[0].size()}));
 
         for (size_t i = 0; i < dataList.size(); ++i) {
             for (size_t j = 0; j < dataList[i].size(); ++j) {
-                sampleTensor.getComputeNode()
-                    ->getData()
-                    ->getRawData()[i * dataList[0].size() + j] = dataList[i][j];
+                sampleTensor.getRawData()[i * dataList[0].size() + j] = dataList[i][j];
             }
         }
 
-        dataset.samples_ = sampleTensor;
+        dataset.samples_ = std::move(sampleTensor);
 
         // initialise identity permutation — no shuffle yet
         dataset.indices_.resize(dataList.size());

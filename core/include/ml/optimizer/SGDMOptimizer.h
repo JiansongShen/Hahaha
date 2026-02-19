@@ -31,6 +31,9 @@ namespace hahaha::ml {
  * theta(t) = theta(t-1) - eta * v(t)
  */
 template <typename T> class SGDMOptimizer : public Optimizer<T> {
+    static_assert(utils::isLegalFloatType<T>::value,
+                  "AdamOptimizer just supports float values");
+
   public:
     /**
      * @brief Construct a new SGDMOptimizer.

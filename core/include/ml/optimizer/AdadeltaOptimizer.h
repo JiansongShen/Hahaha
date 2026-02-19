@@ -25,8 +25,10 @@
 namespace hahaha::ml {
 template<typename T>
 class AdadeltaOptimizer : public Optimizer<T>{
+    static_assert(utils::isLegalFloatType<T>::value,
+                  "AdamOptimizer just supports float values");
 
-public:
+  public:
     static constexpr T DefaultDecayRate = T(0.9);
     static constexpr T DefaultEpsilon = T(1e-6);
 

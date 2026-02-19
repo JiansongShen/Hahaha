@@ -22,11 +22,12 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <optional>
 #include <random>
 #include <utility>
 
 #include "DatasetTypeUnifyStrategy.h"
-#include "public/Tensor.h"
+#include "math/TensorWrapper.h"
 
 namespace hahaha::ml {
 class DatasetInnerLoader;
@@ -34,13 +35,13 @@ class DatasetInnerLoader;
 template <typename T> class DatasetInner {
 
   public:
-    using value_type = Tensor<T>;
+    using value_type = math::TensorWrapper<T>;
     using size_type = size_t;
     using difference_type = std::ptrdiff_t;
-    using reference = Tensor<T>&;
-    using const_reference = const Tensor<T>&;
-    using pointer = Tensor<T>*;
-    using const_pointer = const Tensor<T>*;
+    using reference = math::TensorWrapper<T>&;
+    using const_reference = const math::TensorWrapper<T>&;
+    using pointer = math::TensorWrapper<T>*;
+    using const_pointer = const math::TensorWrapper<T>*;
 
     // =========================================================================
     // iterator
@@ -58,9 +59,9 @@ template <typename T> class DatasetInner {
         }
 
         reference operator*() {
-            current_ = dataset_->samples_.select(
-                0, dataset_->indices_[static_cast<size_t>(index_)]);
-            return current_;
+            current_.emplace(dataset_->samples_.select(
+                0, dataset_->indices_[static_cast<size_t>(index_)]));
+            return *current_;
         }
 
         pointer operator->() {
@@ -127,7 +128,8 @@ template <typename T> class DatasetInner {
       private:
         DatasetInner* dataset_;
         long index_;
-        Tensor<T> current_; ///< cached current-row view used by operator*()
+        /// nullopt until operator*() is first called; avoids copying a null TensorWrapper.
+        std::optional<math::TensorWrapper<T>> current_;
     };
 
     // =========================================================================
@@ -146,9 +148,9 @@ template <typename T> class DatasetInner {
         }
 
         reference operator*() const {
-            current_ = dataset_->samples_.select(
-                0, dataset_->indices_[static_cast<size_t>(index_)]);
-            return current_;
+            current_.emplace(dataset_->samples_.select(
+                0, dataset_->indices_[static_cast<size_t>(index_)]));
+            return *current_;
         }
 
         pointer operator->() const {
@@ -215,7 +217,8 @@ template <typename T> class DatasetInner {
       private:
         const DatasetInner* dataset_;
         long index_;
-        mutable Tensor<T> current_; ///< cached current-row view (mutable for const operator*)
+        /// nullopt until operator*() is first called; avoids copying a null TensorWrapper.
+        mutable std::optional<math::TensorWrapper<T>> current_;
     };
 
     DatasetInner() : typeUnifyStrategy_(getDefaultDatasetTypeUnifyStrategy()) {
@@ -253,7 +256,7 @@ template <typename T> class DatasetInner {
      * The logical index is remapped through the current permutation, so the
      * result reflects any prior call to shuffle().
      */
-    Tensor<T> getItem(size_t idx) {
+    math::TensorWrapper<T> getItem(size_t idx) {
         return samples_.select(0, indices_[idx]);
     }
 
@@ -323,7 +326,7 @@ template <typename T> class DatasetInner {
 
     DatasetTypeUnifyStrategy typeUnifyStrategy_;
 
-    Tensor<T> samples_;
+    math::TensorWrapper<T> samples_;
     /// Logical-to-physical row mapping. Shuffled by shuffle(); reset by the loader.
     std::vector<size_t> indices_;
 

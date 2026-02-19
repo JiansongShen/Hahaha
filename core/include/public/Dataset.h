@@ -18,39 +18,94 @@
 
 #ifndef HAHAHA_DATASET_H_4277B28506244EA690CC3B3E7CEB44C5
 #define HAHAHA_DATASET_H_4277B28506244EA690CC3B3E7CEB44C5
+
+#include <cstddef>
 #include <memory>
 #include <string>
+#include <vector>
 
+#include "Tensor.h"
+#include "math/TensorWrapper.h"
 #include "ml/dataset/DatasetInner.h"
 #include "ml/dataset/DatasetInnerLoader.h"
 
 namespace hahaha {
 
+/**
+ * @brief Public-facing dataset wrapper.
+ *
+ * Stores samples internally as a @ref ml::DatasetInner (which uses raw
+ * @ref math::TensorWrapper storage). The public API surfaces rows as
+ * @ref Tensor<T> so user code does not need to know about TensorWrapper.
+ */
 template <typename T>
 class Dataset {
-
-    using Interator = std::vector<T>;
 public:
-    static Dataset loadFromCSV(const std::string &filePath) {
-        Dataset dataset;
-        ml::DatasetInnerLoader().loadFromCSVTo<T>(filePath, dataset);
-        return dataset;
+    /**
+     * @brief Load a dataset from a CSV file.
+     * @param filePath Path to the CSV file.
+     * @return Dataset containing the loaded samples.
+     */
+    static Dataset loadFromCSV(const std::string& filePath) {
+        Dataset ds;
+        ml::DatasetInnerLoader().loadFromCSVTo<T>(filePath, ds.inner_);
+        return ds;
     }
 
+    /**
+     * @brief Number of samples.
+     */
+    [[nodiscard]] size_t size() const {
+        return inner_.size();
+    }
+
+    /**
+     * @brief Return sample at logical index @p idx as a Tensor view.
+     *
+     * The logical index is remapped through the shuffle permutation, so the
+     * result reflects any prior call to shuffle().
+     */
     Tensor<T> getItem(size_t idx) {
-        return datasetInner_->getItem(idx);
+        // DatasetInner::getItem returns a TensorWrapper view.  Wrap it in a
+        // Tensor so the public API stays purely in terms of Tensor<T>.
+        auto view = inner_.getItem(idx);
+        return Tensor<T>(
+            std::make_shared<math::TensorWrapper<T>>(std::move(view)));
     }
 
-    void shuffleDataset() {
-        datasetInner_->shuffleDataset();
+    /** @brief Column (feature) names. */
+    [[nodiscard]] std::vector<std::string> getFeatures() const {
+        return inner_.getFeatures();
     }
 
+    /** @brief Label names. */
+    [[nodiscard]] std::vector<std::string> getLabels() const {
+        return inner_.getLabels();
+    }
 
+    /** @brief Dataset name (set to the file path by the loader). */
+    [[nodiscard]] std::string getDatasetName() const {
+        return inner_.getDatasetName();
+    }
+
+    /**
+     * @brief Randomly permute the iteration order (non-deterministic seed).
+     */
+    void shuffle() {
+        inner_.shuffle();
+    }
+
+    /**
+     * @brief Shuffle with an explicit seed for reproducible runs.
+     */
+    void shuffle(unsigned seed) {
+        inner_.shuffle(seed);
+    }
 
 private:
-    Dataset() {}
+    Dataset() = default;
 
-    std::shared_ptr<ml::DatasetInner<T>> datasetInner_;
+    ml::DatasetInner<T> inner_;
 };
 
 } // namespace hahaha

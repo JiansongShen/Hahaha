@@ -23,6 +23,9 @@
 
 namespace hahaha::ml {
 template <typename T> class SGDOptimizer : public Optimizer<T> {
+    static_assert(utils::isLegalFloatType<T>::value,
+                  "AdamOptimizer just supports float values");
+
   public:
     /**
      * @brief Construct a new SGDOptimizer.

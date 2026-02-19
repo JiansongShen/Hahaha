@@ -47,11 +47,6 @@ TensorWrapper<T> TensorWrapper<T>::reshape(const std::vector<size_t>& newShape) 
     result.data_.setData(std::shared_ptr<T[]>(new T[currentSize]));
     result.data_.setDevice(data_.getDevice());
     
-    // Since we checked isContiguous, we can safely copy from data_.getData() + offset
-    // Note: isContiguous() implies strides match shape, but offset might be non-zero if it's a contiguous slice (e.g. narrow).
-    // Wait, narrow usually changes offset but keeps strides same as parent, which might not match the new shape unless it's a specific slice.
-    // But isContiguous() checks if strides match the CURRENT shape.
-    // So if isContiguous() is true, it means the data is packed densely according to current shape.
     std::copy(data_.getData().get() + data_.getOffset(),
               data_.getData().get() + data_.getOffset() + currentSize,
               result.data_.getData().get());
