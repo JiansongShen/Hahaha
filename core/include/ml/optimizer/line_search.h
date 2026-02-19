@@ -18,12 +18,39 @@
 #ifndef LINE_SEARCH_CEE4A3B3_DA15_4257_9AC3_AADA33509FCA
 #define LINE_SEARCH_CEE4A3B3_DA15_4257_9AC3_AADA33509FCA
 
+#include <functional>
+
+#include "math/TensorWrapper.h"
+
 namespace hahaha::ml {
 
-template <typename T> T line_search() {
+/**
+ * @brief Perform line search to find the step size for the given direction. Using
+ * wolfe condition.
+ */
+template <typename T>
+T line_search(const math::TensorWrapper<T>& x,
+              const math::TensorWrapper<T>& g,
+              const math::TensorWrapper<T>& p,
+              const std::vector<math::TensorWrapper<T>*>& paramWrappers,
+              const std::vector<size_t>& paramSizes,
+              T initialStepSize,
+              T lineSearchTolerance,
+              int maxLineSearchIterations,
+              std::function<T()> loss_function) {
+    T alpha = initialStepSize;
+    long currIterator{0};
+
+    while (currIterator < maxLineSearchIterations) {
+        // Evaluate the loss function at x + alpha * p
+        math::TensorWrapper<T> x_plus_alpha_p = x + alpha * p;
+        // T loss = loss_function(x_plus_alpha_p, paramWrappers, paramSizes);
+
+        // Check the Wolfe conditions
+    }
+
+    return alpha;
 }
-
-
 
 } // namespace hahaha::ml
 

@@ -274,15 +274,14 @@ template <typename T> class BFGSOptimizer : public Optimizer<T> {
         // 2. Check Armijo condition: f(x + alpha*p) <= f(x) + c1*alpha*g^T*p
         // 3. Backtrack if condition not met
 
-
-        // For now, we'll use a simple adaptive step size based on gradient magnitude
-        T gradNorm = T(0);
-
-        gradNorm = g.square().sum();
-        gradNorm = std::sqrt(gradNorm);
-
-        // Adaptive step size: smaller when gradient is large
-        T alpha = initialStepSize_ / (T(1.0) + T(0.1) * gradNorm);
+        T alpha = line_search<T>(x,
+                                 g,
+                                 p,
+                                 paramWrappers,
+                                 paramSizes,
+                                 initialStepSize_,
+                                 lineSearchTolerance_,
+                                 maxLineSearchIterations_);
         return std::max(alpha, DefaultMinimumStepSize); // Ensure minimum step size
     }
 
