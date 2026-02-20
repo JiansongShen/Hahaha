@@ -364,12 +364,14 @@ TEST_F(DatasetConstIteratorTest, BeginNotEqualEnd) {
 }
 
 TEST_F(DatasetConstIteratorTest, DereferenceReturnsFirstRow) {
-    const auto& row = *cds().begin();
+    auto it = cds().begin();
+    const auto& row = *it;
     EXPECT_NEAR(row.at({0}), 1.0f, 1e-5f);
 }
 
 TEST_F(DatasetConstIteratorTest, ArrowReturnsPointer) {
-    EXPECT_EQ(cds().begin()->getDimensions(), 1u);
+    auto it = cds().begin();
+    EXPECT_EQ(it->getDimensions(), 1u);
 }
 
 TEST_F(DatasetConstIteratorTest, PreIncrement) {
@@ -407,7 +409,8 @@ TEST_F(DatasetConstIteratorTest, PlusEqualsN) {
 }
 
 TEST_F(DatasetConstIteratorTest, OperatorPlusN) {
-    EXPECT_NEAR((*(cds().begin() + 1)).at({0}), 3.0f, 1e-5f);
+    auto it = cds().begin() + 1;
+    EXPECT_NEAR((*it).at({0}), 3.0f, 1e-5f);
 }
 
 TEST_F(DatasetConstIteratorTest, MinusEqualsN) {
@@ -417,7 +420,8 @@ TEST_F(DatasetConstIteratorTest, MinusEqualsN) {
 }
 
 TEST_F(DatasetConstIteratorTest, OperatorMinusN) {
-    EXPECT_NEAR((*(cds().end() - 2)).at({0}), 3.0f, 1e-5f);
+    auto it = cds().end() - 2;
+    EXPECT_NEAR((*it).at({0}), 3.0f, 1e-5f);
 }
 
 TEST_F(DatasetConstIteratorTest, IteratorDifference) {
@@ -425,7 +429,8 @@ TEST_F(DatasetConstIteratorTest, IteratorDifference) {
 }
 
 TEST_F(DatasetConstIteratorTest, SubscriptOperator) {
-    auto row2 = cds().begin()[2];
+    auto it = cds().begin();
+    auto row2 = it[2];
     EXPECT_NEAR(row2.at({0}), 5.0f, 1e-5f);
 }
 
