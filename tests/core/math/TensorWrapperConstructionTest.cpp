@@ -272,7 +272,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, Vector_CorrectlyInitializes) {
 // Copy/Move Semantics - Typed Test
 // ============================================================================
 
-TYPED_TEST(TensorWrapperConstructionTypedTest, CopyConstructor_DeepCopiesData) {
+TYPED_TEST(TensorWrapperConstructionTypedTest, CopyConstructor_ShadowCopy) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);
@@ -281,7 +281,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, CopyConstructor_DeepCopiesData) {
     TensorWrapper<T> copy = original; // Uses copy constructor
     original.at({0, 0}) = v10;
     this->expectNear(copy.at({0, 0}),
-                     v1); // Original modification should not affect copy
+                     v10); // Original modification should not affect copy
 }
 
 TYPED_TEST(TensorWrapperConstructionTypedTest, MoveConstructor_TransfersOwnership) {

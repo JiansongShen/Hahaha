@@ -867,6 +867,7 @@ TensorWrapper<T> operator/(T scalar, const TensorWrapper<T>& tensor);
 #include "TensorWrapperAccessors.inl"
 #include "TensorWrapperArithmetic.inl"
 #include "TensorWrapperConstructors.inl"
+#include "TensorWrapperCore.inl"
 #include "TensorWrapperMatrixOps.inl"
 #include "TensorWrapperOperators.inl"
 #include "TensorWrapperShapeOps.inl"

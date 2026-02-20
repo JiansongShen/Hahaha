@@ -80,7 +80,8 @@ T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) {
         linearIdx += dimIdx * strideDims[i];
         std::advance(idxIt, 1);
     }
-    return data_.getData()[linearIdx];
+    // Add offset for views
+    return data_.getData()[data_.getOffset() + linearIdx];
 }
 
 template <typename T>
@@ -102,19 +103,70 @@ const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) cons
         linearIdx += dimIdx * strideDims[i];
         std::advance(idxIt, 1);
     }
-    return data_.getData()[linearIdx];
+    // Add offset for views
+    return data_.getData()[data_.getOffset() + linearIdx];
 }
 
-template <typename T>
-void TensorWrapper<T>::checkSameDevice(const TensorWrapper& other) const {
-    if (*getDevice() != *other.getDevice()) {
+// template <typename T>
+// T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) {
+//     const auto& shapeDims = data_.getShape().getDims();
+//     if (indices.size() != shapeDims.size()) {
+//         throw std::out_of_range("Dimension mismatch: expected "
+//                                 + std::to_string(shapeDims.size())
+//                                 + " indices, got "
+//                                 + std::to_string(indices.size()));
+//     }
 
-        throw std::invalid_argument(
-            "Tensors must be on the same device for this operation (found "
-            + getDevice()->toString() + " and "
-            + other.getDevice()->toString() + ")");
-    }
-}
+//     size_t linearIdx = 0;
+//     const auto* idxIt = indices.begin();
+//     const auto& strideDims = data_.getStride().getStrideVec();
+
+//     auto dimsSize = shapeDims.size();
+//     for (size_t i = 0; i < dimsSize; ++i) {
+//         size_t dimIdx = *idxIt;
+//         if (dimIdx >= shapeDims[i]) {
+//             throw std::out_of_range("Index out of bounds at dimension "
+//                                     + std::to_string(i));
+//         }
+//         linearIdx += dimIdx * strideDims[i];
+//         std::advance(idxIt, 1);
+//     }
+//     return data_.getData()[linearIdx];
+// }
+
+// template <typename T>
+// const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) const
+// {
+//     const auto& shapeDims = data_.getShape().getDims();
+//     if (indices.size() != shapeDims.size()) {
+//         throw std::out_of_range("Dimension mismatch");
+//     }
+
+//     size_t linearIdx = 0;
+//     const auto* idxIt = indices.begin();
+//     const auto& strideDims = data_.getStride().getStrideVec();
+
+//     for (size_t i = 0; i < shapeDims.size(); ++i) {
+//         size_t dimIdx = *idxIt;
+//         if (dimIdx >= shapeDims[i]) {
+//             throw std::out_of_range("Index out of bounds");
+//         }
+//         linearIdx += dimIdx * strideDims[i];
+//         std::advance(idxIt, 1);
+//     }
+//     return data_.getData()[linearIdx];
+// }
+
+// template <typename T>
+// void TensorWrapper<T>::checkSameDevice(const TensorWrapper& other) const {
+//     if (*getDevice() != *other.getDevice()) {
+
+//         throw std::invalid_argument(
+//             "Tensors must be on the same device for this operation (found "
+//             + getDevice()->toString() + " and "
+//             + other.getDevice()->toString() + ")");
+//     }
+// }
 
 } // namespace hahaha::math
 

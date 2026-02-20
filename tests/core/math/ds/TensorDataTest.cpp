@@ -125,10 +125,29 @@ TEST_F(TensorDataTest, CopyConstructor) {
         EXPECT_EQ(copied.getData()[i], original.getData()[i]);
     }
 
-    // Verify deep copy
+    // Verify shadow copy (shared data)
+    EXPECT_EQ(copied.getData().get(), original.getData().get());
     copied.getData()[0] = 100;
-    EXPECT_EQ(original.getData()[0], 1);
+    EXPECT_EQ(original.getData()[0], 100);
     EXPECT_EQ(copied.getData()[0], 100);
+}
+
+TEST_F(TensorDataTest, Clone) {
+    TensorData<int> original(hahaha::math::NestedData<int>{{1, 2}, {3, 4}});
+    TensorData<int> cloned = original.clone();
+
+    EXPECT_EQ(cloned.getShape(), original.getShape());
+    EXPECT_EQ(cloned.getStride().getStrideSize(),
+              original.getStride().getStrideSize());
+    for (size_t i = 0; i < original.getShape().getTotalSize(); ++i) {
+        EXPECT_EQ(cloned.getData()[i], original.getData()[i]);
+    }
+
+    // Verify deep copy
+    EXPECT_NE(cloned.getData().get(), original.getData().get());
+    cloned.getData()[0] = 100;
+    EXPECT_EQ(original.getData()[0], 1);
+    EXPECT_EQ(cloned.getData()[0], 100);
 }
 
 TEST_F(TensorDataTest, MoveConstructor) {
@@ -370,12 +389,23 @@ TEST_F(TensorDataTest, ShapeValueConstructor_3D_Tensor) {
     }
 }
 
-TEST_F(TensorDataTest, CopyConstructor_GpuDevice_ThrowsRuntimeError) {
+TEST_F(TensorDataTest, CopyConstructor_GpuDevice_DoesNotThrow) {
     hahaha::math::TensorShape shape({1});
     TensorData<int> original(shape);
     original.setDevice(std::make_shared<hahaha::backend::GPUDevice>());
 
-    EXPECT_THROW(TensorData<int> copied(original), std::runtime_error);
+    // Shadow copy should work even with GPU device
+    TensorData<int> copied(original);
+    EXPECT_EQ(copied.getDevice(), original.getDevice());
+    EXPECT_EQ(copied.getShape(), original.getShape());
+}
+
+TEST_F(TensorDataTest, Clone_GpuDevice_ThrowsRuntimeError) {
+    hahaha::math::TensorShape shape({1});
+    TensorData<int> original(shape);
+    original.setDevice(std::make_shared<hahaha::backend::GPUDevice>());
+
+    EXPECT_THROW(TensorData<int> cloned = original.clone(), std::runtime_error);
 }
 
 TEST_F(TensorDataTest, MoveConstructor_PreservesAllData) {

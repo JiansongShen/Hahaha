@@ -215,10 +215,30 @@ TYPED_TEST(TensorDataTypedTest, CopyConstructor) {
         EXPECT_EQ(copied.getData()[i], original.getData()[i]);
     }
 
-    // Verify deep copy
+    // Verify shadow copy (shared data)
+    EXPECT_EQ(copied.getData().get(), original.getData().get());
     copied.getData()[0] = T(100);
-    EXPECT_EQ(original.getData()[0], T(1));
+    EXPECT_EQ(original.getData()[0], T(100));
     EXPECT_EQ(copied.getData()[0], T(100));
+}
+
+TYPED_TEST(TensorDataTypedTest, Clone) {
+    using T = TestFixture::Type;
+    TensorData<T> original(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
+    TensorData<T> cloned = original.clone();
+
+    EXPECT_EQ(cloned.getShape(), original.getShape());
+    EXPECT_EQ(cloned.getStride().getStrideSize(),
+              original.getStride().getStrideSize());
+    for (size_t i = 0; i < original.getShape().getTotalSize(); ++i) {
+        EXPECT_EQ(cloned.getData()[i], original.getData()[i]);
+    }
+
+    // Verify deep copy
+    EXPECT_NE(cloned.getData().get(), original.getData().get());
+    cloned.getData()[0] = T(100);
+    EXPECT_EQ(original.getData()[0], T(1));
+    EXPECT_EQ(cloned.getData()[0], T(100));
 }
 
 TYPED_TEST(TensorDataTypedTest, MoveConstructor) {
