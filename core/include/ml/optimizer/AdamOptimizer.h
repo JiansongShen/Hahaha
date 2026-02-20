@@ -49,7 +49,8 @@ using common::u64;
  *
  * Where:
  * - eta: learning rate
- * - beta1, beta2: coefficients for computing running averages of gradient and its square
+ * - beta1, beta2: coefficients for computing running averages of gradient and its
+ * square
  * - epsilon: term added to the denominator to improve numerical stability
  *
  * @tparam T The numeric type (must be float or double).
@@ -60,14 +61,16 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
     static constexpr T DefaultBeta1 = 0.9;
     static constexpr T DefaultBeta2 = 0.999;
     static constexpr T DefaultEpsilon = 1e-8;
+
   public:
-/**
+    /**
      * @brief Construct a new Adam Optimizer with default hyperparameters.
-     * @param parameters A vector of Tensors to be optimized.
+     * @param parameters A vector of compute nodes to be optimized.
      * @param learningRate The step size used for each iteration.
      */
-    AdamOptimizer(const std::vector<Tensor<T>>& parameters,
-                  const T learningRate)
+    AdamOptimizer(
+        const std::vector<std::shared_ptr<compute::ComputeNode<T>>>& parameters,
+        const T learningRate)
         : Optimizer<T>(parameters, learningRate) {
     }
 
@@ -75,8 +78,7 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
      * @brief Copy constructor from a base Optimizer.
      * @param optimizer The optimizer instance to copy from.
      */
-    explicit AdamOptimizer(const Optimizer<T>& optimizer)
-        : Optimizer<T>(optimizer) {
+    explicit AdamOptimizer(const Optimizer<T>& optimizer) : Optimizer<T>(optimizer) {
     }
 
     /**
@@ -88,38 +90,39 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
 
     /**
      * @brief Construct a new Adam Optimizer with custom hyperparameters.
-     * @param parameters A vector of Tensors to be optimized.
+     * @param parameters A vector of compute nodes to be optimized.
      * @param learningRate The step size used for each iteration.
      * @param beta1 Exponential decay rate for the first moment estimates.
      * @param beta2 Exponential decay rate for the second-moment estimates.
      * @param epsilon A small constant for numerical stability.
      */
-    AdamOptimizer(const std::vector<Tensor<T>>& parameters,
-                  const T& learningRate,
-                  T beta1,
-                  T beta2,
-                  T epsilon)
+    AdamOptimizer(
+        const std::vector<std::shared_ptr<compute::ComputeNode<T>>>& parameters,
+        const T& learningRate,
+        T beta1,
+        T beta2,
+        T epsilon)
         : Optimizer<T>(parameters, learningRate), beta1_(beta1), beta2_(beta2),
           epsilon_(epsilon) {
     }
 
     /**
      * @brief Adds a parameter to the optimizer's watch list.
-     * @details If the optimizer has already been prepared/initialized, this also 
+     * @details If the optimizer has already been prepared/initialized, this also
      * initializes the moment vectors (M and V) for the new parameter.
-     * @param param The Tensor parameter to add.
+     * @param param The compute node parameter to add.
      */
-    void addParameter(const Tensor<T>& param) override {
-        if (trainPrepared_) {
-            parametersM_.push_back(param.getComputeNode()->getData()->zeros());
-            parametersV_.push_back(param.getComputeNode()->getData()->zeros());
+    void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) override {
+        if (trainPrepared_ && param) {
+            parametersM_.push_back(param->getData()->zeros());
+            parametersV_.push_back(param->getData()->zeros());
         }
-        this->parameters_.push_back(param);
+        Optimizer<T>::addParameter(std::move(param));
     }
 
     /**
      * @brief Performs a single optimization step (parameter update).
-     * @details This method calculates the bias-corrected first and second moment 
+     * @details This method calculates the bias-corrected first and second moment
      * estimates and updates the data of each parameter that requires gradients.
      */
     void step() override {
@@ -128,11 +131,11 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
         beta1PowT_ *= beta1_;
         beta2PowT_ *= beta2_;
         for (size_t i = 0; i < parametersM_.size(); ++i) {
-            auto param = this->parameters_[i].getComputeNode();
+            auto param = this->parameters_[i];
             auto& paramM = this->parametersM_[i];
             auto& paramV = this->parametersV_[i];
 
-            if (!param->getRequiresGrad()) {
+            if (!param || !param->getRequiresGrad()) {
                 continue;
             }
             auto grad = param->getGrad();
@@ -156,8 +159,9 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
 
   private:
     /**
-     * @brief Initializes internal state (moment buffers) before the first training step.
-     * @details Allocates and zeros out the `parametersM_` and `parametersV_` vectors 
+     * @brief Initializes internal state (moment buffers) before the first training
+     * step.
+     * @details Allocates and zeros out the `parametersM_` and `parametersV_` vectors
      * based on the current parameters registered in the optimizer.
      */
     void preTrainIfNeed() {
@@ -171,10 +175,10 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
         parametersV_.resize(paramSize);
         turn_ = 0;
         for (size_t i = 0; i < paramSize; ++i) {
-            parametersM_[i] =
-                this->parameters_[i].getComputeNode()->getData()->zeros();
-            parametersV_[i] =
-                this->parameters_[i].getComputeNode()->getData()->zeros();
+            if (this->parameters_[i]) {
+                parametersM_[i] = this->parameters_[i]->getData()->zeros();
+                parametersV_[i] = this->parameters_[i]->getData()->zeros();
+            }
         }
 
         trainPrepared_ = true;

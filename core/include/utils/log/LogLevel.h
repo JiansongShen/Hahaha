@@ -69,8 +69,7 @@ const std::string_view DefaultColoredDebug = "\033[0;36mDEBUG\033[0m"; // CYAN
 const std::string_view DefaultColoredInfo = "\033[0;32mINFO \033[0m";  // GREEN
 const std::string_view DefaultColoredWarn = "\033[0;33mWARN \033[0m";  // YELLOW
 const std::string_view DefaultColoredError = "\033[0;31mERROR\033[0m"; // RED
-const std::string_view DefaultColoredFatal =
-    "\033[0;35mFATAL\033[0m"; // MAGENTA
+const std::string_view DefaultColoredFatal = "\033[0;35mFATAL\033[0m"; // MAGENTA
 const std::string_view DefaultColoredTrace = "\033[0;34mTRACE\033[0m"; // BLUE
 
 /**

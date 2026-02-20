@@ -55,8 +55,7 @@ class alignas(8) Device {
      * @param deviceType Device type.
      * @param deviceId Device ID.
      */
-    explicit Device(const DeviceType deviceType,
-                    const std::uint8_t deviceId = 0)
+    explicit Device(const DeviceType deviceType, const std::uint8_t deviceId = 0)
         : type_(deviceType), id_(deviceId) {
     }
 
@@ -104,10 +103,9 @@ class alignas(8) Device {
                                   std::span<std::byte> dst,
                                   const std::shared_ptr<Device>& srcDevice) = 0;
 
-    virtual void
-    copyMemoryFromThis(std::span<std::byte> src,
-                       std::span<std::byte> dst,
-                       const std::shared_ptr<Device>& dstDevice) = 0;
+    virtual void copyMemoryFromThis(std::span<std::byte> src,
+                                    std::span<std::byte> dst,
+                                    const std::shared_ptr<Device>& dstDevice) = 0;
 
     [[nodiscard]] DeviceType getType() const {
         return type_;

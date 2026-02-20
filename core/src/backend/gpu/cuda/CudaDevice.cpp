@@ -23,11 +23,7 @@
 
 #include "backend/gpu/cuda/CudaDevice.h"
 
-namespace hahaha::backend {
-
-
-
-} // namespace hahaha::backend
+namespace hahaha::backend {} // namespace hahaha::backend
 
 #endif // __has_include(<driver_types.h>)
 #endif // HAHAHA_USE_CUDA

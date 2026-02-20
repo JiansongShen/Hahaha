@@ -23,9 +23,9 @@
 #include <random>
 #include <vector>
 
-#include "public/Tensor.h"
 #include "common/definitions.h"
 #include "ml/optimizer/SGDOptimizer.h"
+#include "public/Tensor.h"
 
 using hahaha::Tensor;
 using namespace hahaha::common;
@@ -70,15 +70,16 @@ inline void basic_linear_regression_example() {
     Tensor<f32> loss(1);
     loss.setRequiresGrad(true);
 
-    auto optimizer = hahaha::ml::SGDOptimizer<f32>({w}, 0.001);
+    // Optimizer operates on compute nodes, not tensors.
+    std::vector<std::shared_ptr<hahaha::compute::ComputeNode<f32>>> params = {
+        w.getComputeNode()};
+    auto optimizer = hahaha::ml::SGDOptimizer<f32>(params, 0.001f);
 
     for (int i = 0; i < TrainLoop; ++i) {
         optimizer.zeroGrad();
         auto tmp = yTensorM - w * xTensorM;
 
-        loss = (yTensorM - w * xTensorM)
-                   .transpose()
-                   .matmul(yTensorM - w * xTensorM);
+        loss = (yTensorM - w * xTensorM).transpose().matmul(yTensorM - w * xTensorM);
 
         loss.backward();
         optimizer.step();

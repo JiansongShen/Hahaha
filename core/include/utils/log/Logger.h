@@ -176,8 +176,8 @@ class Logger {
             LogMessageEntry entry;
             {
                 std::unique_lock lock(mutex_);
-                condition_.wait(
-                    lock, [this] { return !queue_.empty() || !running_; });
+                condition_.wait(lock,
+                                [this] { return !queue_.empty() || !running_; });
 
                 if (!running_ && queue_.empty()) {
                     break;
@@ -200,9 +200,8 @@ class Logger {
                 stream_.flush(); // Ensure data is written
             }
             if (config_.isWriteToConsole()) {
-                std::cout << timestamp << "["
-                          << toColoredString(entry.getLevel()) << "]"
-                          << entry.getMessage() << '\n';
+                std::cout << timestamp << "[" << toColoredString(entry.getLevel())
+                          << "]" << entry.getMessage() << '\n';
                 std::cout.flush(); // Ensure data is written
             }
         }

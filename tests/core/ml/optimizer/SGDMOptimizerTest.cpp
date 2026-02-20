@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include "../../../../core/include/public/Tensor.h"
+#include "public/Tensor.h"
 
 using namespace hahaha;
 using namespace hahaha::ml;
@@ -28,7 +28,8 @@ using FloatingPointTypes = ::testing::Types<float, double>;
 template <typename T> class SGDMOptimizerTest : public ::testing::Test {
   protected:
     void expectNear(T expected, T actual, T tolerance = 1e-4) {
-        EXPECT_NEAR(static_cast<double>(expected), static_cast<double>(actual),
+        EXPECT_NEAR(static_cast<double>(expected),
+                    static_cast<double>(actual),
                     static_cast<double>(tolerance));
     }
 };
@@ -45,7 +46,8 @@ TYPED_TEST(SGDMOptimizerTest, StandardUpdate_MomentumAccumulation) {
     // lr = 0.1, momentum = 0.9
     T lr = T(0.1);
     T mu = T(0.9);
-    std::vector<Tensor<T>> params = {w};
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
     SGDMOptimizer<T> opt(params, lr, mu);
 
     // --- Step 1 ---
@@ -56,7 +58,7 @@ TYPED_TEST(SGDMOptimizerTest, StandardUpdate_MomentumAccumulation) {
     // w = 1.0 - 0.1 * 0.1 = 0.99
     w.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));
-    
+
     opt.step();
     this->expectNear(T(0.99), w.at({0}));
 
@@ -67,7 +69,7 @@ TYPED_TEST(SGDMOptimizerTest, StandardUpdate_MomentumAccumulation) {
     w.clearGrad();
     w.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));
-    
+
     opt.step();
     this->expectNear(T(0.971), w.at({0}));
 }
@@ -78,7 +80,9 @@ TYPED_TEST(SGDMOptimizerTest, Step_RequiresGradFalse_NoUpdate) {
     Tensor<T> w(math::NestedData<T>{T(1.0)});
     w.setRequiresGrad(false);
 
-    SGDMOptimizer<T> opt({w}, T(0.1), T(0.9));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    SGDMOptimizer<T> opt(params, T(0.1), T(0.9));
 
     // Even if we somehow force a grad (though typically backward wouldn't run),
     // let's manually set one to ensure step() ignores it.
@@ -96,7 +100,9 @@ TYPED_TEST(SGDMOptimizerTest, Step_GradEmpty_NoUpdate) {
     Tensor<T> w(math::NestedData<T>{T(1.0)});
     w.setRequiresGrad(true);
 
-    SGDMOptimizer<T> opt({w}, T(0.1), T(0.9));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    SGDMOptimizer<T> opt(params, T(0.1), T(0.9));
 
     // No gradient accumulated
     opt.step();
@@ -114,7 +120,9 @@ TYPED_TEST(SGDMOptimizerTest, AddParameter_BeforeAndAfterStep) {
     Tensor<T> w1(math::NestedData<T>{T(1.0)});
     w1.setRequiresGrad(true);
 
-    SGDMOptimizer<T> opt({w1}, lr, mu);
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w1.getComputeNode()};
+    SGDMOptimizer<T> opt(params, lr, mu);
 
     // --- Step 1: w1 update ---
     // grad(w1) = 1.0
@@ -128,13 +136,13 @@ TYPED_TEST(SGDMOptimizerTest, AddParameter_BeforeAndAfterStep) {
     // --- Add w2 after step (trainPrepared_ is true) ---
     Tensor<T> w2(math::NestedData<T>{T(2.0)});
     w2.setRequiresGrad(true);
-    opt.addParameter(w2);
+    opt.addParameter(w2.getComputeNode());
 
     // --- Step 2: w1 and w2 update ---
     // grad(w1) = 1.0
     // v(w1) = 0.9 * 0.1 + 0.1 * 1.0 = 0.19
     // w1 = 0.99 - 0.1 * 0.19 = 0.971
-    
+
     // grad(w2) = 1.0
     // v(w2) (initially 0) = 0.9 * 0 + 0.1 * 1.0 = 0.1
     // w2 = 2.0 - 0.1 * 0.1 = 1.99
@@ -142,7 +150,7 @@ TYPED_TEST(SGDMOptimizerTest, AddParameter_BeforeAndAfterStep) {
     w1.clearGrad();
     w1.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));
-    
+
     w2.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));
 
@@ -156,7 +164,9 @@ TYPED_TEST(SGDMOptimizerTest, ZeroGrad) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{T(1.0)});
     w.setRequiresGrad(true);
-    SGDMOptimizer<T> opt({w}, T(0.1));
+    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+        w.getComputeNode()};
+    SGDMOptimizer<T> opt(params, T(0.1));
 
     w.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));

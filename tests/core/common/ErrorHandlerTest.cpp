@@ -1,16 +1,16 @@
-//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//       https://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //
 //  Contributors:
 //  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
@@ -39,8 +39,7 @@ TEST_F(ErrorHandlerTest, Error_Properties) {
     Error error_invalid{ErrorCode::InvalidArgument};
     EXPECT_FALSE(error_invalid.isSuccess());
     EXPECT_EQ(error_invalid.code, ErrorCode::InvalidArgument);
-    EXPECT_STREQ(error_invalid.message(),
-                 "Invalid argument (e.g., shape mismatch)");
+    EXPECT_STREQ(error_invalid.message(), "Invalid argument (e.g., shape mismatch)");
 
     Error error_device{ErrorCode::DeviceNotSupported};
     EXPECT_FALSE(error_device.isSuccess());
@@ -82,8 +81,7 @@ TEST_F(ErrorHandlerTest, FailedWithError) {
     const auto e = testReturnFailed();
     ASSERT_FALSE(e.has_value());
     ASSERT_EQ(e.error().code, ErrorCode::InvalidArgument);
-    ASSERT_STREQ(e.error().message(),
-                 "Invalid argument (e.g., shape mismatch)");
+    ASSERT_STREQ(e.error().message(), "Invalid argument (e.g., shape mismatch)");
 }
 
 TEST_F(ErrorHandlerTest, FailedWithError_Manual) {

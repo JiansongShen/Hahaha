@@ -38,8 +38,7 @@
 
 namespace hahaha::backend {
 
-template <>
-struct SimdVec<f32, 512> {
+template <> struct SimdVec<f32, 512> {
     using scalar_type = f32;
     static constexpr std::size_t kBits = 512;
     static constexpr std::size_t kLanes = 16;
@@ -47,7 +46,8 @@ struct SimdVec<f32, 512> {
     __m512 v_{};
 
     SimdVec() = default;
-    explicit SimdVec(__m512 v) : v_(v) {}
+    explicit SimdVec(__m512 v) : v_(v) {
+    }
 
     static SimdVec load(f32 const* ptr) {
         return SimdVec(_mm512_loadu_ps(ptr));
@@ -77,14 +77,25 @@ struct SimdVec<f32, 512> {
     SimdVec operator/(SimdVec const& other) const {
         return SimdVec(_mm512_div_ps(v_, other.v_));
     }
-    SimdVec& operator+=(SimdVec const& other) { v_ = _mm512_add_ps(v_, other.v_); return *this; }
-    SimdVec& operator-=(SimdVec const& other) { v_ = _mm512_sub_ps(v_, other.v_); return *this; }
-    SimdVec& operator*=(SimdVec const& other) { v_ = _mm512_mul_ps(v_, other.v_); return *this; }
-    SimdVec& operator/=(SimdVec const& other) { v_ = _mm512_div_ps(v_, other.v_); return *this; }
+    SimdVec& operator+=(SimdVec const& other) {
+        v_ = _mm512_add_ps(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator-=(SimdVec const& other) {
+        v_ = _mm512_sub_ps(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator*=(SimdVec const& other) {
+        v_ = _mm512_mul_ps(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator/=(SimdVec const& other) {
+        v_ = _mm512_div_ps(v_, other.v_);
+        return *this;
+    }
 };
 
-template <>
-struct SimdVec<f64, 512> {
+template <> struct SimdVec<f64, 512> {
     using scalar_type = f64;
     static constexpr std::size_t kBits = 512;
     static constexpr std::size_t kLanes = 8;
@@ -92,7 +103,8 @@ struct SimdVec<f64, 512> {
     __m512d v_{};
 
     SimdVec() = default;
-    explicit SimdVec(__m512d v) : v_(v) {}
+    explicit SimdVec(__m512d v) : v_(v) {
+    }
 
     static SimdVec load(f64 const* ptr) {
         return SimdVec(_mm512_loadu_pd(ptr));
@@ -122,15 +134,26 @@ struct SimdVec<f64, 512> {
     SimdVec operator/(SimdVec const& other) const {
         return SimdVec(_mm512_div_pd(v_, other.v_));
     }
-    SimdVec& operator+=(SimdVec const& other) { v_ = _mm512_add_pd(v_, other.v_); return *this; }
-    SimdVec& operator-=(SimdVec const& other) { v_ = _mm512_sub_pd(v_, other.v_); return *this; }
-    SimdVec& operator*=(SimdVec const& other) { v_ = _mm512_mul_pd(v_, other.v_); return *this; }
-    SimdVec& operator/=(SimdVec const& other) { v_ = _mm512_div_pd(v_, other.v_); return *this; }
+    SimdVec& operator+=(SimdVec const& other) {
+        v_ = _mm512_add_pd(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator-=(SimdVec const& other) {
+        v_ = _mm512_sub_pd(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator*=(SimdVec const& other) {
+        v_ = _mm512_mul_pd(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator/=(SimdVec const& other) {
+        v_ = _mm512_div_pd(v_, other.v_);
+        return *this;
+    }
 };
 
 // AVX-512F includes integer operations
-template <>
-struct SimdVec<i32, 512> {
+template <> struct SimdVec<i32, 512> {
     using scalar_type = i32;
     static constexpr std::size_t kBits = 512;
     static constexpr std::size_t kLanes = 16;
@@ -138,7 +161,8 @@ struct SimdVec<i32, 512> {
     __m512i v_{};
 
     SimdVec() = default;
-    explicit SimdVec(__m512i v) : v_(v) {}
+    explicit SimdVec(__m512i v) : v_(v) {
+    }
 
     static SimdVec load(i32 const* ptr) {
         return SimdVec(_mm512_loadu_si512(reinterpret_cast<__m512i const*>(ptr)));
@@ -165,13 +189,21 @@ struct SimdVec<i32, 512> {
     SimdVec operator*(SimdVec const& other) const {
         return SimdVec(_mm512_mullo_epi32(v_, other.v_));
     }
-    SimdVec& operator+=(SimdVec const& other) { v_ = _mm512_add_epi32(v_, other.v_); return *this; }
-    SimdVec& operator-=(SimdVec const& other) { v_ = _mm512_sub_epi32(v_, other.v_); return *this; }
-    SimdVec& operator*=(SimdVec const& other) { v_ = _mm512_mullo_epi32(v_, other.v_); return *this; }
+    SimdVec& operator+=(SimdVec const& other) {
+        v_ = _mm512_add_epi32(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator-=(SimdVec const& other) {
+        v_ = _mm512_sub_epi32(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator*=(SimdVec const& other) {
+        v_ = _mm512_mullo_epi32(v_, other.v_);
+        return *this;
+    }
 };
 
-template <>
-struct SimdVec<i64, 512> {
+template <> struct SimdVec<i64, 512> {
     using scalar_type = i64;
     static constexpr std::size_t kBits = 512;
     static constexpr std::size_t kLanes = 8;
@@ -179,7 +211,8 @@ struct SimdVec<i64, 512> {
     __m512i v_{};
 
     SimdVec() = default;
-    explicit SimdVec(__m512i v) : v_(v) {}
+    explicit SimdVec(__m512i v) : v_(v) {
+    }
 
     static SimdVec load(i64 const* ptr) {
         return SimdVec(_mm512_loadu_si512(reinterpret_cast<__m512i const*>(ptr)));
@@ -208,10 +241,19 @@ struct SimdVec<i64, 512> {
     SimdVec operator*(SimdVec const& other) const {
         return SimdVec(_mm512_mullo_epi64(v_, other.v_));
     }
-    SimdVec& operator*=(SimdVec const& other) { v_ = _mm512_mullo_epi64(v_, other.v_); return *this; }
+    SimdVec& operator*=(SimdVec const& other) {
+        v_ = _mm512_mullo_epi64(v_, other.v_);
+        return *this;
+    }
 #endif
-    SimdVec& operator+=(SimdVec const& other) { v_ = _mm512_add_epi64(v_, other.v_); return *this; }
-    SimdVec& operator-=(SimdVec const& other) { v_ = _mm512_sub_epi64(v_, other.v_); return *this; }
+    SimdVec& operator+=(SimdVec const& other) {
+        v_ = _mm512_add_epi64(v_, other.v_);
+        return *this;
+    }
+    SimdVec& operator-=(SimdVec const& other) {
+        v_ = _mm512_sub_epi64(v_, other.v_);
+        return *this;
+    }
 };
 
 } // namespace hahaha::backend

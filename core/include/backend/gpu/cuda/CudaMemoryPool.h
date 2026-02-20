@@ -119,8 +119,8 @@ class CudaMemoryPool {
         bool isAllocated; // Allocation state
 
         SmallBlockMetadata()
-            : gpuPtr(nullptr), size(0), blockIdx(0), prev(nullptr),
-              next(nullptr), isAllocated(false) {
+            : gpuPtr(nullptr), size(0), blockIdx(0), prev(nullptr), next(nullptr),
+              isAllocated(false) {
         }
     };
 
@@ -128,8 +128,8 @@ class CudaMemoryPool {
      * @brief CPU-side metadata for a large memory block.
      */
     struct BigBlockMetadata {
-        void* gpuPtr; // GPU memory pointer (points to data, not header)
-        size_t size;  // Block size in bytes
+        void* gpuPtr;          // GPU memory pointer (points to data, not header)
+        size_t size;           // Block size in bytes
         size_t cacheLiveTimes; // Cache lifetime counter
         bool isAllocated;      // Allocation state
 
@@ -180,8 +180,7 @@ class CudaMemoryPool {
      * @param size Size in bytes.
      * @return Big block metadata or error.
      */
-    std::expected<BigBlockMetadata*, common::Error>
-    requireNewBigBlock(size_t size);
+    std::expected<BigBlockMetadata*, common::Error> requireNewBigBlock(size_t size);
 
     /**
      * @brief Find cached big block that fits size.

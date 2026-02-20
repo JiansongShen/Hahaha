@@ -46,9 +46,8 @@ namespace hahaha::compute {
  * @return Result node representing Z = X @ Y.
  */
 template <typename T>
-std::shared_ptr<ComputeNode<T>>
-matmul(const std::shared_ptr<ComputeNode<T>>& lhs,
-       const std::shared_ptr<ComputeNode<T>>& rhs) {
+std::shared_ptr<ComputeNode<T>> matmul(const std::shared_ptr<ComputeNode<T>>& lhs,
+                                       const std::shared_ptr<ComputeNode<T>>& rhs) {
     auto resData = std::make_shared<math::TensorWrapper<T>>(
         lhs->getData()->matmul(*rhs->getData()));
 
@@ -67,15 +66,15 @@ matmul(const std::shared_ptr<ComputeNode<T>>& lhs,
             auto gradPtr = res->getGrad();
             if (lhs->getRequiresGrad()) {
                 auto rhsT = rhs->getData()->transpose();
-                auto gradLhs = std::make_shared<math::TensorWrapper<T>>(
-                    gradPtr->matmul(rhsT));
+                auto gradLhs =
+                    std::make_shared<math::TensorWrapper<T>>(gradPtr->matmul(rhsT));
                 lhs->accumulateGrad(gradLhs);
                 // lhs->backward();
             }
             if (rhs->getRequiresGrad()) {
                 auto lhsT = lhs->getData()->transpose();
-                auto gradRhs = std::make_shared<math::TensorWrapper<T>>(
-                    lhsT.matmul(*gradPtr));
+                auto gradRhs =
+                    std::make_shared<math::TensorWrapper<T>>(lhsT.matmul(*gradPtr));
                 rhs->accumulateGrad(gradRhs);
                 // rhs->backward();
             }

@@ -17,4 +17,3 @@
 //
 
 #include "backend/vectorize/simd_compute_funs.h"
-

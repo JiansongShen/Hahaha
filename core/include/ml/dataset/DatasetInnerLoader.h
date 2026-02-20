@@ -1,4 +1,4 @@
-// Copyright (c) 2025-2026 Contributors of Hahaha
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -30,10 +31,8 @@
 #include "math/TensorWrapper.h"
 #include "math/ds/TensorShape.h"
 #include "ml/dataset/DatasetHandleBlankStrategy.h"
-#include "ml/dataset/DatasetTypeUnifyStrategy.h"
-#include "ml/dataset/dataset_format.h"
-#include "utils/common/helper_structs.h"
 #include "utils/common/StringUtils.h"
+#include "utils/common/helper_structs.h"
 #include "utils/log/Logger.h"
 
 namespace hahaha::ml {
@@ -43,26 +42,7 @@ class DatasetInnerLoader {
 
   public:
     template <typename T>
-    void loadFromCSVTo(const std::string& pathString,
-                       DatasetInner<T>& dataset) {
-        currFile_ = pathString;
-        currLine_ = 1;
-        checkPathExist(pathString);
-        std::ifstream ifs(pathString);
-        if (!ifs.is_open()) {
-            error(std::format("file can not open: {}", pathString));
-            throw std::runtime_error(pathString);
-        }
-
-        setUpColumnNames<T>(ifs, dataset);
-        setUpData<T>(ifs, dataset);
-        dataset.datasetName_ = pathString;
-    }
-
-    template <typename T>
-    void loadFromCSVTo(const std::string& pathString,
-                       DatasetInner<T>& dataset,
-                       CSVDatasetFormat format) {
+    void loadFromCSVTo(const std::string& pathString, DatasetInner<T>& dataset) {
         currFile_ = pathString;
         currLine_ = 1;
         checkPathExist(pathString);
@@ -96,6 +76,7 @@ class DatasetInnerLoader {
 
         std::vector<std::vector<T>> dataList;
         while (std::getline(ifs, line)) {
+            ++currLine_;
             auto datas = handleOneLine<T>(line);
             if (!datas.has_value() || datas.value().size() == 0) {
                 continue;
@@ -110,8 +91,7 @@ class DatasetInnerLoader {
     template <typename T>
     std::expected<std::vector<T>, common::Error>
     handleOneLine(const std::string& line) {
-        const auto strVec =
-            utils::StringUtils::split(line, CSVLineDelimiter, true);
+        const auto strVec = utils::StringUtils::split(line, CSVLineDelimiter, true);
         auto res = std::vector<T>{};
 
         if (strVec.size() != columnNum_) {
@@ -127,11 +107,16 @@ class DatasetInnerLoader {
         for (size_t i = 0; i < strVec.size(); ++i) {
             auto valRes = handleOneValue<T>(strVec[i]);
             if (!valRes) {
-                error(
-                    std::format("error: when parsing the line:{} at file {}:{}",
-                                line,
-                                currFile_,
-                                static_cast<int>(currLine_)));
+                // JumpOne strategy returns unexpected silently (it is expected
+                // behaviour, not a parse error).  Only log for other causes.
+                if (datasetHandleBlankStrategy_
+                    != DatasetHandleBlankStrategy::JumpOne) {
+                    error(
+                        std::format("error: when parsing the line:{} at file {}:{}",
+                                    line,
+                                    currFile_,
+                                    static_cast<int>(currLine_)));
+                }
                 return std::unexpected(common::InvalidDatasetError());
             }
             res[i] = valRes.value();
@@ -157,43 +142,62 @@ class DatasetInnerLoader {
                 return static_cast<T>(0);
                 break;
 
+            case DatasetHandleBlankStrategy::JumpOne:
+
+                return std::unexpected(common::InvalidDatasetError());
+
             default:
                 error("Invalid dataset handle blank strategy");
                 return std::unexpected(common::InvalidDatasetError());
             }
         }
-        return utils::StringUtils::to<T>(str);
+        // to<T>() now returns std::optional; propagate parse failures.
+        auto parsed = utils::StringUtils::to<T>(str);
+        if (!parsed.has_value()) {
+            error(std::format("error: cannot parse value '{}' at file {}:{}",
+                              str,
+                              currFile_,
+                              static_cast<int>(currLine_)));
+            return std::unexpected(common::InvalidDatasetError());
+        }
+        return parsed.value();
     }
 
     template <typename T>
     void setUpColumnNames(std::ifstream& ifs, DatasetInner<T>& dataset) {
         auto line = std::string{};
         std::getline(ifs, line);
-        auto columns = utils::StringUtils::split(line, CSVLineDelimiter);
+        auto columns = utils::StringUtils::split(line, CSVLineDelimiter, true);
         columnNum_ = columns.size();
+        for (auto& column : columns) {
+            column = utils::StringUtils::trimSideBlank(column);
+        }
         dataset.columns_ = std::move(columns);
     }
 
     template <typename T>
-    void fillData(std::vector<std::vector<T>>& dataList,
-                  DatasetInner<T>& dataset) {
+    void fillData(std::vector<std::vector<T>>& dataList, DatasetInner<T>& dataset) {
         if (dataList.empty()) {
-            dataset.samples_ = Tensor<T>();
+            dataset.samples_ = math::TensorWrapper<T>();
+            dataset.indices_.clear();
             return;
         }
 
-        Tensor<T> sampleTensor =
-            Tensor<T>::buildFromShape({dataList.size(), dataList[0].size()});
+        math::TensorWrapper<T> sampleTensor(math::TensorShape(
+            std::vector<size_t>{dataList.size(), dataList[0].size()}));
 
         for (size_t i = 0; i < dataList.size(); ++i) {
             for (size_t j = 0; j < dataList[i].size(); ++j) {
-                sampleTensor.getComputeNode()
-                    ->getData()
-                    ->getRawData()[i * dataList[0].size() + j] = dataList[i][j];
+                sampleTensor.getRawData()[i * dataList[0].size() + j] =
+                    dataList[i][j];
             }
         }
 
-        dataset.samples_ = sampleTensor;
+        dataset.samples_ = std::move(sampleTensor);
+
+        // initialise identity permutation — no shuffle yet
+        dataset.indices_.resize(dataList.size());
+        std::iota(dataset.indices_.begin(), dataset.indices_.end(), 0);
     }
 
     void clearStatus() {

@@ -19,6 +19,7 @@
 #ifndef HAHAHA_SGDMOPTIMIZER_H_E57DB5EDFD0E4CC4914AB64FBF0C0859
 #define HAHAHA_SGDMOPTIMIZER_H_E57DB5EDFD0E4CC4914AB64FBF0C0859
 #include <vector>
+
 #include "Optimizer.h"
 
 namespace hahaha::ml {
@@ -31,14 +32,17 @@ namespace hahaha::ml {
  * theta(t) = theta(t-1) - eta * v(t)
  */
 template <typename T> class SGDMOptimizer : public Optimizer<T> {
+    static_assert(utils::isLegalFloatType<T>::value,
+                  "AdamOptimizer just supports float values");
+
   public:
     /**
      * @brief Construct a new SGDMOptimizer.
-     * @param parameters List of tensors to optimize.
+     * @param parameters List of compute nodes to optimize.
      * @param learningRate Learning rate.
      * @param momentumCoefficient Momentum factor (default 0.9).
      */
-    SGDMOptimizer(std::vector<Tensor<T>> parameters,
+    SGDMOptimizer(std::vector<std::shared_ptr<compute::ComputeNode<T>>> parameters,
                   T learningRate,
                   T momentumCoefficient = 0.9)
         : Optimizer<T>(std::move(parameters), learningRate),
@@ -47,13 +51,13 @@ template <typename T> class SGDMOptimizer : public Optimizer<T> {
 
     /**
      * @brief Adds a parameter to the optimizer.
-     * @param param The tensor to be optimized.
+     * @param param The compute node to be optimized.
      */
-    void addParameter(const Tensor<T>& param) override {
+    void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) override {
         if (trainPrepared_) {
-            momentum_.push_back(param.data()->zeros());
+            momentum_.push_back(param->getData()->zeros());
         }
-        Optimizer<T>::addParameter(param);
+        Optimizer<T>::addParameter(std::move(param));
     }
 
     /**
@@ -67,12 +71,12 @@ template <typename T> class SGDMOptimizer : public Optimizer<T> {
         for (size_t i = 0; i < params.size(); ++i) {
             auto param = params[i];
 
-            if (!param.getRequiresGrad()) {
+            if (!param || !param->getRequiresGrad()) {
                 continue;
             }
 
-            auto grad = param.grad();
-            if (grad.isEmpty()) {
+            auto grad = param->getGrad();
+            if (!grad) {
                 continue;
             }
 
@@ -81,10 +85,10 @@ template <typename T> class SGDMOptimizer : public Optimizer<T> {
             // Update momentum: v = mu * v + (1 - mu) * grad
             // Use in-place operations on TensorWrapper to avoid building graph
             momentum *= momentumCoefficient_;
-            momentum.axpy(T(1) - momentumCoefficient_, *(grad.data()));
+            momentum.axpy(T(1) - momentumCoefficient_, *grad);
 
             // Update parameter: theta = theta - lr * momentum
-            param.data()->axpy(-learningRate, momentum);
+            param->getData()->axpy(-learningRate, momentum);
         }
     }
 
@@ -97,7 +101,9 @@ template <typename T> class SGDMOptimizer : public Optimizer<T> {
         momentum_.clear();
         momentum_.reserve(paramSize);
         for (const auto& param : this->getParameters()) {
-            momentum_.push_back(param.data()->zeros());
+            if (param) {
+                momentum_.push_back(param->getData()->zeros());
+            }
         }
         trainPrepared_ = true;
     }

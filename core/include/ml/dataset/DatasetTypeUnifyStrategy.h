@@ -1,4 +1,4 @@
-// Copyright (c) 2025-2026 Contributors of Hahaha
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ enum class DatasetTypeUnifyStrategy {
     UseLargestRange,
 };
 
-static auto defaultDatasetTypeUnifyStrategy =
-    DatasetTypeUnifyStrategy::AllFloat32;
+static auto defaultDatasetTypeUnifyStrategy = DatasetTypeUnifyStrategy::AllFloat32;
 
 inline DatasetTypeUnifyStrategy getDefaultDatasetTypeUnifyStrategy() {
     return defaultDatasetTypeUnifyStrategy;

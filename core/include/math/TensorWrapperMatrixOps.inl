@@ -1,16 +1,16 @@
-//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//       https://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //
 //  Contributors:
 //  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
@@ -29,6 +29,10 @@ TensorWrapper<T> TensorWrapper<T>::matmul(const TensorWrapper& other) const {
     if (getDimensions() != 2 || other.getDimensions() != 2) {
         throw std::invalid_argument(
             "matmul is only implemented for 2D tensors");
+    }
+
+    if (!isContiguous() || !other.isContiguous()) {
+        throw std::invalid_argument("matmul is not supported for non-contiguous tensors. Call clone() first.");
     }
 
     checkSameDevice(other);
@@ -53,6 +57,9 @@ TensorWrapper<T> TensorWrapper<T>::matmul(const TensorWrapper& other) const {
     result.data_.setStride(TensorStride(result.data_.getShape()));
     result.data_.setDevice(data_.getDevice());
     result.data_.setData(std::shared_ptr<T[]>(new T[rows * cols]));
+    // Initialize result with zeros as matmul accumulates
+    std::fill(result.data_.getData().get(), result.data_.getData().get() + rows * cols, T(0));
+
 
     auto result_val = backend::dispatchMatMul(
         data_.getDevice()->getType(), *this, other, result);
@@ -70,6 +77,10 @@ TensorWrapper<T> TensorWrapper<T>::transpose() const {
             "transpose is only implemented for 2D tensors for now");
     }
 
+    if (!isContiguous()) {
+        throw std::invalid_argument("transpose is not supported for non-contiguous tensors. Call clone() first.");
+    }
+
     const auto& shapeDims = data_.getShape().getDims();
     size_t rows = shapeDims[0];
     size_t cols = shapeDims[1];
@@ -79,11 +90,14 @@ TensorWrapper<T> TensorWrapper<T>::transpose() const {
     result.data_.setStride(TensorStride(result.data_.getShape()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     result.data_.setDevice(data_.getDevice());
+    
+    // Since we checked isContiguous, we can use raw pointers with offset
+    const T* src = data_.getData().get() + data_.getOffset();
+    T* dst = result.data_.getData().get();
 
     for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
-            result.data_.getData()[j * rows + i] =
-                data_.getData()[i * cols + j];
+            dst[j * rows + i] = src[i * cols + j];
         }
     }
 
@@ -94,8 +108,34 @@ template <typename T>
 T TensorWrapper<T>::sum() const {
     T result = T(0);
     const auto totalSize = getTotalSize();
-    for (size_t i = 0; i < totalSize; ++i) {
-        result += data_[i];
+    
+    if (isContiguous()) {
+        const T* src = data_.getData().get() + data_.getOffset();
+        for (size_t i = 0; i < totalSize; ++i) {
+            result += src[i];
+        }
+    } else {
+        // Slow path for non-contiguous
+        const auto& shape = getShape();
+        size_t dims = shape.size();
+        std::vector<size_t> coords(dims, 0);
+        
+        for (size_t i = 0; i < totalSize; ++i) {
+            size_t srcLinearIdx = 0;
+            const auto& srcStrides = data_.getStride().getStrideVec();
+            for(size_t d=0; d<dims; ++d) {
+                srcLinearIdx += coords[d] * srcStrides[d];
+            }
+            result += data_.getData()[data_.getOffset() + srcLinearIdx];
+            
+            for (long d = static_cast<long>(dims) - 1; d >= 0; --d) {
+                coords[d]++;
+                if (coords[d] < shape[d]) {
+                    break;
+                }
+                coords[d] = 0;
+            }
+        }
     }
     return result;
 }
@@ -105,6 +145,10 @@ TensorWrapper<T> TensorWrapper<T>::sum(std::vector<size_t> axes,
                       const bool keepDims) const {
     if (axes.empty()) {
         return this->clone();
+    }
+    
+    if (!isContiguous()) {
+        throw std::invalid_argument("sum(axes) is not supported for non-contiguous tensors. Call clone() first.");
     }
 
     std::ranges::sort(axes);
@@ -164,7 +208,7 @@ TensorWrapper<T> TensorWrapper<T>::sum(std::vector<size_t> axes,
     //          if this pos is reduced, then dstIdx will add nothing
     std::vector<size_t> resStride(srcShape.size(), 0);
     TensorWrapper result((TensorShape(resShape)));
-    auto resultStride = result.getStride().getStrides();
+    auto resultStride = result.getStride().getStrideVec();
     size_t resultStrideIdx = 0;
     for (size_t i = 0; i < srcShape.size(); ++i) {
         if (isReduced[i]) {
@@ -179,11 +223,17 @@ TensorWrapper<T> TensorWrapper<T>::sum(std::vector<size_t> axes,
     // 3. calculate data to result
     const std::shared_ptr<T[]> srcPtr = getRawData();
     std::shared_ptr<T[]> resPtr = result.getRawData();
+    // Initialize result with zeros
+    std::fill(resPtr.get(), resPtr.get() + result.getTotalSize(), T(0));
+    
     std::vector<size_t> coord(srcShape.size(), 0);
     size_t dstIdx = 0;
 
+    // Use offset for srcPtr
+    const T* rawSrc = srcPtr.get() + data_.getOffset();
+
     for (size_t srcIdx = 0; srcIdx < getTotalSize(); ++srcIdx) {
-        resPtr[dstIdx] += srcPtr[srcIdx];
+        resPtr[dstIdx] += rawSrc[srcIdx];
 
         for (long i = static_cast<long>(coord.size() - 1); i >= 0; --i) {
             ++coord[i];
@@ -204,4 +254,3 @@ TensorWrapper<T> TensorWrapper<T>::sum(std::vector<size_t> axes,
 } // namespace hahaha::math
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_MATRIX_OPS_INL
-

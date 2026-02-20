@@ -38,8 +38,7 @@ using hahaha::math::TensorWrapper;
 using NumericTypes =
     ::testing::Types<u8, i8, u16, i16, u32, i32, u64, i64, f32, f64>;
 
-template <typename T>
-class TensorWrapperMatrixOpTypedTest : public ::testing::Test {
+template <typename T> class TensorWrapperMatrixOpTypedTest : public ::testing::Test {
   protected:
     using Type = T;
 
@@ -185,8 +184,7 @@ TYPED_TEST(TensorWrapperMatrixOpTypedTest,
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     TensorWrapper<T> m2(NestedData<T>{{v1, v2}, {v3, v4}});
     EXPECT_THROW(t3.matmul(m2), std::invalid_argument);
     EXPECT_THROW(m2.matmul(t3), std::invalid_argument);
@@ -204,9 +202,8 @@ TYPED_TEST(TensorWrapperMatrixOpTypedTest, Transpose_2x3_Matrix) {
     T v4 = T(4);
     T v5 = T(5);
     T v6 = T(6);
-    TensorWrapper<T> tensor_orig(
-        NestedData<T>{{v1, v2, v3}, {v4, v5, v6}});   // 2x3
-    auto tensor_transposed = tensor_orig.transpose(); // 3x2
+    TensorWrapper<T> tensor_orig(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}}); // 2x3
+    auto tensor_transposed = tensor_orig.transpose();                        // 3x2
     EXPECT_EQ(tensor_transposed.getShape()[0], 3);
     EXPECT_EQ(tensor_transposed.getShape()[1], 2);
     this->expectNear(tensor_transposed.at({0, 0}), v1);
@@ -269,8 +266,7 @@ TYPED_TEST(TensorWrapperMatrixOpTypedTest,
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     EXPECT_THROW(t3.transpose(), std::invalid_argument);
 }
 

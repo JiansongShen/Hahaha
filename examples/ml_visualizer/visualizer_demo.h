@@ -19,15 +19,16 @@
 #ifndef HAHAHA_EXAMPLE_ML_VISUALIZER_DEMO_H
 #define HAHAHA_EXAMPLE_ML_VISUALIZER_DEMO_H
 
-#include "display/Visualizer.h"
-#include "display/GlfwWindow.h"
-#include "imgui.h"
-#include "imgui_impl_opengl3.h"
 #include <GL/gl.h>
-#include <iostream>
-#include <thread>
 #include <chrono>
 #include <cmath>
+#include <iostream>
+#include <thread>
+
+#include "display/GlfwWindow.h"
+#include "display/Visualizer.h"
+#include "imgui.h"
+#include "imgui_impl_opengl3.h"
 
 namespace hahaha::example {
 
@@ -38,7 +39,7 @@ static int frameCount = 0;
  */
 inline void run_visualizer_demo() {
     using namespace hahaha::display;
-    
+
     // 1. Create and initialize the window (handles GLFW/OpenGL/ImGui initialization)
     GlfwWindow window;
     try {
@@ -47,10 +48,10 @@ inline void run_visualizer_demo() {
         std::cerr << "Failed to initialize window: " << e.what() << std::endl;
         return;
     }
-    
+
     // 2. Create the visualizer
     auto visualizer = createMLVisualizer();
-    
+
     // 3. Define our "Mock" model structure
     visualizer->addLayer({"Input (Images)", 784, 256});
     visualizer->addLayer({"ReLU", 256, 256});
@@ -59,9 +60,9 @@ inline void run_visualizer_demo() {
     visualizer->addLayer({"Hidden 2", 128, 64});
     visualizer->addLayer({"Sigmoid", 64, 64});
     visualizer->addLayer({"Output (Classes)", 64, 10});
-    
+
     visualizer->setStatus("Ready to train");
-    
+
     int epoch = 0;
     bool training = true;
     float currentLoss = 2.5f;
@@ -71,7 +72,7 @@ inline void run_visualizer_demo() {
 
     // 4. Main Loop
     while (window.render()) {
-        
+
         // Handle User Interaction
         ControlAction action = visualizer->getControlAction();
         if (action == ControlAction::Start) {
@@ -82,7 +83,7 @@ inline void run_visualizer_demo() {
             visualizer->setStatus("Training paused");
         } else if (action == ControlAction::Stop) {
             std::cout << "User requested stop via UI." << std::endl;
-            break; 
+            break;
         } else if (action == ControlAction::Reset) {
             epoch = 0;
             currentLoss = 2.5f;
@@ -92,13 +93,15 @@ inline void run_visualizer_demo() {
 
         // Simulate Training Step
         if (training) {
-            currentLoss *= 0.995f; 
+            currentLoss *= 0.995f;
             currentAcc = 1.0f - (currentLoss / 2.5f);
-            
+
             if (epoch < 1000 && (frameCount % 10 == 0)) {
                 visualizer->recordMetrics(epoch++, currentLoss, currentAcc);
                 if (epoch % 10 == 0) {
-                    std::cout << "[Demo] Epoch: " << epoch << ", Loss: " << currentLoss << ", Acc: " << currentAcc << std::endl;
+                    std::cout << "[Demo] Epoch: " << epoch
+                              << ", Loss: " << currentLoss << ", Acc: " << currentAcc
+                              << std::endl;
                 }
             }
         }
@@ -115,10 +118,11 @@ inline void run_visualizer_demo() {
         glClearColor(0.1f, 0.1f, 0.12f, 1.00f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        
+
         glfwSwapBuffers(window.getHandle());
 
-        // Small sleep to control frame rate if vsync is off or for simulation stability
+        // Small sleep to control frame rate if vsync is off or for simulation
+        // stability
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }

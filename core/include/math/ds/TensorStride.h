@@ -23,8 +23,8 @@
 #include <vector>
 
 #include "common/definitions.h"
-#include "math/ds/TensorShape.h"
 #include "common/macros.h"
+#include "math/ds/TensorShape.h"
 
 namespace hahaha::math {
 using common::u32;
@@ -66,19 +66,18 @@ class TensorStride {
      * @brief Construct strides from a TensorShape.
      * @param shape The source shape to compute strides for.
      */
-    explicit TensorStride(const TensorShape& shape)
-        : TensorStride(shape.getDims()) {
+    explicit TensorStride(const TensorShape& shape) : TensorStride(shape.getDims()) {
     }
 
     /**
      * @brief Get the strides vector.
      * @return const std::vector<size_t>& strides.
      */
-    [[nodiscard]] const std::vector<size_t>& getStrides() const {
+    [[nodiscard]] const std::vector<size_t>& getStrideVec() const {
         return strides_;
     }
 
-    [[nodiscard]] std::vector<size_t>& getStrides() {
+    [[nodiscard]] std::vector<size_t>& getStrideVec() {
         return strides_;
     }
 

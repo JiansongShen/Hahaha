@@ -1,4 +1,4 @@
-// Copyright (c) 2025-2026 Contributors of Hahaha
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@
 
 #ifndef HAHAHA_SLICESETTING_H_8E54B01CAE494949AF7FCD4048DD572D
 #define HAHAHA_SLICESETTING_H_8E54B01CAE494949AF7FCD4048DD572D
+
+#include <algorithm>
 #include <cstddef>
+#include <vector>
 
 struct SliceInnerSetting {
     using size_type = std::size_t;
@@ -35,19 +38,23 @@ struct SliceSetting {
 
     std::vector<setting> settings;
 
-    SliceSetting(std::initializer_list<setting> settingsInput){
+    SliceSetting(std::initializer_list<setting> settingsInput) {
         settings = settingsInput;
     }
 
     // from small to big, sort the axis
-    void sort() {
-        std::ranges::sort(settings, [](const setting& a, const setting& b) -> bool {
-            return a.first < b.first;
-        });
+    void sortAxis() {
+        std::sort(settings.begin(),
+                  settings.end(),
+                  [](const setting& a, const setting& b) -> bool {
+                      return a.first < b.first;
+                  });
     }
 
     [[nodiscard]] bool verifyLegal(const size_type tensorDimNum) const {
-        return settings.end()->first < tensorDimNum;
+        if (settings.empty())
+            return true;
+        return settings.back().first < tensorDimNum;
     }
 };
 

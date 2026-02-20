@@ -27,7 +27,7 @@
 #include <cpuid.h>
 #endif
 
-#if defined (__clang__)
+#if defined(__clang__)
 // #include <cpuid.h>
 #endif
 
@@ -43,7 +43,8 @@ namespace hahaha::backend {
  */
 struct SimdCapabilitiesCompileTime {
     static constexpr bool kSSE2 =
-#if defined(__SSE2__) || (defined(_MSC_VER) && (defined(_M_X64) || defined(_M_AMD64)))
+#if defined(__SSE2__)                                                               \
+    || (defined(_MSC_VER) && (defined(_M_X64) || defined(_M_AMD64)))
         true;
 #else
         false;
@@ -90,21 +91,21 @@ struct SimdCapabilitiesRuntime {
 #if defined(_MSC_VER)
         int info[4];
         __cpuid(info, 1);
-        r.sse2   = (info[3] & (1 << 26)) != 0;
-        r.sse41  = (info[2] & (1 << 19)) != 0;
-        r.avx    = (info[2] & (1 << 28)) != 0;
+        r.sse2 = (info[3] & (1 << 26)) != 0;
+        r.sse41 = (info[2] & (1 << 19)) != 0;
+        r.avx = (info[2] & (1 << 28)) != 0;
         __cpuidex(info, 7, 0);
-        r.avx2   = (info[1] & (1 << 5)) != 0;
+        r.avx2 = (info[1] & (1 << 5)) != 0;
         r.avx512f = (info[1] & (1 << 16)) != 0;
 #elif defined(__GNUC__) || defined(__clang__)
         unsigned a = 0, b = 0, c = 0, d = 0;
         if (__get_cpuid_count(1, 0, &a, &b, &c, &d)) {
-            r.sse2  = (d & (1u << 26)) != 0;
+            r.sse2 = (d & (1u << 26)) != 0;
             r.sse41 = (c & (1u << 19)) != 0;
-            r.avx   = (c & (1u << 28)) != 0;
+            r.avx = (c & (1u << 28)) != 0;
         }
         if (__get_cpuid_count(7, 0, &a, &b, &c, &d)) {
-            r.avx2    = (b & (1u << 5)) != 0;
+            r.avx2 = (b & (1u << 5)) != 0;
             r.avx512f = (b & (1u << 16)) != 0;
         }
 #endif

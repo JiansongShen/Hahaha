@@ -1,4 +1,4 @@
-// Copyright (c) 2025-2026 Contributors of Hahaha
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,16 +18,24 @@
 
 #ifndef HAHAHA_STRINGUTILS_H_6456D372529A4CF69DBCA69F0C736EBF
 #define HAHAHA_STRINGUTILS_H_6456D372529A4CF69DBCA69F0C736EBF
+#include <optional>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
 
 namespace hahaha::utils {
 
 class StringUtils {
 
-
-public:
+  public:
+    /**
+     * @brief Split @p s on @p delimiter.
+     *
+     * @param keepBlankValue  When true, empty/blank segments (e.g. consecutive
+     *        delimiters "a,,b") are kept in the result as empty strings.
+     *        When false, blank segments are silently dropped.
+     *
+     */
     static std::vector<std::string> split(const std::string& s,
                                           const char delimiter,
                                           const bool keepBlankValue = false) {
@@ -36,23 +44,18 @@ public:
         size_t posBegin = 0;
         for (size_t i = 0; i < s.length(); i++) {
             if (s[i] == delimiter) {
-                // like a ','[postBegin] ','[i];
-                if (i - posBegin == 1 && keepBlankValue) {
-                    elems.emplace_back("");
-                    posBegin = i + 1;
-                    continue;
-                }
-
                 const auto substr = s.substr(posBegin, i - posBegin);
-                if (isBlank(substr) && keepBlankValue) {
+                if (!isBlank(substr) || keepBlankValue) {
                     elems.push_back(substr);
-                    continue;
                 }
-                elems.push_back(substr);
-                posBegin = i + 1;
+                posBegin = i + 1; // always advance past the delimiter
             }
         }
-        elems.push_back(s.substr(posBegin, s.length() - posBegin));
+        // Last segment (after the final delimiter, or the whole string if none)
+        const auto last = s.substr(posBegin);
+        if (!isBlank(last) || keepBlankValue) {
+            elems.push_back(last);
+        }
 
         return elems;
     }
@@ -66,12 +69,33 @@ public:
         return true;
     }
 
+    static std::string trimSideBlank(const std::string& s) {
+        size_t start = 0;
+        size_t end = s.length() - 1;
+        while (start < end && ' ' == s[start]) {
+            start++;
+        }
+        while (end > start && ' ' == s[end]) {
+            end--;
+        }
+        return s.substr(start, end - start + 1);
+    }
 
-    template<typename T>
-    static T to(const std::string& s) {
+    /**
+     * @brief Parse @p s into type @p T.
+     * @return The parsed value, or std::nullopt if parsing failed.
+     */
+    template <typename T> static std::optional<T> to(const std::string& s) {
         std::istringstream iss(s);
         T value;
-        iss >> value;
+        if (!(iss >> value)) {
+            return std::nullopt;
+        }
+        // Ensure no trailing non-whitespace garbage (e.g. "1.0abc" for float)
+        char leftover{};
+        if (iss >> leftover) {
+            return std::nullopt;
+        }
         return value;
     }
 };

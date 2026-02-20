@@ -33,7 +33,7 @@
 #include "math/ds/TensorStride.h"
 
 namespace hahaha::common {
-    struct Error;
+struct Error;
 }
 
 namespace hahaha::math {
@@ -66,10 +66,10 @@ template <typename T> class TensorData {
      * @param initValue Initial value for all elements.
      * @param device The device where the data should reside.
      */
-    TensorData(const TensorShape& shape,
-               T initValue,
-               const std::shared_ptr<backend::Device>& device =
-                   backend::getCPUDevice())
+    TensorData(
+        const TensorShape& shape,
+        T initValue,
+        const std::shared_ptr<backend::Device>& device = backend::getCPUDevice())
         : shape_(shape), stride_(shape), device_(device) {
         size_t size = shape_.getTotalSize();
         if (device_->getType() == backend::DeviceType::CPU) {
@@ -87,9 +87,9 @@ template <typename T> class TensorData {
      * @param shape The shape of the tensor.
      * @param device The device where the data should reside.
      */
-    explicit TensorData(const TensorShape& shape,
-                        const std::shared_ptr<backend::Device>& device =
-                            backend::getCPUDevice())
+    explicit TensorData(
+        const TensorShape& shape,
+        const std::shared_ptr<backend::Device>& device = backend::getCPUDevice())
         : shape_(shape), stride_(shape), device_(device) {
         const size_t size = shape_.getTotalSize();
         if (device_->getType() == backend::DeviceType::CPU) {
@@ -101,20 +101,14 @@ template <typename T> class TensorData {
         }
     }
     /**
-     * @brief Copy constructor. Performs a deep copy of the underlying array.
+     * @brief Copy constructor. Performs a shadow copy (shallow copy) of the
+     * underlying array. Both instances will share the same data. Use clone() for
+     * deep copy.
      * @param other The TensorData to copy from.
      */
     TensorData(const TensorData& other)
-        : shape_(other.shape_), stride_(other.stride_), device_(other.device_) {
-        size_t size = shape_.getTotalSize();
-        if (device_->getType() == backend::DeviceType::CPU) {
-            data_ = std::make_shared<T[]>(size);
-            std::copy(other.data_.get(), other.data_.get() + size, data_.get());
-        } else {
-            // TODO: Handle GPU deep copy
-            throw std::runtime_error(
-                "GPU deep copy not yet implemented in TensorData");
-        }
+        : data_(other.data_), shape_(other.shape_), stride_(other.stride_),
+          device_(other.device_), offset_(other.offset_), gpuPtr(other.gpuPtr) {
     }
 
     /**
@@ -123,7 +117,8 @@ template <typename T> class TensorData {
      */
     TensorData(TensorData&& other) noexcept
         : data_(std::move(other.data_)), shape_(std::move(other.shape_)),
-          stride_(std::move(other.stride_)), device_(std::move(other.device_)) {
+          stride_(std::move(other.stride_)), device_(std::move(other.device_)),
+          offset_(other.offset_) {
     }
 
     /**
@@ -155,8 +150,82 @@ template <typename T> class TensorData {
             shape_ = std::move(other.shape_);
             stride_ = std::move(other.stride_);
             device_ = other.device_;
+            offset_ = other.offset_;
         }
         return *this;
+    }
+
+    /**
+     * @brief Create a deep copy of the tensor data.
+     *
+     * This creates a new TensorData instance with its own copy of the
+     * underlying data array. The copy is independent of the original.
+     *
+     * @return TensorData A new TensorData instance with a deep copy of the data.
+     */
+    TensorData clone() const {
+        TensorData clonedData;
+        clonedData.shape_ = shape_;
+        clonedData.stride_ = TensorStride(shape_); // Reset to contiguous stride
+        clonedData.device_ = device_;
+        clonedData.offset_ = 0; // Reset offset for contiguous copy
+        size_t size = shape_.getTotalSize();
+        if (device_->getType() == backend::DeviceType::CPU) {
+            clonedData.data_ = std::make_shared<T[]>(size);
+            // Copy only the logical view's elements
+            // Check if data is contiguous (offset is 0 and stride matches shape)
+            bool isContiguous = (offset_ == 0);
+            if (isContiguous) {
+                const auto& expectedStride = TensorStride(shape_).getStrideVec();
+                const auto& actualStride = stride_.getStrideVec();
+                if (expectedStride.size() == actualStride.size()) {
+                    isContiguous = true;
+                    for (size_t i = 0; i < expectedStride.size(); ++i) {
+                        if (expectedStride[i] != actualStride[i]) {
+                            isContiguous = false;
+                            break;
+                        }
+                    }
+                } else {
+                    isContiguous = false;
+                }
+            }
+
+            if (isContiguous) {
+                // Fast path for contiguous data
+                std::copy(data_.get(), data_.get() + size, clonedData.data_.get());
+            } else {
+                // Slow path for non-contiguous views: copy element by element
+                const auto& shapeDims = shape_.getDims();
+                const auto& strideDims = stride_.getStrideVec();
+                std::vector<size_t> coords(shapeDims.size(), 0);
+                T* destPtr = clonedData.data_.get();
+
+                for (size_t i = 0; i < size; ++i) {
+                    // Calculate source linear index from coordinates
+                    size_t srcLinearIdx = offset_;
+                    for (size_t d = 0; d < shapeDims.size(); ++d) {
+                        srcLinearIdx += coords[d] * strideDims[d];
+                    }
+                    destPtr[i] = data_.get()[srcLinearIdx];
+
+                    // Increment coords (odometer)
+                    for (long d = static_cast<long>(shapeDims.size()) - 1; d >= 0;
+                         --d) {
+                        coords[d]++;
+                        if (coords[d] < shapeDims[d]) {
+                            break;
+                        }
+                        coords[d] = 0;
+                    }
+                }
+            }
+        } else {
+            // TODO: Handle GPU deep copy
+            throw std::runtime_error(
+                "GPU deep copy not yet implemented in TensorData");
+        }
+        return clonedData;
     }
 
     /**
@@ -174,6 +243,7 @@ template <typename T> class TensorData {
         sharedData.stride_ = stride_;
         sharedData.device_ = device_;
         sharedData.data_ = data_;
+        sharedData.offset_ = offset_;
         return sharedData;
     }
 
@@ -197,9 +267,8 @@ template <typename T> class TensorData {
     explicit TensorData(NestedData<T>&& data) : shape_(data.getShape()) {
         if (const size_t size = data.getFlatData().size(); size > 0) {
             data_ = std::make_shared<T[]>(size);
-            std::copy(data.getFlatData().begin(),
-                      data.getFlatData().end(),
-                      data_.get());
+            std::copy(
+                data.getFlatData().begin(), data.getFlatData().end(), data_.get());
         } else {
             data_ = nullptr; // Explicitly null for truly empty tensors
         }
@@ -216,8 +285,7 @@ template <typename T> class TensorData {
         }
 
         targetDevice->copyMemoryToThis(
-            std::span(reinterpret_cast<std::byte*>(this->data_.get()),
-                      byteSize),
+            std::span(reinterpret_cast<std::byte*>(this->data_.get()), byteSize),
             std::span(reinterpret_cast<std::byte*>(targetBuffer.address()),
                       byteSize),
             device_);
@@ -348,12 +416,29 @@ template <typename T> class TensorData {
         device_ = std::move(device);
     }
 
+    /**
+     * @brief Get the offset for view operations.
+     * @return size_t The current offset.
+     */
+    [[nodiscard]] size_t getOffset() const {
+        return offset_;
+    }
+
+    /**
+     * @brief Set the offset for view operations.
+     * @param offset The new offset value.
+     */
+    void setOffset(size_t offset) {
+        offset_ = offset;
+    }
+
   private:
     std::shared_ptr<T[]> data_; /**< Raw heap-allocated data array. */
     TensorShape shape_;         /**< Dimensionality metadata. */
     TensorStride stride_;       /**< Memory skip values for indexing. */
     std::shared_ptr<backend::Device> device_ =
         backend::getCPUDevice(); /**< Device where data resides. */
+    size_t offset_ = 0;
 
     std::uintptr_t gpuPtr = 0;
 

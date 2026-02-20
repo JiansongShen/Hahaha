@@ -67,7 +67,10 @@ inline void basic_linear_regression_example() {
     // y = w * x
     Tensor<f32> loss(1);
     loss.setRequiresGrad(true);
-    hahaha::ml::SGDOptimizer<f32> optimizer({w, bias}, 0.005);
+    // Optimizer operates on compute nodes, not tensors.
+    std::vector<std::shared_ptr<hahaha::compute::ComputeNode<f32>>> params = {
+        w.getComputeNode(), bias.getComputeNode()};
+    hahaha::ml::SGDOptimizer<f32> optimizer(params, 0.005f);
 
     for (int i = 0; i < TrainLoop; ++i) {
         optimizer.zeroGrad();

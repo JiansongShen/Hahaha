@@ -47,8 +47,7 @@ class Bitmap {
      */
     explicit Bitmap(const sizeT size) : size_(size) {
         if (size_ > 0) {
-            words_ =
-                std::make_unique<wordType[]>((size_ + wordSize - 1) / wordSize);
+            words_ = std::make_unique<wordType[]>((size_ + wordSize - 1) / wordSize);
             clear();
         }
     }
@@ -61,8 +60,7 @@ class Bitmap {
      */
     Bitmap(const sizeT size, const bool initialValue) : size_(size) {
         if (size_ > 0) {
-            words_ =
-                std::make_unique<wordType[]>((size_ + wordSize - 1) / wordSize);
+            words_ = std::make_unique<wordType[]>((size_ + wordSize - 1) / wordSize);
             if (initialValue) {
                 setAll();
             } else {
@@ -188,8 +186,7 @@ class Bitmap {
 
         // Handle the last partial word if needed
         if (lastWordBits) {
-            const wordType mask =
-                (static_cast<wordType>(1) << lastWordBits) - 1;
+            const wordType mask = (static_cast<wordType>(1) << lastWordBits) - 1;
             words_[numWords - 1] = mask;
         }
     }
@@ -218,8 +215,7 @@ class Bitmap {
             throw std::out_of_range("index out of range");
         }
         const sizeT wordIndex = index / wordSize;
-        return (words_[wordIndex]
-                & static_cast<wordType>(1) << (index % wordSize))
+        return (words_[wordIndex] & static_cast<wordType>(1) << (index % wordSize))
             != 0;
     }
 
@@ -244,8 +240,7 @@ class Bitmap {
         // Handle the last partial word if needed
         if (lastWordBits) {
             const wordType lastWord = words_[numWords - 1];
-            const wordType mask =
-                (static_cast<wordType>(1) << lastWordBits) - 1;
+            const wordType mask = (static_cast<wordType>(1) << lastWordBits) - 1;
             result += static_cast<sizeT>(std::popcount(lastWord & mask));
         }
 
@@ -273,8 +268,7 @@ class Bitmap {
 
         // Check the last partial word if needed
         if (lastWordBits) {
-            if (const wordType mask =
-                    (static_cast<wordType>(1) << lastWordBits) - 1;
+            if (const wordType mask = (static_cast<wordType>(1) << lastWordBits) - 1;
                 (words_[numWords - 1] & mask) != mask) {
                 return false;
             }
@@ -304,8 +298,7 @@ class Bitmap {
 
         // Check the last partial word if needed
         if (lastWordBits) {
-            if (const wordType mask =
-                    (static_cast<wordType>(1) << lastWordBits) - 1;
+            if (const wordType mask = (static_cast<wordType>(1) << lastWordBits) - 1;
                 (words_[numWords - 1] & mask) != 0) {
                 return false;
             }
@@ -395,13 +388,13 @@ class Bitmap {
             const sizeT lastNewBit = newSize % wordSize;
 
             if (lastOldBit > 0) {
-                // Update the last word that had old bits: set new bits in that word to 1
+                // Update the last word that had old bits: set new bits in that word
+                // to 1
                 const sizeT lastOldWordIdx = oldSize / wordSize;
                 const wordType oldMask =
                     (static_cast<wordType>(1) << lastOldBit) - 1;
-                const sizeT validBitsInWord = std::min(
-                    wordSize,
-                    newSize - lastOldWordIdx * wordSize);
+                const sizeT validBitsInWord =
+                    std::min(wordSize, newSize - lastOldWordIdx * wordSize);
                 const wordType newMask = (validBitsInWord == wordSize)
                     ? ~static_cast<wordType>(0)
                     : (static_cast<wordType>(1) << validBitsInWord) - 1;

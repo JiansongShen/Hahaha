@@ -15,6 +15,7 @@
 //
 //  Contributors:
 //  Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
+//  JiansongShen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 
 #ifndef HAHAHA_SGDOPTIMIZER_H_E57DB5EDFD0E4CC4914AB64FBF0C0859
@@ -23,13 +24,17 @@
 
 namespace hahaha::ml {
 template <typename T> class SGDOptimizer : public Optimizer<T> {
+    static_assert(utils::isLegalFloatType<T>::value,
+                  "AdamOptimizer just supports float values");
+
   public:
     /**
      * @brief Construct a new SGDOptimizer.
-     * @param parameters List of tensors to optimize.
+     * @param parameters List of compute nodes to optimize.
      * @param learningRate Learning rate.
      */
-    SGDOptimizer(std::vector<Tensor<T>> parameters, T learningRate)
+    SGDOptimizer(std::vector<std::shared_ptr<compute::ComputeNode<T>>> parameters,
+                 T learningRate)
         : Optimizer<T>(std::move(parameters), learningRate) {
     }
 
@@ -43,18 +48,18 @@ template <typename T> class SGDOptimizer : public Optimizer<T> {
     void step() override {
         T learningRate = this->getLearningRate();
         for (auto& param : this->getParameters()) {
-            if (!param.getRequiresGrad()) {
+            if (!param || !param->getRequiresGrad()) {
                 continue;
             }
 
-            auto grad = param.grad();
-            if (grad.isEmpty()) {
+            auto grad = param->getGrad();
+            if (!grad) {
                 continue;
             }
 
             // theta = theta - learningRate * gradient
             // Use TensorWrapper's axpy for device-neutral in-place update
-            param.data()->axpy(-learningRate, *(grad.data()));
+            param->getData()->axpy(-learningRate, *grad);
         }
     }
 };

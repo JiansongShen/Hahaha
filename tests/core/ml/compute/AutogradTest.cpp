@@ -406,8 +406,8 @@ TEST_F(AutogradTest, ThreeDim_ComplexChain) {
     Tensor<float> a(
         NestedData<float>{{{1.0f, 2.0f}, {3.0f, 4.0f}},
                           {{5.0f, 6.0f}, {7.0f, 8.0f}}}); // Shape {2, 2, 2}
-    Tensor<float> c(NestedData<float>{
-        {0.1f, 0.2f, 0.3f, 0.4f}, {0.5f, 0.6f, 0.7f, 0.8f}}); // Shape {2, 4}
+    Tensor<float> c(NestedData<float>{{0.1f, 0.2f, 0.3f, 0.4f},
+                                      {0.5f, 0.6f, 0.7f, 0.8f}}); // Shape {2, 4}
     a.setRequiresGrad(true);
     c.setRequiresGrad(true);
 
@@ -703,8 +703,7 @@ TEST_F(AutogradTest, Transpose_Backward_PropagatesNonUniformGrad) {
     a.setRequiresGrad(true);
 
     auto b = a.transpose(); // (3,2)
-    Tensor<float> w(
-        NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}});
+    Tensor<float> w(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}});
     auto c = b * w;
     c.backward();
 

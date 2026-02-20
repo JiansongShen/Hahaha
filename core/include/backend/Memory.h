@@ -51,7 +51,8 @@ class Memory {
     /**
      * @brief Frees a device buffer and clears the handle.
      * @param buffer The buffer to free. After the call, the handle is reset
-     *               (address 0, size 0); caller must not use it for deallocation again.
+     *               (address 0, size 0); caller must not use it for deallocation
+     * again.
      */
     virtual void free(DeviceBuffer& buffer) = 0;
 

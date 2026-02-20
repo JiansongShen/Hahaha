@@ -130,8 +130,7 @@ TEST_F(DeviceComputeDispatcherCudaTest, DispatchDiv_CUDA_WorksForDenseTensors) {
 }
 
 // Test CUDA dispatch with non-contiguous data (should return error)
-TEST_F(DeviceComputeDispatcherCudaTest,
-       DispatchAdd_CUDA_NonContiguous_ThrowError) {
+TEST_F(DeviceComputeDispatcherCudaTest, DispatchAdd_CUDA_NonContiguous_ThrowError) {
     TensorWrapper<float> a(NestedData<float>{{1.0f, 2.0f}, {3.0f, 4.0f}});
     TensorWrapper<float> b(NestedData<float>{{10.0f}, {20.0f}}); // shape (2, 1)
     TensorWrapper<float> b_broadcasted = b.broadcastTo(TensorShape({2, 2}));
@@ -143,7 +142,8 @@ TEST_F(DeviceComputeDispatcherCudaTest,
     res.to(cudaDevice_);
 
     // Non-contiguous data should return error
-    auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b_broadcasted, res);
+    auto result =
+        hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b_broadcasted, res);
     EXPECT_FALSE(result.has_value());
     EXPECT_EQ(result.error().code, hahaha::common::ErrorCode::InvalidArgument);
 }
@@ -219,8 +219,8 @@ TEST_F(DeviceComputeDispatcherCudaTest,
     b_broadcasted.to(cudaDevice_);
     res.to(cudaDevice_);
 
-    auto result = hahaha::backend::dispatchAdd(DeviceType::CUDA, a,
-                                               b_broadcasted, res);
+    auto result =
+        hahaha::backend::dispatchAdd(DeviceType::CUDA, a, b_broadcasted, res);
     EXPECT_FALSE(result.has_value());
     EXPECT_EQ(result.error().code, hahaha::common::ErrorCode::InvalidArgument);
 }

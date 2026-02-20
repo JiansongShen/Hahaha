@@ -81,8 +81,7 @@ void forEachElement(const std::vector<size_t>& shape,
         // advance coordinate + offsets
         for (long dim = static_cast<long>(rank) - 1; dim >= 0; --dim) {
             coord[static_cast<size_t>(dim)]++;
-            if (coord[static_cast<size_t>(dim)]
-                == shape[static_cast<size_t>(dim)]) {
+            if (coord[static_cast<size_t>(dim)] == shape[static_cast<size_t>(dim)]) {
                 coord[static_cast<size_t>(dim)] = 0;
                 lhsOff -= lhsStride[static_cast<size_t>(dim)]
                     * (shape[static_cast<size_t>(dim)] - 1);
@@ -101,44 +100,44 @@ void forEachElement(const std::vector<size_t>& shape,
 
 template <typename T>
 void cpuAdd(const std::vector<size_t>& shape,
-             const std::vector<size_t>& lStride,
-             const std::vector<size_t>& rStride,
-             std::span<T> a,
-             std::span<T> b,
-             std::span<T> out) {
+            const std::vector<size_t>& lStride,
+            const std::vector<size_t>& rStride,
+            std::span<T> a,
+            std::span<T> b,
+            std::span<T> out) {
     forEachElement<T>(
         shape, lStride, rStride, a, b, out, [](T x, T y) { return x + y; });
 }
 
 template <typename T>
 void cpuSub(const std::vector<size_t>& shape,
-             const std::vector<size_t>& lStride,
-             const std::vector<size_t>& rStride,
-             std::span<T> a,
-             std::span<T> b,
-             std::span<T> out) {
+            const std::vector<size_t>& lStride,
+            const std::vector<size_t>& rStride,
+            std::span<T> a,
+            std::span<T> b,
+            std::span<T> out) {
     forEachElement<T>(
         shape, lStride, rStride, a, b, out, [](T x, T y) { return x - y; });
 }
 
 template <typename T>
 void cpuMul(const std::vector<size_t>& shape,
-             const std::vector<size_t>& lStride,
-             const std::vector<size_t>& rStride,
-             std::span<T> a,
-             std::span<T> b,
-             std::span<T> out) {
+            const std::vector<size_t>& lStride,
+            const std::vector<size_t>& rStride,
+            std::span<T> a,
+            std::span<T> b,
+            std::span<T> out) {
     forEachElement<T>(
         shape, lStride, rStride, a, b, out, [](T x, T y) { return x * y; });
 }
 
 template <typename T>
 void cpuDiv(const std::vector<size_t>& shape,
-             const std::vector<size_t>& lStride,
-             const std::vector<size_t>& rStride,
-             std::span<T> a,
-             std::span<T> b,
-             std::span<T> out) {
+            const std::vector<size_t>& lStride,
+            const std::vector<size_t>& rStride,
+            std::span<T> a,
+            std::span<T> b,
+            std::span<T> out) {
     forEachElement<T>(shape, lStride, rStride, a, b, out, [](T x, T y) {
         if (y == T(0))
             throw std::runtime_error("Division by zero");

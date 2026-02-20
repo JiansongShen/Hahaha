@@ -44,8 +44,7 @@ TEST_F(ErrorCodeTest, ErrorCodeEnumValues) {
     EXPECT_EQ(static_cast<std::size_t>(ErrorCode::InternalError), 4);
     EXPECT_EQ(static_cast<std::size_t>(ErrorCode::InvalidDataset), 5);
     EXPECT_EQ(static_cast<std::size_t>(ErrorCode::CudaDeviceOutOfMemory), 6);
-    EXPECT_EQ(
-        static_cast<std::size_t>(ErrorCode::CudaSmallObjectMemoryPoolFull), 7);
+    EXPECT_EQ(static_cast<std::size_t>(ErrorCode::CudaSmallObjectMemoryPoolFull), 7);
     EXPECT_EQ(static_cast<std::size_t>(ErrorCode::Count), 8);
 }
 
@@ -53,8 +52,7 @@ TEST_F(ErrorCodeTest, ErrorMessagesArraySize) {
     // The ErrorMessages array should have the same number of entries as the
     // enum Since ErrorCode::Count represents the number of enum values, the
     // array size should match
-    const std::size_t errorCodeCount =
-        static_cast<std::size_t>(ErrorCode::Count);
+    const std::size_t errorCodeCount = static_cast<std::size_t>(ErrorCode::Count);
     EXPECT_EQ(errorCodeCount, 8); // Updated to reflect all enum values
                                   // including CudaSmallObjectMemoryPoolFull
 
@@ -74,23 +72,20 @@ TEST_F(ErrorCodeTest, ErrorMessagesAccessibility) {
     // values
     EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(ErrorCode::Success)],
                  "Success");
-    EXPECT_STREQ(
-        ErrorMessages[static_cast<std::size_t>(ErrorCode::InvalidArgument)],
-        "Invalid argument (e.g., shape mismatch)");
+    EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(ErrorCode::InvalidArgument)],
+                 "Invalid argument (e.g., shape mismatch)");
     EXPECT_STREQ(
         ErrorMessages[static_cast<std::size_t>(ErrorCode::DeviceNotSupported)],
         "Device unsupported");
     EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(ErrorCode::Overflow)],
                  "Numerical overflow");
+    EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(ErrorCode::InternalError)],
+                 "Internal error");
+    EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(ErrorCode::InvalidDataset)],
+                 "Invalid dataset");
     EXPECT_STREQ(
-        ErrorMessages[static_cast<std::size_t>(ErrorCode::InternalError)],
-        "Internal error");
-    EXPECT_STREQ(
-        ErrorMessages[static_cast<std::size_t>(ErrorCode::InvalidDataset)],
-        "Invalid dataset");
-    EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(
-                     ErrorCode::CudaDeviceOutOfMemory)],
-                 "Cuda device out of memory");
+        ErrorMessages[static_cast<std::size_t>(ErrorCode::CudaDeviceOutOfMemory)],
+        "Cuda device out of memory");
     EXPECT_STREQ(ErrorMessages[static_cast<std::size_t>(
                      ErrorCode::CudaSmallObjectMemoryPoolFull)],
                  "CUDA small object memory pool full");
@@ -117,8 +112,7 @@ TEST_F(ErrorCodeTest, ErrorMessageArrayBoundsCheck) {
     EXPECT_STREQ(ErrorMessages[maxIndex], "CUDA small object memory pool full");
 
     // Test a few more to ensure array integrity
-    for (std::size_t i = 0; i < static_cast<std::size_t>(ErrorCode::Count);
-         ++i) {
+    for (std::size_t i = 0; i < static_cast<std::size_t>(ErrorCode::Count); ++i) {
         // Each index should have a valid string
         EXPECT_NE(ErrorMessages[i], nullptr);
     }
@@ -139,22 +133,23 @@ TEST_F(ErrorCodeTest, EnumValuesAreSequential) {
 
 TEST_F(ErrorCodeTest, ErrorMessagesContent) {
     // Verify the content of each error message
-    EXPECT_EQ(std::string(
-                  ErrorMessages[static_cast<std::size_t>(ErrorCode::Success)]),
-              "Success");
-    EXPECT_EQ(std::string(ErrorMessages[static_cast<std::size_t>(
-                  ErrorCode::InvalidArgument)]),
-              "Invalid argument (e.g., shape mismatch)");
-    EXPECT_EQ(std::string(ErrorMessages[static_cast<std::size_t>(
-                  ErrorCode::DeviceNotSupported)]),
-              "Device unsupported");
-    EXPECT_EQ(std::string(
-                  ErrorMessages[static_cast<std::size_t>(ErrorCode::Overflow)]),
-              "Numerical overflow");
+    EXPECT_EQ(
+        std::string(ErrorMessages[static_cast<std::size_t>(ErrorCode::Success)]),
+        "Success");
     EXPECT_EQ(
         std::string(
-            ErrorMessages[static_cast<std::size_t>(ErrorCode::InternalError)]),
-        "Internal error");
+            ErrorMessages[static_cast<std::size_t>(ErrorCode::InvalidArgument)]),
+        "Invalid argument (e.g., shape mismatch)");
+    EXPECT_EQ(
+        std::string(
+            ErrorMessages[static_cast<std::size_t>(ErrorCode::DeviceNotSupported)]),
+        "Device unsupported");
+    EXPECT_EQ(
+        std::string(ErrorMessages[static_cast<std::size_t>(ErrorCode::Overflow)]),
+        "Numerical overflow");
+    EXPECT_EQ(std::string(
+                  ErrorMessages[static_cast<std::size_t>(ErrorCode::InternalError)]),
+              "Internal error");
     EXPECT_EQ(
         std::string(
             ErrorMessages[static_cast<std::size_t>(ErrorCode::InvalidDataset)]),

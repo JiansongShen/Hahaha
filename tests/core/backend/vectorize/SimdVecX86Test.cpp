@@ -16,13 +16,13 @@
 //  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
 //
 
-#include <gtest/gtest.h>
 #include <array>
 #include <cmath>
+#include <gtest/gtest.h>
 #include <limits>
 
-#include "backend/vectorize/simd_vec.h"
 #include "backend/vectorize/arch/simd_impl.h"
+#include "backend/vectorize/simd_vec.h"
 #include "common/definitions.h"
 
 using namespace hahaha::backend;
@@ -138,27 +138,27 @@ TEST(SimdVecX86_128, Float32_CompoundAssignment) {
 
     auto va = SimdVec<f32, 128>::load(a);
     auto vb = SimdVec<f32, 128>::load(b);
-    
+
     va += vb;
     va.store(result);
     for (int i = 0; i < 4; ++i) {
         EXPECT_FLOAT_EQ(result[i], a[i] + b[i]);
     }
-    
+
     va = SimdVec<f32, 128>::load(a);
     va -= vb;
     va.store(result);
     for (int i = 0; i < 4; ++i) {
         EXPECT_FLOAT_EQ(result[i], a[i] - b[i]);
     }
-    
+
     va = SimdVec<f32, 128>::load(a);
     va *= vb;
     va.store(result);
     for (int i = 0; i < 4; ++i) {
         EXPECT_FLOAT_EQ(result[i], a[i] * b[i]);
     }
-    
+
     va = SimdVec<f32, 128>::load(a);
     va /= vb;
     va.store(result);
@@ -458,7 +458,7 @@ TEST(SimdVecX86_256, Int64_Arithmetic_AVX2) {
 TEST(SimdVecX86_512, Float32_LoadStore) {
     alignas(64) f32 input[16];
     alignas(64) f32 output[16] = {0.0f};
-    
+
     for (int i = 0; i < 16; ++i) {
         input[i] = static_cast<f32>(i + 1);
     }
@@ -473,7 +473,7 @@ TEST(SimdVecX86_512, Float32_LoadStore) {
 
 TEST(SimdVecX86_512, Float32_Arithmetic) {
     alignas(64) f32 a[16], b[16], result[16] = {0.0f};
-    
+
     for (int i = 0; i < 16; ++i) {
         a[i] = static_cast<f32>(i + 1);
         b[i] = static_cast<f32>(16 - i);
@@ -496,7 +496,7 @@ TEST(SimdVecX86_512, Float32_Arithmetic) {
 TEST(SimdVecX86_512, Float64_LoadStore) {
     alignas(64) f64 input[8];
     alignas(64) f64 output[8] = {0.0};
-    
+
     for (int i = 0; i < 8; ++i) {
         input[i] = static_cast<f64>(i + 1) * 10.0;
     }
@@ -512,7 +512,7 @@ TEST(SimdVecX86_512, Float64_LoadStore) {
 TEST(SimdVecX86_512, Int32_LoadStore) {
     alignas(64) i32 input[16];
     alignas(64) i32 output[16] = {0};
-    
+
     for (int i = 0; i < 16; ++i) {
         input[i] = i * 10;
     }
@@ -527,7 +527,7 @@ TEST(SimdVecX86_512, Int32_LoadStore) {
 
 TEST(SimdVecX86_512, Int32_Arithmetic) {
     alignas(64) i32 a[16], b[16], result[16] = {0};
-    
+
     for (int i = 0; i < 16; ++i) {
         a[i] = i * 10;
         b[i] = i + 1;
@@ -550,7 +550,7 @@ TEST(SimdVecX86_512, Int32_Arithmetic) {
 TEST(SimdVecX86_512, Int64_LoadStore) {
     alignas(64) i64 input[8];
     alignas(64) i64 output[8] = {0};
-    
+
     for (int i = 0; i < 8; ++i) {
         input[i] = i * 1000;
     }
@@ -565,7 +565,7 @@ TEST(SimdVecX86_512, Int64_LoadStore) {
 
 TEST(SimdVecX86_512, Int64_Arithmetic) {
     alignas(64) i64 a[8], b[8], result[8] = {0};
-    
+
     for (int i = 0; i < 8; ++i) {
         a[i] = i * 1000;
         b[i] = i + 100;
@@ -588,7 +588,7 @@ TEST(SimdVecX86_512, Int64_Arithmetic) {
 #if defined(__AVX512DQ__)
 TEST(SimdVecX86_512, Int64_Multiplication_AVX512DQ) {
     alignas(64) i64 a[8], b[8], result[8] = {0};
-    
+
     for (int i = 0; i < 8; ++i) {
         a[i] = i + 2;
         b[i] = i + 3;

@@ -77,10 +77,10 @@ TEST_F(TensorStrideTest, AtAccess) {
 
 TEST_F(TensorStrideTest, MutableGetStrides) {
     TensorStride stride(std::vector<size_t>{2, 3});
-    stride.getStrides()[0] = 10;
+    stride.getStrideVec()[0] = 10;
     EXPECT_EQ(stride[0], 10);
 
-    const auto& constStrides = stride.getStrides();
+    const auto& constStrides = stride.getStrideVec();
     EXPECT_EQ(constStrides[0], 10);
 }
 
@@ -127,7 +127,7 @@ TEST_F(TensorStrideTest, NonConstOperatorIndex) {
 
 TEST_F(TensorStrideTest, GetStridesConst) {
     const TensorStride stride(std::vector<size_t>{2, 2});
-    const std::vector<size_t>& s = stride.getStrides();
+    const std::vector<size_t>& s = stride.getStrideVec();
     ASSERT_EQ(s.size(), 2);
     EXPECT_EQ(s[0], 2);
     EXPECT_EQ(s[1], 1);
@@ -285,9 +285,9 @@ TEST_F(TensorStrideTest, FromDifferentTypes) {
 
 TEST_F(TensorStrideTest, GetStridesNonConstAccess) {
     TensorStride stride(std::vector<size_t>{2, 3});
-    auto& stridesRef = stride.getStrides();
+    auto& stridesRef = stride.getStrideVec();
     stridesRef[0] = 10;
 
     EXPECT_EQ(stride[0], 10);
-    EXPECT_EQ(stride.getStrides()[0], 10);
+    EXPECT_EQ(stride.getStrideVec()[0], 10);
 }

@@ -38,8 +38,7 @@ using hahaha::math::TensorWrapper;
 using NumericTypes =
     ::testing::Types<u8, i8, u16, i16, u32, i32, u64, i64, f32, f64>;
 
-template <typename T>
-class TensorWrapperInPlaceTypedTest : public ::testing::Test {
+template <typename T> class TensorWrapperInPlaceTypedTest : public ::testing::Test {
   protected:
     using Type = T;
 
@@ -159,10 +158,8 @@ TYPED_TEST(TensorWrapperInPlaceTypedTest, InPlaceAdd_3D_Tensor) {
     T o6 = T(6) / T(10);
     T o7 = T(7) / T(10);
     T o8 = T(8) / T(10);
-    TensorWrapper<T> t3a(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
-    TensorWrapper<T> t3b(
-        NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
+    TensorWrapper<T> t3a(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3b(NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
     t3a += t3b;
     if constexpr (TestFixture::isFloatingPoint()) {
         this->expectNear(t3a.at({0, 0, 0}), T(1.1));
@@ -277,8 +274,7 @@ TYPED_TEST(TensorWrapperInPlaceTypedTest, InPlaceSubtract_3D_Tensor) {
     T v8 = T(8);
     TensorWrapper<T> t3a(
         NestedData<T>{{{v10, v20}, {v30, v40}}, {{v50, v60}, {v70, v80}}});
-    TensorWrapper<T> t3b(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3b(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     t3a -= t3b;
     this->expectNear(t3a.at({0, 0, 0}), T(9));
 }
@@ -385,10 +381,8 @@ TYPED_TEST(TensorWrapperInPlaceTypedTest, InPlaceMultiply_3D_Tensor) {
     T o6 = T(6) / T(10);
     T o7 = T(7) / T(10);
     T o8 = T(8) / T(10);
-    TensorWrapper<T> t3a(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
-    TensorWrapper<T> t3b(
-        NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
+    TensorWrapper<T> t3a(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3b(NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
     t3a *= t3b;
     if constexpr (TestFixture::isFloatingPoint()) {
         this->expectNear(t3a.at({0, 0, 0}), T(0.1));
@@ -592,8 +586,7 @@ TYPED_TEST(TensorWrapperInPlaceDivideTypedTest,
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     EXPECT_THROW(t3 /= T(0), std::runtime_error);
 }
 

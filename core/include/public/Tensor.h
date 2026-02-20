@@ -1,24 +1,24 @@
-//  Copyright (c) 2026 Contributors of hahaha(https://github.com/Napbad/Hahaha)
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//       https://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //
 //  Contributors:
 //  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 //
 
-#ifndef HAHAHA_TENSOR_H
-#define HAHAHA_TENSOR_H
+#ifndef TENSOR_DEA87AF2_9732_4E92_8B63_8D479609FD6C
+#define TENSOR_DEA87AF2_9732_4E92_8B63_8D479609FD6C
 
 #include <memory>
 #include <vector>
@@ -32,9 +32,7 @@
 
 namespace hahaha {
 
-
-
-//TODO: Make sure the check of nullptr of compute node
+// TODO: Make sure the check of nullptr of compute node
 /**
  * @brief High-level User Interface for Tensor operations and Autograd.
  *
@@ -51,8 +49,7 @@ namespace hahaha {
  * @tparam T Numeric data type.
  */
 template <typename T> class Tensor {
-    static_assert(utils::isLegalDataType<T>::value,
-                  "T must be a legal data type");
+    static_assert(utils::isLegalDataType<T>::value, "T must be a legal data type");
 
   public:
     /**
@@ -66,10 +63,9 @@ template <typename T> class Tensor {
     /**
      * @brief Default tensor constructor
      */
-    Tensor () {
+    Tensor() {
         computeNode_ = std::make_shared<compute::ComputeNode<T>>(
-            std::make_shared<math::TensorWrapper<T>>()
-        );
+            std::make_shared<math::TensorWrapper<T>>());
     }
 
     /**
@@ -112,7 +108,6 @@ template <typename T> class Tensor {
 
         return Tensor(computeNode);
     }
-
 
     /** @brief Addition operator. Builds an 'Add' node. */
     Tensor operator+(const Tensor& other) const {
@@ -328,10 +323,9 @@ template <typename T> class Tensor {
      * * @return Tensor A new tensor instance with all elements set to 0.
      */
     Tensor zeros() const {
-        Tensor newTensor;
-        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+        auto zeroData = std::make_shared<math::TensorWrapper<T>>(
             computeNode_->getData()->zeros());
-        return newTensor;
+        return Tensor(zeroData);
     }
 
     /**
@@ -341,10 +335,9 @@ template <typename T> class Tensor {
      * * @return Tensor A new tensor instance with all elements set to 1.
      */
     Tensor ones() const {
-        Tensor newTensor;
-        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+        auto oneData = std::make_shared<math::TensorWrapper<T>>(
             computeNode_->getData()->ones());
-        return newTensor;
+        return Tensor(oneData);
     }
 
     /**
@@ -353,15 +346,272 @@ template <typename T> class Tensor {
      * * @param initValue The value to fill the new tensor with.
      * @return Tensor A new tensor instance where every element is @p initValue.
      */
-    Tensor sameShapeWithValue(T initValue) {
-        Tensor newTensor;
-        newTensor.computeNode_ = std::make_shared<compute::ComputeNode<T>>(
+    Tensor sameShapeWithValue(T initValue) const {
+        auto newData = std::make_shared<math::TensorWrapper<T>>(
             computeNode_->getData()->sameShapeWithValue(initValue));
-        return newTensor;
+        return Tensor(newData);
     }
 
-    Tensor slice() {
+    /**
+     * @brief Create a deep copy of this tensor.
+     * @return Tensor A new tensor with copied data.
+     */
+    Tensor clone() const {
+        auto clonedData = std::make_shared<math::TensorWrapper<T>>(
+            computeNode_->getData()->clone());
+        return Tensor(clonedData);
+    }
 
+    /**
+     * @brief Number of dimensions.
+     * @return size_t dimension count.
+     */
+    [[nodiscard]] size_t getDimensions() const {
+        return computeNode_->getData()->getDimensions();
+    }
+
+    /**
+     * @brief Get the tensor's strides.
+     * @return const TensorStride& reference to internal strides.
+     */
+    [[nodiscard]] const math::TensorStride& getStride() const {
+        return computeNode_->getData()->getStride();
+    }
+
+    /**
+     * @brief Narrow the tensor along a dimension from start with given length.
+     *
+     * Returns a new Tensor that is a view of the original, narrowed along
+     * dimension @p dim from @p start to @p start + @p length.
+     *
+     * Formula:
+     *     result[i0, ..., idim, ..., iN] = self[i0, ..., start+idim, ..., iN]
+     *     where 0 <= idim < length
+     *
+     * Example:
+     * @code
+     *   // tensor shape (4, 5, 6)
+     *   auto t2 = tensor.narrow(0, 1, 2); // shape (2, 5, 6)
+     * @endcode
+     *
+     * @param dim    Dimension to narrow along. Must be < getDimensions().
+     * @param start  Starting index along @p dim. Must be < shape[dim].
+     * @param length Number of elements to keep. Must satisfy start+length <=
+     * shape[dim].
+     * @return Tensor A new view tensor with reduced size along @p dim.
+     * @throws std::out_of_range if @p dim, @p start, or @p length are out of bounds.
+     */
+    Tensor narrow(size_t dim, size_t start, size_t length) const {
+        auto result = computeNode_->getData()->narrow(dim, start, length);
+        return Tensor(std::make_shared<math::TensorWrapper<T>>(std::move(result)));
+    }
+
+    /**
+     * @brief Select a single index along a dimension, removing that dimension.
+     *
+     * Returns a new Tensor with dimension @p dim removed by fixing it at @p index.
+     *
+     * Formula:
+     *     result[i0, ..., idim-1, idim+1, ..., iN] = self[i0, ..., index, ..., iN]
+     *
+     * Example:
+     * @code
+     *   // tensor shape (4, 5, 6)
+     *   auto t2 = tensor.select(0, 2); // shape (5, 6)
+     *   auto t3 = tensor.select(1, 1); // shape (4, 6)
+     * @endcode
+     *
+     * @param dim   Dimension to select from. Must be < getDimensions().
+     * @param index Index to select along @p dim. Must be < shape[dim].
+     * @return Tensor A new view tensor with @p dim removed.
+     * @throws std::out_of_range if @p dim or @p index are out of bounds.
+     */
+    Tensor select(size_t dim, size_t index) const {
+        auto result = computeNode_->getData()->select(dim, index);
+        return Tensor(std::make_shared<math::TensorWrapper<T>>(std::move(result)));
+    }
+
+    /**
+     * @brief Slice along a single dimension with optional start, end, and step.
+     *
+     * Returns a new Tensor sliced along dimension @p dim using Python-style
+     * [start:end:step] semantics. When step == 1 the result shares storage
+     * with the original (zero-copy view).
+     *
+     * Formula:
+     *     result[i0, ..., idim, ..., iN] = self[i0, ..., start+idim*step, ..., iN]
+     *     where 0 <= idim < ceil((end - start) / step)
+     *
+     * Example:
+     * @code
+     *   // tensor shape (4, 5, 6)
+     *   auto t2 = tensor.sliceDim(0, 0, 4, 2); // shape (2, 5, 6) — every 2nd
+     *   auto t3 = tensor.sliceDim(1, 1, 4);    // shape (4, 3, 6) — [1:4]
+     * @endcode
+     *
+     * @param dim   Dimension to slice along. Must be < getDimensions().
+     * @param start Starting index (inclusive). Defaults to 0.
+     * @param end   Ending index (exclusive). Defaults to shape[dim].
+     * @param step  Step size (must be > 0). Defaults to 1.
+     * @return Tensor A new (view) tensor with the sliced dimension.
+     * @throws std::out_of_range     if @p dim is out of range.
+     * @throws std::invalid_argument if step == 0 or start >= end.
+     */
+    Tensor sliceDim(size_t dim,
+                    std::optional<size_t> start = std::nullopt,
+                    std::optional<size_t> end = std::nullopt,
+                    size_t step = 1) const {
+        auto result = computeNode_->getData()->sliceDim(dim, start, end, step);
+        return Tensor(std::make_shared<math::TensorWrapper<T>>(std::move(result)));
+    }
+
+    /**
+     * @brief Slice multiple dimensions using a SliceSetting descriptor.
+     *
+     * Returns a new Tensor sliced according to @p setting, which specifies
+     * per-dimension [start:end:step] ranges.  All-step-1 slices are zero-copy
+     * views; step > 1 may produce non-contiguous views.
+     *
+     * Example:
+     * @code
+     *   // tensor shape (4, 5, 6)
+     *   SliceSetting setting({
+     *       {0, {1, 3, 1}},   // dim 0: [1:3]
+     *       {2, {0, 6, 2}}    // dim 2: [0:6:2]
+     *   });
+     *   auto t2 = tensor.slice(setting); // shape (2, 5, 3)
+     * @endcode
+     *
+     * @param setting Slice configuration (dimensions + ranges). Modified
+     *                in-place to sort axes in ascending order.
+     * @return Tensor A new (view) tensor with all specified dimensions sliced.
+     * @throws std::invalid_argument if any dimension index or range is invalid.
+     */
+    Tensor slice(SliceSetting& setting) const {
+        auto result = computeNode_->getData()->slice(setting);
+        return Tensor(std::make_shared<math::TensorWrapper<T>>(std::move(result)));
+    }
+
+    /**
+     * @brief Broadcast this tensor to a larger shape.
+     *
+     * Returns a new Tensor that has @p newShape but shares storage with the
+     * original (zero-copy view).  Broadcasted axes use stride == 0 so that
+     * reads along that axis always hit the same memory location.
+     *
+     * Example:
+     * @code
+     *   // tensor shape (1, 3)
+     *   auto t2 = tensor.broadcastTo({2, 3}); // shape (2, 3), stride (0, 1)
+     * @endcode
+     *
+     * @param newShape The target shape as a vector of dimension sizes. Must be
+     *                 broadcast-compatible and have rank >= current rank.
+     * @return Tensor A new view tensor with shape @p newShape.
+     * @throws std::invalid_argument if shapes are not broadcast-compatible.
+     */
+    Tensor broadcastTo(const std::vector<size_t>& newShape) const {
+        auto result =
+            computeNode_->getData()->broadcastTo(math::TensorShape(newShape));
+        return Tensor(std::make_shared<math::TensorWrapper<T>>(std::move(result)));
+    }
+
+    /**
+     * @brief In-place addition (tensor += tensor).
+     */
+    Tensor& operator+=(const Tensor& other) {
+        *computeNode_->getData() += *other.computeNode_->getData();
+        return *this;
+    }
+
+    /**
+     * @brief In-place subtraction (tensor -= tensor).
+     */
+    Tensor& operator-=(const Tensor& other) {
+        *computeNode_->getData() -= *other.computeNode_->getData();
+        return *this;
+    }
+
+    /**
+     * @brief In-place multiplication (tensor *= tensor).
+     */
+    Tensor& operator*=(const Tensor& other) {
+        *computeNode_->getData() *= *other.computeNode_->getData();
+        return *this;
+    }
+
+    /**
+     * @brief In-place division (tensor /= tensor).
+     */
+    Tensor& operator/=(const Tensor& other) {
+        *computeNode_->getData() /= *other.computeNode_->getData();
+        return *this;
+    }
+
+    /**
+     * @brief In-place scalar addition (tensor += scalar).
+     */
+    Tensor& operator+=(T scalar) {
+        *computeNode_->getData() += scalar;
+        return *this;
+    }
+
+    /**
+     * @brief In-place scalar subtraction (tensor -= scalar).
+     */
+    Tensor& operator-=(T scalar) {
+        *computeNode_->getData() -= scalar;
+        return *this;
+    }
+
+    /**
+     * @brief In-place scalar multiplication (tensor *= scalar).
+     */
+    Tensor& operator*=(T scalar) {
+        *computeNode_->getData() *= scalar;
+        return *this;
+    }
+
+    /**
+     * @brief In-place scalar division (tensor /= scalar).
+     */
+    Tensor& operator/=(T scalar) {
+        *computeNode_->getData() /= scalar;
+        return *this;
+    }
+
+    /**
+     * @brief Square all elements.
+     * @return Tensor A new tensor with squared elements.
+     * @note This operation currently does not support autograd.
+     */
+    Tensor square() const {
+        auto newData = computeNode_->getData()->clone();
+        newData.squareInPlace();
+        return Tensor(std::make_shared<math::TensorWrapper<T>>(std::move(newData)));
+    }
+
+    /**
+     * @brief Square all elements in place.
+     */
+    void squareInPlace() {
+        computeNode_->getData()->squareInPlace();
+    }
+
+    /**
+     * @brief Square root all elements in place.
+     */
+    void sqrtInPlace() {
+        computeNode_->getData()->sqrtInPlace();
+    }
+
+    /**
+     * @brief In-place update: y = y + alpha * x
+     * @param alpha Scaling factor.
+     * @param other Other tensor (x).
+     */
+    void axpy(T alpha, const Tensor& other) {
+        computeNode_->getData()->axpy(alpha, *other.computeNode_->getData());
     }
 
   private:
@@ -370,4 +620,4 @@ template <typename T> class Tensor {
 
 } // namespace hahaha
 
-#endif // HAHAHA_TENSOR_H
+#endif // TENSOR_DEA87AF2_9732_4E92_8B63_8D479609FD6C

@@ -59,8 +59,7 @@ TEST_F(CudaComputeFunTest, ComputeAdd_Basic) {
     cudaMemcpy(d_buf1, input1.data(), bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(d_buf2, input2.data(), bytes, cudaMemcpyHostToDevice);
 
-    cudaError_t err =
-        cudaComputeAdd(d_buf1, d_buf2, d_bufOut, size, 256);
+    cudaError_t err = cudaComputeAdd(d_buf1, d_buf2, d_bufOut, size, 256);
 
     EXPECT_EQ(err, cudaSuccess);
 
@@ -96,8 +95,7 @@ TEST_F(CudaComputeFunTest, ComputeSubtract_Basic) {
     cudaMemcpy(d_buf1, input1.data(), bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(d_buf2, input2.data(), bytes, cudaMemcpyHostToDevice);
 
-    cudaError_t err =
-        cudaComputeSubtract(d_buf1, d_buf2, d_bufOut, size, 256);
+    cudaError_t err = cudaComputeSubtract(d_buf1, d_buf2, d_bufOut, size, 256);
 
     EXPECT_EQ(err, cudaSuccess);
 
@@ -133,8 +131,7 @@ TEST_F(CudaComputeFunTest, ComputeMultiply_Basic) {
     cudaMemcpy(d_buf1, input1.data(), bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(d_buf2, input2.data(), bytes, cudaMemcpyHostToDevice);
 
-    cudaError_t err =
-        cudaComputeMultiply(d_buf1, d_buf2, d_bufOut, size, 256);
+    cudaError_t err = cudaComputeMultiply(d_buf1, d_buf2, d_bufOut, size, 256);
 
     EXPECT_EQ(err, cudaSuccess);
 
@@ -170,8 +167,7 @@ TEST_F(CudaComputeFunTest, ComputeDivide_Basic) {
     cudaMemcpy(d_buf1, input1.data(), bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(d_buf2, input2.data(), bytes, cudaMemcpyHostToDevice);
 
-    cudaError_t err =
-        cudaComputeDivide(d_buf1, d_buf2, d_bufOut, size, 256);
+    cudaError_t err = cudaComputeDivide(d_buf1, d_buf2, d_bufOut, size, 256);
 
     EXPECT_EQ(err, cudaSuccess);
 
@@ -207,8 +203,7 @@ TEST_F(CudaComputeFunTest, ComputeDivide_ZeroDivisor) {
     cudaMemcpy(d_buf1, input1.data(), bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(d_buf2, input2.data(), bytes, cudaMemcpyHostToDevice);
 
-    cudaError_t err =
-        cudaComputeDivide(d_buf1, d_buf2, d_bufOut, size, 256);
+    cudaError_t err = cudaComputeDivide(d_buf1, d_buf2, d_bufOut, size, 256);
 
     EXPECT_EQ(err, cudaSuccess);
 
@@ -275,21 +270,17 @@ TEST_F(CudaComputeFunTest, ComputeAdd_InvalidInput) {
     ASSERT_EQ(cudaMalloc(&d_buf, bytes), cudaSuccess);
 
     // Test with null pointers
-    cudaError_t err1 =
-        cudaComputeAdd(nullptr, d_buf, d_buf, size);
+    cudaError_t err1 = cudaComputeAdd(nullptr, d_buf, d_buf, size);
     EXPECT_EQ(err1, cudaErrorInvalidValue);
 
-    cudaError_t err2 =
-        cudaComputeAdd(d_buf, nullptr, d_buf, size);
+    cudaError_t err2 = cudaComputeAdd(d_buf, nullptr, d_buf, size);
     EXPECT_EQ(err2, cudaErrorInvalidValue);
 
-    cudaError_t err3 =
-        cudaComputeAdd(d_buf, d_buf, nullptr, size);
+    cudaError_t err3 = cudaComputeAdd(d_buf, d_buf, nullptr, size);
     EXPECT_EQ(err3, cudaErrorInvalidValue);
 
     // Test with zero size
-    cudaError_t err4 =
-        cudaComputeAdd(d_buf, d_buf, d_buf, 0);
+    cudaError_t err4 = cudaComputeAdd(d_buf, d_buf, d_buf, 0);
     EXPECT_EQ(err4, cudaErrorInvalidValue);
 
     cudaFree(d_buf);

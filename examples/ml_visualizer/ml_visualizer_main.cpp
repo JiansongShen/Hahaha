@@ -22,4 +22,3 @@ int main() {
     hahaha::example::run_visualizer_demo();
     return 0;
 }
-

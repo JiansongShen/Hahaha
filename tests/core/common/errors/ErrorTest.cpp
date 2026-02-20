@@ -83,8 +83,7 @@ TEST_F(ErrorTest, MessageMethod) {
 TEST_F(ErrorTest, HelperFunctions) {
     Error invalid_arg = InvalidArgumentError();
     EXPECT_EQ(invalid_arg.code, ErrorCode::InvalidArgument);
-    EXPECT_STREQ(invalid_arg.message(),
-                 "Invalid argument (e.g., shape mismatch)");
+    EXPECT_STREQ(invalid_arg.message(), "Invalid argument (e.g., shape mismatch)");
     EXPECT_FALSE(invalid_arg.isSuccess());
 
     Error device_not_supported = DeviceNotSupportedError();
@@ -127,8 +126,7 @@ TEST_F(ErrorTest, AllErrorCodesCovered) {
     EXPECT_FALSE(cudaOutOfMemory.isSuccess());
 
     EXPECT_STREQ(success.message(), "Success");
-    EXPECT_STREQ(invalidArg.message(),
-                 "Invalid argument (e.g., shape mismatch)");
+    EXPECT_STREQ(invalidArg.message(), "Invalid argument (e.g., shape mismatch)");
     EXPECT_STREQ(deviceNotSupported.message(), "Device unsupported");
     EXPECT_STREQ(overflow.message(), "Numerical overflow");
     EXPECT_STREQ(internalError.message(), "Internal error");

@@ -63,8 +63,7 @@ TYPED_TEST(NestedDataErrorHandlingTypedTest, InconsistentShapes_Throws) {
     T v3 = T(3);
     T v4 = T(4);
     T v5 = T(5);
-    EXPECT_THROW((NestedData<T>{{v1, v2, v3}, {v4, v5}}),
-                 std::invalid_argument);
+    EXPECT_THROW((NestedData<T>{{v1, v2, v3}, {v4, v5}}), std::invalid_argument);
 }
 
 TYPED_TEST(NestedDataErrorHandlingTypedTest, InconsistentShapesDeeper_Throws) {
@@ -90,8 +89,7 @@ TYPED_TEST(NestedDataErrorHandlingTypedTest, NestedEmptyList_Throws) {
     EXPECT_THROW((NestedData<T>{{}, {v1}}), std::invalid_argument);
 }
 
-TYPED_TEST(NestedDataErrorHandlingTypedTest,
-           IntegerOverflow_HandlesGracefully) {
+TYPED_TEST(NestedDataErrorHandlingTypedTest, IntegerOverflow_HandlesGracefully) {
     using T = TestFixture::Type;
     // Test that large values don't cause overflow issues (behavior depends on
     // implementation)
@@ -99,8 +97,7 @@ TYPED_TEST(NestedDataErrorHandlingTypedTest,
         // For unsigned types, max values should be accepted
         NestedData<T> nd({std::numeric_limits<T>::max()});
         ASSERT_EQ(nd.getFlatData().at(0), std::numeric_limits<T>::max());
-    } else if constexpr (std::is_signed_v<T>
-                         && !TestFixture::isFloatingPoint()) {
+    } else if constexpr (std::is_signed_v<T> && !TestFixture::isFloatingPoint()) {
         // For signed integer types, max and min values should be accepted
         NestedData<T> nd(
             {std::numeric_limits<T>::max(), std::numeric_limits<T>::min()});
@@ -110,11 +107,9 @@ TYPED_TEST(NestedDataErrorHandlingTypedTest,
         // For floating point types, test max values
         NestedData<T> nd({std::numeric_limits<T>::max()});
         if constexpr (std::is_same_v<T, f64>) {
-            EXPECT_DOUBLE_EQ(nd.getFlatData().at(0),
-                             std::numeric_limits<T>::max());
+            EXPECT_DOUBLE_EQ(nd.getFlatData().at(0), std::numeric_limits<T>::max());
         } else {
-            EXPECT_FLOAT_EQ(nd.getFlatData().at(0),
-                            std::numeric_limits<T>::max());
+            EXPECT_FLOAT_EQ(nd.getFlatData().at(0), std::numeric_limits<T>::max());
         }
     }
 }

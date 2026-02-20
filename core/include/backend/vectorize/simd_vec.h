@@ -28,24 +28,26 @@ namespace hahaha::backend {
 
 /**
  * @brief SIMD vector type: T is element type, N is width in bits (128, 256, or 512).
- * Arch-specific specializations (e.g. x86 SSE/AVX) provide load/store and arithmetic.
+ * Arch-specific specializations (e.g. x86 SSE/AVX) provide load/store and
+ * arithmetic.
  */
-template <typename T, std::size_t N>
-struct SimdVec {
-    static_assert(utils::isLegalDataType<T>::value
-        && std::format(
-            "the data type of simd vector is not legal: current is {},"
-            " but only supports: {}",
-            typeid(T).name(), utils::getLegalDataTypeString()
-            ).data());
+template <typename T, std::size_t N> struct SimdVec {
+    static_assert(
+        utils::isLegalDataType<T>::value
+        && std::format("the data type of simd vector is not legal: current is {},"
+                       " but only supports: {}",
+                       typeid(T).name(),
+                       utils::getLegalDataTypeString())
+               .data());
 
-    static_assert(N == 128 || N == 256 || N == 512
-        && std::format(
-            "the size of simd vector is not supported: {}"
-            "currently only 128, 256, 512 are supported", N
-            ).data());
+    static_assert(N == 128 || N == 256
+                  || N == 512
+                      && std::format("the size of simd vector is not supported: {}"
+                                     "currently only 128, 256, 512 are supported",
+                                     N)
+                             .data());
 };
 
-}
+} // namespace hahaha::backend
 
-#endif //HAHAHA_SIMDVEC_H_B878DE32A18743769333838EF65ACE5E
+#endif // HAHAHA_SIMDVEC_H_B878DE32A18743769333838EF65ACE5E

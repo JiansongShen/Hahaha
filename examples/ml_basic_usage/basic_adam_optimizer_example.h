@@ -1,4 +1,4 @@
-// Copyright (c) 2025-2026 Contributors of Hahaha
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -71,15 +71,16 @@ inline void basic_adam_optimizer_example() {
     Tensor<f32> loss(1);
     loss.setRequiresGrad(true);
 
-    auto optimizer = hahaha::ml::AdamOptimizer<f32>({w}, 0.1);
+    // Optimizer operates on compute nodes, not tensors.
+    std::vector<std::shared_ptr<hahaha::compute::ComputeNode<f32>>> params = {
+        w.getComputeNode()};
+    auto optimizer = hahaha::ml::AdamOptimizer<f32>(params, 0.1f);
 
     for (int i = 0; i < TrainLoop; ++i) {
         optimizer.zeroGrad();
         auto tmp = yTensorM - w * xTensorM;
 
-        loss = (yTensorM - w * xTensorM)
-                   .transpose()
-                   .matmul(yTensorM - w * xTensorM);
+        loss = (yTensorM - w * xTensorM).transpose().matmul(yTensorM - w * xTensorM);
 
         loss.backward();
         optimizer.step();
@@ -88,5 +89,4 @@ inline void basic_adam_optimizer_example() {
         std::cout << "  w: " << w.at({}) << std::endl;
         std::cout << "  loss: " << loss.data()->at({0, 0}) << std::endl;
     }
-
 }

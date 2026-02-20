@@ -13,22 +13,24 @@
 // limitations under the License.
 //
 
-#include <gtest/gtest.h>
-#include <cmath>
-
 #include "math/TensorComputeFuns.h"
+
+#include <cmath>
+#include <gtest/gtest.h>
+
 #include "math/TensorWrapper.h"
 #include "math/ds/NestedData.h"
 
 using namespace hahaha;
 using namespace hahaha::math;
 
-template <typename T>
-class TensorComputeFunsTypedTest : public ::testing::Test {
+template <typename T> class TensorComputeFunsTypedTest : public ::testing::Test {
   protected:
     void expectNear(T expected, T actual, double tolerance = 1e-5) {
         if constexpr (std::is_floating_point_v<T>) {
-            EXPECT_NEAR(static_cast<double>(expected), static_cast<double>(actual), tolerance);
+            EXPECT_NEAR(static_cast<double>(expected),
+                        static_cast<double>(actual),
+                        tolerance);
         } else {
             EXPECT_EQ(expected, actual);
         }
