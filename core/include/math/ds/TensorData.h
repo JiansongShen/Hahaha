@@ -33,7 +33,7 @@
 #include "math/ds/TensorStride.h"
 
 namespace hahaha::common {
-    struct Error;
+struct Error;
 }
 
 namespace hahaha::math {
@@ -66,10 +66,10 @@ template <typename T> class TensorData {
      * @param initValue Initial value for all elements.
      * @param device The device where the data should reside.
      */
-    TensorData(const TensorShape& shape,
-               T initValue,
-               const std::shared_ptr<backend::Device>& device =
-                   backend::getCPUDevice())
+    TensorData(
+        const TensorShape& shape,
+        T initValue,
+        const std::shared_ptr<backend::Device>& device = backend::getCPUDevice())
         : shape_(shape), stride_(shape), device_(device) {
         size_t size = shape_.getTotalSize();
         if (device_->getType() == backend::DeviceType::CPU) {
@@ -87,9 +87,9 @@ template <typename T> class TensorData {
      * @param shape The shape of the tensor.
      * @param device The device where the data should reside.
      */
-    explicit TensorData(const TensorShape& shape,
-                        const std::shared_ptr<backend::Device>& device =
-                            backend::getCPUDevice())
+    explicit TensorData(
+        const TensorShape& shape,
+        const std::shared_ptr<backend::Device>& device = backend::getCPUDevice())
         : shape_(shape), stride_(shape), device_(device) {
         const size_t size = shape_.getTotalSize();
         if (device_->getType() == backend::DeviceType::CPU) {
@@ -202,9 +202,8 @@ template <typename T> class TensorData {
     explicit TensorData(NestedData<T>&& data) : shape_(data.getShape()) {
         if (const size_t size = data.getFlatData().size(); size > 0) {
             data_ = std::make_shared<T[]>(size);
-            std::copy(data.getFlatData().begin(),
-                      data.getFlatData().end(),
-                      data_.get());
+            std::copy(
+                data.getFlatData().begin(), data.getFlatData().end(), data_.get());
         } else {
             data_ = nullptr; // Explicitly null for truly empty tensors
         }
@@ -221,8 +220,7 @@ template <typename T> class TensorData {
         }
 
         targetDevice->copyMemoryToThis(
-            std::span(reinterpret_cast<std::byte*>(this->data_.get()),
-                      byteSize),
+            std::span(reinterpret_cast<std::byte*>(this->data_.get()), byteSize),
             std::span(reinterpret_cast<std::byte*>(targetBuffer.address()),
                       byteSize),
             device_);

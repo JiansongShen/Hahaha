@@ -101,10 +101,8 @@ CudaMemoryPool::allocateOnBlock(const size_t blockIdx) {
 
     // If no free block, try to split from a larger block
     if (!block) {
-        if (auto resError = requireSplitBlock(blockIdx);
-            !resError.isSuccess()) {
-            if (resError.code
-                == common::ErrorCode::CudaSmallObjectMemoryPoolFull) {
+        if (auto resError = requireSplitBlock(blockIdx); !resError.isSuccess()) {
+            if (resError.code == common::ErrorCode::CudaSmallObjectMemoryPoolFull) {
                 return std::unexpected(resError);
             }
             return std::unexpected(resError);
@@ -158,8 +156,7 @@ void CudaMemoryPool::insertIntoFreeBlock(SmallBlockMetadata* metadata) {
             smallBlockMap_.find(reinterpret_cast<void*>(buddyBlockGpuPtr));
         pair != smallBlockMap_.end()) {
         // Can be merged into a bigger one
-        if (pair->second->size == metadata->size
-            && !pair->second->isAllocated) {
+        if (pair->second->size == metadata->size && !pair->second->isAllocated) {
             // Remove buddy from the free list
             SmallBlockMetadata* buddy = pair->second;
             if (buddy->prev) {
@@ -311,8 +308,7 @@ void CudaMemoryPool::free(void* ptr) { // NOLINT
     }
 
     // Check if it's a big block
-    if (const auto bigIt = bigBlockMap_.find(ptr);
-        bigIt != bigBlockMap_.end()) {
+    if (const auto bigIt = bigBlockMap_.find(ptr); bigIt != bigBlockMap_.end()) {
         BigBlockMetadata* metadata = bigIt->second;
         if (!metadata) {
             return;
@@ -374,13 +370,11 @@ void CudaMemoryPool::free(void* ptr) { // NOLINT
     // Pointer not allocated by this pool: do not free (cudaFree(unknown ptr)
     // is undefined behavior). Caller must only free pointers returned by
     // allocateSmall/allocateBig.
-    (void)ptr;
+    (void) ptr;
 }
 
-std::expected<void*, common::Error>
-CudaMemoryPool::allocateBig(const size_t size) {
-    if (BigBlockMetadata* bigBlock = findCachedBigBlock(size);
-        bigBlock != nullptr) {
+std::expected<void*, common::Error> CudaMemoryPool::allocateBig(const size_t size) {
+    if (BigBlockMetadata* bigBlock = findCachedBigBlock(size); bigBlock != nullptr) {
         return bigBlock->gpuPtr;
     }
 
@@ -392,8 +386,7 @@ size_t CudaMemoryPool::getBlockIndexOfSize(const size_t size) {
     size_t currentSize = BaseMemoryBlockSize;
 
     while (size > currentSize
-           &&
-           idx < MaxSmallObjectPoolListSize) { // Limit to prevent infinite loop
+           && idx < MaxSmallObjectPoolListSize) { // Limit to prevent infinite loop
         currentSize *= 2;
         ++idx;
     }
@@ -409,8 +402,7 @@ common::Error CudaMemoryPool::requireSplitBlock(const size_t blockIdx) {
     if (blockIdx == MaxSmallObjectPoolListSize - 1) {
         void* ptr = nullptr;
         const auto size = BaseMemoryBlockSize << (blockIdx);
-        const cudaError_t res =
-            cudaMemoryAllocate(size, &ptr);
+        const cudaError_t res = cudaMemoryAllocate(size, &ptr);
         if (res != cudaSuccess) {
             return common::CudaDeviceOutOfMemoryError();
         }
@@ -421,8 +413,7 @@ common::Error CudaMemoryPool::requireSplitBlock(const size_t blockIdx) {
         smallBlockMap_[ptr] = freeSmallBlocks_[blockIdx];
 
         if (!smallBlockStorage_) {
-            smallBlockStorage_ =
-                new SmallBlockMetadata(*freeSmallBlocks_[blockIdx]);
+            smallBlockStorage_ = new SmallBlockMetadata(*freeSmallBlocks_[blockIdx]);
         } else {
             smallBlockStorage_->prev =
                 new SmallBlockMetadata(*freeSmallBlocks_[blockIdx]);

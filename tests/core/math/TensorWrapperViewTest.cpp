@@ -122,8 +122,7 @@ TEST_F(NarrowTest, Narrow1D_CorrectShapeStrideAndValues) {
 
 TEST_F(NarrowTest, Narrow2D_AlongDim0_CorrectFields) {
     // Base: [[0,1,2],[3,4,5],[6,7,8]] shape (3,3)
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
 
     // narrow(0, 1, 2) => rows [1,2] => [[3,4,5],[6,7,8]]
     auto view = base.narrow(0, 1, 2);
@@ -158,8 +157,7 @@ TEST_F(NarrowTest, Narrow2D_AlongDim0_CorrectFields) {
 
 TEST_F(NarrowTest, Narrow2D_AlongDim1_CorrectFields) {
     // Base: [[0,1,2,3],[4,5,6,7]] shape (2,4)
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2, 3}, {4, 5, 6, 7}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2, 3}, {4, 5, 6, 7}});
 
     // narrow(1, 1, 2) => cols [1,2] => [[1,2],[5,6]]
     auto view = base.narrow(1, 1, 2);
@@ -299,8 +297,7 @@ TEST_F(SelectTest, Select2D_AlongDim1_ReducesDimension) {
 
 TEST_F(SelectTest, Select3D_AlongDim0_Reduces3DTo2D) {
     // Base: [[[0,1],[2,3]],[[4,5],[6,7]]] shape (2,2,2)
-    TensorWrapper<float> base(
-        NestedData<float>{{{0, 1}, {2, 3}}, {{4, 5}, {6, 7}}});
+    TensorWrapper<float> base(NestedData<float>{{{0, 1}, {2, 3}}, {{4, 5}, {6, 7}}});
 
     // select(0, 1) => second "slice" => [[4,5],[6,7]] shape (2,2)
     auto view = base.select(0, 1);
@@ -386,7 +383,7 @@ TEST_F(SliceDimTest, SliceDim1D_Step2_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 3u);  // ceil((5-0)/2) = 3
+    EXPECT_EQ(view.getShape()[0], 3u); // ceil((5-0)/2) = 3
 
     // --- Stride: step=2 => stride[0] = 1*2 = 2 ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 1u);
@@ -409,8 +406,7 @@ TEST_F(SliceDimTest, SliceDim1D_Step2_CorrectFields) {
 
 TEST_F(SliceDimTest, SliceDim2D_AlongDim0_Step1) {
     // Base: [[0,1,2],[3,4,5],[6,7,8]] shape (3,3)
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
 
     // sliceDim(0, 1, 3, 1) => rows [1,2] => [[3,4,5],[6,7,8]]
     auto view = base.sliceDim(0, 1, 3, 1);
@@ -445,8 +441,7 @@ TEST_F(SliceDimTest, SliceDim2D_AlongDim0_Step1) {
 
 TEST_F(SliceDimTest, SliceDim2D_AlongDim0_Step2) {
     // Base: [[0,1],[2,3],[4,5],[6,7]] shape (4,2)
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1}, {2, 3}, {4, 5}, {6, 7}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1}, {2, 3}, {4, 5}, {6, 7}});
 
     // sliceDim(0, 0, 4, 2) => rows [0,2] => [[0,1],[4,5]]
     auto view = base.sliceDim(0, 0, 4, 2);
@@ -531,8 +526,7 @@ class SliceTest : public ::testing::Test {};
 
 TEST_F(SliceTest, Slice2D_OneDim_CorrectFields) {
     // Base: [[0,1,2],[3,4,5],[6,7,8]] shape (3,3)
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
 
     SliceSetting setting({{0, {1, 3, 1}}}); // dim0: [1:3:1]
     auto view = base.slice(setting);
@@ -637,8 +631,7 @@ TEST_F(CloneViewTest, CloneNarrowedView_IsContiguousDeepCopy) {
 }
 
 TEST_F(CloneViewTest, CloneSlicedView_2D_DeepCopy) {
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     auto view = base.narrow(0, 1, 2); // rows 1..2
 
     auto cloned = view.clone();
@@ -726,9 +719,9 @@ TEST_F(ViewArithmeticTest, AddTwoViews_CorrectResultFields) {
     EXPECT_TRUE(result.isContiguous());
 
     // --- Values ---
-    EXPECT_FLOAT_EQ(result.at({0}), 11.0f);  // 1 + 10
-    EXPECT_FLOAT_EQ(result.at({1}), 22.0f);  // 2 + 20
-    EXPECT_FLOAT_EQ(result.at({2}), 33.0f);  // 3 + 30
+    EXPECT_FLOAT_EQ(result.at({0}), 11.0f); // 1 + 10
+    EXPECT_FLOAT_EQ(result.at({1}), 22.0f); // 2 + 20
+    EXPECT_FLOAT_EQ(result.at({2}), 33.0f); // 3 + 30
 
     // --- Original tensors unchanged ---
     EXPECT_FLOAT_EQ(a.at({1}), 1.0f);
@@ -758,9 +751,9 @@ TEST_F(ViewArithmeticTest, SubtractView_CorrectResultFields) {
     EXPECT_TRUE(result.isContiguous());
 
     // --- Values ---
-    EXPECT_FLOAT_EQ(result.at({0}), 25.0f);  // 30 - 5
-    EXPECT_FLOAT_EQ(result.at({1}), 30.0f);  // 40 - 10
-    EXPECT_FLOAT_EQ(result.at({2}), 35.0f);  // 50 - 15
+    EXPECT_FLOAT_EQ(result.at({0}), 25.0f); // 30 - 5
+    EXPECT_FLOAT_EQ(result.at({1}), 30.0f); // 40 - 10
+    EXPECT_FLOAT_EQ(result.at({2}), 35.0f); // 50 - 15
 }
 
 TEST_F(ViewArithmeticTest, MultiplyView_CorrectResultFields) {
@@ -813,10 +806,10 @@ TEST_F(ViewArithmeticTest, DivideView_CorrectResultFields) {
     EXPECT_TRUE(result.isContiguous());
 
     // --- Values ---
-    EXPECT_FLOAT_EQ(result.at({0}), 5.0f);   // 10/2
-    EXPECT_FLOAT_EQ(result.at({1}), 5.0f);   // 20/4
-    EXPECT_FLOAT_EQ(result.at({2}), 6.0f);   // 30/5
-    EXPECT_FLOAT_EQ(result.at({3}), 5.0f);   // 40/8
+    EXPECT_FLOAT_EQ(result.at({0}), 5.0f); // 10/2
+    EXPECT_FLOAT_EQ(result.at({1}), 5.0f); // 20/4
+    EXPECT_FLOAT_EQ(result.at({2}), 6.0f); // 30/5
+    EXPECT_FLOAT_EQ(result.at({3}), 5.0f); // 40/8
 }
 
 TEST_F(ViewArithmeticTest, AddViewScalar_CorrectResultFields) {
@@ -876,8 +869,7 @@ TEST_F(ViewArithmeticTest, AddTwoStepViews_CorrectResultFields) {
 
 TEST_F(ViewArithmeticTest, Add2DViews_CorrectResultFields) {
     // Base: [[0,1,2],[3,4,5],[6,7,8]] shape (3,3)
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     TensorWrapper<float> addend(NestedData<float>{{10, 10, 10}, {20, 20, 20}});
 
     auto view = base.narrow(0, 1, 2); // rows 1..2
@@ -900,12 +892,12 @@ TEST_F(ViewArithmeticTest, Add2DViews_CorrectResultFields) {
     EXPECT_TRUE(result.isContiguous());
 
     // --- Values ---
-    EXPECT_FLOAT_EQ(result.at({0, 0}), 13.0f);  // 3 + 10
-    EXPECT_FLOAT_EQ(result.at({0, 1}), 14.0f);  // 4 + 10
-    EXPECT_FLOAT_EQ(result.at({0, 2}), 15.0f);  // 5 + 10
-    EXPECT_FLOAT_EQ(result.at({1, 0}), 26.0f);  // 6 + 20
-    EXPECT_FLOAT_EQ(result.at({1, 1}), 27.0f);  // 7 + 20
-    EXPECT_FLOAT_EQ(result.at({1, 2}), 28.0f);  // 8 + 20
+    EXPECT_FLOAT_EQ(result.at({0, 0}), 13.0f); // 3 + 10
+    EXPECT_FLOAT_EQ(result.at({0, 1}), 14.0f); // 4 + 10
+    EXPECT_FLOAT_EQ(result.at({0, 2}), 15.0f); // 5 + 10
+    EXPECT_FLOAT_EQ(result.at({1, 0}), 26.0f); // 6 + 20
+    EXPECT_FLOAT_EQ(result.at({1, 1}), 27.0f); // 7 + 20
+    EXPECT_FLOAT_EQ(result.at({1, 2}), 28.0f); // 8 + 20
 }
 
 // =============================================================================
@@ -930,8 +922,7 @@ TEST_F(ViewSumTest, SumNarrowedView_CorrectValue) {
 }
 
 TEST_F(ViewSumTest, Sum2DViewAlongAxis_CorrectValue) {
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     auto view = base.narrow(0, 1, 2); // rows 1,2 => [[3,4,5],[6,7,8]]
 
     float s = view.sum();
@@ -964,10 +955,9 @@ class ChainedViewTest : public ::testing::Test {};
 
 TEST_F(ChainedViewTest, NarrowThenNarrow_CorrectFields) {
     // Base: [0..9]
-    TensorWrapper<float> base(
-        NestedData<float>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    TensorWrapper<float> base(NestedData<float>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
 
-    auto view1 = base.narrow(0, 2, 6); // [2,3,4,5,6,7]
+    auto view1 = base.narrow(0, 2, 6);  // [2,3,4,5,6,7]
     auto view2 = view1.narrow(0, 1, 3); // [3,4,5]
 
     // --- Shape ---
@@ -1048,8 +1038,7 @@ TEST_F(ViewWriteThroughTest, WriteToNarrowedView_ModifiesBase) {
 }
 
 TEST_F(ViewWriteThroughTest, WriteToSelectedView_ModifiesBase) {
-    TensorWrapper<float> base(
-        NestedData<float>{{1, 2, 3}, {4, 5, 6}});
+    TensorWrapper<float> base(NestedData<float>{{1, 2, 3}, {4, 5, 6}});
     auto row1 = base.select(0, 1); // [4, 5, 6]
 
     row1.at({1}) = 99.0f;
@@ -1183,16 +1172,14 @@ TEST_F(ViewReshapeTest, Reshape_ClonedView_Succeeds) {
 class ViewTransposeTest : public ::testing::Test {};
 
 TEST_F(ViewTransposeTest, Transpose_NonContiguousView_ThrowsInvalidArgument) {
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     auto view = base.narrow(0, 1, 2); // rows 1,2 – non-contiguous
     EXPECT_FALSE(view.isContiguous());
     EXPECT_THROW(view.transpose(), std::invalid_argument);
 }
 
 TEST_F(ViewTransposeTest, Transpose_ClonedView_Succeeds) {
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     auto view = base.narrow(0, 1, 2); // [[3,4,5],[6,7,8]] shape (2,3)
     auto cloned = view.clone();
 
@@ -1230,8 +1217,7 @@ TEST_F(ViewTransposeTest, Transpose_ClonedView_Succeeds) {
 class ViewMatmulTest : public ::testing::Test {};
 
 TEST_F(ViewMatmulTest, Matmul_NonContiguousView_ThrowsInvalidArgument) {
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     auto view = base.narrow(0, 1, 2); // non-contiguous
     TensorWrapper<float> b(NestedData<float>{{1, 0}, {0, 1}, {0, 0}});
     EXPECT_FALSE(view.isContiguous());
@@ -1240,11 +1226,9 @@ TEST_F(ViewMatmulTest, Matmul_NonContiguousView_ThrowsInvalidArgument) {
 
 TEST_F(ViewMatmulTest, Matmul_ClonedView_CorrectFields) {
     // view = [[3,4,5],[6,7,8]] after narrow, then clone => contiguous (2,3)
-    TensorWrapper<float> base(
-        NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    TensorWrapper<float> base(NestedData<float>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     auto view = base.narrow(0, 1, 2).clone(); // [[3,4,5],[6,7,8]] contiguous
-    TensorWrapper<float> rhs(
-        NestedData<float>{{1, 0}, {0, 1}, {0, 0}}); // (3,2)
+    TensorWrapper<float> rhs(NestedData<float>{{1, 0}, {0, 1}, {0, 0}}); // (3,2)
 
     auto result = view.matmul(rhs);
 
@@ -1385,8 +1369,7 @@ TEST_F(ViewHelperTensorsTest, Zeros_FromView_CorrectShapeAndValues) {
 }
 
 TEST_F(ViewHelperTensorsTest, SameShapeWithValue_FromView_CorrectFields) {
-    TensorWrapper<float> base(
-        NestedData<float>{{1, 2}, {3, 4}, {5, 6}});
+    TensorWrapper<float> base(NestedData<float>{{1, 2}, {3, 4}, {5, 6}});
     auto view = base.narrow(0, 1, 2); // rows 1,2 shape (2,2)
 
     auto filled = view.sameShapeWithValue(7.0f);

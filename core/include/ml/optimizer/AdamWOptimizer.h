@@ -45,11 +45,13 @@ using common::u64;
  *     v_t = beta2 * v_{t-1} + (1 - beta2) * g_t^2
  *     m_hat = m_t / (1 - beta1^t)
  *     v_hat = v_t / (1 - beta2^t)
- *     theta_t = theta_{t-1} - eta * (alpha * m_hat / (sqrt(v_hat) + epsilon) + lambda * theta_{t-1})
+ *     theta_t = theta_{t-1} - eta * (alpha * m_hat / (sqrt(v_hat) + epsilon) +
+ * lambda * theta_{t-1})
  *
  * Where:
  * - eta: learning rate
- * - beta1, beta2: coefficients for computing running averages of gradient and its square
+ * - beta1, beta2: coefficients for computing running averages of gradient and its
+ * square
  * - epsilon: term added to the denominator to improve numerical stability
  * - lambda: weight decay coefficient
  *
@@ -62,6 +64,7 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
     static constexpr T DefaultBeta2 = 0.999;
     static constexpr T DefaultEpsilon = 1e-8;
     static constexpr T DefaultWeightDecay = 1e-6;
+
   public:
     /**
      * @brief Construct a new AdamW Optimizer with default hyperparameters.
@@ -124,8 +127,9 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
 
     /**
      * @brief Performs a single AdamW optimization step.
-     * @details Updates moments, calculates bias corrections, applies decoupled weight 
-     * decay to the parameter data, and finally applies the gradient-based update.
+     * @details Updates moments, calculates bias corrections, applies decoupled
+     * weight decay to the parameter data, and finally applies the gradient-based
+     * update.
      */
     void step() override {
         preTrainIfNeed();
@@ -147,7 +151,8 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
             if (!paramNode || !paramNode->getRequiresGrad())
                 continue;
             auto grad = paramNode->getGrad();
-            if (grad == nullptr) continue;
+            if (grad == nullptr)
+                continue;
 
             // Update biased first moment estimate: m = β1 * m + (1 - β1) * g
             paramM *= beta1_;
@@ -176,7 +181,8 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
 
   private:
     /**
-     * @brief Initializes moment buffers (M and V) for all parameters before optimization begins.
+     * @brief Initializes moment buffers (M and V) for all parameters before
+     * optimization begins.
      */
     void preTrainIfNeed() {
         if (trainPrepared_) {

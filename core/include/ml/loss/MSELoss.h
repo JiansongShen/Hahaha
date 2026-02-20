@@ -54,8 +54,7 @@ template <typename T> class MSELoss : public Loss<T> {
  * @param yPredict The predicted values.
  * @return Tensor<T> The computed MSE loss value.
  */
-template <typename T>
-Tensor<T> computeMSELoss(Tensor<T> yTrue, Tensor<T> yPredict) {
+template <typename T> Tensor<T> computeMSELoss(Tensor<T> yTrue, Tensor<T> yPredict) {
     static MSELoss<T> loss;
     return loss.computeLoss(yTrue, yPredict);
 }

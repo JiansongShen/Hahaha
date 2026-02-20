@@ -76,11 +76,11 @@ reshape(const std::shared_ptr<ComputeNode<T>>& parent,
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
 transpose(const std::shared_ptr<ComputeNode<T>>& parent) {
-    auto resData = std::make_shared<math::TensorWrapper<T>>(
-        parent->getData()->transpose());
+    auto resData =
+        std::make_shared<math::TensorWrapper<T>>(parent->getData()->transpose());
 
-    std::shared_ptr<ComputeNode<T>> resNode = ComputeNode<T>::createUnary(
-        parent, resData, common::Operator::Transpose);
+    std::shared_ptr<ComputeNode<T>> resNode =
+        ComputeNode<T>::createUnary(parent, resData, common::Operator::Transpose);
 
     std::weak_ptr<ComputeNode<T>> weakRes = resNode;
     std::weak_ptr<ComputeNode<T>> weakParent = parent;
@@ -91,8 +91,8 @@ transpose(const std::shared_ptr<ComputeNode<T>>& parent) {
         if (res && parent) {
             auto gradPtr = res->getGrad();
             if (parent->getRequiresGrad()) {
-                auto transposedGrad = std::make_shared<math::TensorWrapper<T>>(
-                    gradPtr->transpose());
+                auto transposedGrad =
+                    std::make_shared<math::TensorWrapper<T>>(gradPtr->transpose());
                 parent->accumulateGrad(transposedGrad);
                 // parent->backward();
             }
@@ -109,10 +109,8 @@ transpose(const std::shared_ptr<ComputeNode<T>>& parent) {
  * negation operation.
  */
 template <typename T>
-std::shared_ptr<ComputeNode<T>>
-neg(const std::shared_ptr<ComputeNode<T>>& parent) {
-    auto resData =
-        std::make_shared<math::TensorWrapper<T>>(-*parent->getData());
+std::shared_ptr<ComputeNode<T>> neg(const std::shared_ptr<ComputeNode<T>>& parent) {
+    auto resData = std::make_shared<math::TensorWrapper<T>>(-*parent->getData());
     auto resNode =
         ComputeNode<T>::createUnary(parent, resData, common::Operator::Neg);
 
@@ -124,8 +122,7 @@ neg(const std::shared_ptr<ComputeNode<T>>& parent) {
         auto parent = weakParent.lock();
         auto gradPtr = res->getGrad();
         if (parent->getRequiresGrad()) {
-            auto negatedGrad =
-                std::make_shared<math::TensorWrapper<T>>(-*gradPtr);
+            auto negatedGrad = std::make_shared<math::TensorWrapper<T>>(-*gradPtr);
             parent->accumulateGrad(negatedGrad);
         }
     });

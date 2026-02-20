@@ -15,8 +15,8 @@
 //  Contributors:
 //  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
 //
-//  x86 SIMD implementation: SSE2 (128-bit), AVX (256-bit), optional AVX-512 (512-bit).
-//  Implementations are split by width to keep each file manageable.
+//  x86 SIMD implementation: SSE2 (128-bit), AVX (256-bit), optional AVX-512
+//  (512-bit). Implementations are split by width to keep each file manageable.
 //
 
 #ifndef HAHAHA_SIMD_VEC_IMPL_H_92AB0F5E920442FC95C08FE4487A6DE8

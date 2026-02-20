@@ -62,8 +62,7 @@ namespace hahaha::compute {
  */
 template <typename T>
 class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
-    static_assert(utils::isLegalDataType<T>::value,
-                  "T must be a legal data type");
+    static_assert(utils::isLegalDataType<T>::value, "T must be a legal data type");
 
   public:
     /**
@@ -85,8 +84,7 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
     ComputeNode(std::shared_ptr<math::TensorWrapper<T>> res,
                 common::Operator operatorType,
                 std::function<void()> gradFun = nullptr)
-        : data_(res), operatorType_(operatorType),
-          gradFun_(std::move(gradFun)) {
+        : data_(res), operatorType_(operatorType), gradFun_(std::move(gradFun)) {
         if (operatorType_ == common::Operator::None) {
             throw std::invalid_argument("Operator cannot be None");
         }
@@ -105,8 +103,7 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
                 std::shared_ptr<math::TensorWrapper<T>> res,
                 common::Operator operatorType,
                 std::function<void()> gradFun)
-        : data_(res), operatorType_(operatorType),
-          gradFun_(std::move(gradFun)) {
+        : data_(res), operatorType_(operatorType), gradFun_(std::move(gradFun)) {
         if (operatorType_ == common::Operator::None) {
             throw std::invalid_argument("Operator cannot be None");
         }
@@ -136,8 +133,8 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
     void accumulateGrad(std::shared_ptr<math::TensorWrapper<T>> grad) {
         if (this->grad_) {
             // grad_total = grad_total + incoming_grad
-            this->grad_ = std::make_shared<math::TensorWrapper<T>>(
-                this->grad_->add(*grad));
+            this->grad_ =
+                std::make_shared<math::TensorWrapper<T>>(this->grad_->add(*grad));
         } else {
             // First gradient received, clone it to avoid side effects
             this->grad_ = std::make_shared<math::TensorWrapper<T>>(*grad);
@@ -271,8 +268,8 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
                 std::shared_ptr<math::TensorWrapper<T>> res,
                 common::Operator operatorType,
                 std::function<void()> gradFun = nullptr) {
-        std::shared_ptr<ComputeNode> node = std::make_shared<ComputeNode>(
-            res, operatorType, std::move(gradFun));
+        std::shared_ptr<ComputeNode> node =
+            std::make_shared<ComputeNode>(res, operatorType, std::move(gradFun));
         node->addParent(parent);
         node->setRequiresGrad(parent->getRequiresGrad());
         return node;
@@ -283,13 +280,12 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
     }
 
   private:
-    std::vector<std::shared_ptr<ComputeNode>> parents_; /**< Input nodes. */
-    std::shared_ptr<math::TensorWrapper<T>> data_;      /**< Forward data. */
-    common::Operator operatorType_ =
-        common::Operator::None; /**< Operation used. */
+    std::vector<std::shared_ptr<ComputeNode>> parents_;      /**< Input nodes. */
+    std::shared_ptr<math::TensorWrapper<T>> data_;           /**< Forward data. */
+    common::Operator operatorType_ = common::Operator::None; /**< Operation used. */
 
-    bool requiresGrad_ = false;     /**< Grad requirement flag. */
-    std::function<void()> gradFun_; /**< Backprop logic. */
+    bool requiresGrad_ = false;                    /**< Grad requirement flag. */
+    std::function<void()> gradFun_;                /**< Backprop logic. */
     std::shared_ptr<math::TensorWrapper<T>> grad_; /**< Accumulated grad. */
 
     friend class hahaha::Tensor<T>;

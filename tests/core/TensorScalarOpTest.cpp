@@ -107,8 +107,7 @@ TYPED_TEST(TensorScalarOpTypedTest, ScalarOps_0D_Scalar_Add) {
 TYPED_TEST(TensorScalarOpTypedTest, ScalarOps_0D_Scalar_Subtract) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
-    T scalar_2 =
-        TestFixture::scalarValue(T(0.4)); // 2 for integers, 2.0 for floats
+    T scalar_2 = TestFixture::scalarValue(T(0.4)); // 2 for integers, 2.0 for floats
     T scalar_20 = TestFixture::testValue() * T(2);
     Tensor<T> a(val);
     auto d = a - scalar_2;

@@ -16,12 +16,11 @@
 // jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 
+#include "ml/optimizer/AdamWOptimizer.h"
 
 #include <gtest/gtest.h>
 
 #include "public/Tensor.h"
-
-#include "ml/optimizer/AdamWOptimizer.h"
 using namespace hahaha;
 using namespace hahaha::ml;
 
@@ -32,7 +31,8 @@ template <typename T> class AdamWOptimizerTest : public ::testing::Test {
   protected:
     // Helper to compare values with epsilon
     void expectNear(T expected, T actual, T tolerance = 1e-4) {
-        EXPECT_NEAR(static_cast<double>(expected), static_cast<double>(actual),
+        EXPECT_NEAR(static_cast<double>(expected),
+                    static_cast<double>(actual),
                     static_cast<double>(tolerance));
     }
 
@@ -102,7 +102,7 @@ TYPED_TEST(AdamWOptimizerTest, WeightDecay_Logic) {
     using T = TypeParam;
     Tensor<T> w(T(10.0));
     w.setRequiresGrad(true);
-    
+
     T lr = T(0.1);
     T wd = T(0.01);
     // Grad = 0 to test pure Weight Decay effect
@@ -110,9 +110,9 @@ TYPED_TEST(AdamWOptimizerTest, WeightDecay_Logic) {
         w.getComputeNode()};
     AdamWOptimizer<T> opt(params, lr, 0.9, 0.999, 1e-8, wd);
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.0)));
-    
+
     opt.step();
-    
+
     // AdamW formula: theta = theta - lr * wd * theta - lr * AdamUpdate
     // Since Grad=0, AdamUpdate=0
     // theta = 10.0 - 0.1 * 0.01 * 10.0 = 10.0 - 0.01 = 9.99
@@ -123,7 +123,7 @@ TYPED_TEST(AdamWOptimizerTest, WeightDecay_WithGrad) {
     using T = TypeParam;
     Tensor<T> w(T(10.0));
     w.setRequiresGrad(true);
-    
+
     T lr = T(0.1);
     T wd = T(0.01);
     std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
@@ -133,7 +133,7 @@ TYPED_TEST(AdamWOptimizerTest, WeightDecay_WithGrad) {
     // Grad = 1.0 -> AdamUpdate ≈ 1.0
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(1.0)));
     opt.step();
-    
+
     // theta = 10.0 - (lr * wd * 10.0) - (lr * AdamUpdate)
     // theta = 10.0 - (0.1 * 0.01 * 10.0) - (0.1 * 1.0)
     // theta = 10.0 - 0.01 - 0.1 = 9.89
@@ -176,7 +176,7 @@ TYPED_TEST(AdamWOptimizerTest, AddParameter_3D_AfterStep) {
 
     w2.getComputeNode()->accumulateGrad(this->createGrad({1, 1, 2}, T(1.0)));
     opt.step(); // turn 2
-    
+
     // t=2 update ≈ 0.0744137
     T expectedUpdate = T(0.0744137);
     this->expectNear(T(10.0 - expectedUpdate), w2.at({0, 0, 0}));

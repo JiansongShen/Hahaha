@@ -39,11 +39,11 @@ namespace hahaha {
  *
  * @tparam T Numeric type.
  */
-template <typename T>
-class Parameters {
+template <typename T> class Parameters {
   public:
     /** @brief Construct an empty parameter collection. */
-    Parameters() : impl_(std::make_shared<ml::Parameters<T>>()) {}
+    Parameters() : impl_(std::make_shared<ml::Parameters<T>>()) {
+    }
 
     /**
      * @brief Add a parameter to the collection.

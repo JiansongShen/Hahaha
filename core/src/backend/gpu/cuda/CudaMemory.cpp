@@ -99,8 +99,7 @@ DeviceBuffer CudaMemory::allocateSmall(size_t size) {
 
 DeviceBuffer CudaMemory::allocateBig(size_t size) {
     if (auto res = memoryPool_.allocateBig(size); res.has_value()) {
-        return DeviceBuffer{reinterpret_cast<std::uintptr_t>(res.value()),
-                            size};
+        return DeviceBuffer{reinterpret_cast<std::uintptr_t>(res.value()), size};
     }
 
     warn(std::format("CUDA has not enough memory, need {}", size));
@@ -113,11 +112,10 @@ void CudaMemory::copyHostToDevice(DeviceBuffer& dst,
         throw std::runtime_error("Host to device copy size mismatch");
     }
 
-    const cudaError_t err =
-        cudaMemoryCopy(reinterpret_cast<void*>(dst.address()),
-                       src.data(),
-                       src.size(),
-                       cudaMemcpyHostToDevice);
+    const cudaError_t err = cudaMemoryCopy(reinterpret_cast<void*>(dst.address()),
+                                           src.data(),
+                                           src.size(),
+                                           cudaMemcpyHostToDevice);
 
     if (err != cudaSuccess) {
         throw std::runtime_error(std::string("CUDA host to device copy failed: ")

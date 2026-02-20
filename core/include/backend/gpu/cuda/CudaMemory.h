@@ -40,8 +40,7 @@ namespace hahaha::backend {
  */
 class CudaMemory : public GPUMemory {
   public:
-    static constexpr size_t DefaultSmallMemoryBlockThreshold = 512
-        << 20; // 512MB
+    static constexpr size_t DefaultSmallMemoryBlockThreshold = 512 << 20; // 512MB
 
     /**
      * @brief Free a device buffer.

@@ -287,14 +287,12 @@ TEST_F(NestedDataTest, EmptyNestedDataConstruction) {
 TEST_F(NestedDataTest, ConsistencyCheckInConstructor) {
     // Additional test for consistency checking
     EXPECT_THROW((NestedData<int>{{1, 2, 3}, {4, 5}}), std::invalid_argument);
-    EXPECT_THROW((NestedData<int>{{{1, 2}}, {{3, 4, 5}}}),
-                 std::invalid_argument);
+    EXPECT_THROW((NestedData<int>{{{1, 2}}, {{3, 4, 5}}}), std::invalid_argument);
 }
 
 TEST_F(NestedDataTest, ComplexNestedStructure) {
     // Test with more complex nested structures
-    NestedData<int> nd = {
-        {{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
+    NestedData<int> nd = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
     ASSERT_EQ(nd.getFlatData().size(), 12);
     ASSERT_EQ(nd.getShape().size(), 3);
     ASSERT_EQ(nd.getShape()[0], 3); // 3 major groups

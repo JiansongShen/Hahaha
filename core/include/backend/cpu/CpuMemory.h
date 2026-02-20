@@ -59,9 +59,8 @@ class CpuMemory : public Memory {
             throw std::runtime_error("Host to device copy size mismatch");
         }
         if (!src.empty()) {
-            std::memcpy(reinterpret_cast<void*>(dst.address()),
-                        src.data(),
-                        src.size());
+            std::memcpy(
+                reinterpret_cast<void*>(dst.address()), src.data(), src.size());
         }
     }
 
@@ -82,8 +81,8 @@ class CpuMemory : public Memory {
             return;
         }
         std::memset(reinterpret_cast<void*>(dst.address()),
-                   static_cast<unsigned char>(value),
-                   count);
+                    static_cast<unsigned char>(value),
+                    count);
     }
 };
 

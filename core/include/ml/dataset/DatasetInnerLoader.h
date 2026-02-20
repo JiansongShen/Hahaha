@@ -76,7 +76,7 @@ class DatasetInnerLoader {
 
         std::vector<std::vector<T>> dataList;
         while (std::getline(ifs, line)) {
-            ++currLine_; 
+            ++currLine_;
             auto datas = handleOneLine<T>(line);
             if (!datas.has_value() || datas.value().size() == 0) {
                 continue;
@@ -109,11 +109,13 @@ class DatasetInnerLoader {
             if (!valRes) {
                 // JumpOne strategy returns unexpected silently (it is expected
                 // behaviour, not a parse error).  Only log for other causes.
-                if (datasetHandleBlankStrategy_ != DatasetHandleBlankStrategy::JumpOne) {
-                error(std::format("error: when parsing the line:{} at file {}:{}",
-                                  line,
-                                  currFile_,
-                                  static_cast<int>(currLine_)));
+                if (datasetHandleBlankStrategy_
+                    != DatasetHandleBlankStrategy::JumpOne) {
+                    error(
+                        std::format("error: when parsing the line:{} at file {}:{}",
+                                    line,
+                                    currFile_,
+                                    static_cast<int>(currLine_)));
                 }
                 return std::unexpected(common::InvalidDatasetError());
             }
@@ -181,12 +183,13 @@ class DatasetInnerLoader {
             return;
         }
 
-        math::TensorWrapper<T> sampleTensor(
-            math::TensorShape(std::vector<size_t>{dataList.size(), dataList[0].size()}));
+        math::TensorWrapper<T> sampleTensor(math::TensorShape(
+            std::vector<size_t>{dataList.size(), dataList[0].size()}));
 
         for (size_t i = 0; i < dataList.size(); ++i) {
             for (size_t j = 0; j < dataList[i].size(); ++j) {
-                sampleTensor.getRawData()[i * dataList[0].size() + j] = dataList[i][j];
+                sampleTensor.getRawData()[i * dataList[0].size() + j] =
+                    dataList[i][j];
             }
         }
 

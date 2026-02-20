@@ -128,7 +128,8 @@ template <typename T> class DatasetInner {
       private:
         DatasetInner* dataset_;
         long index_;
-        /// nullopt until operator*() is first called; avoids copying a null TensorWrapper.
+        /// nullopt until operator*() is first called; avoids copying a null
+        /// TensorWrapper.
         std::optional<math::TensorWrapper<T>> current_;
     };
 
@@ -217,7 +218,8 @@ template <typename T> class DatasetInner {
       private:
         const DatasetInner* dataset_;
         long index_;
-        /// nullopt until operator*() is first called; avoids copying a null TensorWrapper.
+        /// nullopt until operator*() is first called; avoids copying a null
+        /// TensorWrapper.
         mutable std::optional<math::TensorWrapper<T>> current_;
     };
 
@@ -248,7 +250,6 @@ template <typename T> class DatasetInner {
     [[nodiscard]] DatasetTypeUnifyStrategy getDatasetTypeUnifyStrategy() const {
         return typeUnifyStrategy_;
     }
-
 
     /**
      * @brief Return the sample at logical index @p idx as a 1-D Tensor view.

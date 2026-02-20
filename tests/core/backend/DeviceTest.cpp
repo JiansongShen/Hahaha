@@ -35,8 +35,7 @@ namespace {
 // Concrete implementation for testing
 class TestDevice : public Device {
   public:
-    explicit TestDevice(DeviceType type, std::uint8_t id = 0)
-        : Device(type, id) {
+    explicit TestDevice(DeviceType type, std::uint8_t id = 0) : Device(type, id) {
     }
 
     DeviceBuffer allocate(size_t size) override {
@@ -58,8 +57,7 @@ class TestDevice : public Device {
 // Specialized class to test invalid device type
 class TestDeviceWithInvalidType : public Device {
   public:
-    explicit TestDeviceWithInvalidType(std::uint8_t rawType,
-                                       std::uint8_t id = 0)
+    explicit TestDeviceWithInvalidType(std::uint8_t rawType, std::uint8_t id = 0)
         : Device(static_cast<DeviceType>(0), id) {
         // Directly set the underlying type value
         *reinterpret_cast<std::uint8_t*>(&type_) = rawType;
@@ -168,10 +166,9 @@ TEST(DeviceTest, StringRepresentation) {
     EXPECT_EQ(TestDevice(DeviceType::XLA, 0).toString(), "XLA:0");
 
     // Test boundary case with maximum possible ID
-    EXPECT_EQ(
-        TestDevice(DeviceType::CPU, std::numeric_limits<std::uint8_t>::max())
-            .toString(),
-        "CPU:255");
+    EXPECT_EQ(TestDevice(DeviceType::CPU, std::numeric_limits<std::uint8_t>::max())
+                  .toString(),
+              "CPU:255");
 }
 
 TEST(DeviceTest, EdgeCases) {

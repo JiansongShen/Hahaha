@@ -142,8 +142,7 @@ TYPED_TEST(ComputeNodeErrorHandlingTypedTest, DivisionByZero_3D_Tensor) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    Tensor<T> a(
-        NestedData<T>{{{v10, v20}, {v30, v40}}, {{v50, v60}, {v70, v80}}});
+    Tensor<T> a(NestedData<T>{{{v10, v20}, {v30, v40}}, {{v50, v60}, {v70, v80}}});
     Tensor<T> b(NestedData<T>{{{v1, v2}, {v3, zero}}, {{v5, v6}, {v7, v8}}});
     EXPECT_THROW(auto c = a / b, std::runtime_error);
 }
@@ -207,8 +206,7 @@ TYPED_TEST(ComputeNodeErrorHandlingTypedTest, MatMul_3D_Tensor_Throws) {
     EXPECT_THROW(m2.matmul(t3), std::invalid_argument);
 }
 
-TYPED_TEST(ComputeNodeErrorHandlingTypedTest,
-           MatMul_InvalidShape_Non2D_Throws) {
+TYPED_TEST(ComputeNodeErrorHandlingTypedTest, MatMul_InvalidShape_Non2D_Throws) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);

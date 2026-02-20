@@ -43,15 +43,14 @@ enum class ErrorCode : std::size_t {
 /**
  * @brief Static array of error messages corresponding to ErrorCode.
  */
-constexpr const char* ErrorMessages[] = {
-    "Success",
-    "Invalid argument (e.g., shape mismatch)",
-    "Device unsupported",
-    "Numerical overflow",
-    "Internal error",
-    "Invalid dataset",
-    "Cuda device out of memory",
-    "CUDA small object memory pool full"};
+constexpr const char* ErrorMessages[] = {"Success",
+                                         "Invalid argument (e.g., shape mismatch)",
+                                         "Device unsupported",
+                                         "Numerical overflow",
+                                         "Internal error",
+                                         "Invalid dataset",
+                                         "Cuda device out of memory",
+                                         "CUDA small object memory pool full"};
 
 } // namespace hahaha::common
 

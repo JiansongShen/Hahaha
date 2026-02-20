@@ -65,11 +65,11 @@ TensorWrapper<T> concatenate(const std::vector<TensorWrapper<T>>& tensors) {
     size_t offset = 0;
     for (const auto& tensor : tensors) {
         size_t size = tensor.getTotalSize();
-        
+
         // Flatten the tensor to 1D using reshape (creates a copy)
         TensorWrapper<T> flatTensor = tensor.reshape({size});
         const T* tensorData = flatTensor.getRawData();
-        
+
         // Copy data
         std::copy(tensorData, tensorData + size, resultData + offset);
         offset += size;
@@ -91,8 +91,8 @@ TensorWrapper<T> concatenate(const std::vector<TensorWrapper<T>>& tensors) {
  *   TensorWrapper<float> t1({2, 3}, 0.0f); // shape [2, 3] - will be updated
  *   TensorWrapper<float> t2({4}, 0.0f);     // shape [4] - will be updated
  *   std::vector<TensorWrapper<float>*> tensors = {&t1, &t2};
- *   std::vector<size_t> sizes = {6, 4};      // sizes must match tensor.getTotalSize()
- *   distributeTensors(flat, tensors, sizes);
+ *   std::vector<size_t> sizes = {6, 4};      // sizes must match
+ * tensor.getTotalSize() distributeTensors(flat, tensors, sizes);
  *   // t1 and t2 now contain data from flat[0:6] and flat[6:10] respectively
  * @endcode
  *
@@ -106,17 +106,16 @@ TensorWrapper<T> concatenate(const std::vector<TensorWrapper<T>>& tensors) {
  *         or if the total size doesn't match flatTensor.getTotalSize().
  */
 template <typename T>
-void distributeTensors(
-    const TensorWrapper<T>& flatTensor,
-    const std::vector<TensorWrapper<T>*>& tensors,
-    const std::vector<size_t>& sizes) {
+void distributeTensors(const TensorWrapper<T>& flatTensor,
+                       const std::vector<TensorWrapper<T>*>& tensors,
+                       const std::vector<size_t>& sizes) {
     if (tensors.size() != sizes.size()) {
         throw std::invalid_argument(
             "distributeTensors: tensors and sizes vectors must have the same size");
     }
 
     if (tensors.empty()) {
-        return;  // Nothing to distribute
+        return; // Nothing to distribute
     }
 
     // Verify total size matches
@@ -124,19 +123,20 @@ void distributeTensors(
     for (size_t i = 0; i < tensors.size(); ++i) {
         size_t tensorTotalSize = tensors[i]->getTotalSize();
         if (sizes[i] != tensorTotalSize) {
-            throw std::invalid_argument(
-                "distributeTensors: size[" + std::to_string(i) + "] (" +
-                std::to_string(sizes[i]) + ") does not match tensor.getTotalSize() (" +
-                std::to_string(tensorTotalSize) + ")");
+            throw std::invalid_argument("distributeTensors: size["
+                                        + std::to_string(i) + "] ("
+                                        + std::to_string(sizes[i])
+                                        + ") does not match tensor.getTotalSize() ("
+                                        + std::to_string(tensorTotalSize) + ")");
         }
         totalSize += sizes[i];
     }
 
     if (totalSize != flatTensor.getTotalSize()) {
         throw std::invalid_argument(
-            "distributeTensors: total size of tensors (" + std::to_string(totalSize) +
-            ") does not match flatTensor.getTotalSize() (" +
-            std::to_string(flatTensor.getTotalSize()) + ")");
+            "distributeTensors: total size of tensors (" + std::to_string(totalSize)
+            + ") does not match flatTensor.getTotalSize() ("
+            + std::to_string(flatTensor.getTotalSize()) + ")");
     }
 
     const T* flatData = flatTensor.getRawData();
@@ -145,11 +145,11 @@ void distributeTensors(
     for (size_t i = 0; i < tensors.size(); ++i) {
         auto& tensor = *tensors[i];
         size_t tensorTotalSize = tensor.getTotalSize();
-        
+
         // Get raw data pointer directly from the original tensor
         // (reshape creates a copy, so we need to write to the original)
         T* tensorData = tensor.getRawData();
-        
+
         // Copy data from flattened tensor back to individual tensor
         // The tensor may be multi-dimensional, but getRawData() gives us
         // a flat view of the underlying storage

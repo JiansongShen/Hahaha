@@ -51,10 +51,8 @@ cudaError_t cudaMemoryFree(void* ptr);
  * @param kind Copy direction (e.g. cudaMemcpyHostToDevice, cudaMemcpyDeviceToHost).
  * @return CUDA error code.
  */
-cudaError_t cudaMemoryCopy(void* dst,
-                           const void* src,
-                           size_t count,
-                           cudaMemcpyKind kind);
+cudaError_t
+cudaMemoryCopy(void* dst, const void* src, size_t count, cudaMemcpyKind kind);
 
 /**
  * @brief Set memory to a value on CUDA device.

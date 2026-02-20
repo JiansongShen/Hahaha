@@ -80,9 +80,7 @@ inline void basic_adam_optimizer_example() {
         optimizer.zeroGrad();
         auto tmp = yTensorM - w * xTensorM;
 
-        loss = (yTensorM - w * xTensorM)
-                   .transpose()
-                   .matmul(yTensorM - w * xTensorM);
+        loss = (yTensorM - w * xTensorM).transpose().matmul(yTensorM - w * xTensorM);
 
         loss.backward();
         optimizer.step();
@@ -91,5 +89,4 @@ inline void basic_adam_optimizer_example() {
         std::cout << "  w: " << w.at({}) << std::endl;
         std::cout << "  loss: " << loss.data()->at({0, 0}) << std::endl;
     }
-
 }

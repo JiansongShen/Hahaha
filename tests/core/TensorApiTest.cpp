@@ -110,8 +110,7 @@ TYPED_TEST(TensorApiTest, RequiresGrad_FlagIsStoredOnNode) {
 
 TYPED_TEST(TensorApiTest, Sum_ForwardsToTensorWrapper) {
     Tensor<TypeParam> t(NestedData<TypeParam>{{1, 2}, {3, 4}});
-    TypeParam expected =
-        TypeParam(1) + TypeParam(2) + TypeParam(3) + TypeParam(4);
+    TypeParam expected = TypeParam(1) + TypeParam(2) + TypeParam(3) + TypeParam(4);
     EXPECT_EQ(t.sum(), expected);
 }
 
@@ -139,8 +138,7 @@ TYPED_TEST(TensorApiTest, GetTotalSize_2D_Matrix) {
 }
 
 TYPED_TEST(TensorApiTest, GetTotalSize_3D_Tensor) {
-    Tensor<TypeParam> t3D(
-        NestedData<TypeParam>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
+    Tensor<TypeParam> t3D(NestedData<TypeParam>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
     EXPECT_EQ(t3D.getTotalSize(), 8);
 }
 
@@ -169,8 +167,7 @@ TYPED_TEST(TensorApiTest, Clear_2D_Matrix) {
 }
 
 TYPED_TEST(TensorApiTest, Clear_3D_Tensor) {
-    Tensor<TypeParam> t3D(
-        NestedData<TypeParam>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
+    Tensor<TypeParam> t3D(NestedData<TypeParam>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
     t3D.clear();
     EXPECT_EQ(t3D.at({0, 0, 0}), TypeParam(0));
     EXPECT_EQ(t3D.at({1, 1, 1}), TypeParam(0));
@@ -193,16 +190,13 @@ TYPED_TEST(TensorApiTest, Sum_1D_Vector) {
 
 TYPED_TEST(TensorApiTest, Sum_2D_Matrix) {
     Tensor<TypeParam> t2D(NestedData<TypeParam>{{1, 2}, {3, 4}});
-    TypeParam expected =
-        TypeParam(1) + TypeParam(2) + TypeParam(3) + TypeParam(4);
+    TypeParam expected = TypeParam(1) + TypeParam(2) + TypeParam(3) + TypeParam(4);
     EXPECT_EQ(t2D.sum(), expected);
 }
 
 TYPED_TEST(TensorApiTest, Sum_3D_Tensor) {
-    Tensor<TypeParam> t3D(
-        NestedData<TypeParam>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
-    TypeParam expected = TypeParam(1) + TypeParam(2) + TypeParam(3)
-        + TypeParam(4) + TypeParam(5) + TypeParam(6) + TypeParam(7)
-        + TypeParam(8);
+    Tensor<TypeParam> t3D(NestedData<TypeParam>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
+    TypeParam expected = TypeParam(1) + TypeParam(2) + TypeParam(3) + TypeParam(4)
+        + TypeParam(5) + TypeParam(6) + TypeParam(7) + TypeParam(8);
     EXPECT_EQ(t3D.sum(), expected);
 }

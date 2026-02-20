@@ -62,17 +62,12 @@ cudaError_t cudaComputeAdd(cf32* input1,
                            cf32* output,
                            size_t size,
                            unsigned int blockSize) {
-    if (input1 == nullptr || input2 == nullptr || output == nullptr
-        || size == 0) {
+    if (input1 == nullptr || input2 == nullptr || output == nullptr || size == 0) {
         return cudaErrorInvalidValue;
     }
 
     // Call C interface
-    cuda_compute_add_c_interface((input1),
-                                 (input2),
-                                 (output),
-                                 size,
-                                 blockSize);
+    cuda_compute_add_c_interface((input1), (input2), (output), size, blockSize);
 
     // Check kernel launch error
     return cudaSuccess;
@@ -83,17 +78,12 @@ cudaError_t cudaComputeSubtract(cf32* input1,
                                 cf32* output,
                                 size_t size,
                                 unsigned int blockSize) {
-    if (input1 == nullptr || input2 == nullptr || output == nullptr
-        || size == 0) {
+    if (input1 == nullptr || input2 == nullptr || output == nullptr || size == 0) {
         return cudaErrorInvalidValue;
     }
 
     // Call C interface
-    cuda_compute_subtract_c_interface((input1),
-                                      (input2),
-                                      (output),
-                                      size,
-                                      blockSize);
+    cuda_compute_subtract_c_interface((input1), (input2), (output), size, blockSize);
 
     // Check kernel launch error
     return cudaSuccess;
@@ -104,17 +94,12 @@ cudaError_t cudaComputeMultiply(cf32* input1,
                                 cf32* output,
                                 size_t size,
                                 unsigned int blockSize) {
-    if (input1 == nullptr || input2 == nullptr || output == nullptr
-        || size == 0) {
+    if (input1 == nullptr || input2 == nullptr || output == nullptr || size == 0) {
         return cudaErrorInvalidValue;
     }
 
     // Call C interface
-    cuda_compute_multiply_c_interface((input1),
-                                      (input2),
-                                      (output),
-                                      size,
-                                      blockSize);
+    cuda_compute_multiply_c_interface((input1), (input2), (output), size, blockSize);
 
     // Check kernel launch error
     return cudaSuccess;
@@ -125,17 +110,12 @@ cudaError_t cudaComputeDivide(cf32* input1,
                               cf32* output,
                               size_t size,
                               unsigned int blockSize) {
-    if (input1 == nullptr || input2 == nullptr || output == nullptr
-        || size == 0) {
+    if (input1 == nullptr || input2 == nullptr || output == nullptr || size == 0) {
         return cudaErrorInvalidValue;
     }
 
     // Call C interface
-    cuda_compute_divide_c_interface(input1,
-                                    input2,
-                                    output,
-                                    size,
-                                    blockSize);
+    cuda_compute_divide_c_interface(input1, input2, output, size, blockSize);
 
     // Check kernel launch error
     return cudaSuccess;

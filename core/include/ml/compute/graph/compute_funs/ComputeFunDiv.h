@@ -51,9 +51,8 @@ namespace hahaha::compute {
  * @return Result node representing z = lhs / rhs.
  */
 template <typename T>
-std::shared_ptr<ComputeNode<T>>
-div(const std::shared_ptr<ComputeNode<T>>& lhs,
-    const std::shared_ptr<ComputeNode<T>>& rhs) {
+std::shared_ptr<ComputeNode<T>> div(const std::shared_ptr<ComputeNode<T>>& lhs,
+                                    const std::shared_ptr<ComputeNode<T>>& rhs) {
     auto [bLhs, bRhs] = broadcastNodes(lhs, rhs);
 
     auto resData = std::make_shared<math::TensorWrapper<T>>(
@@ -117,8 +116,8 @@ std::shared_ptr<ComputeNode<T>> div(const std::shared_ptr<ComputeNode<T>>& lhs,
  *   tensor-tensor `div(lhsScalarNode, rhs)`.
  */
 template <typename T>
-std::shared_ptr<ComputeNode<T>>
-div(const T& lhsScalar, const std::shared_ptr<ComputeNode<T>>& rhs) {
+std::shared_ptr<ComputeNode<T>> div(const T& lhsScalar,
+                                    const std::shared_ptr<ComputeNode<T>>& rhs) {
     return div(createScalarNode(lhsScalar, rhs), rhs);
 }
 

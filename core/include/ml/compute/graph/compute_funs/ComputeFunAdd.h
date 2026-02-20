@@ -50,9 +50,8 @@ namespace hahaha::compute {
  * @return Result node representing z = lhs + rhs.
  */
 template <typename T>
-std::shared_ptr<ComputeNode<T>>
-add(const std::shared_ptr<ComputeNode<T>>& lhs,
-    const std::shared_ptr<ComputeNode<T>>& rhs) {
+std::shared_ptr<ComputeNode<T>> add(const std::shared_ptr<ComputeNode<T>>& lhs,
+                                    const std::shared_ptr<ComputeNode<T>>& rhs) {
     auto [bLhs, bRhs] = broadcastNodes(lhs, rhs);
 
     auto resData = std::make_shared<math::TensorWrapper<T>>(
@@ -104,8 +103,8 @@ std::shared_ptr<ComputeNode<T>> add(const std::shared_ptr<ComputeNode<T>>& lhs,
  * - Addition is commutative, so this forwards to (rhs + scalar).
  */
 template <typename T>
-std::shared_ptr<ComputeNode<T>>
-add(const T& lhsScalar, const std::shared_ptr<ComputeNode<T>>& rhs) {
+std::shared_ptr<ComputeNode<T>> add(const T& lhsScalar,
+                                    const std::shared_ptr<ComputeNode<T>>& rhs) {
     return add(rhs, lhsScalar); // Commutative
 }
 

@@ -40,8 +40,7 @@ using hahaha::math::TensorWrapper;
 using NumericTypes =
     ::testing::Types<u8, i8, u16, i16, u32, i32, u64, i64, f32, f64>;
 
-template <typename T>
-class TensorWrapperShapeOpTypedTest : public ::testing::Test {
+template <typename T> class TensorWrapperShapeOpTypedTest : public ::testing::Test {
   protected:
     using Type = T;
 
@@ -177,8 +176,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_3D_To1D) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r6 = t3.reshape({8});
     EXPECT_EQ(r6.getShape().size(), 1);
     EXPECT_EQ(r6.getShape()[0], 8);
@@ -196,8 +194,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_3D_To2D) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r7 = t3.reshape({4, 2});
     EXPECT_EQ(r7.getShape().size(), 2);
     EXPECT_EQ(r7.getShape()[0], 4);
@@ -224,9 +221,8 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_3D_To3D_DifferentShape) {
     T v14 = T(14);
     T v15 = T(15);
     T v16 = T(16);
-    TensorWrapper<T> t3a(
-        NestedData<T>{{{v1, v2, v3, v4}, {v5, v6, v7, v8}},
-                      {{v9, v10, v11, v12}, {v13, v14, v15, v16}}});
+    TensorWrapper<T> t3a(NestedData<T>{{{v1, v2, v3, v4}, {v5, v6, v7, v8}},
+                                       {{v9, v10, v11, v12}, {v13, v14, v15, v16}}});
     auto r8 = t3a.reshape({2, 4, 2});
     EXPECT_EQ(r8.getShape().size(), 3);
     EXPECT_EQ(r8.getShape()[0], 2);
@@ -281,8 +277,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest,
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     EXPECT_THROW(t3.reshape({7}), std::invalid_argument);
     EXPECT_THROW(t3.reshape({2, 3}), std::invalid_argument);
     EXPECT_THROW(t3.reshape({2, 2, 3}), std::invalid_argument);
@@ -423,8 +418,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_2D_To2D_SameShape) {
     EXPECT_EQ(b22.getRawData().get(), m2.getRawData().get());
 }
 
-TYPED_TEST(TensorWrapperShapeOpTypedTest,
-           BroadcastTo_2D_To2D_Dim1_Broadcasting) {
+TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_2D_To2D_Dim1_Broadcasting) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);
@@ -464,8 +458,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_3D_To3D_SameShape) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto b33 = t3.broadcastTo(TensorShape({2, 2, 2}));
     EXPECT_EQ(b33.getShape().size(), 3);
     EXPECT_EQ(b33.getShape()[0], 2);
@@ -485,8 +478,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_ScalarTypes_0D_Scalar) {
     this->expectNear(b0.at({1, 1, 1}), val);
 }
 
-TYPED_TEST(TensorWrapperShapeOpTypedTest,
-           BroadcastTo_ScalarTypes_1D_SingleElement) {
+TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_ScalarTypes_1D_SingleElement) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
     TensorShape target({2, 2, 2});
@@ -496,8 +488,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest,
     this->expectNear(b1.at({1, 1, 1}), val);
 }
 
-TYPED_TEST(TensorWrapperShapeOpTypedTest,
-           BroadcastTo_ScalarTypes_2D_SingleElement) {
+TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_ScalarTypes_2D_SingleElement) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
     TensorShape target({2, 2, 2});
@@ -507,8 +498,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest,
     this->expectNear(b2.at({1, 1, 1}), val);
 }
 
-TYPED_TEST(TensorWrapperShapeOpTypedTest,
-           BroadcastTo_ScalarTypes_3D_SingleElement) {
+TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_ScalarTypes_3D_SingleElement) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
     TensorShape target({2, 2, 2});
@@ -518,8 +508,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest,
     this->expectNear(b3.at({1, 1, 1}), val);
 }
 
-TEST_F(TensorWrapperShapeOpTest,
-       BroadcastTo_SameShape_ReturnsViewWithSameStride) {
+TEST_F(TensorWrapperShapeOpTest, BroadcastTo_SameShape_ReturnsViewWithSameStride) {
     TensorWrapper<int> src(NestedData<int>{{1, 2}, {3, 4}}); // shape (2,2)
     auto view = src.broadcastTo(TensorShape({2, 2}));
 
@@ -549,8 +538,7 @@ TEST_F(TensorWrapperShapeOpTest, BroadcastTo_DimOneGetsZeroStride) {
     auto view = src.broadcastTo(TensorShape({2, 3}));   // (2,3)
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2);
     EXPECT_EQ(view.getStride().getStrideVec()[0], 0);
-    EXPECT_EQ(view.getStride().getStrideVec()[1],
-              src.getStride().getStrideVec()[1]);
+    EXPECT_EQ(view.getStride().getStrideVec()[1], src.getStride().getStrideVec()[1]);
 }
 
 TYPED_TEST(TensorWrapperShapeOpTypedTest,
@@ -563,15 +551,13 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest,
     EXPECT_THROW(v1_tensor.broadcastTo(TensorShape({})), std::invalid_argument);
 }
 
-TYPED_TEST(
-    TensorWrapperShapeOpTypedTest,
-    BroadcastTo_ErrorHandling_1D_IncompatibleSize_ThrowsInvalidArgument) {
+TYPED_TEST(TensorWrapperShapeOpTypedTest,
+           BroadcastTo_ErrorHandling_1D_IncompatibleSize_ThrowsInvalidArgument) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);
     TensorWrapper<T> v2_tensor(NestedData<T>{v1, v2});
-    EXPECT_THROW(v2_tensor.broadcastTo(TensorShape({3})),
-                 std::invalid_argument);
+    EXPECT_THROW(v2_tensor.broadcastTo(TensorShape({3})), std::invalid_argument);
 }
 
 TYPED_TEST(TensorWrapperShapeOpTypedTest,
@@ -585,9 +571,8 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest,
     EXPECT_THROW(m2.broadcastTo(TensorShape({3})), std::invalid_argument);
 }
 
-TYPED_TEST(
-    TensorWrapperShapeOpTypedTest,
-    BroadcastTo_ErrorHandling_2D_IncompatibleShape_ThrowsInvalidArgument) {
+TYPED_TEST(TensorWrapperShapeOpTypedTest,
+           BroadcastTo_ErrorHandling_2D_IncompatibleShape_ThrowsInvalidArgument) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);
@@ -608,14 +593,12 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest,
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     EXPECT_THROW(t3.broadcastTo(TensorShape({2, 2})), std::invalid_argument);
 }
 
-TYPED_TEST(
-    TensorWrapperShapeOpTypedTest,
-    BroadcastTo_ErrorHandling_3D_IncompatibleShape_ThrowsInvalidArgument) {
+TYPED_TEST(TensorWrapperShapeOpTypedTest,
+           BroadcastTo_ErrorHandling_3D_IncompatibleShape_ThrowsInvalidArgument) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);
@@ -625,10 +608,8 @@ TYPED_TEST(
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3b(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
-    EXPECT_THROW(t3b.broadcastTo(TensorShape({2, 2, 3})),
-                 std::invalid_argument);
+    TensorWrapper<T> t3b(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    EXPECT_THROW(t3b.broadcastTo(TensorShape({2, 2, 3})), std::invalid_argument);
 }
 
 TYPED_TEST(

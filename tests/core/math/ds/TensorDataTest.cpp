@@ -72,16 +72,15 @@ TEST_F(TensorDataTest, ShapeOnlyConstructor_DefaultDeviceAllocates) {
 TEST_F(TensorDataTest, ShapeValueConstructor_GpuDevice_ThrowsRuntimeError) {
     hahaha::math::TensorShape shape({2, 2});
     EXPECT_THROW(
-        TensorData<int>(
-            shape, 1, (std::make_shared<hahaha::backend::GPUDevice>())),
+        TensorData<int>(shape, 1, (std::make_shared<hahaha::backend::GPUDevice>())),
         std::runtime_error);
 }
 
 TEST_F(TensorDataTest, ShapeOnlyConstructor_GpuDevice_ThrowsRuntimeError) {
     hahaha::math::TensorShape shape({2, 2});
-    EXPECT_THROW(TensorData<int>(
-                     shape, (std::make_shared<hahaha::backend::GPUDevice>())),
-                 std::runtime_error);
+    EXPECT_THROW(
+        TensorData<int>(shape, (std::make_shared<hahaha::backend::GPUDevice>())),
+        std::runtime_error);
 }
 
 TEST_F(TensorDataTest, InitVecConstructor_Creates1DTensor) {

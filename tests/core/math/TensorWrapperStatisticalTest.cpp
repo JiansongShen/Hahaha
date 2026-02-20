@@ -115,8 +115,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_3D_Tensor) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     T expected = T(36);
     this->expectNear(t3.sum(), expected);
 }
@@ -128,8 +127,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_EmptyTensor_ReturnsZero) {
     this->expectNear(tensor.sum(), expected);
 }
 
-TYPED_TEST(TensorWrapperStatisticalTypedTest,
-           Sum_WithAxes_EmptyAxes_ReturnsClone) {
+TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_WithAxes_EmptyAxes_ReturnsClone) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);
@@ -185,8 +183,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     EXPECT_THROW(t3.sum({3}), std::invalid_argument); // 3D has only axes 0,1,2
 }
 
@@ -440,8 +437,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     EXPECT_EQ(sum1.getShape()[0], 2);
 }
 
-TYPED_TEST(TensorWrapperStatisticalTypedTest,
-           Sum_0D_EmptyAxes_ReturnsSameValue) {
+TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_0D_EmptyAxes_ReturnsSameValue) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
     TensorWrapper<T> s0(val);
@@ -493,8 +489,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_3D_EmptyAxes_ReturnsClone) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r3_empty = t3.sum({});
     EXPECT_EQ(r3_empty.getShape(), t3.getShape());
 }
@@ -510,8 +505,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r3_01 = t3.sum({0, 1});
     EXPECT_EQ(r3_01.getShape().size(), 1);
     EXPECT_EQ(r3_01.getShape()[0], 2);
@@ -529,8 +523,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_3D_AllAxes_ReducesToScalar) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r3_all = t3.sum({0, 1, 2});
     EXPECT_EQ(r3_all.getDimensions(), 0);
     T expected = T(36);

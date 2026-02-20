@@ -28,7 +28,8 @@ using FloatingPointTypes = ::testing::Types<float, double>;
 template <typename T> class SGDMOptimizerTest : public ::testing::Test {
   protected:
     void expectNear(T expected, T actual, T tolerance = 1e-4) {
-        EXPECT_NEAR(static_cast<double>(expected), static_cast<double>(actual),
+        EXPECT_NEAR(static_cast<double>(expected),
+                    static_cast<double>(actual),
                     static_cast<double>(tolerance));
     }
 };
@@ -57,7 +58,7 @@ TYPED_TEST(SGDMOptimizerTest, StandardUpdate_MomentumAccumulation) {
     // w = 1.0 - 0.1 * 0.1 = 0.99
     w.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));
-    
+
     opt.step();
     this->expectNear(T(0.99), w.at({0}));
 
@@ -68,7 +69,7 @@ TYPED_TEST(SGDMOptimizerTest, StandardUpdate_MomentumAccumulation) {
     w.clearGrad();
     w.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));
-    
+
     opt.step();
     this->expectNear(T(0.971), w.at({0}));
 }
@@ -141,7 +142,7 @@ TYPED_TEST(SGDMOptimizerTest, AddParameter_BeforeAndAfterStep) {
     // grad(w1) = 1.0
     // v(w1) = 0.9 * 0.1 + 0.1 * 1.0 = 0.19
     // w1 = 0.99 - 0.1 * 0.19 = 0.971
-    
+
     // grad(w2) = 1.0
     // v(w2) (initially 0) = 0.9 * 0 + 0.1 * 1.0 = 0.1
     // w2 = 2.0 - 0.1 * 0.1 = 1.99
@@ -149,7 +150,7 @@ TYPED_TEST(SGDMOptimizerTest, AddParameter_BeforeAndAfterStep) {
     w1.clearGrad();
     w1.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));
-    
+
     w2.getComputeNode()->accumulateGrad(
         std::make_shared<math::TensorWrapper<T>>(math::TensorShape({1}), T(1.0)));
 

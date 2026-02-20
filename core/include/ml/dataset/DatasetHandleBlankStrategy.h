@@ -31,17 +31,15 @@ inline constexpr auto FloatNan = std::numeric_limits<float>::quiet_NaN();
 
 static auto DefaultDatasetHandleBlankStrategy = DatasetHandleBlankStrategy::SetNan;
 
-inline DatasetHandleBlankStrategy getDefaultDatasetHandleBlankStrategy()
-{
+inline DatasetHandleBlankStrategy getDefaultDatasetHandleBlankStrategy() {
     return DefaultDatasetHandleBlankStrategy;
 }
 
 inline void setDefaultDatasetHandleBlankStrategy(
-    const DatasetHandleBlankStrategy datasetHandleBlankStrategy)
-{
+    const DatasetHandleBlankStrategy datasetHandleBlankStrategy) {
     DefaultDatasetHandleBlankStrategy = datasetHandleBlankStrategy;
 }
 
-}
+} // namespace hahaha::ml
 
 #endif // HAHAHA_DATASETHANDLEBLANKSTRATEGY_H_F167E75C6E5D452A9A3414D452960B1E

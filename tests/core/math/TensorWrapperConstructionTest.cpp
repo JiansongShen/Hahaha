@@ -103,8 +103,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, Default_CreatesEmptyTensor) {
 // Shape-Value Constructor - Typed Test
 // ============================================================================
 
-TYPED_TEST(TensorWrapperConstructionTypedTest,
-           ShapeInitValue_CreatesCorrectTensor) {
+TYPED_TEST(TensorWrapperConstructionTypedTest, ShapeInitValue_CreatesCorrectTensor) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
     TensorWrapper<T> tensor(TensorShape({2, 3}), val);
@@ -120,9 +119,8 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
            ShapeInitValueDevice_CreatesCorrectTensor) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
-    TensorWrapper<T> tensor(TensorShape({2, 3}),
-                            val,
-                            std::make_shared<hahaha::backend::CPUDevice>());
+    TensorWrapper<T> tensor(
+        TensorShape({2, 3}), val, std::make_shared<hahaha::backend::CPUDevice>());
     EXPECT_EQ(tensor.getTotalSize(), 6);
     EXPECT_EQ(tensor.getShape().size(), 2);
     EXPECT_EQ(tensor.getDevice()->getType(), DeviceType::CPU);
@@ -286,8 +284,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, CopyConstructor_DeepCopiesData) {
                      v1); // Original modification should not affect copy
 }
 
-TYPED_TEST(TensorWrapperConstructionTypedTest,
-           MoveConstructor_TransfersOwnership) {
+TYPED_TEST(TensorWrapperConstructionTypedTest, MoveConstructor_TransfersOwnership) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);
@@ -300,8 +297,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
               0); // Moved-from objects usually have empty state
 }
 
-TYPED_TEST(TensorWrapperConstructionTypedTest,
-           MoveAssignment_TransfersOwnership) {
+TYPED_TEST(TensorWrapperConstructionTypedTest, MoveAssignment_TransfersOwnership) {
     using T = TestFixture::Type;
     T v1 = T(1);
     T v2 = T(2);
@@ -369,8 +365,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
     EXPECT_EQ(tensor.getDevice()->getId(), 0);
 }
 
-TYPED_TEST(TensorWrapperConstructionTypedTest,
-           GetRawData_ReturnsSharedPtrToBuffer) {
+TYPED_TEST(TensorWrapperConstructionTypedTest, GetRawData_ReturnsSharedPtrToBuffer) {
     using T = TestFixture::Type;
     T val = TestFixture::testValue();
     TensorWrapper<T> tensor(TensorShape({2, 2}), val);
@@ -401,7 +396,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
     T v4 = T(4);
     TensorWrapper<T> tensor(NestedData<T>{{v1, v2}, {v3, v4}});
     EXPECT_THROW(tensor.at({0, 0, 0}), std::out_of_range); // Dimension mismatch
-    EXPECT_THROW(tensor.at({2, 0}), std::out_of_range); // Index out of bounds
+    EXPECT_THROW(tensor.at({2, 0}), std::out_of_range);    // Index out of bounds
 }
 
 TYPED_TEST(TensorWrapperConstructionTypedTest,
@@ -416,8 +411,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
     EXPECT_THROW(tensor.at({0}), std::out_of_range);
 }
 
-TYPED_TEST(TensorWrapperConstructionTypedTest,
-           GetDimensions_ReturnsCorrectCount) {
+TYPED_TEST(TensorWrapperConstructionTypedTest, GetDimensions_ReturnsCorrectCount) {
     using T = TestFixture::Type;
     T val1 = T(1);
     TensorWrapper<T> tensor_scalar(val1);
@@ -432,8 +426,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
     EXPECT_EQ(tensor_2d.getDimensions(), 2);
 }
 
-TYPED_TEST(TensorWrapperConstructionTypedTest,
-           GetTotalSize_ReturnsCorrectCount) {
+TYPED_TEST(TensorWrapperConstructionTypedTest, GetTotalSize_ReturnsCorrectCount) {
     using T = TestFixture::Type;
     T val1 = T(1);
     TensorWrapper<T> tensor_scalar(NestedData<T>{val1});

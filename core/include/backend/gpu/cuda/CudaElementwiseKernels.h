@@ -53,9 +53,8 @@ void cuda_div(std::span<T> a, std::span<T> b, std::span<T> out);
  * @brief CUDA implementation for element-wise addition (float specialization).
  */
 template <>
-inline void cuda_add<float>(std::span<float> a,
-                            std::span<float> b,
-                            std::span<float> out) {
+inline void
+cuda_add<float>(std::span<float> a, std::span<float> b, std::span<float> out) {
     const size_t size = a.size();
     if (size == 0) {
         return;
@@ -63,11 +62,7 @@ inline void cuda_add<float>(std::span<float> a,
 
     const unsigned int blockSize = 256;
     const cudaError_t err =
-        cudaComputeAdd(a.data(),
-                       b.data(),
-                       out.data(),
-                       size,
-                       blockSize);
+        cudaComputeAdd(a.data(), b.data(), out.data(), size, blockSize);
     if (err != cudaSuccess) {
         throw std::runtime_error(std::string("CUDA kernel launch failed: ")
                                  + cudaGetErrorString(err));
@@ -81,21 +76,19 @@ inline void cuda_add<float>(std::span<float> a,
  * specialization).
  */
 template <>
-inline void cuda_sub<float>(std::span<float> a,
-                            std::span<float> b,
-                            std::span<float> out) {
+inline void
+cuda_sub<float>(std::span<float> a, std::span<float> b, std::span<float> out) {
     const size_t size = a.size();
     if (size == 0) {
         return;
     }
 
     const unsigned int blockSize = 256;
-    cudaError_t err =
-        cudaComputeSubtract(reinterpret_cast<cf32*>(a.data()),
-                            reinterpret_cast<cf32*>(b.data()),
-                            reinterpret_cast<cf32*>(out.data()),
-                            size,
-                            blockSize);
+    cudaError_t err = cudaComputeSubtract(reinterpret_cast<cf32*>(a.data()),
+                                          reinterpret_cast<cf32*>(b.data()),
+                                          reinterpret_cast<cf32*>(out.data()),
+                                          size,
+                                          blockSize);
     if (err != cudaSuccess) {
         throw std::runtime_error(std::string("CUDA kernel launch failed: ")
                                  + cudaGetErrorString(err));
@@ -109,21 +102,19 @@ inline void cuda_sub<float>(std::span<float> a,
  * specialization).
  */
 template <>
-inline void cuda_mul<float>(std::span<float> a,
-                            std::span<float> b,
-                            std::span<float> out) {
+inline void
+cuda_mul<float>(std::span<float> a, std::span<float> b, std::span<float> out) {
     const size_t size = a.size();
     if (size == 0) {
         return;
     }
 
     const unsigned int blockSize = 256;
-    cudaError_t err =
-        cudaComputeMultiply(reinterpret_cast<cf32*>(a.data()),
-                            reinterpret_cast<cf32*>(b.data()),
-                            reinterpret_cast<cf32*>(out.data()),
-                            size,
-                            blockSize);
+    cudaError_t err = cudaComputeMultiply(reinterpret_cast<cf32*>(a.data()),
+                                          reinterpret_cast<cf32*>(b.data()),
+                                          reinterpret_cast<cf32*>(out.data()),
+                                          size,
+                                          blockSize);
     if (err != cudaSuccess) {
         throw std::runtime_error(std::string("CUDA kernel launch failed: ")
                                  + cudaGetErrorString(err));
@@ -136,21 +127,19 @@ inline void cuda_mul<float>(std::span<float> a,
  * @brief CUDA implementation for element-wise division (float specialization).
  */
 template <>
-inline void cuda_div<float>(std::span<float> a,
-                            std::span<float> b,
-                            std::span<float> out) {
+inline void
+cuda_div<float>(std::span<float> a, std::span<float> b, std::span<float> out) {
     const size_t size = a.size();
     if (size == 0) {
         return;
     }
 
     const unsigned int blockSize = 256;
-    cudaError_t err =
-        cudaComputeDivide(reinterpret_cast<cf32*>(a.data()),
-                          reinterpret_cast<cf32*>(b.data()),
-                          reinterpret_cast<cf32*>(out.data()),
-                          size,
-                          blockSize);
+    cudaError_t err = cudaComputeDivide(reinterpret_cast<cf32*>(a.data()),
+                                        reinterpret_cast<cf32*>(b.data()),
+                                        reinterpret_cast<cf32*>(out.data()),
+                                        size,
+                                        blockSize);
     if (err != cudaSuccess) {
         throw std::runtime_error(std::string("CUDA kernel launch failed: ")
                                  + cudaGetErrorString(err));
@@ -161,30 +150,22 @@ inline void cuda_div<float>(std::span<float> a,
 
 // Stubs for non-float types
 template <typename T>
-void cuda_add(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {
+void cuda_add(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
     throw std::runtime_error("CUDA operations only support float type");
 }
 
 template <typename T>
-void cuda_sub(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {
+void cuda_sub(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
     throw std::runtime_error("CUDA operations only support float type");
 }
 
 template <typename T>
-void cuda_mul(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {
+void cuda_mul(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
     throw std::runtime_error("CUDA operations only support float type");
 }
 
 template <typename T>
-void cuda_div(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {
+void cuda_div(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
     throw std::runtime_error("CUDA operations only support float type");
 }
 
@@ -192,42 +173,34 @@ void cuda_div(std::span<T> /* a */,
 
 // Stubs when CUDA headers not available
 template <typename T>
-void cuda_add(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {}
+void cuda_add(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
+}
 template <typename T>
-void cuda_sub(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {}
+void cuda_sub(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
+}
 template <typename T>
-void cuda_mul(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {}
+void cuda_mul(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
+}
 template <typename T>
-void cuda_div(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {}
+void cuda_div(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
+}
 
 #endif // __has_include(<driver_types.h>)
 #else  // !HAHAHA_USE_CUDA
 
 // Stubs when CUDA not enabled
 template <typename T>
-void cuda_add(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {}
+void cuda_add(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
+}
 template <typename T>
-void cuda_sub(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {}
+void cuda_sub(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
+}
 template <typename T>
-void cuda_mul(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {}
+void cuda_mul(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
+}
 template <typename T>
-void cuda_div(std::span<T> /* a */,
-              std::span<T> /* b*/,
-              std::span<T> /*out*/) {}
+void cuda_div(std::span<T> /* a */, std::span<T> /* b*/, std::span<T> /*out*/) {
+}
 
 #endif // HAHAHA_USE_CUDA
 

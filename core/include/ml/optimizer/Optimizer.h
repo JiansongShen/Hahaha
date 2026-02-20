@@ -14,7 +14,7 @@
 //
 // Contributors:
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
-//
+// JiansongShen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 
 #ifndef OPTIMIZER_B8596AC9_CA72_40A7_A99C_9A73CB770A4B
 #define OPTIMIZER_B8596AC9_CA72_40A7_A99C_9A73CB770A4B

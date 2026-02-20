@@ -21,17 +21,17 @@
 
 #include <cstddef>
 
+#include "backend/vectorize/arch/simd_impl.h"
 #include "backend/vectorize/simd_vec.h"
 #include "common/definitions.h"
-
-#include "backend/vectorize/arch/simd_impl.h"
 
 namespace hahaha::backend {
 using common::f32;
 using common::f64;
 
 /**
- * @brief Contiguous elementwise add: out[i] = a[i] + b[i], vectorized when SimdVec is available.
+ * @brief Contiguous elementwise add: out[i] = a[i] + b[i], vectorized when SimdVec
+ * is available.
  */
 inline void simdAddContiguous(f32 const* a, f32 const* b, f32* out, std::size_t n) {
 #if defined(HAHAHA_ARCH_IS_X86_FAMILY) && HAHAHA_ARCH_IS_X86_FAMILY

@@ -172,8 +172,7 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_1D_To2D) {
     T g4 = T(40);
     Tensor<T> grad1(NestedData<T>{{g1, g2}, {g3, g4}});
     b1.getComputeNode()->setGrad(
-        std::make_shared<hahaha::math::TensorWrapper<T>>(
-            grad1.data()->clone()));
+        std::make_shared<hahaha::math::TensorWrapper<T>>(grad1.data()->clone()));
 
     b1.getComputeNode()->getGradFun()();
 
@@ -198,8 +197,7 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_2D_To1D) {
     T g4 = T(40);
     Tensor<T> grad2(NestedData<T>{g1, g2, g3, g4});
     b2.getComputeNode()->setGrad(
-        std::make_shared<hahaha::math::TensorWrapper<T>>(
-            grad2.data()->clone()));
+        std::make_shared<hahaha::math::TensorWrapper<T>>(grad2.data()->clone()));
 
     b2.getComputeNode()->getGradFun()();
 
@@ -232,8 +230,7 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_3D_To1D) {
     T g8 = T(80);
     Tensor<T> grad3(NestedData<T>{g1, g2, g3, g4, g5, g6, g7, g8});
     b3.getComputeNode()->setGrad(
-        std::make_shared<hahaha::math::TensorWrapper<T>>(
-            grad3.data()->clone()));
+        std::make_shared<hahaha::math::TensorWrapper<T>>(grad3.data()->clone()));
 
     b3.getComputeNode()->getGradFun()();
 
@@ -259,8 +256,7 @@ TYPED_TEST(UnaryOpTypedTest, Reshape_Backward_0D_Scalar_To1D) {
 
     Tensor<T> grad0(NestedData<T>{grad_val});
     b0.getComputeNode()->setGrad(
-        std::make_shared<hahaha::math::TensorWrapper<T>>(
-            grad0.data()->clone()));
+        std::make_shared<hahaha::math::TensorWrapper<T>>(grad0.data()->clone()));
 
     b0.getComputeNode()->getGradFun()();
 
@@ -288,8 +284,7 @@ TYPED_TEST(UnaryOpTypedTest, Transpose_Backward_2D_SquareMatrix) {
     T g4 = T(40);
     Tensor<T> grad2(NestedData<T>{{g1, g2}, {g3, g4}});
     b2.getComputeNode()->setGrad(
-        std::make_shared<hahaha::math::TensorWrapper<T>>(
-            grad2.data()->clone()));
+        std::make_shared<hahaha::math::TensorWrapper<T>>(grad2.data()->clone()));
 
     b2.getComputeNode()->getGradFun()();
 
@@ -318,8 +313,7 @@ TYPED_TEST(UnaryOpTypedTest, Transpose_Backward_2D_RectangularMatrix) {
     T g6 = T(60);
     Tensor<T> grad2b(NestedData<T>{{g1, g2}, {g3, g4}, {g5, g6}});
     b2b.getComputeNode()->setGrad(
-        std::make_shared<hahaha::math::TensorWrapper<T>>(
-            grad2b.data()->clone()));
+        std::make_shared<hahaha::math::TensorWrapper<T>>(grad2b.data()->clone()));
 
     b2b.getComputeNode()->getGradFun()();
 
@@ -440,8 +434,7 @@ TYPED_TEST(UnaryOpTypedTest, Negate_Backward_2D_Matrix) {
     auto f2 = -ab2;
     f2.backward();
 
-    T expected_a00_grad, expected_a11_grad, expected_b00_grad,
-        expected_b11_grad;
+    T expected_a00_grad, expected_a11_grad, expected_b00_grad, expected_b11_grad;
     if constexpr (TestFixture::isFloatingPoint()) {
         expected_a00_grad = T(-6.0);
         expected_a11_grad = T(-9.0);
@@ -511,8 +504,7 @@ TYPED_TEST(UnaryOpTypedTest, Negate_Backward_3D_Tensor) {
     auto f3 = -ab3;
     f3.backward();
 
-    T expected_a000_grad, expected_a111_grad, expected_b000_grad,
-        expected_b111_grad;
+    T expected_a000_grad, expected_a111_grad, expected_b000_grad, expected_b111_grad;
     if constexpr (TestFixture::isFloatingPoint()) {
         expected_a000_grad = T(-1.0);
         expected_a111_grad = T(-8.0);

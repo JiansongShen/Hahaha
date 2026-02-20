@@ -24,8 +24,7 @@
 
 // Avoid including ImGui backend headers from a Meson subproject directory.
 // We compile the backend .cpp files and declare the symbols we use here.
-extern bool ImGui_ImplGlfw_InitForOpenGL(GLFWwindow* window,
-                                         bool install_callbacks);
+extern bool ImGui_ImplGlfw_InitForOpenGL(GLFWwindow* window, bool install_callbacks);
 extern void ImGui_ImplGlfw_NewFrame();
 extern void ImGui_ImplGlfw_Shutdown();
 

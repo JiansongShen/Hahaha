@@ -26,8 +26,7 @@ inline void tensor_basic_init_example() {
 
     hahaha::Tensor<hahaha::common::u32> t2({{1, 2}, {3, 4}});
 
-    hahaha::Tensor<hahaha::common::i32> t3(
-        {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
+    hahaha::Tensor<hahaha::common::i32> t3({{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
 }
 
 inline void tensor_basic_add_example() {

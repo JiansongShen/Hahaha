@@ -32,9 +32,7 @@
 
 namespace hahaha {
 
-
-
-//TODO: Make sure the check of nullptr of compute node
+// TODO: Make sure the check of nullptr of compute node
 /**
  * @brief High-level User Interface for Tensor operations and Autograd.
  *
@@ -51,8 +49,7 @@ namespace hahaha {
  * @tparam T Numeric data type.
  */
 template <typename T> class Tensor {
-    static_assert(utils::isLegalDataType<T>::value,
-                  "T must be a legal data type");
+    static_assert(utils::isLegalDataType<T>::value, "T must be a legal data type");
 
   public:
     /**
@@ -66,10 +63,9 @@ template <typename T> class Tensor {
     /**
      * @brief Default tensor constructor
      */
-    Tensor () {
+    Tensor() {
         computeNode_ = std::make_shared<compute::ComputeNode<T>>(
-            std::make_shared<math::TensorWrapper<T>>()
-        );
+            std::make_shared<math::TensorWrapper<T>>());
     }
 
     /**
@@ -112,7 +108,6 @@ template <typename T> class Tensor {
 
         return Tensor(computeNode);
     }
-
 
     /** @brief Addition operator. Builds an 'Add' node. */
     Tensor operator+(const Tensor& other) const {
@@ -328,7 +323,8 @@ template <typename T> class Tensor {
      * * @return Tensor A new tensor instance with all elements set to 0.
      */
     Tensor zeros() const {
-        auto zeroData = std::make_shared<math::TensorWrapper<T>>(computeNode_->getData()->zeros());
+        auto zeroData = std::make_shared<math::TensorWrapper<T>>(
+            computeNode_->getData()->zeros());
         return Tensor(zeroData);
     }
 
@@ -339,7 +335,8 @@ template <typename T> class Tensor {
      * * @return Tensor A new tensor instance with all elements set to 1.
      */
     Tensor ones() const {
-        auto oneData = std::make_shared<math::TensorWrapper<T>>(computeNode_->getData()->ones());
+        auto oneData = std::make_shared<math::TensorWrapper<T>>(
+            computeNode_->getData()->ones());
         return Tensor(oneData);
     }
 
@@ -350,7 +347,8 @@ template <typename T> class Tensor {
      * @return Tensor A new tensor instance where every element is @p initValue.
      */
     Tensor sameShapeWithValue(T initValue) const {
-        auto newData = std::make_shared<math::TensorWrapper<T>>(computeNode_->getData()->sameShapeWithValue(initValue));
+        auto newData = std::make_shared<math::TensorWrapper<T>>(
+            computeNode_->getData()->sameShapeWithValue(initValue));
         return Tensor(newData);
     }
 
@@ -359,7 +357,8 @@ template <typename T> class Tensor {
      * @return Tensor A new tensor with copied data.
      */
     Tensor clone() const {
-        auto clonedData = std::make_shared<math::TensorWrapper<T>>(computeNode_->getData()->clone());
+        auto clonedData = std::make_shared<math::TensorWrapper<T>>(
+            computeNode_->getData()->clone());
         return Tensor(clonedData);
     }
 

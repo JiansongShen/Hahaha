@@ -47,8 +47,7 @@ int main() {
         cuda_device.memory().allocate(sizeof(float) * host_data.size());
 
     if (device_buffer.address() != 0) {
-        std::cout << "Successfully allocated memory on CUDA device"
-                  << std::endl;
+        std::cout << "Successfully allocated memory on CUDA device" << std::endl;
 
         // Copy data to device
         cuda_device.memory().copyHostToDevice(
@@ -61,8 +60,7 @@ int main() {
         // Test memory set operation
         cuda_device.memory().memset(
             device_buffer, 0, sizeof(float) * host_data.size());
-        std::cout << "Successfully performed memset on CUDA device"
-                  << std::endl;
+        std::cout << "Successfully performed memset on CUDA device" << std::endl;
 
         // Read data back to host
         std::vector<float> read_back_data(host_data.size());
@@ -71,8 +69,7 @@ int main() {
                             sizeof(float) * host_data.size()),
             device_buffer);
 
-        std::cout << "Successfully copied data back from CUDA device"
-                  << std::endl;
+        std::cout << "Successfully copied data back from CUDA device" << std::endl;
 
         // Free device memory
         cuda_device.memory().free(device_buffer);

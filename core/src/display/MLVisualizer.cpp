@@ -122,16 +122,13 @@ class MLVisualizer : public IVisualizer {
 
             // Draw node box
             ImVec2 p_min = current_pos;
-            ImVec2 p_max = {current_pos.x + nodeWidth,
-                            current_pos.y + nodeHeight};
-            drawList->AddRectFilled(
-                p_min, p_max, IM_COL32(60, 60, 70, 255), 5.0f);
+            ImVec2 p_max = {current_pos.x + nodeWidth, current_pos.y + nodeHeight};
+            drawList->AddRectFilled(p_min, p_max, IM_COL32(60, 60, 70, 255), 5.0f);
             drawList->AddRect(p_min, p_max, IM_COL32(200, 200, 200, 255), 5.0f);
 
             // Draw text
-            std::string label = layer.name + "\n("
-                + std::to_string(layer.inputSize) + "->"
-                + std::to_string(layer.outputSize) + ")";
+            std::string label = layer.name + "\n(" + std::to_string(layer.inputSize)
+                + "->" + std::to_string(layer.outputSize) + ")";
             ImGui::SetCursorScreenPos({current_pos.x + 5, current_pos.y + 5});
             ImGui::Text("%s", label.c_str());
 
@@ -141,8 +138,7 @@ class MLVisualizer : public IVisualizer {
                                 current_pos.y + nodeHeight};
                 ImVec2 end = {current_pos.x + nodeWidth / 2,
                               current_pos.y + nodeHeight + spacingY};
-                drawList->AddLine(
-                    start, end, IM_COL32(255, 255, 255, 255), 2.0f);
+                drawList->AddLine(start, end, IM_COL32(255, 255, 255, 255), 2.0f);
             }
 
             current_pos.y += nodeHeight + spacingY;

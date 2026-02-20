@@ -38,9 +38,8 @@ namespace hahaha {
  * @ref math::TensorWrapper storage). The public API surfaces rows as
  * @ref Tensor<T> so user code does not need to know about TensorWrapper.
  */
-template <typename T>
-class Dataset {
-public:
+template <typename T> class Dataset {
+  public:
     /**
      * @brief Load a dataset from a CSV file.
      * @param filePath Path to the CSV file.
@@ -69,8 +68,7 @@ public:
         // DatasetInner::getItem returns a TensorWrapper view.  Wrap it in a
         // Tensor so the public API stays purely in terms of Tensor<T>.
         auto view = inner_.getItem(idx);
-        return Tensor<T>(
-            std::make_shared<math::TensorWrapper<T>>(std::move(view)));
+        return Tensor<T>(std::make_shared<math::TensorWrapper<T>>(std::move(view)));
     }
 
     /** @brief Column (feature) names. */
@@ -102,7 +100,7 @@ public:
         inner_.shuffle(seed);
     }
 
-private:
+  private:
     Dataset() = default;
 
     ml::DatasetInner<T> inner_;

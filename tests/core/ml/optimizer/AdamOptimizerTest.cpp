@@ -32,7 +32,8 @@ template <typename T> class AdamOptimizerTest : public ::testing::Test {
   protected:
     // Helper to compare values with epsilon
     void expectNear(T expected, T actual, T tolerance = 1e-4) {
-        EXPECT_NEAR(static_cast<double>(expected), static_cast<double>(actual),
+        EXPECT_NEAR(static_cast<double>(expected),
+                    static_cast<double>(actual),
                     static_cast<double>(tolerance));
     }
 
@@ -45,7 +46,6 @@ template <typename T> class AdamOptimizerTest : public ::testing::Test {
 };
 
 TYPED_TEST_SUITE(AdamOptimizerTest, FloatingPointTypes);
-
 
 // ============================================================================
 // Constructor Tests
@@ -92,7 +92,6 @@ TYPED_TEST(AdamOptimizerTest, Constructor_Move) {
     EXPECT_EQ(opt2.getParameters().size(), 1);
     EXPECT_EQ(opt2.getLearningRate(), T(0.1));
 }
-
 
 // ============================================================================
 // Standard Dimension Updates
@@ -336,7 +335,6 @@ TYPED_TEST(AdamOptimizerTest, AddParameter_3D_BeforeStep) {
     auto paramNode = opt.getParameters()[1];
     EXPECT_EQ(paramNode->getData()->at({1, 0, 1}), T(4.0));
 }
-
 
 TYPED_TEST(AdamOptimizerTest, AddParameter_0D_AfterStep) {
     using T = TypeParam;

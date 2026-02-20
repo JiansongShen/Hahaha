@@ -56,7 +56,7 @@ template <typename T>
 struct isNestedInitList
     : std::integral_constant<
           bool,
-          isInitList<T>::value && // is an initializer list
+          isInitList<T>::value &&                        // is an initializer list
               isInitList<typename T::value_type>::value> // check if element is
                                                          // also a list
 {};

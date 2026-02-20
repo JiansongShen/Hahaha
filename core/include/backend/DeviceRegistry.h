@@ -133,8 +133,7 @@ class DeviceRegistry {
      * @brief Get all available CUDA devices.
      * @return Map of device ID to device shared pointer.
      */
-    [[nodiscard]] const std::unordered_map<std::uint8_t,
-                                           std::shared_ptr<Device>>&
+    [[nodiscard]] const std::unordered_map<std::uint8_t, std::shared_ptr<Device>>&
     getAllCudaDevices() const {
         return cudaDevices_;
     }

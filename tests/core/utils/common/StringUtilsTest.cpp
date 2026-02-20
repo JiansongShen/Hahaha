@@ -16,12 +16,12 @@
 // jiansongshen (jason.shen111@outlook.com)
 //
 
+#include "utils/common/StringUtils.h"
+
 #include <gtest/gtest.h>
 #include <optional>
 #include <string>
 #include <vector>
-
-#include "utils/common/StringUtils.h"
 
 using hahaha::utils::StringUtils;
 

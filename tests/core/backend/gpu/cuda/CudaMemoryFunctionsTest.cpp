@@ -136,8 +136,7 @@ TEST_F(CudaMemoryFunctionsTest, MultipleSmallAllocations) {
 
     // Allocate multiple small blocks
     for (size_t i = 0; i < num_allocations; ++i) {
-        cudaError_t result =
-            cudaMemoryAllocate(size_per_allocation, &pointers[i]);
+        cudaError_t result = cudaMemoryAllocate(size_per_allocation, &pointers[i]);
         EXPECT_EQ(result, cudaSuccess);
         EXPECT_NE(pointers[i], nullptr);
     }
@@ -296,8 +295,8 @@ TEST_F(CudaMemoryFunctionsTest, BasicCopyHostToDevice) {
     ASSERT_EQ(alloc_result, cudaSuccess);
     ASSERT_NE(device_ptr, nullptr);
 
-    cudaError_t copy_result = cudaMemoryCopy(
-        device_ptr, host_src.data(), size, cudaMemcpyHostToDevice);
+    cudaError_t copy_result =
+        cudaMemoryCopy(device_ptr, host_src.data(), size, cudaMemcpyHostToDevice);
     EXPECT_EQ(copy_result, cudaSuccess);
 
     cudaError_t free_result = cudaMemoryFree(device_ptr);
@@ -317,13 +316,13 @@ TEST_F(CudaMemoryFunctionsTest, BasicCopyDeviceToHost) {
     ASSERT_EQ(alloc_result, cudaSuccess);
     ASSERT_NE(device_ptr, nullptr);
 
-    cudaError_t to_device = cudaMemoryCopy(
-        device_ptr, host_src.data(), size, cudaMemcpyHostToDevice);
+    cudaError_t to_device =
+        cudaMemoryCopy(device_ptr, host_src.data(), size, cudaMemcpyHostToDevice);
     ASSERT_EQ(to_device, cudaSuccess);
 
     std::vector<std::byte> host_dst(size);
-    cudaError_t to_host = cudaMemoryCopy(
-        host_dst.data(), device_ptr, size, cudaMemcpyDeviceToHost);
+    cudaError_t to_host =
+        cudaMemoryCopy(host_dst.data(), device_ptr, size, cudaMemcpyDeviceToHost);
     EXPECT_EQ(to_host, cudaSuccess);
 
     for (size_t i = 0; i < size; ++i) {
@@ -342,12 +341,12 @@ TEST_F(CudaMemoryFunctionsTest, CopyZeroCount) {
     ASSERT_NE(device_ptr, nullptr);
 
     std::vector<std::byte> host_buf(256);
-    cudaError_t copy_result = cudaMemoryCopy(
-        device_ptr, host_buf.data(), 0, cudaMemcpyHostToDevice);
+    cudaError_t copy_result =
+        cudaMemoryCopy(device_ptr, host_buf.data(), 0, cudaMemcpyHostToDevice);
     EXPECT_EQ(copy_result, cudaSuccess);
 
-    copy_result = cudaMemoryCopy(
-        host_buf.data(), device_ptr, 0, cudaMemcpyDeviceToHost);
+    copy_result =
+        cudaMemoryCopy(host_buf.data(), device_ptr, 0, cudaMemcpyDeviceToHost);
     EXPECT_EQ(copy_result, cudaSuccess);
 
     cudaError_t free_result = cudaMemoryFree(device_ptr);
@@ -357,8 +356,8 @@ TEST_F(CudaMemoryFunctionsTest, CopyZeroCount) {
 // Test null destination returns invalid value
 TEST_F(CudaMemoryFunctionsTest, CopyNullDst) {
     std::vector<std::byte> host_src(64);
-    cudaError_t result = cudaMemoryCopy(
-        nullptr, host_src.data(), 64, cudaMemcpyHostToDevice);
+    cudaError_t result =
+        cudaMemoryCopy(nullptr, host_src.data(), 64, cudaMemcpyHostToDevice);
     EXPECT_EQ(result, cudaErrorInvalidValue);
 }
 
@@ -369,8 +368,8 @@ TEST_F(CudaMemoryFunctionsTest, CopyNullSrc) {
     ASSERT_EQ(alloc_result, cudaSuccess);
     ASSERT_NE(device_ptr, nullptr);
 
-    cudaError_t result = cudaMemoryCopy(
-        device_ptr, nullptr, 64, cudaMemcpyHostToDevice);
+    cudaError_t result =
+        cudaMemoryCopy(device_ptr, nullptr, 64, cudaMemcpyHostToDevice);
     EXPECT_EQ(result, cudaErrorInvalidValue);
 
     cudaMemoryFree(device_ptr);

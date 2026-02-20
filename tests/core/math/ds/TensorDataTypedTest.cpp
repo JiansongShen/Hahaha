@@ -460,8 +460,8 @@ TYPED_TEST(TensorDataTypedTest, TwoDimension_SingleElement) {
 TYPED_TEST(TensorDataTypedTest, ThreeDimension_Tensor) {
     using T = TestFixture::Type;
     // 3D: {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}}
-    TensorData<T> td(NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}},
-                                   {{T(5), T(6)}, {T(7), T(8)}}});
+    TensorData<T> td(
+        NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}}, {{T(5), T(6)}, {T(7), T(8)}}});
     EXPECT_EQ(td.getShape().getDims().size(), 3);
     EXPECT_EQ(td.getShape().getDims()[0], 2);
     EXPECT_EQ(td.getShape().getDims()[1], 2);

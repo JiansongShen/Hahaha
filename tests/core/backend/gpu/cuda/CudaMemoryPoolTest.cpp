@@ -61,9 +61,8 @@ TEST_F(CudaMemoryPoolTest, MinimumBlockSizeAllocation) {
 
 // Test boundary condition: near threshold size
 TEST_F(CudaMemoryPoolTest, NearThresholdAllocation) {
-    const size_t threshold = 512 << 20; // 512MB
-    auto result =
-        pool_->allocateSmall(threshold); // close but less than threshold
+    const size_t threshold = 512 << 20;            // 512MB
+    auto result = pool_->allocateSmall(threshold); // close but less than threshold
     ASSERT_TRUE(result.has_value());
 
     void* ptr = result.value();
@@ -361,8 +360,7 @@ TEST_F(CudaMemoryPoolTest, BlockIndexCalculation) {
 // Test error path: out of bounds block index
 TEST_F(CudaMemoryPoolTest, OutOfBoundsBlockIndex) {
     // Test very large allocation, which may exceed block index limits
-    auto result =
-        pool_->allocateSmall(static_cast<size_t>(-1)); // Try maximum value
+    auto result = pool_->allocateSmall(static_cast<size_t>(-1)); // Try maximum value
     // This may fail but should not crash
 }
 
@@ -428,7 +426,7 @@ TEST_F(CudaMemoryPoolTest, PoolFullScenario) {
                 result.error().code
                     == hahaha::common::ErrorCode::CudaSmallObjectMemoryPoolFull
                 || result.error().code
-                       == hahaha::common::ErrorCode::CudaDeviceOutOfMemory);
+                    == hahaha::common::ErrorCode::CudaDeviceOutOfMemory);
             break;
         }
     }
@@ -461,8 +459,7 @@ TEST_F(CudaMemoryPoolTest, BoundaryBlockIndex) {
 TEST_F(CudaMemoryPoolTest, AllocateSmall_ZeroSize_ReturnsInvalidArgument) {
     auto result = pool_->allocateSmall(0);
     ASSERT_FALSE(result.has_value());
-    EXPECT_EQ(result.error().code,
-              hahaha::common::ErrorCode::InvalidArgument);
+    EXPECT_EQ(result.error().code, hahaha::common::ErrorCode::InvalidArgument);
 }
 
 // --- Branch coverage: checkFreeBlockListExist valid / invalid ---
@@ -680,10 +677,10 @@ TEST_F(CudaMemoryPoolTest, AllocateBig_OutOfMemory_ReturnsError) {
     }
 }
 
-// --- Branch coverage: requireSplitBlock top-level first (smallBlockStorage_ null) ---
+// --- Branch coverage: requireSplitBlock top-level first (smallBlockStorage_ null)
+// ---
 TEST_F(CudaMemoryPoolTest, RequireSplitBlock_TopLevel_FirstBlock) {
-    size_t maxSmall =
-        hahaha::backend::CudaMemoryPool::BaseMemoryBlockSize
+    size_t maxSmall = hahaha::backend::CudaMemoryPool::BaseMemoryBlockSize
         << (hahaha::backend::CudaMemoryPool::MaxSmallObjectPoolListSize - 1);
     auto result = pool_->allocateSmall(maxSmall);
     if (result.has_value()) {
@@ -691,10 +688,10 @@ TEST_F(CudaMemoryPoolTest, RequireSplitBlock_TopLevel_FirstBlock) {
     }
 }
 
-// --- Branch coverage: requireSplitBlock top-level second (smallBlockStorage_ non-null) ---
+// --- Branch coverage: requireSplitBlock top-level second (smallBlockStorage_
+// non-null) ---
 TEST_F(CudaMemoryPoolTest, RequireSplitBlock_TopLevel_SecondBlock) {
-    size_t maxSmall =
-        hahaha::backend::CudaMemoryPool::BaseMemoryBlockSize
+    size_t maxSmall = hahaha::backend::CudaMemoryPool::BaseMemoryBlockSize
         << (hahaha::backend::CudaMemoryPool::MaxSmallObjectPoolListSize - 1);
     auto a = pool_->allocateSmall(maxSmall);
     auto b = pool_->allocateSmall(maxSmall);
@@ -862,10 +859,11 @@ TEST_F(CudaMemoryPoolTest, WriteAndVerifyDataConsistency) {
 
     // Write data to GPU memory using cudaMemcpy
     for (size_t i = 0; i < numBlocks; ++i) {
-        cudaError_t err = cudaMemcpy(allocatedBlocks[i], hostData[i].data(),
-                                     blockSize, cudaMemcpyHostToDevice);
-        ASSERT_EQ(err, cudaSuccess)
-            << "Failed to copy data to GPU for block " << i;
+        cudaError_t err = cudaMemcpy(allocatedBlocks[i],
+                                     hostData[i].data(),
+                                     blockSize,
+                                     cudaMemcpyHostToDevice);
+        ASSERT_EQ(err, cudaSuccess) << "Failed to copy data to GPU for block " << i;
     }
 
     // Synchronize to ensure all copies are complete
@@ -873,8 +871,10 @@ TEST_F(CudaMemoryPoolTest, WriteAndVerifyDataConsistency) {
 
     // Copy data back from GPU to host
     for (size_t i = 0; i < numBlocks; ++i) {
-        cudaError_t err = cudaMemcpy(receivedData[i].data(), allocatedBlocks[i],
-                                     blockSize, cudaMemcpyDeviceToHost);
+        cudaError_t err = cudaMemcpy(receivedData[i].data(),
+                                     allocatedBlocks[i],
+                                     blockSize,
+                                     cudaMemcpyDeviceToHost);
         ASSERT_EQ(err, cudaSuccess)
             << "Failed to copy data from GPU for block " << i;
     }
@@ -888,9 +888,9 @@ TEST_F(CudaMemoryPoolTest, WriteAndVerifyDataConsistency) {
             << "Size mismatch for block " << i;
         for (size_t j = 0; j < blockSize; ++j) {
             EXPECT_EQ(hostData[i][j], receivedData[i][j])
-                << "Data mismatch at block " << i << ", byte " << j
-                << ": expected " << static_cast<int>(hostData[i][j])
-                << ", got " << static_cast<int>(receivedData[i][j]);
+                << "Data mismatch at block " << i << ", byte " << j << ": expected "
+                << static_cast<int>(hostData[i][j]) << ", got "
+                << static_cast<int>(receivedData[i][j]);
         }
     }
 
@@ -924,8 +924,7 @@ TEST_F(CudaMemoryPoolTest, WriteAndVerifyDataAfterExhaustingMaxBlock) {
     std::vector<void*> secondMaxBlocks;
     for (size_t i = 0; i < 10; ++i) {
         auto result = pool_->allocateSmall(smallBlockSize);
-        ASSERT_TRUE(result.has_value())
-            << "Should allocate from second max block";
+        ASSERT_TRUE(result.has_value()) << "Should allocate from second max block";
         secondMaxBlocks.push_back(result.value());
     }
 
@@ -943,8 +942,10 @@ TEST_F(CudaMemoryPoolTest, WriteAndVerifyDataAfterExhaustingMaxBlock) {
 
     // Write to GPU
     for (size_t i = 0; i < secondMaxBlocks.size(); ++i) {
-        cudaError_t err = cudaMemcpy(secondMaxBlocks[i], hostData[i].data(),
-                                     smallBlockSize, cudaMemcpyHostToDevice);
+        cudaError_t err = cudaMemcpy(secondMaxBlocks[i],
+                                     hostData[i].data(),
+                                     smallBlockSize,
+                                     cudaMemcpyHostToDevice);
         ASSERT_EQ(err, cudaSuccess) << "Failed to copy to GPU for block " << i;
     }
 
@@ -953,10 +954,10 @@ TEST_F(CudaMemoryPoolTest, WriteAndVerifyDataAfterExhaustingMaxBlock) {
     // Copy back
     for (size_t i = 0; i < secondMaxBlocks.size(); ++i) {
         cudaError_t err = cudaMemcpy(receivedData[i].data(),
-                                     secondMaxBlocks[i], smallBlockSize,
+                                     secondMaxBlocks[i],
+                                     smallBlockSize,
                                      cudaMemcpyDeviceToHost);
-        ASSERT_EQ(err, cudaSuccess)
-            << "Failed to copy from GPU for block " << i;
+        ASSERT_EQ(err, cudaSuccess) << "Failed to copy from GPU for block " << i;
     }
 
     cudaDeviceSynchronize();
@@ -995,8 +996,7 @@ TEST_F(CudaMemoryPoolTest, MemsetAndVerifyMemory) {
 
     // Copy back and verify
     std::vector<uint8_t> receivedData(blockSize);
-    err = cudaMemcpy(receivedData.data(), ptr, blockSize,
-                     cudaMemcpyDeviceToHost);
+    err = cudaMemcpy(receivedData.data(), ptr, blockSize, cudaMemcpyDeviceToHost);
     ASSERT_EQ(err, cudaSuccess) << "cudaMemcpy failed";
 
     // Verify all bytes are set to test value

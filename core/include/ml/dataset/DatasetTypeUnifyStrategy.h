@@ -29,8 +29,7 @@ enum class DatasetTypeUnifyStrategy {
     UseLargestRange,
 };
 
-static auto defaultDatasetTypeUnifyStrategy =
-    DatasetTypeUnifyStrategy::AllFloat32;
+static auto defaultDatasetTypeUnifyStrategy = DatasetTypeUnifyStrategy::AllFloat32;
 
 inline DatasetTypeUnifyStrategy getDefaultDatasetTypeUnifyStrategy() {
     return defaultDatasetTypeUnifyStrategy;

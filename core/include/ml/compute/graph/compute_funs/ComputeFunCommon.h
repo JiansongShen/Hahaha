@@ -47,8 +47,7 @@ namespace hahaha::compute {
  */
 template <typename T>
 std::shared_ptr<ComputeNode<T>>
-createScalarNode(const T& value,
-                 const std::shared_ptr<ComputeNode<T>>& refNode) {
+createScalarNode(const T& value, const std::shared_ptr<ComputeNode<T>>& refNode) {
     auto scalarWrapper = std::make_shared<math::TensorWrapper<T>>(
         math::TensorShape({}), value, refNode->getData()->getDevice());
     return std::make_shared<ComputeNode<T>>(scalarWrapper);

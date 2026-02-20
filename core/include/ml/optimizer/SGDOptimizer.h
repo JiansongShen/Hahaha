@@ -15,6 +15,7 @@
 //
 //  Contributors:
 //  Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
+//  JiansongShen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 
 #ifndef HAHAHA_SGDOPTIMIZER_H_E57DB5EDFD0E4CC4914AB64FBF0C0859

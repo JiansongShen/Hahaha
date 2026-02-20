@@ -57,25 +57,34 @@ toComputeNodes(const std::vector<Tensor<T>>& tensors) {
  *
  * @tparam T Numeric type.
  */
-template <typename T>
-class Optimizer {
+template <typename T> class Optimizer {
   public:
     virtual ~Optimizer() = default;
 
     /** @brief Execute one parameter-update step. */
-    void step() { impl_->step(); }
+    void step() {
+        impl_->step();
+    }
 
     /** @brief Zero (clear) the gradients of all tracked parameters. */
-    void zeroGrad() { impl_->zeroGrad(); }
+    void zeroGrad() {
+        impl_->zeroGrad();
+    }
 
     /** @brief Replace the current learning rate. */
-    void setLearningRate(T lr) { impl_->setLearningRate(lr); }
+    void setLearningRate(T lr) {
+        impl_->setLearningRate(lr);
+    }
 
     /** @brief Return the current learning rate. */
-    [[nodiscard]] T getLearningRate() const { return impl_->getLearningRate(); }
+    [[nodiscard]] T getLearningRate() const {
+        return impl_->getLearningRate();
+    }
 
     /** @brief Register an additional parameter for optimization. */
-    void addParameter(const Tensor<T>& param) { impl_->addParameter(param); }
+    void addParameter(const Tensor<T>& param) {
+        impl_->addParameter(param);
+    }
 
     /** @brief Mutable access to the tracked parameter list (internal nodes). */
     auto& getParameters() {
@@ -84,7 +93,8 @@ class Optimizer {
 
   protected:
     explicit Optimizer(std::shared_ptr<ml::Optimizer<T>> impl)
-        : impl_(std::move(impl)) {}
+        : impl_(std::move(impl)) {
+    }
 
   private:
     std::shared_ptr<ml::Optimizer<T>> impl_;
@@ -95,8 +105,7 @@ class Optimizer {
 // ---------------------------------------------------------------------------
 
 /** @brief Public SGD optimizer handle. */
-template <typename T>
-class SGDOptimizer : public Optimizer<T> {
+template <typename T> class SGDOptimizer : public Optimizer<T> {
   public:
     SGDOptimizer(std::vector<Tensor<T>> params, T lr)
         : Optimizer<T>(
@@ -109,8 +118,7 @@ class SGDOptimizer : public Optimizer<T> {
 // ---------------------------------------------------------------------------
 
 /** @brief Public SGD-with-Momentum optimizer handle. */
-template <typename T>
-class SGDMOptimizer : public Optimizer<T> {
+template <typename T> class SGDMOptimizer : public Optimizer<T> {
   public:
     SGDMOptimizer(std::vector<Tensor<T>> params, T lr, T momentum = T(0.9))
         : Optimizer<T>(std::make_shared<ml::SGDMOptimizer<T>>(toComputeNodes(params),
@@ -124,8 +132,7 @@ class SGDMOptimizer : public Optimizer<T> {
 // ---------------------------------------------------------------------------
 
 /** @brief Public Adam optimizer handle (float / double only). */
-template <typename T>
-class AdamOptimizer : public Optimizer<T> {
+template <typename T> class AdamOptimizer : public Optimizer<T> {
     static_assert(utils::isLegalFloatType<T>::value,
                   "AdamOptimizer requires a floating-point type");
 
@@ -153,8 +160,7 @@ class AdamOptimizer : public Optimizer<T> {
 // ---------------------------------------------------------------------------
 
 /** @brief Public AdamW optimizer handle (float / double only). */
-template <typename T>
-class AdamWOptimizer : public Optimizer<T> {
+template <typename T> class AdamWOptimizer : public Optimizer<T> {
     static_assert(utils::isLegalFloatType<T>::value,
                   "AdamWOptimizer requires a floating-point type");
 
@@ -185,12 +191,11 @@ class AdamWOptimizer : public Optimizer<T> {
 // ---------------------------------------------------------------------------
 
 /** @brief Public Adadelta optimizer handle. */
-template <typename T>
-class AdadeltaOptimizer : public Optimizer<T> {
+template <typename T> class AdadeltaOptimizer : public Optimizer<T> {
     // Private delegating ctor: creates base + stores typed pointer once.
-    explicit AdadeltaOptimizer(
-        std::shared_ptr<ml::AdadeltaOptimizer<T>> impl)
-        : Optimizer<T>(impl), adaImpl_(impl) {}
+    explicit AdadeltaOptimizer(std::shared_ptr<ml::AdadeltaOptimizer<T>> impl)
+        : Optimizer<T>(impl), adaImpl_(impl) {
+    }
 
   public:
     explicit AdadeltaOptimizer(std::vector<Tensor<T>> params,
@@ -203,10 +208,14 @@ class AdadeltaOptimizer : public Optimizer<T> {
     }
 
     /** @brief Decay rate ρ used to accumulate E[g²]. */
-    [[nodiscard]] T getDecayRate() const { return adaImpl_->getDecayRate(); }
+    [[nodiscard]] T getDecayRate() const {
+        return adaImpl_->getDecayRate();
+    }
 
     /** @brief Numerical stability constant ε. */
-    [[nodiscard]] T getEpsilon() const { return adaImpl_->getEpsilon(); }
+    [[nodiscard]] T getEpsilon() const {
+        return adaImpl_->getEpsilon();
+    }
 
   private:
     std::shared_ptr<ml::AdadeltaOptimizer<T>> adaImpl_;

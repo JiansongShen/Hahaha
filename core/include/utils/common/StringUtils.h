@@ -27,8 +27,7 @@ namespace hahaha::utils {
 
 class StringUtils {
 
-
-public:
+  public:
     /**
      * @brief Split @p s on @p delimiter.
      *
@@ -82,13 +81,11 @@ public:
         return s.substr(start, end - start + 1);
     }
 
-
     /**
      * @brief Parse @p s into type @p T.
      * @return The parsed value, or std::nullopt if parsing failed.
      */
-    template <typename T>
-    static std::optional<T> to(const std::string& s) {
+    template <typename T> static std::optional<T> to(const std::string& s) {
         std::istringstream iss(s);
         T value;
         if (!(iss >> value)) {

@@ -23,9 +23,9 @@
 #include <random>
 #include <vector>
 
-#include "public/Tensor.h"
 #include "common/definitions.h"
 #include "ml/optimizer/SGDOptimizer.h"
+#include "public/Tensor.h"
 
 using hahaha::Tensor;
 using namespace hahaha::common;
@@ -79,9 +79,7 @@ inline void basic_linear_regression_example() {
         optimizer.zeroGrad();
         auto tmp = yTensorM - w * xTensorM;
 
-        loss = (yTensorM - w * xTensorM)
-                   .transpose()
-                   .matmul(yTensorM - w * xTensorM);
+        loss = (yTensorM - w * xTensorM).transpose().matmul(yTensorM - w * xTensorM);
 
         loss.backward();
         optimizer.step();

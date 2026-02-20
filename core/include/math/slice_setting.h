@@ -38,19 +38,22 @@ struct SliceSetting {
 
     std::vector<setting> settings;
 
-    SliceSetting(std::initializer_list<setting> settingsInput){
+    SliceSetting(std::initializer_list<setting> settingsInput) {
         settings = settingsInput;
     }
 
     // from small to big, sort the axis
     void sortAxis() {
-        std::sort(settings.begin(), settings.end(), [](const setting& a, const setting& b) -> bool {
-            return a.first < b.first;
-        });
+        std::sort(settings.begin(),
+                  settings.end(),
+                  [](const setting& a, const setting& b) -> bool {
+                      return a.first < b.first;
+                  });
     }
 
     [[nodiscard]] bool verifyLegal(const size_type tensorDimNum) const {
-        if (settings.empty()) return true;
+        if (settings.empty())
+            return true;
         return settings.back().first < tensorDimNum;
     }
 };

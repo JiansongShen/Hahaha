@@ -23,8 +23,7 @@ namespace hahaha {
 
 class Config {
 
-public:
-
+  public:
 };
 
 } // namespace hahaha

@@ -38,8 +38,7 @@ using hahaha::math::NestedData;
 using NumericTypes =
     ::testing::Types<u8, i8, u16, i16, u32, i32, u64, i64, f32, f64>;
 
-template <typename T>
-class NestedDataPropertyTypedTest : public ::testing::Test {
+template <typename T> class NestedDataPropertyTypedTest : public ::testing::Test {
   protected:
     using Type = T;
 
@@ -184,8 +183,7 @@ TYPED_TEST(NestedDataPropertyFloatingPointTypedTest,
     this->expectNear(nd.getFlatData().at(1), normal_val);
 }
 
-TYPED_TEST(NestedDataPropertyFloatingPointTypedTest,
-           FloatingPoint_NaN_Storage) {
+TYPED_TEST(NestedDataPropertyFloatingPointTypedTest, FloatingPoint_NaN_Storage) {
     using T = TestFixture::Type;
     T nan_val = std::numeric_limits<T>::quiet_NaN();
     T normal_val;

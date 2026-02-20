@@ -37,8 +37,7 @@ TEST_F(SGDOptimizerTest, SimpleUpdate) {
     // 3. Manually set gradient to 2.0
     // In a real scenario, this comes from loss.backward()
     w.getComputeNode()->accumulateGrad(
-        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}),
-                                                     2.0f));
+        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}), 2.0f));
 
     // 4. Perform optimization step
     // Expected: w = 10.0 - (0.1 * 2.0) = 9.8
@@ -58,12 +57,10 @@ TEST_F(SGDOptimizerTest, MultipleParameters) {
     SGDOptimizer<float> opt(params, 0.5f);
 
     // Set gradients: grad(w1) = [0.2, 0.4], grad(w2) = 1.0
-    w1.getComputeNode()->accumulateGrad(
-        std::make_shared<math::TensorWrapper<float>>(
-            math::NestedData<float>{0.2f, 0.4f}));
+    w1.getComputeNode()->accumulateGrad(std::make_shared<math::TensorWrapper<float>>(
+        math::NestedData<float>{0.2f, 0.4f}));
     w2.getComputeNode()->accumulateGrad(
-        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}),
-                                                     1.0f));
+        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}), 1.0f));
 
     opt.step();
 
@@ -82,8 +79,7 @@ TEST_F(SGDOptimizerTest, LearningRateChange) {
     SGDOptimizer<float> opt(params, 0.1f);
 
     w.getComputeNode()->accumulateGrad(
-        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}),
-                                                     1.0f));
+        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}), 1.0f));
 
     opt.step(); // w = 1.0 - 0.1*1.0 = 0.9
     EXPECT_FLOAT_EQ(w.at({0}), 0.9f);
@@ -91,8 +87,7 @@ TEST_F(SGDOptimizerTest, LearningRateChange) {
     opt.setLearningRate(0.2f);
     w.clearGrad();
     w.getComputeNode()->accumulateGrad(
-        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}),
-                                                     1.0f));
+        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}), 1.0f));
 
     opt.step(); // w = 0.9 - 0.2*1.0 = 0.7
     EXPECT_FLOAT_EQ(w.at({0}), 0.7f);
@@ -108,8 +103,7 @@ TEST_F(SGDOptimizerTest, RequiresGradFalse) {
     // Even if it has a gradient, it shouldn't be updated if requiresGrad is
     // false
     w.getComputeNode()->accumulateGrad(
-        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}),
-                                                     1.0f));
+        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}), 1.0f));
 
     opt.step();
     EXPECT_FLOAT_EQ(w.at({0}), 1.0f);
@@ -123,8 +117,7 @@ TEST_F(SGDOptimizerTest, ZeroGrad) {
     SGDOptimizer<float> opt(params, 0.1f);
 
     w.getComputeNode()->accumulateGrad(
-        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}),
-                                                     1.0f));
+        std::make_shared<math::TensorWrapper<float>>(math::TensorShape({1}), 1.0f));
 
     ASSERT_FALSE(w.grad().isEmpty());
     opt.zeroGrad();

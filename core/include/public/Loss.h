@@ -39,8 +39,7 @@ namespace hahaha {
  *
  * @tparam T Numeric type (float, double, …).
  */
-template <typename T>
-class Loss {
+template <typename T> class Loss {
   public:
     virtual ~Loss() = default;
 
@@ -55,7 +54,8 @@ class Loss {
     }
 
   protected:
-    explicit Loss(std::shared_ptr<ml::Loss<T>> impl) : impl_(std::move(impl)) {}
+    explicit Loss(std::shared_ptr<ml::Loss<T>> impl) : impl_(std::move(impl)) {
+    }
 
   private:
     std::shared_ptr<ml::Loss<T>> impl_;
@@ -68,17 +68,16 @@ class Loss {
  *
  * @tparam T Numeric type.
  */
-template <typename T>
-class MSELoss : public Loss<T> {
+template <typename T> class MSELoss : public Loss<T> {
   public:
-    MSELoss() : Loss<T>(std::make_shared<ml::MSELoss<T>>()) {}
+    MSELoss() : Loss<T>(std::make_shared<ml::MSELoss<T>>()) {
+    }
 };
 
 /**
  * @brief Free-function convenience wrapper around @ref MSELoss.
  */
-template <typename T>
-Tensor<T> computeMSELoss(Tensor<T> yTrue, Tensor<T> yPred) {
+template <typename T> Tensor<T> computeMSELoss(Tensor<T> yTrue, Tensor<T> yPred) {
     return MSELoss<T>().computeLoss(std::move(yTrue), std::move(yPred));
 }
 

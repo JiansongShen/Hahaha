@@ -25,28 +25,24 @@
 #include "DatasetHandleBlankStrategy.h"
 
 namespace hahaha::ml {
-template <DatasetHandleBlankStrategy strategy>
-struct DatasetBlankHandler {
-    static bool handleBlankValue(std::vector<std::string> &vec) {
+template <DatasetHandleBlankStrategy strategy> struct DatasetBlankHandler {
+    static bool handleBlankValue(std::vector<std::string>& vec) {
         std::unreachable();
     }
 };
 
-template <>
-struct DatasetBlankHandler<DatasetHandleBlankStrategy::JumpOne> {
-    static bool handleBlankValue(std::vector<std::string> &vec) {
+template <> struct DatasetBlankHandler<DatasetHandleBlankStrategy::JumpOne> {
+    static bool handleBlankValue(std::vector<std::string>& vec) {
         std::unreachable();
     }
 };
 
-template <>
-struct DatasetBlankHandler<DatasetHandleBlankStrategy::SetNan> {
-    static bool handleBlankValue(std::vector<std::string> &vec) {
+template <> struct DatasetBlankHandler<DatasetHandleBlankStrategy::SetNan> {
+    static bool handleBlankValue(std::vector<std::string>& vec) {
         std::unreachable();
     }
 };
 
-
-}
+} // namespace hahaha::ml
 
 #endif // HAHAHA_DATASET_BLANK_HANDER_H_54EDDFBDC36F4A898CB04420AB2B934E

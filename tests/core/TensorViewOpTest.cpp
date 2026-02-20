@@ -14,7 +14,7 @@
 //
 // Contributors:
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
-// 
+//
 
 // =============================================================================
 // Tests for Tensor public view/inspection APIs:
@@ -54,8 +54,7 @@ using NumericTypes =
 // Typed test fixture (all numeric types)
 // =============================================================================
 
-template <typename T>
-class TensorViewOpTypedTest : public ::testing::Test {};
+template <typename T> class TensorViewOpTypedTest : public ::testing::Test {};
 
 TYPED_TEST_SUITE(TensorViewOpTypedTest, NumericTypes);
 
@@ -74,8 +73,7 @@ TYPED_TEST(TensorViewOpTypedTest, GetDimensions_2D) {
 }
 
 TYPED_TEST(TensorViewOpTypedTest, GetDimensions_3D) {
-    Tensor<TypeParam> t(
-        NestedData<TypeParam>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
+    Tensor<TypeParam> t(NestedData<TypeParam>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
     EXPECT_EQ(t.getDimensions(), 3u);
 }
 
@@ -112,8 +110,7 @@ TYPED_TEST(TensorViewOpTypedTest, Narrow_1D_Shape) {
 
 TYPED_TEST(TensorViewOpTypedTest, Narrow_2D_AlongDim0_Shape) {
     // shape (3,3), narrow(0,1,2) => shape (2,3)
-    Tensor<TypeParam> t(
-        NestedData<TypeParam>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    Tensor<TypeParam> t(NestedData<TypeParam>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     auto v = t.narrow(0, 1, 2);
     EXPECT_EQ(v.getDimensions(), 2u);
     EXPECT_EQ(v.getShape()[0], 2u);
@@ -123,8 +120,7 @@ TYPED_TEST(TensorViewOpTypedTest, Narrow_2D_AlongDim0_Shape) {
 
 TYPED_TEST(TensorViewOpTypedTest, Narrow_2D_AlongDim1_Shape) {
     // shape (2,4), narrow(1,1,2) => shape (2,2)
-    Tensor<TypeParam> t(
-        NestedData<TypeParam>{{0, 1, 2, 3}, {4, 5, 6, 7}});
+    Tensor<TypeParam> t(NestedData<TypeParam>{{0, 1, 2, 3}, {4, 5, 6, 7}});
     auto v = t.narrow(1, 1, 2);
     EXPECT_EQ(v.getDimensions(), 2u);
     EXPECT_EQ(v.getShape()[0], 2u);
@@ -138,8 +134,8 @@ TYPED_TEST(TensorViewOpTypedTest, Narrow_2D_AlongDim1_Shape) {
 
 TYPED_TEST(TensorViewOpTypedTest, Select_2D_AlongDim0_ReducesDim) {
     // shape (3,4), select(0,1) => shape (4,)
-    Tensor<TypeParam> t(NestedData<TypeParam>{
-        {0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
+    Tensor<TypeParam> t(
+        NestedData<TypeParam>{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
     auto v = t.select(0, 1);
     EXPECT_EQ(v.getDimensions(), 1u);
     EXPECT_EQ(v.getShape()[0], 4u);
@@ -155,8 +151,7 @@ TYPED_TEST(TensorViewOpTypedTest, Select_2D_AlongDim1_ReducesDim) {
 
 TYPED_TEST(TensorViewOpTypedTest, Select_3D_AlongDim0_Reduces3DTo2D) {
     // shape (2,2,2), select(0,1) => shape (2,2)
-    Tensor<TypeParam> t(
-        NestedData<TypeParam>{{{0, 1}, {2, 3}}, {{4, 5}, {6, 7}}});
+    Tensor<TypeParam> t(NestedData<TypeParam>{{{0, 1}, {2, 3}}, {{4, 5}, {6, 7}}});
     auto v = t.select(0, 1);
     EXPECT_EQ(v.getDimensions(), 2u);
     EXPECT_EQ(v.getShape()[0], 2u);
@@ -185,8 +180,8 @@ TYPED_TEST(TensorViewOpTypedTest, SliceDim_1D_Step2_Shape) {
 
 TYPED_TEST(TensorViewOpTypedTest, SliceDim_2D_AlongDim0_Shape) {
     // shape (4,3), sliceDim(0, 0, 4, 2) => shape (2,3)
-    Tensor<TypeParam> t(NestedData<TypeParam>{
-        {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {9, 10, 11}});
+    Tensor<TypeParam> t(
+        NestedData<TypeParam>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {9, 10, 11}});
     auto v = t.sliceDim(0, 0, 4, 2);
     EXPECT_EQ(v.getDimensions(), 2u);
     EXPECT_EQ(v.getShape()[0], 2u);
@@ -207,8 +202,7 @@ TYPED_TEST(TensorViewOpTypedTest, SliceDim_DefaultArgs_FullDimension) {
 
 TYPED_TEST(TensorViewOpTypedTest, Slice_OneDimSetting_Shape) {
     // shape (3,3), slice dim0 [1:3:1] => shape (2,3)
-    Tensor<TypeParam> t(
-        NestedData<TypeParam>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
+    Tensor<TypeParam> t(NestedData<TypeParam>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     SliceSetting setting({{0, {1, 3, 1}}});
     auto v = t.slice(setting);
     EXPECT_EQ(v.getDimensions(), 2u);
@@ -218,8 +212,8 @@ TYPED_TEST(TensorViewOpTypedTest, Slice_OneDimSetting_Shape) {
 
 TYPED_TEST(TensorViewOpTypedTest, Slice_TwoDimSetting_Shape) {
     // shape (3,4), dim0:[0:2:1], dim1:[1:3:1] => shape (2,2)
-    Tensor<TypeParam> t(NestedData<TypeParam>{
-        {0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
+    Tensor<TypeParam> t(
+        NestedData<TypeParam>{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
     SliceSetting setting({{0, {0, 2, 1}}, {1, {1, 3, 1}}});
     auto v = t.slice(setting);
     EXPECT_EQ(v.getDimensions(), 2u);
@@ -232,7 +226,7 @@ TYPED_TEST(TensorViewOpTypedTest, Slice_TwoDimSetting_Shape) {
 // =============================================================================
 
 TYPED_TEST(TensorViewOpTypedTest, BroadcastTo_1x3_To_2x3_Shape) {
-    Tensor<TypeParam> t(NestedData<TypeParam>{{1, 2, 3}});  // shape (1,3)
+    Tensor<TypeParam> t(NestedData<TypeParam>{{1, 2, 3}}); // shape (1,3)
     auto v = t.broadcastTo({2, 3});
     EXPECT_EQ(v.getDimensions(), 2u);
     EXPECT_EQ(v.getShape()[0], 2u);
@@ -242,7 +236,7 @@ TYPED_TEST(TensorViewOpTypedTest, BroadcastTo_1x3_To_2x3_Shape) {
 
 TYPED_TEST(TensorViewOpTypedTest, BroadcastTo_1D_To_3D_Shape) {
     // shape (1,) -> (2, 3, 1)
-    Tensor<TypeParam> t(NestedData<TypeParam>{5});  // shape (1,)
+    Tensor<TypeParam> t(NestedData<TypeParam>{5}); // shape (1,)
     auto v = t.broadcastTo({2, 3, 1});
     EXPECT_EQ(v.getDimensions(), 3u);
     EXPECT_EQ(v.getShape()[0], 2u);
@@ -301,11 +295,11 @@ TEST_F(TensorViewOpTest, Narrow_StartZero_IsViewOfHead) {
 TEST_F(TensorViewOpTest, Narrow_ViewIsWriteThrough) {
     // Writing into the narrow view should be reflected in the original tensor
     Tensor<float> t(NestedData<float>{1, 2, 3, 4, 5});
-    auto v = t.narrow(0, 1, 3);  // [2,3,4]
+    auto v = t.narrow(0, 1, 3); // [2,3,4]
     v.at({0}) = 99.0f;
-    EXPECT_FLOAT_EQ(t.at({1}), 99.0f);  // write-through to base
-    EXPECT_FLOAT_EQ(t.at({0}), 1.0f);   // unaffected
-    EXPECT_FLOAT_EQ(t.at({4}), 5.0f);   // unaffected
+    EXPECT_FLOAT_EQ(t.at({1}), 99.0f); // write-through to base
+    EXPECT_FLOAT_EQ(t.at({0}), 1.0f);  // unaffected
+    EXPECT_FLOAT_EQ(t.at({4}), 5.0f);  // unaffected
 }
 
 // ── select() values ──────────────────────────────────────────────────────────
@@ -331,8 +325,7 @@ TEST_F(TensorViewOpTest, Select_2D_Dim1_Values) {
 
 TEST_F(TensorViewOpTest, Select_3D_Dim0_Values) {
     // [[[0,1],[2,3]],[[4,5],[6,7]]], select(0,1) => [[4,5],[6,7]]
-    Tensor<float> t(
-        NestedData<float>{{{0, 1}, {2, 3}}, {{4, 5}, {6, 7}}});
+    Tensor<float> t(NestedData<float>{{{0, 1}, {2, 3}}, {{4, 5}, {6, 7}}});
     auto v = t.select(0, 1);
     EXPECT_EQ(v.getDimensions(), 2u);
     EXPECT_FLOAT_EQ(v.at({0, 0}), 4.0f);
@@ -343,10 +336,10 @@ TEST_F(TensorViewOpTest, Select_3D_Dim0_Values) {
 
 TEST_F(TensorViewOpTest, Select_ViewIsWriteThrough) {
     Tensor<float> t(NestedData<float>{{1, 2, 3}, {4, 5, 6}});
-    auto row = t.select(0, 1);  // [4,5,6]
+    auto row = t.select(0, 1); // [4,5,6]
     row.at({1}) = 99.0f;
     EXPECT_FLOAT_EQ(t.at({1, 1}), 99.0f);
-    EXPECT_FLOAT_EQ(t.at({0, 0}), 1.0f);  // unaffected
+    EXPECT_FLOAT_EQ(t.at({0, 0}), 1.0f); // unaffected
 }
 
 // ── sliceDim() values ─────────────────────────────────────────────────────────
@@ -374,8 +367,7 @@ TEST_F(TensorViewOpTest, SliceDim_1D_Step2_Values) {
 
 TEST_F(TensorViewOpTest, SliceDim_2D_AlongDim0_Step2_Values) {
     // [[0,1],[2,3],[4,5],[6,7]], sliceDim(0,0,4,2) => rows 0,2 => [[0,1],[4,5]]
-    Tensor<float> t(
-        NestedData<float>{{0, 1}, {2, 3}, {4, 5}, {6, 7}});
+    Tensor<float> t(NestedData<float>{{0, 1}, {2, 3}, {4, 5}, {6, 7}});
     auto v = t.sliceDim(0, 0, 4, 2);
     EXPECT_EQ(v.getShape()[0], 2u);
     EXPECT_EQ(v.getShape()[1], 2u);
@@ -396,7 +388,7 @@ TEST_F(TensorViewOpTest, SliceDim_DefaultArgs_AllElements) {
 TEST_F(TensorViewOpTest, SliceDim_StepMatchesStride) {
     // stride for dim0 should be base_stride * step
     Tensor<float> t(NestedData<float>{0, 1, 2, 3, 4, 5});
-    auto v = t.sliceDim(0, 0, 6, 3);  // step=3
+    auto v = t.sliceDim(0, 0, 6, 3); // step=3
     ASSERT_EQ(v.getStride().getStrideVec().size(), 1u);
     EXPECT_EQ(v.getStride().getStrideVec()[0], 3u);
 }
@@ -417,8 +409,7 @@ TEST_F(TensorViewOpTest, Slice_OneDim_Values) {
 TEST_F(TensorViewOpTest, Slice_TwoDims_Values) {
     // [[0,1,2,3],[4,5,6,7],[8,9,10,11]], dim0:[0:2:1], dim1:[1:3:1]
     // => rows 0..1, cols 1..2 => [[1,2],[5,6]]
-    Tensor<float> t(NestedData<float>{
-        {0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
+    Tensor<float> t(NestedData<float>{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
     SliceSetting setting({{0, {0, 2, 1}}, {1, {1, 3, 1}}});
     auto v = t.slice(setting);
     EXPECT_FLOAT_EQ(v.at({0, 0}), 1.0f);
@@ -440,9 +431,8 @@ TEST_F(TensorViewOpTest, Slice_WithStep2_Values) {
 
 TEST_F(TensorViewOpTest, Slice_UnsortedAxes_StillCorrect) {
     // Supply axes in reverse order; sortAxis() inside slice() fixes it
-    Tensor<float> t(NestedData<float>{
-        {0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
-    SliceSetting setting({{1, {1, 3, 1}}, {0, {0, 2, 1}}});  // dim1 before dim0
+    Tensor<float> t(NestedData<float>{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
+    SliceSetting setting({{1, {1, 3, 1}}, {0, {0, 2, 1}}}); // dim1 before dim0
     auto v = t.slice(setting);
     EXPECT_EQ(v.getShape()[0], 2u);
     EXPECT_EQ(v.getShape()[1], 2u);
@@ -479,7 +469,7 @@ TEST_F(TensorViewOpTest, BroadcastTo_Stride_IszeroOnBroadcastedAxis) {
 
 TEST_F(TensorViewOpTest, BroadcastTo_IdentityBroadcast_ValuesUnchanged) {
     // Broadcasting to the same shape is a no-op
-    Tensor<float> t(NestedData<float>{5, 6, 7});  // shape (3,)
+    Tensor<float> t(NestedData<float>{5, 6, 7}); // shape (3,)
     auto v = t.broadcastTo({3});
     EXPECT_EQ(v.getShape()[0], 3u);
     EXPECT_FLOAT_EQ(v.at({0}), 5.0f);
@@ -492,9 +482,8 @@ TEST_F(TensorViewOpTest, BroadcastTo_IdentityBroadcast_ValuesUnchanged) {
 TEST_F(TensorViewOpTest, NarrowThenSelect_ChainedValues) {
     // [[0,1,2,3],[4,5,6,7],[8,9,10,11]], narrow(0,1,2) => [[4..7],[8..11]]
     // then select(1,1) => [5,9]
-    Tensor<float> t(NestedData<float>{
-        {0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
-    auto narrowed = t.narrow(0, 1, 2);   // shape (2,4)
+    Tensor<float> t(NestedData<float>{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
+    auto narrowed = t.narrow(0, 1, 2);     // shape (2,4)
     auto selected = narrowed.select(1, 1); // shape (2,): col 1 of each row
     EXPECT_EQ(selected.getDimensions(), 1u);
     EXPECT_EQ(selected.getShape()[0], 2u);
@@ -506,7 +495,7 @@ TEST_F(TensorViewOpTest, SliceDimThenNarrow_ChainedValues) {
     // [0..9], sliceDim(0,2,8,1) => [2,3,4,5,6,7]
     // then narrow(0,1,3) => [3,4,5]
     Tensor<float> t(NestedData<float>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-    auto sliced = t.sliceDim(0, 2, 8, 1);  // [2..7]
+    auto sliced = t.sliceDim(0, 2, 8, 1);   // [2..7]
     auto narrowed = sliced.narrow(0, 1, 3); // [3,4,5]
     EXPECT_EQ(narrowed.getShape()[0], 3u);
     EXPECT_FLOAT_EQ(narrowed.at({0}), 3.0f);
@@ -517,11 +506,11 @@ TEST_F(TensorViewOpTest, SliceDimThenNarrow_ChainedValues) {
 TEST_F(TensorViewOpTest, NarrowThenClone_DeepCopy) {
     // Clone must be independent from the original
     Tensor<float> t(NestedData<float>{1, 2, 3, 4, 5});
-    auto v = t.narrow(0, 1, 3);  // view of [2,3,4]
+    auto v = t.narrow(0, 1, 3); // view of [2,3,4]
     auto c = v.clone();
     c.at({0}) = 99.0f;
-    EXPECT_FLOAT_EQ(t.at({1}), 2.0f);  // original unaffected
-    EXPECT_FLOAT_EQ(v.at({0}), 2.0f);  // view unaffected
+    EXPECT_FLOAT_EQ(t.at({1}), 2.0f); // original unaffected
+    EXPECT_FLOAT_EQ(v.at({0}), 2.0f); // view unaffected
 }
 
 // ── Error handling ────────────────────────────────────────────────────────────
@@ -567,7 +556,7 @@ TEST_F(TensorViewOpTest, SliceDim_StartGEEnd_Throws) {
 }
 
 TEST_F(TensorViewOpTest, BroadcastTo_IncompatibleShape_Throws) {
-    Tensor<float> t(NestedData<float>{{1, 2, 3}, {4, 5, 6}});  // shape (2,3)
+    Tensor<float> t(NestedData<float>{{1, 2, 3}, {4, 5, 6}}); // shape (2,3)
     // Cannot broadcast (2,3) => (2,4): 3 != 4 and neither is 1
     EXPECT_THROW(t.broadcastTo({2, 4}), std::invalid_argument);
 }

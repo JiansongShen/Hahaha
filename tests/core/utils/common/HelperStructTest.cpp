@@ -16,7 +16,6 @@
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
-
 #include <gtest/gtest.h>
 #include <initializer_list>
 
@@ -31,8 +30,8 @@ TEST(HelperStructTest, IsInitList) {
 }
 
 TEST(HelperStructTest, IsNestedInitList) {
-    EXPECT_TRUE(isNestedInitList<
-                std::initializer_list<std::initializer_list<int>>>::value);
+    EXPECT_TRUE(
+        isNestedInitList<std::initializer_list<std::initializer_list<int>>>::value);
     EXPECT_FALSE(isNestedInitList<std::initializer_list<int>>::value);
 }
 

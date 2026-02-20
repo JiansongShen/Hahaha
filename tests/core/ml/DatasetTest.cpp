@@ -30,18 +30,18 @@
 
 namespace fs = std::filesystem;
 
-using hahaha::ml::DatasetHandleBlankStrategy;
-using hahaha::ml::DatasetInner;
-using hahaha::ml::DatasetInnerLoader;
 using hahaha::common::f32;
 using hahaha::common::f64;
 using hahaha::common::i32;
+using hahaha::ml::DatasetHandleBlankStrategy;
+using hahaha::ml::DatasetInner;
+using hahaha::ml::DatasetInnerLoader;
 
 // Write content to a uniquely-named temp file, return the path.
 static std::string writeTempCSV(const std::string& content,
                                 const std::string& tag = "default") {
-    auto path = (fs::temp_directory_path() /
-                 ("hahaha_test_" + tag + ".csv")).string();
+    auto path =
+        (fs::temp_directory_path() / ("hahaha_test_" + tag + ".csv")).string();
     std::ofstream ofs(path, std::ios::trunc);
     ofs << content;
     return path;
@@ -225,7 +225,8 @@ TEST_F(DatasetBlankStrategyTest, SetNanFillsBlankCellWithNaN_Float) {
 }
 
 TEST_F(DatasetBlankStrategyTest, SetNanOnIntegerTypeSkipsLine) {
-    // isBlank(str) && SetNan && !isLegalFloatType<T> (constexpr else) → unexpected → line skipped
+    // isBlank(str) && SetNan && !isLegalFloatType<T> (constexpr else) → unexpected →
+    // line skipped
     const std::string csv = "col1,col2\n1,\n3,4\n";
     loader_.setHandleBlankStrategy(DatasetHandleBlankStrategy::SetNan);
     DatasetInner<i32> ds;
@@ -353,7 +354,9 @@ class DatasetConstIteratorTest : public ::testing::Test {
     }
     DatasetInner<f32> ds_;
 
-    const DatasetInner<f32>& cds() const { return ds_; }
+    const DatasetInner<f32>& cds() const {
+        return ds_;
+    }
 };
 
 TEST_F(DatasetConstIteratorTest, BeginNotEqualEnd) {
@@ -460,8 +463,7 @@ TEST_F(DatasetConstIteratorTest, ConstRangeForVisitsAllRows) {
 
 using FloatTypes = ::testing::Types<f32, f64>;
 
-template <typename T>
-class DatasetInnerTypedTest : public ::testing::Test {};
+template <typename T> class DatasetInnerTypedTest : public ::testing::Test {};
 
 TYPED_TEST_SUITE(DatasetInnerTypedTest, FloatTypes);
 
@@ -487,8 +489,7 @@ TYPED_TEST(DatasetInnerTypedTest, ValuesAreCorrect) {
 TYPED_TEST(DatasetInnerTypedTest, EmptyDataSectionProducesEmptyDataset) {
     const std::string tag = std::string("typed_empty_") + typeid(TypeParam).name();
     DatasetInner<TypeParam> ds;
-    DatasetInnerLoader().loadFromCSVTo<TypeParam>(
-        writeTempCSV("x,y\n", tag), ds);
+    DatasetInnerLoader().loadFromCSVTo<TypeParam>(writeTempCSV("x,y\n", tag), ds);
     EXPECT_EQ(ds.size(), 0u);
     EXPECT_EQ(ds.begin(), ds.end());
 }

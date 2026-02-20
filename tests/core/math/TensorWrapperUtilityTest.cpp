@@ -44,8 +44,7 @@ using hahaha::math::TensorWrapper;
 using NumericTypes =
     ::testing::Types<u8, i8, u16, i16, u32, i32, u64, i64, f32, f64>;
 
-template <typename T>
-class TensorWrapperUtilityTypedTest : public ::testing::Test {
+template <typename T> class TensorWrapperUtilityTypedTest : public ::testing::Test {
   protected:
     using Type = T;
 
@@ -139,8 +138,7 @@ TYPED_TEST(TensorWrapperUtilityTypedTest, UnaryNegation_3D_Tensor) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r3 = -t3;
     this->expectNear(r3.at({0, 0, 0}), T(-1));
     this->expectNear(r3.at({1, 1, 1}), T(-8));
@@ -203,8 +201,7 @@ TYPED_TEST(TensorWrapperUtilityTypedTest, Clear_3D_Tensor) {
     T v6 = T(6);
     T v7 = T(7);
     T v8 = T(8);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     t3.clear();
     T expected = T(0);
     this->expectNear(t3.at({0, 0, 0}), expected);
@@ -271,8 +268,7 @@ TYPED_TEST(TensorWrapperUtilityTypedTest, Clone_3D_Tensor_CreatesDeepCopy) {
     T v7 = T(7);
     T v8 = T(8);
     T v100 = T(100);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto c3 = t3.clone();
     this->expectNear(c3.at({0, 0, 0}), v1);
     t3.at({0, 0, 0}) = v100;
@@ -364,10 +360,8 @@ TYPED_TEST(TensorWrapperUtilityTypedTest, Axpy_3D_Tensor) {
     T o7 = T(7) / T(10);
     T o8 = T(8) / T(10);
     T a = T(2);
-    TensorWrapper<T> x3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
-    TensorWrapper<T> y3(
-        NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
+    TensorWrapper<T> x3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> y3(NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
     y3.axpy(a, x3); // y = 2*x + y
     if constexpr (TestFixture::isFloatingPoint()) {
         this->expectNear(y3.at({0, 0, 0}), T(2.1));  // 2*1 + 0.1
@@ -426,8 +420,7 @@ TYPED_TEST(TensorWrapperUtilityTypedTest, Axpy_ShapeMismatch_2Dvs3D_Throws) {
     T v7 = T(7);
     T v8 = T(8);
     TensorWrapper<T> x2b(NestedData<T>{{v1, v2}, {v3, v4}});
-    TensorWrapper<T> y3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> y3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     EXPECT_THROW(y3.axpy(T(1), x2b), std::invalid_argument);
 }
 
@@ -442,8 +435,7 @@ TYPED_TEST(TensorWrapperUtilityTypedTest, Axpy_ShapeMismatch_3Dvs3D_Throws) {
     T v7 = T(7);
     T v8 = T(8);
     TensorWrapper<T> x3(NestedData<T>{{{v1, v2}, {v3, v4}}});
-    TensorWrapper<T> y3b(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> y3b(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     EXPECT_THROW(y3b.axpy(T(1), x3), std::invalid_argument);
 }
 
@@ -458,8 +450,7 @@ TEST_F(TensorWrapperUtilityTest, ToDevice_SameDevice_NoChangeAndNoThrow) {
     EXPECT_EQ(tensor.getDevice()->getType(), DeviceType::CPU);
 }
 
-TEST_F(TensorWrapperUtilityTest,
-       ToDevice_UnsupportedTransfers_ThrowsRuntimeError) {
+TEST_F(TensorWrapperUtilityTest, ToDevice_UnsupportedTransfers_ThrowsRuntimeError) {
     TensorWrapper<float> tensor({1}, 1.0f);
     // CPU to GPU (throws)
     // TODO: Success or Not

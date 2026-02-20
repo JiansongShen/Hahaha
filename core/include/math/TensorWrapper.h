@@ -496,8 +496,8 @@ template <typename T> class TensorWrapper {
         newShape.erase(newShape.begin() + static_cast<int>(dim));
         res.data_.setShape(TensorShape(newShape));
         TensorStride newStrideTS = getStride();
-        newStrideTS.getStrideVec().erase(
-            newStrideTS.getStrideVec().begin() + static_cast<int>(dim));
+        newStrideTS.getStrideVec().erase(newStrideTS.getStrideVec().begin()
+                                         + static_cast<int>(dim));
         res.data_.setStride(newStrideTS);
 
         return res;
@@ -566,7 +566,7 @@ template <typename T> class TensorWrapper {
 
         // Calculate new shape: the sliced dimension size
         std::vector<size_t> newShape = getShape();
-        size_t sliceSize = (endVal - startVal + step - 1) / step;  // Ceiling division
+        size_t sliceSize = (endVal - startVal + step - 1) / step; // Ceiling division
         newShape[dim] = sliceSize;
         res.data_.setShape(TensorShape(newShape));
 
@@ -612,7 +612,8 @@ template <typename T> class TensorWrapper {
         // Validate the setting
         setting.sortAxis();
         if (!setting.verifyLegal(getDimensions())) {
-            throw std::invalid_argument("SliceSetting contains invalid dimension indices");
+            throw std::invalid_argument(
+                "SliceSetting contains invalid dimension indices");
         }
 
         // Share data (not deep-copy) so the result is a true view of this tensor
@@ -621,7 +622,7 @@ template <typename T> class TensorWrapper {
         for (const auto& sliceSetting : setting.settings) {
             size_t dim = sliceSetting.first;
             const auto& inner = sliceSetting.second;
-            
+
             // Convert size_t to optional for sliceDim
             res = res.sliceDim(dim,
                                std::make_optional(inner.start),

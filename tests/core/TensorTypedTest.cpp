@@ -252,16 +252,14 @@ TYPED_TEST(TensorTypedTest, Divide_TensorScalar_CorrectResult) {
     this->expectNear(T(10), res.at({0, 1}));
 }
 
-TYPED_TEST(TensorTypedTest,
-           Divide_TwoTensors_DivisionByZero_ThrowsRuntimeError) {
+TYPED_TEST(TensorTypedTest, Divide_TwoTensors_DivisionByZero_ThrowsRuntimeError) {
     using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t_zero(NestedData<T>{{T(0), T(1)}});
     EXPECT_THROW(t1 / t_zero, std::runtime_error);
 }
 
-TYPED_TEST(TensorTypedTest,
-           Divide_TensorScalar_DivisionByZero_ThrowsRuntimeError) {
+TYPED_TEST(TensorTypedTest, Divide_TensorScalar_DivisionByZero_ThrowsRuntimeError) {
     using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}});
     EXPECT_THROW(tensor / T(0), std::runtime_error);
@@ -276,8 +274,7 @@ TYPED_TEST(TensorTypedTest, UnaryNegation_CorrectResult) {
     Tensor<T> tensor(NestedData<T>{{T(1), T(-2)}});
     auto neg_tensor = -tensor;
     EXPECT_EQ(neg_tensor.at({0, 0}), T(-1));
-    if constexpr (TestFixture::isSignedInteger()
-                  || TestFixture::isFloatingPoint()) {
+    if constexpr (TestFixture::isSignedInteger() || TestFixture::isFloatingPoint()) {
         EXPECT_EQ(neg_tensor.at({0, 1}), T(2));
     }
 }
@@ -336,8 +333,7 @@ TYPED_TEST(TensorTypedTest, Add_IntegerOverflow_Behavior) {
                 << "Type: " << typeid(T).name()
                 << ", maxVal = " << static_cast<unsigned long long>(maxVal)
                 << ", expected = " << static_cast<unsigned long long>(expected)
-                << ", actual = "
-                << static_cast<unsigned long long>(res.at({0}));
+                << ", actual = " << static_cast<unsigned long long>(res.at({0}));
         } else {
             // For signed integers, overflow is undefined behavior,
             // but we just verify it doesn't crash
@@ -473,8 +469,7 @@ TYPED_TEST(TensorTypedTest, Reshape_ValidNewShape_CorrectResult) {
 
 TYPED_TEST(TensorTypedTest, Transpose_Valid2DTensor_CorrectResult) {
     using T = TestFixture::Type;
-    Tensor<T> tensor_orig(
-        NestedData<T>{{T(1), T(2), T(3)}, {T(4), T(5), T(6)}});
+    Tensor<T> tensor_orig(NestedData<T>{{T(1), T(2), T(3)}, {T(4), T(5), T(6)}});
     auto tensor_transposed = tensor_orig.transpose();
     EXPECT_EQ(tensor_transposed.getShape()[0], 3);
     EXPECT_EQ(tensor_transposed.getShape()[1], 2);
@@ -529,8 +524,7 @@ TYPED_TEST(TensorTypedTest, Backward_Multiplication_GradientPropagation) {
 // Error Handling Tests: Shape Mismatch
 // ============================================================================
 
-TYPED_TEST(TensorTypedTest,
-           Add_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
+TYPED_TEST(TensorTypedTest, Add_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
     using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t2(NestedData<T>{{T(1), T(2), T(3)}});
@@ -553,8 +547,7 @@ TYPED_TEST(TensorTypedTest,
     EXPECT_THROW(t1 * t2, std::invalid_argument);
 }
 
-TYPED_TEST(TensorTypedTest,
-           Divide_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
+TYPED_TEST(TensorTypedTest, Divide_TwoTensors_ShapeMismatch_ThrowsInvalidArgument) {
     using T = TestFixture::Type;
     Tensor<T> t1(NestedData<T>{{T(1), T(2)}});
     Tensor<T> t2(NestedData<T>{{T(1), T(2), T(3)}});
@@ -569,8 +562,7 @@ TYPED_TEST(TensorTypedTest, Matmul_Non2DTensors_ThrowsInvalidArgument) {
     EXPECT_THROW(tensor_1d.matmul(matrix_a), std::invalid_argument);
 }
 
-TYPED_TEST(TensorTypedTest,
-           Matmul_InnerDimensionMismatch_ThrowsInvalidArgument) {
+TYPED_TEST(TensorTypedTest, Matmul_InnerDimensionMismatch_ThrowsInvalidArgument) {
     using T = TestFixture::Type;
     Tensor<T> matrix_a(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     Tensor<T> matrix_d(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}, {T(5), T(6)}});
@@ -599,8 +591,8 @@ TYPED_TEST(TensorTypedTest, Reshape_SizeMismatch_ThrowsInvalidArgument) {
 
 TYPED_TEST(TensorTypedTest, Constructor_NestedData_3D_CorrectlyInitializes) {
     using T = TestFixture::Type;
-    Tensor<T> tensor(NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}},
-                                   {{T(5), T(6)}, {T(7), T(8)}}});
+    Tensor<T> tensor(
+        NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}}, {{T(5), T(6)}, {T(7), T(8)}}});
     EXPECT_EQ(tensor.getShape().size(), 3);
     EXPECT_EQ(tensor.getTotalSize(), 8);
     EXPECT_EQ(tensor.at({0, 0, 0}), T(1));
@@ -629,8 +621,8 @@ TYPED_TEST(TensorTypedTest, GetShape_ReturnsCorrectDimensionsAndSize) {
     EXPECT_EQ(tensor_2d.getShape()[1], 2);
     EXPECT_EQ(tensor_2d.getTotalSize(), 4);
 
-    Tensor<T> tensor_3d(NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}},
-                                      {{T(5), T(6)}, {T(7), T(8)}}});
+    Tensor<T> tensor_3d(
+        NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}}, {{T(5), T(6)}, {T(7), T(8)}}});
     EXPECT_EQ(tensor_3d.getShape()[0], 2);
     EXPECT_EQ(tensor_3d.getShape()[1], 2);
     EXPECT_EQ(tensor_3d.getShape()[2], 2);
@@ -651,7 +643,7 @@ TYPED_TEST(TensorTypedTest, ElementAccess_OutOfBounds_ThrowsOutOfRange) {
     using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     EXPECT_THROW(tensor.at({0, 0, 0}), std::out_of_range); // Dimension mismatch
-    EXPECT_THROW(tensor.at({2, 0}), std::out_of_range); // Index out of bounds
+    EXPECT_THROW(tensor.at({2, 0}), std::out_of_range);    // Index out of bounds
 }
 
 // ============================================================================

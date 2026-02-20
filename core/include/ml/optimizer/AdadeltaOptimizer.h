@@ -13,7 +13,7 @@
 //  limitations under the License.
 //
 //  Contributors:
-//  Napbad (napbad.sen@gmail.com) (https://github.com/Napbad)
+//  jiansongshen (jason.shen111@outlook.com ) (https://github.com/jiansongshen )
 //
 
 #ifndef HAHAHA_ADADELTAOPTIMIZER_H_525358001A394D618AF4F91698E27EB7
@@ -22,8 +22,7 @@
 #include "Optimizer.h"
 
 namespace hahaha::ml {
-template<typename T>
-class AdadeltaOptimizer : public Optimizer<T>{
+template <typename T> class AdadeltaOptimizer : public Optimizer<T> {
     static_assert(utils::isLegalFloatType<T>::value,
                   "AdamOptimizer just supports float values");
 
@@ -81,13 +80,13 @@ class AdadeltaOptimizer : public Optimizer<T>{
             // Create temporary copy for calculation so we don't modify state
             auto rmsGrad = gradSquareSumData.clone();
             rmsGrad += getEpsilon();
-            rmsGrad.sqrtInPlace(); 
+            rmsGrad.sqrtInPlace();
 
             // 3. RMS[dx]_{t-1} = sqrt(E[dx^2]_{t-1} + epsilon)
             auto rmsX = realUpdateValueSumData.clone();
             rmsX += getEpsilon();
             rmsX.sqrtInPlace();
-            
+
             // 4. delta_x = - (RMS[dx]_{t-1} / RMS[g]_t) * g
             auto deltaX = rmsX.clone();
             deltaX *= T(-1);
@@ -112,13 +111,13 @@ class AdadeltaOptimizer : public Optimizer<T>{
         Optimizer<T>::addParameter(std::move(param));
     }
 
-private:
-  std::vector<math::TensorWrapper<T>> gradSquareSum_;
-  std::vector<math::TensorWrapper<T>> realUpdateValueSum_;
+  private:
+    std::vector<math::TensorWrapper<T>> gradSquareSum_;
+    std::vector<math::TensorWrapper<T>> realUpdateValueSum_;
 
-  T decayRate_;
-  T epsilon_;
+    T decayRate_;
+    T epsilon_;
 };
-}
+} // namespace hahaha::ml
 
-#endif //HAHAHA_ADADELTAOPTIMIZER_H_525358001A394D618AF4F91698E27EB7
+#endif // HAHAHA_ADADELTAOPTIMIZER_H_525358001A394D618AF4F91698E27EB7

@@ -20,30 +20,27 @@
 #define HAHAHA_SUPPORT_TYPES_H_5C36CB79B1EA4A78A692C4B0986B82E9
 #include <string_view>
 
-
 namespace hahaha::utils {
- constexpr std::string_view getLegalDataTypeString() {
-    return std::string_view{
-        "Supported data types:\n"
-        "  Built-in:\n"
-        "    - float, double\n"
-        "    - short, int, long, long long\n"
-        "    - unsigned int, unsigned long, unsigned long long\n"
-        "\n"
-        "  Aliases (hahaha::common):\n"
-        "    - f32  -> float       (32-bit floating point)\n"
-        "    - f64  -> double      (64-bit floating point)\n"
-        "    - i8   -> int8_t      (8-bit signed)\n"
-        "    - u8   -> uint8_t     (8-bit unsigned)\n"
-        "    - i16  -> int16_t     (16-bit signed)\n"
-        "    - u16  -> uint16_t    (16-bit unsigned)\n"
-        "    - i32  -> int32_t     (32-bit signed)\n"
-        "    - u32  -> uint32_t    (32-bit unsigned)\n"
-        "    - i64  -> int64_t     (64-bit signed)\n"
-        "    - u64  -> uint64_t    (64-bit unsigned)\n"
-        "    - bool8 -> uint8_t    (8-bit boolean storage)\n"
-    };
+constexpr std::string_view getLegalDataTypeString() {
+    return std::string_view{"Supported data types:\n"
+                            "  Built-in:\n"
+                            "    - float, double\n"
+                            "    - short, int, long, long long\n"
+                            "    - unsigned int, unsigned long, unsigned long long\n"
+                            "\n"
+                            "  Aliases (hahaha::common):\n"
+                            "    - f32  -> float       (32-bit floating point)\n"
+                            "    - f64  -> double      (64-bit floating point)\n"
+                            "    - i8   -> int8_t      (8-bit signed)\n"
+                            "    - u8   -> uint8_t     (8-bit unsigned)\n"
+                            "    - i16  -> int16_t     (16-bit signed)\n"
+                            "    - u16  -> uint16_t    (16-bit unsigned)\n"
+                            "    - i32  -> int32_t     (32-bit signed)\n"
+                            "    - u32  -> uint32_t    (32-bit unsigned)\n"
+                            "    - i64  -> int64_t     (64-bit signed)\n"
+                            "    - u64  -> uint64_t    (64-bit unsigned)\n"
+                            "    - bool8 -> uint8_t    (8-bit boolean storage)\n"};
 }
-}
+} // namespace hahaha::utils
 
-#endif //HAHAHA_SUPPORT_TYPES_H_5C36CB79B1EA4A78A692C4B0986B82E9
+#endif // HAHAHA_SUPPORT_TYPES_H_5C36CB79B1EA4A78A692C4B0986B82E9

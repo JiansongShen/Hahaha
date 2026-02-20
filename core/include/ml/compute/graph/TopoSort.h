@@ -64,10 +64,10 @@ template <typename T> class TopoSort {
      * @param visited Set of already visited nodes.
      * @param vec Output vector to store the sorted nodes.
      */
-    void toTopoRecursiveList(
-        const std::shared_ptr<ComputeNode<T>>& node,
-        std::unordered_set<std::shared_ptr<ComputeNode<T>>>& visited,
-        std::vector<std::shared_ptr<ComputeNode<T>>>& vec) {
+    void
+    toTopoRecursiveList(const std::shared_ptr<ComputeNode<T>>& node,
+                        std::unordered_set<std::shared_ptr<ComputeNode<T>>>& visited,
+                        std::vector<std::shared_ptr<ComputeNode<T>>>& vec) {
         if (node == nullptr || visited.contains(node)) {
             return;
         }

@@ -151,8 +151,7 @@ TYPED_TEST(TensorWrapperArithmeticTypedTest, Add_0Dvs3D_ScalarToTensor) {
     T v7 = T(7);
     T v8 = T(8);
     TensorWrapper<T> s0(val);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r = s0 + t3;
     this->expectNear(r.at({0, 0, 0}), T(6));
     this->expectNear(r.at({1, 1, 1}), T(13));
@@ -208,10 +207,8 @@ TYPED_TEST(TensorWrapperArithmeticTypedTest, Add_3Dvs3D_TensorToTensor) {
     T o6 = T(6) / T(10);
     T o7 = T(7) / T(10);
     T o8 = T(8) / T(10);
-    TensorWrapper<T> t3a(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
-    TensorWrapper<T> t3b(
-        NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
+    TensorWrapper<T> t3a(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3b(NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
     auto r = t3a + t3b;
     if constexpr (TestFixture::isFloatingPoint()) {
         this->expectNear(r.at({0, 0, 0}), T(1.1));
@@ -333,8 +330,7 @@ TYPED_TEST(TensorWrapperArithmeticTypedTest, Subtract_3Dvs3D_TensorToTensor) {
     T v8 = T(8);
     TensorWrapper<T> t3a(
         NestedData<T>{{{v10, v20}, {v30, v40}}, {{v50, v60}, {v70, v80}}});
-    TensorWrapper<T> t3b(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3b(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r = t3a - t3b;
     this->expectNear(r.at({0, 0, 0}), T(9));
 }
@@ -448,10 +444,8 @@ TYPED_TEST(TensorWrapperArithmeticTypedTest, Multiply_3Dvs3D_TensorToTensor) {
     T o6 = T(6) / T(10);
     T o7 = T(7) / T(10);
     T o8 = T(8) / T(10);
-    TensorWrapper<T> t3a(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
-    TensorWrapper<T> t3b(
-        NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
+    TensorWrapper<T> t3a(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3b(NestedData<T>{{{o1, o2}, {o3, o4}}, {{o5, o6}, {o7, o8}}});
     auto r = t3a * t3b;
     if constexpr (TestFixture::isFloatingPoint()) {
         this->expectNear(r.at({0, 0, 0}), T(0.1));
@@ -501,8 +495,7 @@ TYPED_TEST(TensorWrapperArithmeticTypedTest,
 // ============================================================================
 
 // Division tests only for floating point types
-template <typename T>
-class TensorWrapperDivisionTypedTest : public ::testing::Test {
+template <typename T> class TensorWrapperDivisionTypedTest : public ::testing::Test {
   protected:
     using Type = T;
     static constexpr bool isFloatingPoint() {
@@ -689,8 +682,7 @@ TYPED_TEST(TensorWrapperDivisionTypedTest,
     T v7 = T(7);
     T v8 = T(8);
     T v0 = T(0);
-    TensorWrapper<T> t3(
-        NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
+    TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     TensorWrapper<T> t3_zero(
         NestedData<T>{{{v0, v1}, {v2, v3}}, {{v4, v5}, {v6, v7}}});
     EXPECT_THROW(t3 / t3_zero, std::runtime_error);

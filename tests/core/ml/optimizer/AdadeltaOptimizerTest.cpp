@@ -17,8 +17,8 @@
 
 #include "ml/optimizer/AdadeltaOptimizer.h"
 
-#include <gtest/gtest.h>
 #include <cmath>
+#include <gtest/gtest.h>
 
 #include "public/Tensor.h"
 
@@ -33,7 +33,8 @@ template <typename T> class AdadeltaOptimizerTest : public ::testing::Test {
   protected:
     // Helper to compare values with epsilon
     void expectNear(T expected, T actual, T tolerance = 1e-4) {
-        EXPECT_NEAR(static_cast<double>(expected), static_cast<double>(actual),
+        EXPECT_NEAR(static_cast<double>(expected),
+                    static_cast<double>(actual),
                     static_cast<double>(tolerance));
     }
 
@@ -73,8 +74,10 @@ TYPED_TEST(AdadeltaOptimizerTest, Constructor_Custom) {
     AdadeltaOptimizer<T> opt(params, decay, eps);
 
     EXPECT_EQ(opt.getParameters().size(), 1);
-    EXPECT_NEAR(static_cast<double>(opt.getDecayRate()), static_cast<double>(decay), 1e-6);
-    EXPECT_NEAR(static_cast<double>(opt.getEpsilon()), static_cast<double>(eps), 1e-9);
+    EXPECT_NEAR(
+        static_cast<double>(opt.getDecayRate()), static_cast<double>(decay), 1e-6);
+    EXPECT_NEAR(
+        static_cast<double>(opt.getEpsilon()), static_cast<double>(eps), 1e-9);
 }
 
 // ============================================================================
@@ -85,7 +88,7 @@ TYPED_TEST(AdadeltaOptimizerTest, Step_SingleUpdate) {
     using T = TypeParam;
     Tensor<T> w(T(1.0));
     w.setRequiresGrad(true);
-    
+
     T decay = T(0.9);
     T eps = T(1e-6);
     std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
@@ -94,7 +97,7 @@ TYPED_TEST(AdadeltaOptimizerTest, Step_SingleUpdate) {
 
     // Set gradient to 0.5
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.5)));
-    
+
     // Manual calculation:
     // g = 0.5
     // E[g^2] = 0.9 * 0 + 0.1 * 0.5^2 = 0.025
@@ -102,16 +105,16 @@ TYPED_TEST(AdadeltaOptimizerTest, Step_SingleUpdate) {
     // RMS[dx]_prev = sqrt(0 + 1e-6) = 0.001
     // delta_x = - (RMS[dx]_prev / RMS[g]) * g
     // delta_x = - (0.001 / sqrt(0.025001)) * 0.5
-    
+
     double g = 0.5;
     double eg2 = 0.1 * g * g;
     double rms_g = std::sqrt(eg2 + static_cast<double>(eps));
     double rms_dx_prev = std::sqrt(0.0 + static_cast<double>(eps));
-    double delta_x = - (rms_dx_prev / rms_g) * g;
+    double delta_x = -(rms_dx_prev / rms_g) * g;
     double expected_w = 1.0 + delta_x;
 
     opt.step();
-    
+
     this->expectNear(T(expected_w), w.at({}), T(1e-5));
 }
 
@@ -119,7 +122,7 @@ TYPED_TEST(AdadeltaOptimizerTest, Step_MultipleUpdates) {
     using T = TypeParam;
     Tensor<T> w(T(1.0));
     w.setRequiresGrad(true);
-    
+
     T decay = T(0.9);
     T eps = T(1e-6);
     std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
@@ -128,12 +131,12 @@ TYPED_TEST(AdadeltaOptimizerTest, Step_MultipleUpdates) {
 
     // Step 1
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.5)));
-    
+
     double g1 = 0.5;
     double eg2_1 = 0.1 * g1 * g1;
     double rms_g_1 = std::sqrt(eg2_1 + static_cast<double>(eps));
     double rms_dx_prev_1 = std::sqrt(0.0 + static_cast<double>(eps));
-    double delta_x_1 = - (rms_dx_prev_1 / rms_g_1) * g1;
+    double delta_x_1 = -(rms_dx_prev_1 / rms_g_1) * g1;
     double w_1 = 1.0 + delta_x_1;
     double edx2_1 = 0.1 * delta_x_1 * delta_x_1;
 
@@ -143,12 +146,12 @@ TYPED_TEST(AdadeltaOptimizerTest, Step_MultipleUpdates) {
     // Step 2
     w.clearGrad();
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.2)));
-    
+
     double g2 = 0.2;
     double eg2_2 = 0.9 * eg2_1 + 0.1 * g2 * g2;
     double rms_g_2 = std::sqrt(eg2_2 + static_cast<double>(eps));
     double rms_dx_prev_2 = std::sqrt(edx2_1 + static_cast<double>(eps));
-    double delta_x_2 = - (rms_dx_prev_2 / rms_g_2) * g2;
+    double delta_x_2 = -(rms_dx_prev_2 / rms_g_2) * g2;
     double w_2 = w_1 + delta_x_2;
 
     opt.step();
@@ -168,9 +171,9 @@ TYPED_TEST(AdadeltaOptimizerTest, Branch_RequiresGradFalse) {
         w.getComputeNode()};
     AdadeltaOptimizer<T> opt(params);
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.5)));
-    
+
     opt.step();
-    
+
     // Should not change
     EXPECT_EQ(w.at({}), T(1.0));
 }
@@ -185,9 +188,9 @@ TYPED_TEST(AdadeltaOptimizerTest, Branch_GradEmpty) {
     AdadeltaOptimizer<T> opt(params);
     // Do NOT accumulate grad -> grad is empty
     // Branch: grad.isEmpty() -> continue
-    
+
     opt.step();
-    
+
     // Should not change
     EXPECT_EQ(w.at({}), T(1.0));
 }
@@ -205,9 +208,9 @@ TYPED_TEST(AdadeltaOptimizerTest, MultipleParameters) {
 
     w1.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.1)));
     w2.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.1)));
-    
+
     opt.step();
-    
+
     // w1 should change
     EXPECT_NE(w1.at({}), T(1.0));
     // w2 should not change

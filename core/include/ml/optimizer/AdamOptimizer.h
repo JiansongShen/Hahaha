@@ -49,7 +49,8 @@ using common::u64;
  *
  * Where:
  * - eta: learning rate
- * - beta1, beta2: coefficients for computing running averages of gradient and its square
+ * - beta1, beta2: coefficients for computing running averages of gradient and its
+ * square
  * - epsilon: term added to the denominator to improve numerical stability
  *
  * @tparam T The numeric type (must be float or double).
@@ -60,6 +61,7 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
     static constexpr T DefaultBeta1 = 0.9;
     static constexpr T DefaultBeta2 = 0.999;
     static constexpr T DefaultEpsilon = 1e-8;
+
   public:
     /**
      * @brief Construct a new Adam Optimizer with default hyperparameters.
@@ -76,8 +78,7 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
      * @brief Copy constructor from a base Optimizer.
      * @param optimizer The optimizer instance to copy from.
      */
-    explicit AdamOptimizer(const Optimizer<T>& optimizer)
-        : Optimizer<T>(optimizer) {
+    explicit AdamOptimizer(const Optimizer<T>& optimizer) : Optimizer<T>(optimizer) {
     }
 
     /**
@@ -121,7 +122,7 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
 
     /**
      * @brief Performs a single optimization step (parameter update).
-     * @details This method calculates the bias-corrected first and second moment 
+     * @details This method calculates the bias-corrected first and second moment
      * estimates and updates the data of each parameter that requires gradients.
      */
     void step() override {
@@ -158,8 +159,9 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
 
   private:
     /**
-     * @brief Initializes internal state (moment buffers) before the first training step.
-     * @details Allocates and zeros out the `parametersM_` and `parametersV_` vectors 
+     * @brief Initializes internal state (moment buffers) before the first training
+     * step.
+     * @details Allocates and zeros out the `parametersM_` and `parametersV_` vectors
      * based on the current parameters registered in the optimizer.
      */
     void preTrainIfNeed() {

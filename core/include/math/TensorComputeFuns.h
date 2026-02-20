@@ -26,8 +26,7 @@
 
 namespace hahaha::math {
 
-
-    // TODO: Support cuda
+// TODO: Support cuda
 /**
  * @brief Collection of element-wise mathematical functions for TensorWrapper.
  *
@@ -47,8 +46,7 @@ class TensorComputeFun {
      * @param input The input tensor x.
      * @return TensorWrapper<T> A new tensor containing the square root values.
      */
-    template <typename T>
-    static TensorWrapper<T> sqrt(TensorWrapper<T>& input) {
+    template <typename T> static TensorWrapper<T> sqrt(TensorWrapper<T>& input) {
         TensorWrapper<T> res;
         res = input.clone();
         for (size_t i = 0; i < res.getTotalSize(); ++i) {
@@ -68,7 +66,7 @@ class TensorComputeFun {
      * @return TensorWrapper<T> Reference to the modified input tensor.
      */
     template <typename T>
-        static TensorWrapper<T> sqrtInPlace(TensorWrapper<T>& input) {
+    static TensorWrapper<T> sqrtInPlace(TensorWrapper<T>& input) {
         for (size_t i = 0; i < input.getTotalSize(); ++i) {
             input.getRawData()[i] = std::sqrt(input.getRawData()[i]);
         }
@@ -85,8 +83,7 @@ class TensorComputeFun {
      * @param input The input tensor x.
      * @return TensorWrapper<T> A new tensor containing the squared values.
      */
-    template <typename T>
-    static TensorWrapper<T> square(TensorWrapper<T>& input) {
+    template <typename T> static TensorWrapper<T> square(TensorWrapper<T>& input) {
         return input * input;
     }
 

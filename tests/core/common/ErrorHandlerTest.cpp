@@ -39,8 +39,7 @@ TEST_F(ErrorHandlerTest, Error_Properties) {
     Error error_invalid{ErrorCode::InvalidArgument};
     EXPECT_FALSE(error_invalid.isSuccess());
     EXPECT_EQ(error_invalid.code, ErrorCode::InvalidArgument);
-    EXPECT_STREQ(error_invalid.message(),
-                 "Invalid argument (e.g., shape mismatch)");
+    EXPECT_STREQ(error_invalid.message(), "Invalid argument (e.g., shape mismatch)");
 
     Error error_device{ErrorCode::DeviceNotSupported};
     EXPECT_FALSE(error_device.isSuccess());
@@ -82,8 +81,7 @@ TEST_F(ErrorHandlerTest, FailedWithError) {
     const auto e = testReturnFailed();
     ASSERT_FALSE(e.has_value());
     ASSERT_EQ(e.error().code, ErrorCode::InvalidArgument);
-    ASSERT_STREQ(e.error().message(),
-                 "Invalid argument (e.g., shape mismatch)");
+    ASSERT_STREQ(e.error().message(), "Invalid argument (e.g., shape mismatch)");
 }
 
 TEST_F(ErrorHandlerTest, FailedWithError_Manual) {

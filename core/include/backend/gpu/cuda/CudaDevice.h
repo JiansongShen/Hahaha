@@ -90,8 +90,8 @@ class CudaDevice : public GPUDevice {
             throw std::invalid_argument("Invalid device type");
         }
 
-        const auto buf = DeviceBuffer{
-            reinterpret_cast<std::uintptr_t>(src.data()), src.size()};
+        const auto buf =
+            DeviceBuffer{reinterpret_cast<std::uintptr_t>(src.data()), src.size()};
         memory_.copyDeviceToHost(dst, buf);
     }
 
@@ -101,8 +101,8 @@ class CudaDevice : public GPUDevice {
         if (srcDevice->getType() != DeviceType::CPU) {
             throw std::invalid_argument("Invalid device type");
         }
-        auto buf = DeviceBuffer{reinterpret_cast<std::uintptr_t>(dst.data()),
-                                dst.size()};
+        auto buf =
+            DeviceBuffer{reinterpret_cast<std::uintptr_t>(dst.data()), dst.size()};
         memory_.copyHostToDevice(buf, src);
     }
 
@@ -123,9 +123,10 @@ class CudaDevice : public GPUDevice {
         std::unreachable();
     }
 
-    void copyMemoryFromThis(std::span<std::byte> /* src */,
-                            std::span<std::byte> /* dst */,
-                            const std::shared_ptr<Device>& /* dstDevice */) override {
+    void
+    copyMemoryFromThis(std::span<std::byte> /* src */,
+                       std::span<std::byte> /* dst */,
+                       const std::shared_ptr<Device>& /* dstDevice */) override {
     }
 
     void copyMemoryToThis(std::span<std::byte> /* src */,
@@ -147,9 +148,10 @@ class CudaDevice : public GPUDevice {
         std::unreachable();
     }
 
-    void copyMemoryFromThis(std::span<std::byte> /* src */,
-                            std::span<std::byte> /* dst */,
-                            const std::shared_ptr<Device>& /* dstDevice */) override {
+    void
+    copyMemoryFromThis(std::span<std::byte> /* src */,
+                       std::span<std::byte> /* dst */,
+                       const std::shared_ptr<Device>& /* dstDevice */) override {
     }
 
     void copyMemoryToThis(std::span<std::byte> /* src */,

@@ -130,8 +130,7 @@ TEST_F(LoggerTest, LoggerConfigVariants) {
     }
     // 2. Only console, no time
     {
-        LoggerConfig config(
-            LogColor::BLUE, LogLevel::DEBUG, "", false, true, false);
+        LoggerConfig config(LogColor::BLUE, LogLevel::DEBUG, "", false, true, false);
         Logger logger(config);
         Logger::debug("Console only, no time");
         // Wait for messages to be processed before logger destruction
@@ -188,12 +187,8 @@ TEST_F(LoggerTest, LogMessageEntrySetters) {
 }
 
 TEST_F(LoggerTest, LoggerWithTimeEnabled) {
-    LoggerConfig config(LogColor::CYAN,
-                        LogLevel::TRACE,
-                        "test_log_time.txt",
-                        true,
-                        false,
-                        true);
+    LoggerConfig config(
+        LogColor::CYAN, LogLevel::TRACE, "test_log_time.txt", true, false, true);
     {
         Logger timeLogger(config);
         // Wait briefly for worker to be ready
@@ -210,12 +205,8 @@ TEST_F(LoggerTest, LoggerOutputDisabled) {
         std::filesystem::remove("test_log_none.txt");
     }
     // Both console and file output disabled
-    LoggerConfig config(LogColor::CYAN,
-                        LogLevel::TRACE,
-                        "test_log_none.txt",
-                        false,
-                        false,
-                        false);
+    LoggerConfig config(
+        LogColor::CYAN, LogLevel::TRACE, "test_log_none.txt", false, false, false);
     {
         Logger noneLogger(config);
         // We can't easily check if nothing was written to console, but we check

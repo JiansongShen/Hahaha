@@ -48,9 +48,8 @@ using math::TensorShape;
  *         the broadcast result.
  */
 template <typename T>
-void checkTensorCanBroadcastTo(
-    const std::shared_ptr<ComputeNode<T>>& sourceNode,
-    const std::vector<size_t>& targetTensorShape);
+void checkTensorCanBroadcastTo(const std::shared_ptr<ComputeNode<T>>& sourceNode,
+                               const std::vector<size_t>& targetTensorShape);
 
 /**
  * @brief Broadcast a node to a target shape (view semantics).
@@ -136,23 +135,19 @@ broadcast(const std::shared_ptr<ComputeNode<T>>& sourceNode,
 }
 
 template <typename T>
-void checkTensorCanBroadcastTo(
-    const std::shared_ptr<ComputeNode<T>>& sourceNode,
-    const std::vector<size_t>& targetTensorShape) {
+void checkTensorCanBroadcastTo(const std::shared_ptr<ComputeNode<T>>& sourceNode,
+                               const std::vector<size_t>& targetTensorShape) {
 
     const auto srcShape = TensorShape(sourceNode->getData()->getShape());
     const TensorShape targetShape(targetTensorShape);
-    const auto broadcastShape =
-        TensorShape::broadcastShape(srcShape, targetShape);
-    if (!broadcastShape.has_value()
-        || broadcastShape.value() != targetTensorShape) {
+    const auto broadcastShape = TensorShape::broadcastShape(srcShape, targetShape);
+    if (!broadcastShape.has_value() || broadcastShape.value() != targetTensorShape) {
         std::string broadcastShapeStr = broadcastShape.has_value()
             ? TensorShape(broadcastShape.value()).toString()
             : "None";
         throw std::runtime_error(
-            "broadcast shape mismatch: source tensor shape is "
-            + srcShape.toString() + ", \n\tbut target tensor shape is "
-            + targetShape.toString()
+            "broadcast shape mismatch: source tensor shape is " + srcShape.toString()
+            + ", \n\tbut target tensor shape is " + targetShape.toString()
             + "\tdo you want to broadcast to :" + broadcastShapeStr);
     }
 }
@@ -212,9 +207,8 @@ broadcast(const T& lhsScalar, const std::shared_ptr<ComputeNode<T>>& rhs) {
 }
 
 template <typename T>
-void broadcastNodeStrideRebuild(
-    std::shared_ptr<ComputeNode<T>> bLhs,
-    std::shared_ptr<math::TensorWrapper<T>> resData) {
+void broadcastNodeStrideRebuild(std::shared_ptr<ComputeNode<T>> bLhs,
+                                std::shared_ptr<math::TensorWrapper<T>> resData) {
     if (bLhs->getOperatorType() == common::Operator::Broadcast) {
         resData->setStride(math::TensorStride(resData->getShape()));
     }
