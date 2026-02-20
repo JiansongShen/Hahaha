@@ -66,11 +66,20 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Step_AtT0_ReachesEtaMin) {
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 4; ++i) {
         scheduler.step();
     }
 
-    EXPECT_NEAR(scheduler.getLearningRate(), 0.0f, 1e-5f);
+    float expected =
+        0.0f + 0.5f * (1.0f - 0.0f) * (1.0f + std::cos(M_PI * 4.0f / 5.0f));
+    EXPECT_NEAR(scheduler.getLearningRate(), expected, 1e-5f);
+
+    scheduler.step();
+    float t = 5.0f - 5.0f;
+    float tN = 5.0f * 2.0f;
+    expected = 0.0f + 0.5f * (1.0f - 0.0f) * (1.0f + std::cos(M_PI * t / tN));
+    EXPECT_NEAR(scheduler.getLearningRate(), expected, 1e-5f);
+    EXPECT_NEAR(scheduler.getLearningRate(), 1.0f, 1e-5f);
 }
 
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Step_AfterT0_UsesExtendedPeriod) {

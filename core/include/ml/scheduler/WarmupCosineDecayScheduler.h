@@ -53,20 +53,23 @@ class WarmupCosineDecayScheduler : public OptimizerScheduler<T> {
 
     void step() override {
         this->increaseStep();
-        if (this->getStep() < getWarmupSteps()) {
+        if (this->getStep() <= getWarmupSteps()) {
             this->setOptimizerLearningRate(
                 getMaxLearningRate()
-                * (1
+                * (T(1)
                    - std::cos(static_cast<T>(M_PI) * static_cast<T>(this->getStep())
-                              / static_cast<T>(getWarmupSteps()))));
+                              / static_cast<T>(getWarmupSteps())))
+                / T(2));
         } else {
             this->setOptimizerLearningRate(
-                getMaxLearningRate()
-                * (1
-                   + std::cos(
-                       static_cast<T>(M_PI)
-                       * static_cast<T>(this->getStep() - getWarmupSteps())
-                       / static_cast<T>(getTotalSteps() - getWarmupSteps()))));
+                getMinLearningRate()
+                + (getMaxLearningRate() - getMinLearningRate())
+                    * (T(1)
+                       + std::cos(
+                           static_cast<T>(M_PI)
+                           * static_cast<T>(this->getStep() - getWarmupSteps())
+                           / static_cast<T>(getTotalSteps() - getWarmupSteps())))
+                    / T(2));
         }
     }
     void reset() override {

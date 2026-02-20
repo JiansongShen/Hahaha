@@ -93,7 +93,6 @@ TEST_F(PolynomialLRSchedulerTest, Step_WithPower2_DecaysFaster) {
     scheduler.step();
     float lr1 = scheduler.getLearningRate();
 
-    scheduler.reset();
     PolynomialLRScheduler<float> scheduler2(opt, 1.0f, 10, 0.0f, 1.0f);
     scheduler2.step();
     float lr2 = scheduler2.getLearningRate();

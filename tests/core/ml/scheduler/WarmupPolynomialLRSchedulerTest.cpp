@@ -84,10 +84,11 @@ TEST_F(WarmupPolynomialLRSchedulerTest, Step_AfterWarmup_PolynomialDecay) {
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupPolynomialLRScheduler<float> scheduler(opt, 1.0f, 20, 0.0f, 1.0f, 5);
 
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 5; ++i) {
         scheduler.step();
     }
 
+    scheduler.step();
     float expected = (1.0f - 0.0f) * std::pow(1.0f - 6.0f / 20.0f, 1.0f) + 0.0f;
     EXPECT_NEAR(scheduler.getLearningRate(), expected, 1e-5f);
     EXPECT_LT(scheduler.getLearningRate(), 1.0f);

@@ -53,7 +53,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, Step_DuringWarmup_Increases) {
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
 
     scheduler.step();
-    float expected = 1.0f * (1.0f - std::cos(M_PI * 1.0f / 5.0f));
+    float expected = 1.0f * (1.0f - std::cos(M_PI * 1.0f / 5.0f)) / 2.0f;
     EXPECT_NEAR(scheduler.getLearningRate(), expected, 1e-5f);
     EXPECT_GT(scheduler.getLearningRate(), 0.0f);
 }
@@ -66,10 +66,14 @@ TEST_F(WarmupCosineDecaySchedulerTest, Step_AtEndOfWarmup_ReachesMax) {
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 4; ++i) {
         scheduler.step();
     }
 
+    float expected = 1.0f * (1.0f - std::cos(M_PI * 4.0f / 5.0f)) / 2.0f;
+    EXPECT_NEAR(scheduler.getLearningRate(), expected, 1e-5f);
+
+    scheduler.step();
     EXPECT_NEAR(scheduler.getLearningRate(), 1.0f, 1e-5f);
 }
 
@@ -81,13 +85,16 @@ TEST_F(WarmupCosineDecaySchedulerTest, Step_AfterWarmup_Decays) {
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
 
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 5; ++i) {
         scheduler.step();
     }
 
-    float t = 6.0f - 5.0f;
-    float totalDecay = 20.0f - 5.0f;
-    float expected = 1.0f * (1.0f + std::cos(M_PI * t / totalDecay));
+    scheduler.step();
+    float t = static_cast<float>(scheduler.getStep() - scheduler.getWarmupSteps());
+    float totalDecay =
+        static_cast<float>(scheduler.getTotalSteps() - scheduler.getWarmupSteps());
+    float expected =
+        0.0f + (1.0f - 0.0f) * (1.0f + std::cos(M_PI * t / totalDecay)) / 2.0f;
     EXPECT_NEAR(scheduler.getLearningRate(), expected, 1e-5f);
     EXPECT_LT(scheduler.getLearningRate(), 1.0f);
 }
@@ -100,7 +107,11 @@ TEST_F(WarmupCosineDecaySchedulerTest, Step_AtEnd_ReachesMin) {
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
 
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < 5; ++i) {
+        scheduler.step();
+    }
+
+    for (int i = 0; i < 15; ++i) {
         scheduler.step();
     }
 

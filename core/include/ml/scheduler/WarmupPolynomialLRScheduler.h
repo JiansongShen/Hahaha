@@ -55,14 +55,17 @@ class WarmupPolynomialLRScheduler : public OptimizerScheduler<T> {
 
     void step() override {
         this->increaseStep();
-        if (this->getStep() < getWarmupSteps()) {
+        if (this->getStep() <= getWarmupSteps()) {
             this->setOptimizerLearningRate(
                 this->getBaseLearningRate() * (static_cast<T>(this->getStep()) / static_cast<T>(getWarmupSteps())));
         } else {
             this->setOptimizerLearningRate(
                 (this->getBaseLearningRate() - getEndLearningRate())
                     * static_cast<T>(
-                        std::pow(1 - this->getStep() / getTotalSteps(), getPower()))
+                        std::pow(T(1)
+                                     - static_cast<T>(this->getStep())
+                                         / static_cast<T>(getTotalSteps()),
+                                 getPower()))
                 + getEndLearningRate());
         }
     }

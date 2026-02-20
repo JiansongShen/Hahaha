@@ -49,8 +49,10 @@ template <typename T> class PolynomialLRScheduler : public OptimizerScheduler<T>
         this->increaseStep();
         this->setOptimizerLearningRate(
             (this->getBaseLearningRate() - getEndLearningRate())
-                * static_cast<T>(
-                    std::pow(1 - this->getStep() / getTotalSteps(), getPower()))
+                * static_cast<T>(std::pow(T(1)
+                                              - static_cast<T>(this->getStep())
+                                                  / static_cast<T>(getTotalSteps()),
+                                          getPower()))
             + getEndLearningRate());
     }
 
