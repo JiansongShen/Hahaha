@@ -18,8 +18,15 @@
 #ifndef HAHAHA_ML_SCHEDULER_WARMUP_COSINE_DECAY_SCHEDULER_H
 #define HAHAHA_ML_SCHEDULER_WARMUP_COSINE_DECAY_SCHEDULER_H
 
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
 #include <cstddef>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #include "ml/scheduler/OptimizerScheduler.h"
 
