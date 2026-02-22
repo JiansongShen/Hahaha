@@ -72,7 +72,7 @@ inline void basic_adam_optimizer_example() {
     loss.setRequiresGrad(true);
 
     // Optimizer operates on compute nodes, not tensors.
-    std::vector<std::shared_ptr<hahaha::compute::ComputeNode<f32>>> params = {
+    std::vector<std::shared_ptr<hahaha::ml::ComputeNode<f32>>> params = {
         w.getComputeNode()};
     auto optimizer = hahaha::ml::AdamOptimizer<f32>(params, 0.1f);
 

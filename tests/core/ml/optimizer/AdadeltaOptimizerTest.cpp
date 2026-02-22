@@ -55,7 +55,7 @@ TYPED_TEST_SUITE(AdadeltaOptimizerTest, FloatingPointTypes);
 TYPED_TEST(AdadeltaOptimizerTest, Constructor_Default) {
     using T = TypeParam;
     Tensor<T> w(T(1.0));
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     AdadeltaOptimizer<T> opt(params);
 
@@ -69,7 +69,7 @@ TYPED_TEST(AdadeltaOptimizerTest, Constructor_Custom) {
     Tensor<T> w(T(1.0));
     T decay = T(0.95);
     T eps = T(1e-5);
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     AdadeltaOptimizer<T> opt(params, decay, eps);
 
@@ -91,7 +91,7 @@ TYPED_TEST(AdadeltaOptimizerTest, Step_SingleUpdate) {
 
     T decay = T(0.9);
     T eps = T(1e-6);
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     AdadeltaOptimizer<T> opt(params, decay, eps);
 
@@ -125,7 +125,7 @@ TYPED_TEST(AdadeltaOptimizerTest, Step_MultipleUpdates) {
 
     T decay = T(0.9);
     T eps = T(1e-6);
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     AdadeltaOptimizer<T> opt(params, decay, eps);
 
@@ -167,7 +167,7 @@ TYPED_TEST(AdadeltaOptimizerTest, Branch_RequiresGradFalse) {
     Tensor<T> w(T(1.0));
     w.setRequiresGrad(false); // Branch: !param.getRequiresGrad() -> continue
 
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     AdadeltaOptimizer<T> opt(params);
     w.getComputeNode()->accumulateGrad(this->createGrad({}, T(0.5)));
@@ -183,7 +183,7 @@ TYPED_TEST(AdadeltaOptimizerTest, Branch_GradEmpty) {
     Tensor<T> w(T(1.0));
     w.setRequiresGrad(true);
 
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     AdadeltaOptimizer<T> opt(params);
     // Do NOT accumulate grad -> grad is empty
@@ -202,7 +202,7 @@ TYPED_TEST(AdadeltaOptimizerTest, MultipleParameters) {
     w1.setRequiresGrad(true);
     w2.setRequiresGrad(false);
 
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w1.getComputeNode(), w2.getComputeNode()};
     AdadeltaOptimizer<T> opt(params);
 

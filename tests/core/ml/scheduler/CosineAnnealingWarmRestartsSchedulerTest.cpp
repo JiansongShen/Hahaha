@@ -37,7 +37,7 @@ class CosineAnnealingWarmRestartsSchedulerTest : public ::testing::Test {};
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Constructor_InitializesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
@@ -53,7 +53,7 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Constructor_InitializesCorrectl
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Step_BeforeT0_UsesT0Period) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
@@ -67,7 +67,7 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Step_BeforeT0_UsesT0Period) {
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Step_AtT0_ReachesEtaMin) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
@@ -91,7 +91,7 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Step_AtT0_ReachesEtaMin) {
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Step_AfterT0_UsesExtendedPeriod) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
@@ -110,7 +110,7 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Step_AfterT0_UsesExtendedPeriod
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Reset_RestoresToEtaMin) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
@@ -126,7 +126,7 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, Reset_RestoresToEtaMin) {
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, SetEtaMax_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
@@ -138,7 +138,7 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, SetEtaMax_UpdatesCorrectly) {
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, SetEtaMin_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
@@ -150,7 +150,7 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, SetEtaMin_UpdatesCorrectly) {
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, SetT0_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);
@@ -162,7 +162,7 @@ TEST_F(CosineAnnealingWarmRestartsSchedulerTest, SetT0_UpdatesCorrectly) {
 TEST_F(CosineAnnealingWarmRestartsSchedulerTest, SetTMult_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingWarmRestartsScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 2.0f);

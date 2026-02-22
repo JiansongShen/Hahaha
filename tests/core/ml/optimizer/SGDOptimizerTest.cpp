@@ -30,7 +30,7 @@ TEST_F(SGDOptimizerTest, SimpleUpdate) {
     w.setRequiresGrad(true);
 
     // 2. Create optimizer with learning rate 0.1
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 0.1f);
 
@@ -52,7 +52,7 @@ TEST_F(SGDOptimizerTest, MultipleParameters) {
     Tensor<float> w2(math::NestedData<float>{3.0f});
     w2.setRequiresGrad(true);
 
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w1.getComputeNode(), w2.getComputeNode()};
     SGDOptimizer<float> opt(params, 0.5f);
 
@@ -74,7 +74,7 @@ TEST_F(SGDOptimizerTest, MultipleParameters) {
 TEST_F(SGDOptimizerTest, LearningRateChange) {
     Tensor<float> w(math::NestedData<float>{1.0f});
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 0.1f);
 
@@ -96,7 +96,7 @@ TEST_F(SGDOptimizerTest, LearningRateChange) {
 TEST_F(SGDOptimizerTest, RequiresGradFalse) {
     Tensor<float> w(math::NestedData<float>{1.0f});
     w.setRequiresGrad(false);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 0.1f);
 
@@ -112,7 +112,7 @@ TEST_F(SGDOptimizerTest, RequiresGradFalse) {
 TEST_F(SGDOptimizerTest, ZeroGrad) {
     Tensor<float> w(math::NestedData<float>{1.0f});
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 0.1f);
 
@@ -132,7 +132,7 @@ TEST_F(SGDOptimizerTest, Step_WithNullGrad) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true); // but no grad accumulated
 
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 0.1f);
     EXPECT_NO_THROW(opt.step());

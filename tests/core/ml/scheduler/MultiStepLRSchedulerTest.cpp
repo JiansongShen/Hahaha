@@ -30,7 +30,7 @@ class MultiStepLRSchedulerTest : public ::testing::Test {};
 TEST_F(MultiStepLRSchedulerTest, Constructor_InitializesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {3, 7, 10};
@@ -45,7 +45,7 @@ TEST_F(MultiStepLRSchedulerTest, Constructor_InitializesCorrectly) {
 TEST_F(MultiStepLRSchedulerTest, Constructor_SortsMilestones) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {10, 3, 7};
@@ -60,7 +60,7 @@ TEST_F(MultiStepLRSchedulerTest, Constructor_SortsMilestones) {
 TEST_F(MultiStepLRSchedulerTest, Step_NoDecayBeforeMilestone) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {3, 7};
@@ -75,7 +75,7 @@ TEST_F(MultiStepLRSchedulerTest, Step_NoDecayBeforeMilestone) {
 TEST_F(MultiStepLRSchedulerTest, Step_DecayAtFirstMilestone) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {3, 7};
@@ -90,7 +90,7 @@ TEST_F(MultiStepLRSchedulerTest, Step_DecayAtFirstMilestone) {
 TEST_F(MultiStepLRSchedulerTest, Step_DecayAtSecondMilestone) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {3, 7};
@@ -105,7 +105,7 @@ TEST_F(MultiStepLRSchedulerTest, Step_DecayAtSecondMilestone) {
 TEST_F(MultiStepLRSchedulerTest, Step_NoDecayBetweenMilestones) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {3, 7};
@@ -125,7 +125,7 @@ TEST_F(MultiStepLRSchedulerTest, Step_NoDecayBetweenMilestones) {
 TEST_F(MultiStepLRSchedulerTest, Reset_RestoresInitialState) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {3, 7};
@@ -143,7 +143,7 @@ TEST_F(MultiStepLRSchedulerTest, Reset_RestoresInitialState) {
 TEST_F(MultiStepLRSchedulerTest, SetMilestones_UpdatesAndSorts) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {3, 7};
@@ -160,7 +160,7 @@ TEST_F(MultiStepLRSchedulerTest, SetMilestones_UpdatesAndSorts) {
 TEST_F(MultiStepLRSchedulerTest, SetGamma_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     std::vector<std::size_t> milestones = {2};

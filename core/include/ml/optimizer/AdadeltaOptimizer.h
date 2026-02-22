@@ -31,7 +31,7 @@ template <typename T> class AdadeltaOptimizer : public Optimizer<T> {
     static constexpr T DefaultEpsilon = T(1e-6);
 
     AdadeltaOptimizer(
-        std::vector<std::shared_ptr<compute::ComputeNode<T>>> parameters,
+        std::vector<std::shared_ptr<ml::ComputeNode<T>>> parameters,
         T decayRate = DefaultDecayRate,
         T epsilon = DefaultEpsilon)
         : Optimizer<T>(std::move(parameters), 0), decayRate_(decayRate),
@@ -103,7 +103,7 @@ template <typename T> class AdadeltaOptimizer : public Optimizer<T> {
         }
     }
 
-    void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) override {
+    void addParameter(std::shared_ptr<ml::ComputeNode<T>> param) override {
         if (param) {
             gradSquareSum_.push_back(param->getData()->zeros());
             realUpdateValueSum_.push_back(param->getData()->zeros());

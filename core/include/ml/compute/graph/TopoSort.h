@@ -23,7 +23,7 @@
 #include <unordered_set>
 #include <vector>
 
-namespace hahaha::compute {
+namespace hahaha::ml {
 template <typename T> class ComputeNode;
 
 /**

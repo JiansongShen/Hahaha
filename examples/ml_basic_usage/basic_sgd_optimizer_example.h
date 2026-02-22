@@ -71,7 +71,7 @@ inline void basic_linear_regression_example() {
     loss.setRequiresGrad(true);
 
     // Optimizer operates on compute nodes, not tensors.
-    std::vector<std::shared_ptr<hahaha::compute::ComputeNode<f32>>> params = {
+    std::vector<std::shared_ptr<hahaha::ml::ComputeNode<f32>>> params = {
         w.getComputeNode()};
     auto optimizer = hahaha::ml::SGDOptimizer<f32>(params, 0.001f);
 

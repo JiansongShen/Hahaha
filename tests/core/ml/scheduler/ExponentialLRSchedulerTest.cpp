@@ -31,7 +31,7 @@ class ExponentialLRSchedulerTest : public ::testing::Test {};
 TEST_F(ExponentialLRSchedulerTest, Constructor_InitializesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     ExponentialLRScheduler<float> scheduler(opt, 1.0f, 0.95f);
@@ -44,7 +44,7 @@ TEST_F(ExponentialLRSchedulerTest, Constructor_InitializesCorrectly) {
 TEST_F(ExponentialLRSchedulerTest, Constructor_ThrowsOnInvalidGamma) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
 
@@ -61,7 +61,7 @@ TEST_F(ExponentialLRSchedulerTest, Constructor_ThrowsOnInvalidGamma) {
 TEST_F(ExponentialLRSchedulerTest, Step_DecaysExponentially) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     ExponentialLRScheduler<float> scheduler(opt, 1.0f, 0.9f);
@@ -79,7 +79,7 @@ TEST_F(ExponentialLRSchedulerTest, Step_DecaysExponentially) {
 TEST_F(ExponentialLRSchedulerTest, Step_MatchesFormula) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     ExponentialLRScheduler<float> scheduler(opt, 1.0f, 0.95f);
@@ -95,7 +95,7 @@ TEST_F(ExponentialLRSchedulerTest, Step_MatchesFormula) {
 TEST_F(ExponentialLRSchedulerTest, Reset_RestoresBaseLearningRate) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     ExponentialLRScheduler<float> scheduler(opt, 1.0f, 0.9f);
@@ -111,7 +111,7 @@ TEST_F(ExponentialLRSchedulerTest, Reset_RestoresBaseLearningRate) {
 TEST_F(ExponentialLRSchedulerTest, SetGamma_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     ExponentialLRScheduler<float> scheduler(opt, 1.0f, 0.9f);

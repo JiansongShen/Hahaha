@@ -43,7 +43,7 @@ template <typename T> class Optimizer {
      * @param parameters List of compute nodes to optimize.
      * @param learningRate Learning rate for the updates.
      */
-    Optimizer(std::vector<std::shared_ptr<compute::ComputeNode<T>>> parameters,
+    Optimizer(std::vector<std::shared_ptr<ml::ComputeNode<T>>> parameters,
               T learningRate)
         : parameters_(std::move(parameters)), learningRate_(learningRate) {
     }
@@ -97,7 +97,7 @@ template <typename T> class Optimizer {
      * @brief Adds a parameter to the optimizer's tracking list.
      * @param param The compute node to be optimized.
      */
-    virtual void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) {
+    virtual void addParameter(std::shared_ptr<ml::ComputeNode<T>> param) {
         parameters_.push_back(std::move(param));
     }
 
@@ -113,12 +113,12 @@ template <typename T> class Optimizer {
      * @return std::vector<std::shared_ptr<compute::ComputeNode<T>>>& Reference to
      * compute nodes.
      */
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>>& getParameters() {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>>& getParameters() {
         return parameters_;
     }
 
   protected:
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>>
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>>
         parameters_; /**< List of compute nodes to optimize. */
     T learningRate_; /**< Learning rate. */
 };

@@ -33,7 +33,7 @@ template <typename T> class SGDOptimizer : public Optimizer<T> {
      * @param parameters List of compute nodes to optimize.
      * @param learningRate Learning rate.
      */
-    SGDOptimizer(std::vector<std::shared_ptr<compute::ComputeNode<T>>> parameters,
+    SGDOptimizer(std::vector<std::shared_ptr<ml::ComputeNode<T>>> parameters,
                  T learningRate)
         : Optimizer<T>(std::move(parameters), learningRate) {
     }

@@ -19,7 +19,7 @@
 
 #ifndef HAHAHA_LOSS_H_B47FE5F8D49547D19923C1D379D9C24C
 #define HAHAHA_LOSS_H_B47FE5F8D49547D19923C1D379D9C24C
-#include "../../public/Tensor.h"
+#include "public/Tensor.h"
 
 namespace hahaha::ml {
 
@@ -48,6 +48,10 @@ template <typename T> class Loss {
     virtual Tensor<T> computeLoss(Tensor<T> /*yTrue*/, Tensor<T> /*yPredict*/) {
         return Tensor<T>(T(0));
     }
+
+    virtual Tensor<T> operator()(Tensor<T> /* yTrue */, Tensor<T> /* yPreedict */);
+
+    virtual Tensor<T> predict(Tensor<T> x);
 };
 
 } // namespace hahaha::ml

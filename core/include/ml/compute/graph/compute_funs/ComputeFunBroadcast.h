@@ -23,7 +23,7 @@
 #include "math/TensorWrapper.h"
 #include "ml/compute/graph/ComputeNode.h"
 
-namespace hahaha::compute {
+namespace hahaha::ml {
 
 using math::TensorShape;
 

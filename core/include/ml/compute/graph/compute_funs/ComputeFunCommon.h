@@ -25,7 +25,7 @@
 #include "math/ds/TensorData.h"
 #include "ml/compute/graph/ComputeNode.h"
 
-namespace hahaha::compute {
+namespace hahaha::ml {
 
 /**
  * @brief Helper to create a constant scalar node on the same device as a

@@ -29,7 +29,7 @@
 class TensorWrapperTest;
 struct SliceSetting;
 
-namespace hahaha::compute {
+namespace hahaha::ml {
 template <typename T> class ComputeNode;
 } // namespace hahaha::compute
 
@@ -818,7 +818,7 @@ template <typename T> class TensorWrapper {
 
     // Friend classes for internal access
     friend class ::TensorWrapperTest;
-    friend class compute::ComputeNode<T>;
+    friend class ml::ComputeNode<T>;
 };
 
 /**

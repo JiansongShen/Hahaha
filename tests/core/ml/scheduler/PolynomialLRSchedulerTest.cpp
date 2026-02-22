@@ -31,7 +31,7 @@ class PolynomialLRSchedulerTest : public ::testing::Test {};
 TEST_F(PolynomialLRSchedulerTest, Constructor_InitializesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 1.0f);
@@ -46,7 +46,7 @@ TEST_F(PolynomialLRSchedulerTest, Constructor_InitializesCorrectly) {
 TEST_F(PolynomialLRSchedulerTest, Step_StartsAtBaseLearningRate) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 1.0f);
@@ -57,7 +57,7 @@ TEST_F(PolynomialLRSchedulerTest, Step_StartsAtBaseLearningRate) {
 TEST_F(PolynomialLRSchedulerTest, Step_DecaysToEndLearningRate) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 1.0f);
@@ -72,7 +72,7 @@ TEST_F(PolynomialLRSchedulerTest, Step_DecaysToEndLearningRate) {
 TEST_F(PolynomialLRSchedulerTest, Step_MatchesPolynomialFormula) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 1.0f);
@@ -85,7 +85,7 @@ TEST_F(PolynomialLRSchedulerTest, Step_MatchesPolynomialFormula) {
 TEST_F(PolynomialLRSchedulerTest, Step_WithPower2_DecaysFaster) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 2.0f);
@@ -103,7 +103,7 @@ TEST_F(PolynomialLRSchedulerTest, Step_WithPower2_DecaysFaster) {
 TEST_F(PolynomialLRSchedulerTest, Reset_RestoresToBaseLearningRate) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 1.0f);
@@ -119,7 +119,7 @@ TEST_F(PolynomialLRSchedulerTest, Reset_RestoresToBaseLearningRate) {
 TEST_F(PolynomialLRSchedulerTest, SetTotalSteps_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 1.0f);
@@ -131,7 +131,7 @@ TEST_F(PolynomialLRSchedulerTest, SetTotalSteps_UpdatesCorrectly) {
 TEST_F(PolynomialLRSchedulerTest, SetEndLearningRate_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 1.0f);
@@ -143,7 +143,7 @@ TEST_F(PolynomialLRSchedulerTest, SetEndLearningRate_UpdatesCorrectly) {
 TEST_F(PolynomialLRSchedulerTest, SetPower_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     PolynomialLRScheduler<float> scheduler(opt, 1.0f, 10, 0.0f, 1.0f);

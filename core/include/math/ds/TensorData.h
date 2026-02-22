@@ -25,8 +25,6 @@
 #include <utility>
 
 #include "backend/DeviceRegistry.h"
-#include "backend/cpu/CPUDevice.h"
-#include "backend/gpu/cuda/cuda_compute_fun.h"
 #include "common/errors/Error.h"
 #include "math/ds/NestedData.h"
 #include "math/ds/TensorShape.h"
@@ -428,7 +426,7 @@ template <typename T> class TensorData {
      * @brief Set the offset for view operations.
      * @param offset The new offset value.
      */
-    void setOffset(size_t offset) {
+    void setOffset(const size_t offset) {
         offset_ = offset;
     }
 

@@ -22,7 +22,7 @@
 #include "math/TensorWrapper.h"
 #include "ml/compute/graph/ComputeNode.h"
 
-using namespace hahaha::compute;
+using namespace hahaha::ml;
 using namespace hahaha::math;
 
 class TopoSortTest : public ::testing::Test {

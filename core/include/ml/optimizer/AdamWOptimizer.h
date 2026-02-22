@@ -72,7 +72,7 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
      * @param learningRate The step size used for each iteration.
      */
     AdamWOptimizer(
-        const std::vector<std::shared_ptr<compute::ComputeNode<T>>>& parameters,
+        const std::vector<std::shared_ptr<ml::ComputeNode<T>>>& parameters,
         const T learningRate)
         : Optimizer<T>(parameters, learningRate) {
     }
@@ -102,7 +102,7 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
      * @param weightDecay The decoupled weight decay coefficient ($\lambda$).
      */
     AdamWOptimizer(
-        const std::vector<std::shared_ptr<compute::ComputeNode<T>>>& parameters,
+        const std::vector<std::shared_ptr<ml::ComputeNode<T>>>& parameters,
         const T& learningRate,
         T beta1,
         T beta2,
@@ -117,7 +117,7 @@ template <typename T> class AdamWOptimizer : public Optimizer<T> {
      * training has started.
      * @param param The compute node parameter to track.
      */
-    void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) override {
+    void addParameter(std::shared_ptr<ml::ComputeNode<T>> param) override {
         if (trainPrepared_ && param) {
             parametersM_.push_back(param->getData()->zeros());
             parametersV_.push_back(param->getData()->zeros());

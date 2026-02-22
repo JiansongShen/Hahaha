@@ -36,7 +36,7 @@ namespace hahaha {
 template <typename T> class Tensor;
 } // namespace hahaha
 
-namespace hahaha::compute {
+namespace hahaha::ml {
 
 /**
  * @brief Represents a node in the computational graph.

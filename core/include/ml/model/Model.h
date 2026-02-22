@@ -19,20 +19,32 @@
 
 #ifndef HAHAHA_MODEL_H_CC9C6DBC3C23404399CA13FD2F70E408
 #define HAHAHA_MODEL_H_CC9C6DBC3C23404399CA13FD2F70E408
-#include <vector>
-
-#include "../../public/Tensor.h"
 #include "ml/Parameters.h"
+#include "ml/optimizer/Optimizer.h"
 
 namespace hahaha::ml {
 
 template <typename T> class Model {
-  public:
+
+    static constexpr int DefaultMaxTrainIterations = 1000000;
+
+public:
     virtual ~Model() = default;
     virtual Parameters<T> getParameters() = 0;
-    virtual void train(Tensor<T> x, Tensor<T> y) = 0;
-};
+    virtual void train(math::TensorWrapper<T> x, math::TensorWrapper<T> y) = 0;
+    virtual math::TensorWrapper<T> predict(math::TensorWrapper<T> x) = 0;
+    virtual void setOptimizer(Optimizer<T> optimizer) {
+        optimizer_ = optimizer;
+    }
 
+    virtual Optimizer<T> getOptimizer() {
+        return optimizer_;
+    }
+
+protected:
+    math::TensorWrapper<T> loss_;
+    Optimizer<T> optimizer_;
+};
 } // namespace hahaha::ml
 
 #endif // HAHAHA_MODEL_H_CC9C6DBC3C23404399CA13FD2F70E408

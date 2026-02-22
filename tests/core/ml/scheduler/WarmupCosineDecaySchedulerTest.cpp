@@ -37,7 +37,7 @@ class WarmupCosineDecaySchedulerTest : public ::testing::Test {};
 TEST_F(WarmupCosineDecaySchedulerTest, Constructor_InitializesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -53,7 +53,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, Constructor_InitializesCorrectly) {
 TEST_F(WarmupCosineDecaySchedulerTest, Step_DuringWarmup_Increases) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -67,7 +67,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, Step_DuringWarmup_Increases) {
 TEST_F(WarmupCosineDecaySchedulerTest, Step_AtEndOfWarmup_ReachesMax) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -86,7 +86,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, Step_AtEndOfWarmup_ReachesMax) {
 TEST_F(WarmupCosineDecaySchedulerTest, Step_AfterWarmup_Decays) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -108,7 +108,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, Step_AfterWarmup_Decays) {
 TEST_F(WarmupCosineDecaySchedulerTest, Step_AtEnd_ReachesMin) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -127,7 +127,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, Step_AtEnd_ReachesMin) {
 TEST_F(WarmupCosineDecaySchedulerTest, Reset_RestoresToMin) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -143,7 +143,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, Reset_RestoresToMin) {
 TEST_F(WarmupCosineDecaySchedulerTest, SetWarmupSteps_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -155,7 +155,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, SetWarmupSteps_UpdatesCorrectly) {
 TEST_F(WarmupCosineDecaySchedulerTest, SetTotalSteps_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -167,7 +167,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, SetTotalSteps_UpdatesCorrectly) {
 TEST_F(WarmupCosineDecaySchedulerTest, SetMaxLearningRate_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);
@@ -179,7 +179,7 @@ TEST_F(WarmupCosineDecaySchedulerTest, SetMaxLearningRate_UpdatesCorrectly) {
 TEST_F(WarmupCosineDecaySchedulerTest, SetMinLearningRate_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     WarmupCosineDecayScheduler<float> scheduler(opt, 1.0f, 0.0f, 5, 20);

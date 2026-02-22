@@ -22,7 +22,7 @@
 #include "ComputeFunBroadcast.h"
 #include "ComputeFunCommon.h"
 
-namespace hahaha::compute {
+namespace hahaha::ml {
 
 // --- Division ---
 

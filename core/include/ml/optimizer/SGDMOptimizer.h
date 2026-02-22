@@ -42,7 +42,7 @@ template <typename T> class SGDMOptimizer : public Optimizer<T> {
      * @param learningRate Learning rate.
      * @param momentumCoefficient Momentum factor (default 0.9).
      */
-    SGDMOptimizer(std::vector<std::shared_ptr<compute::ComputeNode<T>>> parameters,
+    SGDMOptimizer(std::vector<std::shared_ptr<ml::ComputeNode<T>>> parameters,
                   T learningRate,
                   T momentumCoefficient = 0.9)
         : Optimizer<T>(std::move(parameters), learningRate),
@@ -53,7 +53,7 @@ template <typename T> class SGDMOptimizer : public Optimizer<T> {
      * @brief Adds a parameter to the optimizer.
      * @param param The compute node to be optimized.
      */
-    void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) override {
+    void addParameter(std::shared_ptr<ml::ComputeNode<T>> param) override {
         if (trainPrepared_) {
             momentum_.push_back(param->getData()->zeros());
         }

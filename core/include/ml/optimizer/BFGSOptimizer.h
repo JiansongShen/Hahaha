@@ -124,9 +124,9 @@ template <typename T> class BFGSOptimizer : public Optimizer<T> {
 
         // Step 2: Flatten parameters and gradients into single vectors
         // BFGS works on vectors, so we concatenate all parameters using
-        // math::concatenate
-        math::TensorWrapper<T> xFlat = math::concatenate(paramTensors);
-        math::TensorWrapper<T> gFlat = math::concatenate(gradTensors);
+        // math::TensorWrapperUitls::concatenate
+        math::TensorWrapper<T> xFlat = math::TensorWrapperUitls::concatenate(paramTensors);
+        math::TensorWrapper<T> gFlat = math::TensorWrapperUitls::concatenate(gradTensors);
         size_t totalSize = xFlat.getTotalSize();
 
         // Step 3: Initialize inverse Hessian approximation H_0 = I (identity matrix)
@@ -168,7 +168,7 @@ template <typename T> class BFGSOptimizer : public Optimizer<T> {
 
         // Step 9: Reshape and update actual parameter tensors
         // Distribute the updated flattened parameters back to individual tensors
-        math::distributeTensors(xFlat, paramTensors, paramSizes);
+        math::TensorWrapperUitls::distributeTensors(xFlat, paramTensors, paramSizes);
 
         // Step 10: Store s_k = x_{k+1} - x_k for next iteration's BFGS update
         // Note: The new gradient g_{k+1} will be computed by the user calling

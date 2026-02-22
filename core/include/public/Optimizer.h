@@ -38,9 +38,9 @@ namespace hahaha {
 
 // Helper: convert public Tensor list to internal ComputeNode list.
 template <typename T>
-std::vector<std::shared_ptr<compute::ComputeNode<T>>>
+std::vector<std::shared_ptr<ml::ComputeNode<T>>>
 toComputeNodes(const std::vector<Tensor<T>>& tensors) {
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> nodes;
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> nodes;
     nodes.reserve(tensors.size());
     for (const auto& t : tensors) {
         nodes.push_back(t.getComputeNode());

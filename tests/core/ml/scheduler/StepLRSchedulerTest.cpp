@@ -30,7 +30,7 @@ class StepLRSchedulerTest : public ::testing::Test {};
 TEST_F(StepLRSchedulerTest, Constructor_InitializesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     StepLRScheduler<float> scheduler(opt, 1.0f, 3, 0.5f);
@@ -44,7 +44,7 @@ TEST_F(StepLRSchedulerTest, Constructor_InitializesCorrectly) {
 TEST_F(StepLRSchedulerTest, Step_NoDecayBeforeMilestone) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     StepLRScheduler<float> scheduler(opt, 1.0f, 3, 0.5f);
@@ -61,7 +61,7 @@ TEST_F(StepLRSchedulerTest, Step_NoDecayBeforeMilestone) {
 TEST_F(StepLRSchedulerTest, Step_DecayAtMilestone) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     StepLRScheduler<float> scheduler(opt, 1.0f, 3, 0.5f);
@@ -82,7 +82,7 @@ TEST_F(StepLRSchedulerTest, Step_DecayAtMilestone) {
 TEST_F(StepLRSchedulerTest, Step_StepZeroNoDecay) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     StepLRScheduler<float> scheduler(opt, 1.0f, 3, 0.5f);
@@ -94,7 +94,7 @@ TEST_F(StepLRSchedulerTest, Step_StepZeroNoDecay) {
 TEST_F(StepLRSchedulerTest, Reset_RestoresInitialState) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     StepLRScheduler<float> scheduler(opt, 1.0f, 3, 0.5f);
@@ -112,7 +112,7 @@ TEST_F(StepLRSchedulerTest, Reset_RestoresInitialState) {
 TEST_F(StepLRSchedulerTest, SetStepSize_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     StepLRScheduler<float> scheduler(opt, 1.0f, 3, 0.5f);
@@ -132,7 +132,7 @@ TEST_F(StepLRSchedulerTest, SetStepSize_UpdatesCorrectly) {
 TEST_F(StepLRSchedulerTest, SetGamma_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     StepLRScheduler<float> scheduler(opt, 1.0f, 2, 0.5f);

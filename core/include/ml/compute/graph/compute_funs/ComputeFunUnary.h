@@ -24,7 +24,7 @@
 #include "ComputeFunCommon.h"
 #include "math/TensorWrapper.h"
 
-namespace hahaha::compute {
+namespace hahaha::ml {
 
 // --- Unary Operations ---
 

@@ -22,8 +22,6 @@
 #define HAHAHA_LINEARREGRESSION_H_4305E4B0E7784CD1969E389923F7743D
 #include "Model.h"
 #include "ml/Parameters.h"
-#include "ml/loss/MSELoss.h"
-#include "ml/optimizer/SGDOptimizer.h"
 
 namespace hahaha::ml {
 
@@ -73,37 +71,36 @@ template <typename T> class LinearRegression : public Model<T> {
 
     /**
      * @brief Train the model on the given data.
-     * @param x Input features. Shape: (num_samples, num_features).
-     * @param y Target values. Shape: (num_samples, num_outputs).
      */
-    void train(Tensor<T> x, Tensor<T> y) override {
+    void train() {
         // x shape is s * n1 (Size of samples and features Number)
         // y shape is s * n2 (Size of samples and output Number)
 
-        // TODO(napbad): Implement Linear Regression
-        // // reshape to a matrix to support common situations
-        // auto xShape = x.getShape();
-        // if (xShape.size() != 2) {
-        //     x = x.reshape({xShape[0], 1}); // n rows and 1 column
-        // }
+        // reshape to a matrix to support common situations
+        auto xShape = x.getShape();
+        if (xShape.size() != 2) {
+            x = x.reshape({xShape[0], 1}); // n rows and 1 column
+        }
 
-        // auto shape = x.getShape();
-        // auto yPredict = x.matmul(weight_) + bias_;
-        // auto mseLoss = computeMSELoss(y, yPredict);
+        auto shape = x.getShape();
+        auto yPredict = x.matmul(weight_) + bias_;
+        auto mseLoss = computeMSELoss(y, yPredict);
 
-        // SGDOptimizer<T> sgdOptimizer({}, T(0.00001));
-        // sgdOptimizer.addParameter(weight_);
-        // sgdOptimizer.addParameter(bias_);
+        this->getOptimizer().addParameter(weight_);
+        this->getOptimizer().addParameter(bias_);
 
-        // sgdOptimizer.zeroGrad();
-        // mseLoss.backward();
-        // sgdOptimizer.step();
+        this->getOptimizer().zeroGrad();
+        mseLoss.backward();
+        this->getOptimizer().step();
     }
 
   private:
     Tensor<T> weight_; /**< Weight matrix. Shape: (num_input_features,
                           num_outputs). */
     Tensor<T> bias_;   /**< Bias vector. Shape: (num_outputs,). */
+
+    Tensor<T> x;
+    Tensor<T> y;
 };
 
 } // namespace hahaha::ml

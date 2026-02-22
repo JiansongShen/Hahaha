@@ -69,7 +69,7 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
      * @param learningRate The step size used for each iteration.
      */
     AdamOptimizer(
-        const std::vector<std::shared_ptr<compute::ComputeNode<T>>>& parameters,
+        const std::vector<std::shared_ptr<ml::ComputeNode<T>>>& parameters,
         const T learningRate)
         : Optimizer<T>(parameters, learningRate) {
     }
@@ -97,7 +97,7 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
      * @param epsilon A small constant for numerical stability.
      */
     AdamOptimizer(
-        const std::vector<std::shared_ptr<compute::ComputeNode<T>>>& parameters,
+        const std::vector<std::shared_ptr<ml::ComputeNode<T>>>& parameters,
         const T& learningRate,
         T beta1,
         T beta2,
@@ -112,7 +112,7 @@ template <typename T> class AdamOptimizer : public Optimizer<T> {
      * initializes the moment vectors (M and V) for the new parameter.
      * @param param The compute node parameter to add.
      */
-    void addParameter(std::shared_ptr<compute::ComputeNode<T>> param) override {
+    void addParameter(std::shared_ptr<ml::ComputeNode<T>> param) override {
         if (trainPrepared_ && param) {
             parametersM_.push_back(param->getData()->zeros());
             parametersV_.push_back(param->getData()->zeros());

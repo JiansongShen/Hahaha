@@ -46,7 +46,7 @@ TYPED_TEST(SGDMOptimizerTest, StandardUpdate_MomentumAccumulation) {
     // lr = 0.1, momentum = 0.9
     T lr = T(0.1);
     T mu = T(0.9);
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     SGDMOptimizer<T> opt(params, lr, mu);
 
@@ -80,7 +80,7 @@ TYPED_TEST(SGDMOptimizerTest, Step_RequiresGradFalse_NoUpdate) {
     Tensor<T> w(math::NestedData<T>{T(1.0)});
     w.setRequiresGrad(false);
 
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     SGDMOptimizer<T> opt(params, T(0.1), T(0.9));
 
@@ -100,7 +100,7 @@ TYPED_TEST(SGDMOptimizerTest, Step_GradEmpty_NoUpdate) {
     Tensor<T> w(math::NestedData<T>{T(1.0)});
     w.setRequiresGrad(true);
 
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     SGDMOptimizer<T> opt(params, T(0.1), T(0.9));
 
@@ -120,7 +120,7 @@ TYPED_TEST(SGDMOptimizerTest, AddParameter_BeforeAndAfterStep) {
     Tensor<T> w1(math::NestedData<T>{T(1.0)});
     w1.setRequiresGrad(true);
 
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w1.getComputeNode()};
     SGDMOptimizer<T> opt(params, lr, mu);
 
@@ -164,7 +164,7 @@ TYPED_TEST(SGDMOptimizerTest, ZeroGrad) {
     using T = TypeParam;
     Tensor<T> w(math::NestedData<T>{T(1.0)});
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<T>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<T>>> params = {
         w.getComputeNode()};
     SGDMOptimizer<T> opt(params, T(0.1));
 

@@ -37,7 +37,7 @@ class CosineAnnealingLRSchedulerTest : public ::testing::Test {};
 TEST_F(CosineAnnealingLRSchedulerTest, Constructor_InitializesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
@@ -52,7 +52,7 @@ TEST_F(CosineAnnealingLRSchedulerTest, Constructor_InitializesCorrectly) {
 TEST_F(CosineAnnealingLRSchedulerTest, Step_StartsAtEtaMax) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
@@ -63,7 +63,7 @@ TEST_F(CosineAnnealingLRSchedulerTest, Step_StartsAtEtaMax) {
 TEST_F(CosineAnnealingLRSchedulerTest, Step_DecreasesToEtaMin) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
@@ -78,7 +78,7 @@ TEST_F(CosineAnnealingLRSchedulerTest, Step_DecreasesToEtaMin) {
 TEST_F(CosineAnnealingLRSchedulerTest, Step_MatchesCosineFormula) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
@@ -92,7 +92,7 @@ TEST_F(CosineAnnealingLRSchedulerTest, Step_MatchesCosineFormula) {
 TEST_F(CosineAnnealingLRSchedulerTest, Step_MidpointIsAverage) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
@@ -109,7 +109,7 @@ TEST_F(CosineAnnealingLRSchedulerTest, Step_MidpointIsAverage) {
 TEST_F(CosineAnnealingLRSchedulerTest, Reset_RestoresToEtaMax) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
@@ -125,7 +125,7 @@ TEST_F(CosineAnnealingLRSchedulerTest, Reset_RestoresToEtaMax) {
 TEST_F(CosineAnnealingLRSchedulerTest, SetEtaMax_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
@@ -137,7 +137,7 @@ TEST_F(CosineAnnealingLRSchedulerTest, SetEtaMax_UpdatesCorrectly) {
 TEST_F(CosineAnnealingLRSchedulerTest, SetEtaMin_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
@@ -149,7 +149,7 @@ TEST_F(CosineAnnealingLRSchedulerTest, SetEtaMin_UpdatesCorrectly) {
 TEST_F(CosineAnnealingLRSchedulerTest, SetTMax_UpdatesCorrectly) {
     Tensor<float> w(1.0f);
     w.setRequiresGrad(true);
-    std::vector<std::shared_ptr<compute::ComputeNode<float>>> params = {
+    std::vector<std::shared_ptr<ml::ComputeNode<float>>> params = {
         w.getComputeNode()};
     SGDOptimizer<float> opt(params, 1.0f);
     CosineAnnealingLRScheduler<float> scheduler(opt, 1.0f, 0.0f, 10);
