@@ -107,7 +107,7 @@ template <typename T> struct NestedData {
      * @brief Get the computed shape of the nested data.
      * @return const std::vector<size_t>& reference to shape dimensions.
      */
-    [[nodiscard]] const std::vector<size_t>& getShape() const {
+    [[nodiscard]] const std::vector<size_t>& getShapeVecRef() const {
         return shape_;
     }
 

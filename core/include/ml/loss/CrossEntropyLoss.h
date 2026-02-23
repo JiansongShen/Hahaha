@@ -1,0 +1,76 @@
+// Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+//  Contributors:
+//  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
+//
+//
+
+#ifndef CROSS_ENTROPY_LOSS_F9A3B2C1_8D4E_5F7G_6H9I_3J2K1L4M5N6O
+#define CROSS_ENTROPY_LOSS_F9A3B2C1_8D4E_5F7G_6H9I_3J2K1L4M5N6O
+
+// Standard library includes
+#include <cmath>
+
+// Project includes
+#include "Loss.h"
+
+namespace hahaha::ml {
+
+/**
+ * @brief Cross Entropy loss function.
+ *
+ * Cross Entropy loss is commonly used for classification problems.
+ * Formula: CE = -sum(yTrue * log(yPredict + epsilon))
+ * where epsilon is a small value to prevent log(0).
+ *
+ * @tparam T The numeric type.
+ */
+template <typename T> class CrossEntropyLoss : public Loss<T> {
+  private:
+    static constexpr T epsilon = static_cast<T>(1e-8);
+
+  public:
+    /**
+     * @brief Compute the Cross Entropy loss between true and predicted values.
+     * @param yTrue The true (target) labels (one-hot encoded).
+     * @param yPredict The predicted probabilities.
+     * @return TensorWrapper<T> The computed Cross Entropy loss value.
+     */
+    TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+        // Add epsilon to prevent log(0)
+        TensorWrapper<T> safePredict = yPredict + epsilon;
+        // Compute log of predictions
+        TensorWrapper<T> logPredict = safePredict.logInPlace();
+        // Compute cross entropy: -sum(yTrue * log(yPredict))
+        return TensorWrapper<T>((-(yTrue * logPredict).sum()));
+    }
+};
+
+/**
+ * @brief Convenience function to compute Cross Entropy loss.
+ * @tparam T The numeric type.
+ * @param yTrue The true (target) labels (one-hot encoded).
+ * @param yPredict The predicted probabilities.
+ * @return TensorWrapper<T> The computed Cross Entropy loss value.
+ */
+template <typename T>
+TensorWrapper<T> computeCrossEntropyLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+    static CrossEntropyLoss<T> loss;
+    return loss.computeLoss(yTrue, yPredict);
+}
+
+} // namespace hahaha::ml
+
+#endif // CROSS_ENTROPY_LOSS_F9A3B2C1_8D4E_5F7G_6H9I_3J2K1L4M5N6O

@@ -181,7 +181,7 @@ TEST_F(DatasetLoaderTest, ColumnNamesWithSurroundingSpacesAreTrimmed) {
 TEST_F(DatasetLoaderTest, GetItemReturnsCorrectRow) {
     auto row0 = ds_.getItem(0);
     EXPECT_EQ(row0.getDimensions(), 1u);
-    EXPECT_EQ(row0.getShape()[0], 2u);
+    EXPECT_EQ(row0.getShapeVecRef()[0], 2u);
     EXPECT_NEAR(row0.at({0}), 1.0f, 1e-5f);
     EXPECT_NEAR(row0.at({1}), 2.0f, 1e-5f);
 

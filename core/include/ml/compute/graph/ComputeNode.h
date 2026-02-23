@@ -16,8 +16,8 @@
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
-#ifndef HAHAHA_COMPUTE_COMPUTE_GRAPH_COMPUTE_NODE_H
-#define HAHAHA_COMPUTE_COMPUTE_GRAPH_COMPUTE_NODE_H
+#ifndef COMPUTENODE_AB071AE2_67F3_440C_B4EC_7F4083BD437E
+#define COMPUTENODE_AB071AE2_67F3_440C_B4EC_7F4083BD437E
 
 #include <functional>
 #include <memory>
@@ -248,7 +248,7 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
         // 2. Initialize the gradient of the root node (e.g., Loss) to 1.0
         if (!grad_) {
             grad_ = std::make_shared<math::TensorWrapper<T>>(
-                math::TensorShape(data_->getShape()), 1.0f);
+                math::TensorShape(data_->getShapeVecRef()), 1.0f);
         }
 
         // 3. Iterate backwards through the topological list
@@ -294,4 +294,4 @@ class ComputeNode : public std::enable_shared_from_this<ComputeNode<T>> {
 
 } // namespace hahaha::compute
 
-#endif // HAHAHA_COMPUTE_COMPUTE_GRAPH_COMPUTE_NODE_H
+#endif // COMPUTENODE_AB071AE2_67F3_440C_B4EC_7F4083BD437E

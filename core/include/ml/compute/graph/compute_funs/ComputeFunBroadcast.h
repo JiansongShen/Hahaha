@@ -100,8 +100,8 @@ broadcast(const std::shared_ptr<ComputeNode<T>>& sourceNode,
             std::shared_ptr<math::TensorWrapper<T>> srcData = src->getData();
             // detect shape different
             std::vector<size_t> sumAxes;
-            const std::vector<size_t> srcShape = srcData->getShape();
-            const std::vector<size_t> resShape = resData->getShape();
+            const std::vector<size_t> srcShape = srcData->getShapeVecRef();
+            const std::vector<size_t> resShape = resData->getShapeVecRef();
             bool keepDims = resShape.size() == srcShape.size();
 
             // srcIdx must smaller than resIdx
@@ -138,7 +138,7 @@ template <typename T>
 void checkTensorCanBroadcastTo(const std::shared_ptr<ComputeNode<T>>& sourceNode,
                                const std::vector<size_t>& targetTensorShape) {
 
-    const auto srcShape = TensorShape(sourceNode->getData()->getShape());
+    const auto srcShape = TensorShape(sourceNode->getData()->getShapeVecRef());
     const TensorShape targetShape(targetTensorShape);
     const auto broadcastShape = TensorShape::broadcastShape(srcShape, targetShape);
     if (!broadcastShape.has_value() || broadcastShape.value() != targetTensorShape) {
@@ -172,8 +172,8 @@ template <typename T>
 std::pair<std::shared_ptr<ComputeNode<T>>, std::shared_ptr<ComputeNode<T>>>
 broadcastNodes(const std::shared_ptr<ComputeNode<T>>& lhs,
                const std::shared_ptr<ComputeNode<T>>& rhs) {
-    const auto lhsShape = TensorShape(lhs->getData()->getShape());
-    const auto rhsShape = TensorShape(rhs->getData()->getShape());
+    const auto lhsShape = TensorShape(lhs->getData()->getShapeVecRef());
+    const auto rhsShape = TensorShape(rhs->getData()->getShapeVecRef());
 
     if (lhsShape == rhsShape) {
         return {lhs, rhs};
@@ -210,13 +210,13 @@ template <typename T>
 void broadcastNodeStrideRebuild(std::shared_ptr<ComputeNode<T>> bLhs,
                                 std::shared_ptr<math::TensorWrapper<T>> resData) {
     if (bLhs->getOperatorType() == common::Operator::Broadcast) {
-        resData->setStride(math::TensorStride(resData->getShape()));
+        resData->setStride(math::TensorStride(resData->getShapeVecRef()));
     }
 }
 
 template <typename T>
 void broadcastNodeStrideRebuild(math::TensorWrapper<T>& resData) {
-    resData.setStride(math::TensorStride(resData.getShape()));
+    resData.setStride(math::TensorStride(resData.getShapeVecRef()));
 }
 } // namespace hahaha::compute
 

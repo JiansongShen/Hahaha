@@ -19,7 +19,7 @@
 // Comprehensive tests for TensorWrapper view operations.
 //
 // For every test we explicitly verify ALL observable fields:
-//   - shape  (getDimensions(), getShape()[i])
+//   - shape  (getDimensions(), getShapeVecRef()[i])
 //   - stride (getStride().getStrideVec()[i])
 //   - device (getDevice()->getType())
 //   - data sharing / offset  (getRawData().get() ptr equality, value checks)
@@ -50,8 +50,8 @@ TEST_F(IsContiguousTest, FreshTensor_IsContiguous) {
     // shape (2,3), strides [3,1], offset 0
     EXPECT_TRUE(t.isContiguous());
     EXPECT_EQ(t.getDimensions(), 2u);
-    EXPECT_EQ(t.getShape()[0], 2u);
-    EXPECT_EQ(t.getShape()[1], 3u);
+    EXPECT_EQ(t.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(t.getShapeVecRef()[1], 3u);
     EXPECT_EQ(t.getStride().getStrideVec()[0], 3u);
     EXPECT_EQ(t.getStride().getStrideVec()[1], 1u);
     EXPECT_EQ(t.getDevice()->getType(), DeviceType::CPU);
@@ -99,7 +99,7 @@ TEST_F(NarrowTest, Narrow1D_CorrectShapeStrideAndValues) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 3u);
 
     // --- Stride (unchanged from base: [1]) ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 1u);
@@ -129,8 +129,8 @@ TEST_F(NarrowTest, Narrow2D_AlongDim0_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 2u);
-    EXPECT_EQ(view.getShape()[0], 2u);
-    EXPECT_EQ(view.getShape()[1], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[1], 3u);
 
     // --- Stride: row stride = 3, col stride = 1 (same as base) ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2u);
@@ -164,8 +164,8 @@ TEST_F(NarrowTest, Narrow2D_AlongDim1_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 2u);
-    EXPECT_EQ(view.getShape()[0], 2u);
-    EXPECT_EQ(view.getShape()[1], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[1], 2u);
 
     // --- Stride: row stride = 4 (same as base), col stride = 1 ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2u);
@@ -194,7 +194,7 @@ TEST_F(NarrowTest, Narrow_StartZero_FirstElements) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 3u);
 
     // --- Stride ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 1u);
@@ -245,7 +245,7 @@ TEST_F(SelectTest, Select2D_AlongDim0_ReducesDimension) {
 
     // --- Shape (dimension removed) ---
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 3u);
 
     // --- Stride: col stride = 1 ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 1u);
@@ -275,7 +275,7 @@ TEST_F(SelectTest, Select2D_AlongDim1_ReducesDimension) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
 
     // --- Stride: row stride = 3 (from base) ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 1u);
@@ -304,8 +304,8 @@ TEST_F(SelectTest, Select3D_AlongDim0_Reduces3DTo2D) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 2u);
-    EXPECT_EQ(view.getShape()[0], 2u);
-    EXPECT_EQ(view.getShape()[1], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[1], 2u);
 
     // --- Stride: [2, 1] (row stride 2, col stride 1 from base dim 1,2) ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2u);
@@ -353,7 +353,7 @@ TEST_F(SliceDimTest, SliceDim1D_Step1_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 3u);
 
     // --- Stride: step=1 => stride[0] = 1*1 = 1 ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 1u);
@@ -383,7 +383,7 @@ TEST_F(SliceDimTest, SliceDim1D_Step2_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 3u); // ceil((5-0)/2) = 3
+    EXPECT_EQ(view.getShapeVecRef()[0], 3u); // ceil((5-0)/2) = 3
 
     // --- Stride: step=2 => stride[0] = 1*2 = 2 ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 1u);
@@ -413,8 +413,8 @@ TEST_F(SliceDimTest, SliceDim2D_AlongDim0_Step1) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 2u);
-    EXPECT_EQ(view.getShape()[0], 2u);
-    EXPECT_EQ(view.getShape()[1], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[1], 3u);
 
     // --- Stride: row stride 3*1=3, col stride 1 ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2u);
@@ -448,8 +448,8 @@ TEST_F(SliceDimTest, SliceDim2D_AlongDim0_Step2) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 2u);
-    EXPECT_EQ(view.getShape()[0], 2u);
-    EXPECT_EQ(view.getShape()[1], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[1], 2u);
 
     // --- Stride: row stride = 2*2=4, col stride = 1 ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2u);
@@ -478,7 +478,7 @@ TEST_F(SliceDimTest, SliceDim_DefaultStartEnd_GetsFullDim) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 5u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 5u);
 
     // --- Stride ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 1u);
@@ -533,8 +533,8 @@ TEST_F(SliceTest, Slice2D_OneDim_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 2u);
-    EXPECT_EQ(view.getShape()[0], 2u);
-    EXPECT_EQ(view.getShape()[1], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[1], 3u);
 
     // --- Stride ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2u);
@@ -566,8 +566,8 @@ TEST_F(SliceTest, Slice2D_TwoDims_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(view.getDimensions(), 2u);
-    EXPECT_EQ(view.getShape()[0], 2u);
-    EXPECT_EQ(view.getShape()[1], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[1], 2u);
 
     // --- Stride: row = 4, col = 1 ---
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2u);
@@ -605,7 +605,7 @@ TEST_F(CloneViewTest, CloneNarrowedView_IsContiguousDeepCopy) {
 
     // --- Shape ---
     EXPECT_EQ(cloned.getDimensions(), 1u);
-    EXPECT_EQ(cloned.getShape()[0], 3u);
+    EXPECT_EQ(cloned.getShapeVecRef()[0], 3u);
 
     // --- Stride: contiguous strides ---
     ASSERT_EQ(cloned.getStride().getStrideVec().size(), 1u);
@@ -638,8 +638,8 @@ TEST_F(CloneViewTest, CloneSlicedView_2D_DeepCopy) {
 
     // --- Shape ---
     EXPECT_EQ(cloned.getDimensions(), 2u);
-    EXPECT_EQ(cloned.getShape()[0], 2u);
-    EXPECT_EQ(cloned.getShape()[1], 3u);
+    EXPECT_EQ(cloned.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(cloned.getShapeVecRef()[1], 3u);
 
     // --- Stride: contiguous row-major ---
     ASSERT_EQ(cloned.getStride().getStrideVec().size(), 2u);
@@ -672,7 +672,7 @@ TEST_F(CloneViewTest, CloneStepView_AllValues) {
 
     // --- Shape ---
     EXPECT_EQ(cloned.getDimensions(), 1u);
-    EXPECT_EQ(cloned.getShape()[0], 3u);
+    EXPECT_EQ(cloned.getShapeVecRef()[0], 3u);
 
     // --- Stride: contiguous ---
     ASSERT_EQ(cloned.getStride().getStrideVec().size(), 1u);
@@ -706,7 +706,7 @@ TEST_F(ViewArithmeticTest, AddTwoViews_CorrectResultFields) {
 
     // --- Shape ---
     EXPECT_EQ(result.getDimensions(), 1u);
-    EXPECT_EQ(result.getShape()[0], 3u);
+    EXPECT_EQ(result.getShapeVecRef()[0], 3u);
 
     // --- Stride: result is contiguous ---
     ASSERT_EQ(result.getStride().getStrideVec().size(), 1u);
@@ -738,7 +738,7 @@ TEST_F(ViewArithmeticTest, SubtractView_CorrectResultFields) {
 
     // --- Shape ---
     EXPECT_EQ(result.getDimensions(), 1u);
-    EXPECT_EQ(result.getShape()[0], 3u);
+    EXPECT_EQ(result.getShapeVecRef()[0], 3u);
 
     // --- Stride ---
     ASSERT_EQ(result.getStride().getStrideVec().size(), 1u);
@@ -765,7 +765,7 @@ TEST_F(ViewArithmeticTest, MultiplyView_CorrectResultFields) {
 
     // --- Shape ---
     EXPECT_EQ(result.getDimensions(), 1u);
-    EXPECT_EQ(result.getShape()[0], 4u);
+    EXPECT_EQ(result.getShapeVecRef()[0], 4u);
 
     // --- Stride ---
     ASSERT_EQ(result.getStride().getStrideVec().size(), 1u);
@@ -793,7 +793,7 @@ TEST_F(ViewArithmeticTest, DivideView_CorrectResultFields) {
 
     // --- Shape ---
     EXPECT_EQ(result.getDimensions(), 1u);
-    EXPECT_EQ(result.getShape()[0], 4u);
+    EXPECT_EQ(result.getShapeVecRef()[0], 4u);
 
     // --- Stride ---
     ASSERT_EQ(result.getStride().getStrideVec().size(), 1u);
@@ -820,7 +820,7 @@ TEST_F(ViewArithmeticTest, AddViewScalar_CorrectResultFields) {
 
     // --- Shape ---
     EXPECT_EQ(result.getDimensions(), 1u);
-    EXPECT_EQ(result.getShape()[0], 3u);
+    EXPECT_EQ(result.getShapeVecRef()[0], 3u);
 
     // --- Stride ---
     ASSERT_EQ(result.getStride().getStrideVec().size(), 1u);
@@ -849,7 +849,7 @@ TEST_F(ViewArithmeticTest, AddTwoStepViews_CorrectResultFields) {
 
     // --- Shape ---
     EXPECT_EQ(result.getDimensions(), 1u);
-    EXPECT_EQ(result.getShape()[0], 3u);
+    EXPECT_EQ(result.getShapeVecRef()[0], 3u);
 
     // --- Stride ---
     ASSERT_EQ(result.getStride().getStrideVec().size(), 1u);
@@ -877,8 +877,8 @@ TEST_F(ViewArithmeticTest, Add2DViews_CorrectResultFields) {
 
     // --- Shape ---
     EXPECT_EQ(result.getDimensions(), 2u);
-    EXPECT_EQ(result.getShape()[0], 2u);
-    EXPECT_EQ(result.getShape()[1], 3u);
+    EXPECT_EQ(result.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(result.getShapeVecRef()[1], 3u);
 
     // --- Stride ---
     ASSERT_EQ(result.getStride().getStrideVec().size(), 2u);
@@ -916,7 +916,7 @@ TEST_F(ViewSumTest, SumNarrowedView_CorrectValue) {
 
     // Verify base tensor shape/stride/device unchanged
     EXPECT_EQ(base.getDimensions(), 1u);
-    EXPECT_EQ(base.getShape()[0], 5u);
+    EXPECT_EQ(base.getShapeVecRef()[0], 5u);
     EXPECT_EQ(base.getStride().getStrideVec()[0], 1u);
     EXPECT_EQ(base.getDevice()->getType(), DeviceType::CPU);
 }
@@ -931,8 +931,8 @@ TEST_F(ViewSumTest, Sum2DViewAlongAxis_CorrectValue) {
 
     // Verify shape/stride/device of view (should be unchanged after sum)
     EXPECT_EQ(view.getDimensions(), 2u);
-    EXPECT_EQ(view.getShape()[0], 2u);
-    EXPECT_EQ(view.getShape()[1], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(view.getShapeVecRef()[1], 3u);
     EXPECT_EQ(view.getStride().getStrideVec()[0], 3u);
     EXPECT_EQ(view.getStride().getStrideVec()[1], 1u);
     EXPECT_EQ(view.getDevice()->getType(), DeviceType::CPU);
@@ -962,7 +962,7 @@ TEST_F(ChainedViewTest, NarrowThenNarrow_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(view2.getDimensions(), 1u);
-    EXPECT_EQ(view2.getShape()[0], 3u);
+    EXPECT_EQ(view2.getShapeVecRef()[0], 3u);
 
     // --- Stride ---
     ASSERT_EQ(view2.getStride().getStrideVec().size(), 1u);
@@ -995,7 +995,7 @@ TEST_F(ChainedViewTest, SelectThenNarrow_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(sub.getDimensions(), 1u);
-    EXPECT_EQ(sub.getShape()[0], 2u);
+    EXPECT_EQ(sub.getShapeVecRef()[0], 2u);
 
     // --- Stride ---
     ASSERT_EQ(sub.getStride().getStrideVec().size(), 1u);
@@ -1067,7 +1067,7 @@ TEST_F(ViewAxpyTest, Axpy_OnNarrowedView_CorrectFields) {
 
     // View still has same shape
     EXPECT_EQ(y_view.getDimensions(), 1u);
-    EXPECT_EQ(y_view.getShape()[0], 3u);
+    EXPECT_EQ(y_view.getShapeVecRef()[0], 3u);
     EXPECT_EQ(y_view.getStride().getStrideVec()[0], 1u);
     EXPECT_EQ(y_view.getDevice()->getType(), DeviceType::CPU);
     EXPECT_FALSE(y_view.isContiguous());
@@ -1115,7 +1115,7 @@ TEST_F(ViewClearTest, Clear_NarrowedView_ZerosViewOnlyInBase) {
 
     // Shape/stride of view unchanged
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 3u);
     EXPECT_EQ(view.getStride().getStrideVec()[0], 1u);
     EXPECT_EQ(view.getDevice()->getType(), DeviceType::CPU);
 }
@@ -1144,8 +1144,8 @@ TEST_F(ViewReshapeTest, Reshape_ClonedView_Succeeds) {
 
     // --- Shape ---
     EXPECT_EQ(reshaped.getDimensions(), 2u);
-    EXPECT_EQ(reshaped.getShape()[0], 2u);
-    EXPECT_EQ(reshaped.getShape()[1], 2u);
+    EXPECT_EQ(reshaped.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(reshaped.getShapeVecRef()[1], 2u);
 
     // --- Stride ---
     ASSERT_EQ(reshaped.getStride().getStrideVec().size(), 2u);
@@ -1187,8 +1187,8 @@ TEST_F(ViewTransposeTest, Transpose_ClonedView_Succeeds) {
 
     // --- Shape ---
     EXPECT_EQ(transposed.getDimensions(), 2u);
-    EXPECT_EQ(transposed.getShape()[0], 3u);
-    EXPECT_EQ(transposed.getShape()[1], 2u);
+    EXPECT_EQ(transposed.getShapeVecRef()[0], 3u);
+    EXPECT_EQ(transposed.getShapeVecRef()[1], 2u);
 
     // --- Stride ---
     ASSERT_EQ(transposed.getStride().getStrideVec().size(), 2u);
@@ -1234,8 +1234,8 @@ TEST_F(ViewMatmulTest, Matmul_ClonedView_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(result.getDimensions(), 2u);
-    EXPECT_EQ(result.getShape()[0], 2u);
-    EXPECT_EQ(result.getShape()[1], 2u);
+    EXPECT_EQ(result.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(result.getShapeVecRef()[1], 2u);
 
     // --- Stride ---
     ASSERT_EQ(result.getStride().getStrideVec().size(), 2u);
@@ -1283,7 +1283,7 @@ TEST_F(ViewInPlaceTest, SqrtInPlace_OnNarrowedView_WriteThrough) {
 
     // Shape/stride/device unchanged
     EXPECT_EQ(view.getDimensions(), 1u);
-    EXPECT_EQ(view.getShape()[0], 3u);
+    EXPECT_EQ(view.getShapeVecRef()[0], 3u);
     EXPECT_EQ(view.getStride().getStrideVec()[0], 1u);
     EXPECT_EQ(view.getDevice()->getType(), DeviceType::CPU);
     EXPECT_FALSE(view.isContiguous());
@@ -1325,7 +1325,7 @@ TEST_F(ViewHelperTensorsTest, Ones_FromView_CorrectShapeAndValues) {
 
     // --- Shape: same as view ---
     EXPECT_EQ(ones_tensor.getDimensions(), 1u);
-    EXPECT_EQ(ones_tensor.getShape()[0], 3u);
+    EXPECT_EQ(ones_tensor.getShapeVecRef()[0], 3u);
 
     // --- Stride ---
     ASSERT_EQ(ones_tensor.getStride().getStrideVec().size(), 1u);
@@ -1351,7 +1351,7 @@ TEST_F(ViewHelperTensorsTest, Zeros_FromView_CorrectShapeAndValues) {
 
     // --- Shape ---
     EXPECT_EQ(zeros_tensor.getDimensions(), 1u);
-    EXPECT_EQ(zeros_tensor.getShape()[0], 4u);
+    EXPECT_EQ(zeros_tensor.getShapeVecRef()[0], 4u);
 
     // --- Stride ---
     ASSERT_EQ(zeros_tensor.getStride().getStrideVec().size(), 1u);
@@ -1376,8 +1376,8 @@ TEST_F(ViewHelperTensorsTest, SameShapeWithValue_FromView_CorrectFields) {
 
     // --- Shape ---
     EXPECT_EQ(filled.getDimensions(), 2u);
-    EXPECT_EQ(filled.getShape()[0], 2u);
-    EXPECT_EQ(filled.getShape()[1], 2u);
+    EXPECT_EQ(filled.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(filled.getShapeVecRef()[1], 2u);
 
     // --- Stride ---
     ASSERT_EQ(filled.getStride().getStrideVec().size(), 2u);

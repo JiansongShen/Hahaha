@@ -1,4 +1,3 @@
-
 // Copyright (c) 2025-2026 Contributors of Hahaha(https://github.com/Napbad/Hahaha)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +24,8 @@
 
 namespace hahaha::ml {
 
+using hahaha::math::TensorWrapper;
+
 /**
  * @brief Linear regression model.
  *
@@ -48,8 +49,8 @@ template <typename T> class LinearRegression : public Model<T> {
     Parameters<T> getParameters() override {
         Parameters<T> parameters;
 
-        parameters.addParameter(weight_);
-        parameters.addParameter(bias_);
+        // parameters.addParameter(weight_);
+        // parameters.addParameter(bias_);
         return parameters;
     }
 
@@ -58,7 +59,7 @@ template <typename T> class LinearRegression : public Model<T> {
      * @param weights Vector of weight values.
      */
     void setWeights(std::vector<T> weights) {
-        weight_ = Tensor<T>::buildFromVector(weights);
+        weight_ = TensorWrapper<T>(weights);
     }
 
     /**
@@ -66,41 +67,51 @@ template <typename T> class LinearRegression : public Model<T> {
      * @param bias Vector of bias values.
      */
     void setBias(std::vector<T> bias) {
-        bias_ = Tensor<T>::buildFromVector(bias);
+        bias_ = TensorWrapper<T>(bias);
     }
 
     /**
      * @brief Train the model on the given data.
      */
     void train() {
-        // x shape is s * n1 (Size of samples and features Number)
-        // y shape is s * n2 (Size of samples and output Number)
+        // // x shape is s * n1 (Size of samples and features Number)
+        // // y shape is s * n2 (Size of samples and output Number)
 
-        // reshape to a matrix to support common situations
-        auto xShape = x.getShape();
-        if (xShape.size() != 2) {
-            x = x.reshape({xShape[0], 1}); // n rows and 1 column
-        }
+        // // reshape to a matrix to support common situations
+        // auto xShape = x.getShapeVecRef();
+        // if (xShape.size() != 2) {
+        //     x = x.reshape({xShape[0], 1}); // n rows and 1 column
+        // }
 
-        auto shape = x.getShape();
-        auto yPredict = x.matmul(weight_) + bias_;
-        auto mseLoss = computeMSELoss(y, yPredict);
+        // auto shape = x.getShapeVecRef();
+        // auto yPredict = x.matmul(weight_) + bias_;
+        // auto mseLoss = computeMSELoss(y, yPredict);
 
-        this->getOptimizer().addParameter(weight_);
-        this->getOptimizer().addParameter(bias_);
+        // this->getOptimizer().addParameter(weight_);
+        // this->getOptimizer().addParameter(bias_);
 
-        this->getOptimizer().zeroGrad();
-        mseLoss.backward();
-        this->getOptimizer().step();
+        // this->getOptimizer().zeroGrad();
+        // mseLoss.backward();
+        // this->getOptimizer().step();
+    }
+
+    Optimizer<T> getOptimizer() override {
+        return this->getOptimizer();
+    }
+    void setOptimizer(Optimizer<T> optimizer) override {
+        this->setOptimizer(optimizer);
+    }
+    math::TensorWrapper<T> predict(math::TensorWrapper<T> x) override {
+        return x.matmul(weight_) + bias_;
     }
 
   private:
-    Tensor<T> weight_; /**< Weight matrix. Shape: (num_input_features,
+    TensorWrapper<T> weight_; /**< Weight matrix. Shape: (num_input_features,
                           num_outputs). */
-    Tensor<T> bias_;   /**< Bias vector. Shape: (num_outputs,). */
+    TensorWrapper<T> bias_;   /**< Bias vector. Shape: (num_outputs,). */
 
-    Tensor<T> x;
-    Tensor<T> y;
+    TensorWrapper<T> x;
+    TensorWrapper<T> y;
 };
 
 } // namespace hahaha::ml

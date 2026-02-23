@@ -62,7 +62,7 @@ template <typename T> class Optimizer {
      * It iterates through the parameters and updates their values using
      * their gradients.
      */
-    virtual void step() = 0;
+    virtual void step() {};
 
     /**
      * @brief Resets the gradients of all optimized parameters to zero.

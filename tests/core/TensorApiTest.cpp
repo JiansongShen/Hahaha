@@ -43,8 +43,8 @@ TYPED_TEST_SUITE(TensorApiTest, NumericTypes);
 
 TYPED_TEST(TensorApiTest, BuildFromVector_Creates1DTensor) {
     auto t = Tensor<TypeParam>::buildFromVector({1, 2, 3});
-    EXPECT_EQ(t.getShape().size(), 1);
-    EXPECT_EQ(t.getShape()[0], 3);
+    EXPECT_EQ(t.getShapeVecRef().size(), 1);
+    EXPECT_EQ(t.getShapeVecRef()[0], 3);
     EXPECT_EQ(t.at({0}), TypeParam(1));
     EXPECT_EQ(t.at({2}), TypeParam(3));
 }

@@ -72,9 +72,9 @@ TYPED_TEST(TensorTransformOpTypedTest, Reshape_1D_To2D) {
     T v4 = T(4);
     Tensor<T> a1(NestedData<T>{v1, v2, v3, v4});
     auto b1 = a1.reshape({2, 2});
-    EXPECT_EQ(b1.getShape().size(), 2u);
-    EXPECT_EQ(b1.getShape()[0], 2u);
-    EXPECT_EQ(b1.getShape()[1], 2u);
+    EXPECT_EQ(b1.getShapeVecRef().size(), 2u);
+    EXPECT_EQ(b1.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(b1.getShapeVecRef()[1], 2u);
 }
 
 TYPED_TEST(TensorTransformOpTypedTest, Reshape_2D_To1D) {
@@ -85,8 +85,8 @@ TYPED_TEST(TensorTransformOpTypedTest, Reshape_2D_To1D) {
     T v4 = T(4);
     Tensor<T> a2(NestedData<T>{{v1, v2}, {v3, v4}});
     auto b2 = a2.reshape({4});
-    EXPECT_EQ(b2.getShape().size(), 1u);
-    EXPECT_EQ(b2.getShape()[0], 4u);
+    EXPECT_EQ(b2.getShapeVecRef().size(), 1u);
+    EXPECT_EQ(b2.getShapeVecRef()[0], 4u);
 }
 
 TYPED_TEST(TensorTransformOpTypedTest, Reshape_3D_To1D) {
@@ -101,8 +101,8 @@ TYPED_TEST(TensorTransformOpTypedTest, Reshape_3D_To1D) {
     T v8 = T(8);
     Tensor<T> a3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto b3 = a3.reshape({8});
-    EXPECT_EQ(b3.getShape().size(), 1u);
-    EXPECT_EQ(b3.getShape()[0], 8u);
+    EXPECT_EQ(b3.getShapeVecRef().size(), 1u);
+    EXPECT_EQ(b3.getShapeVecRef()[0], 8u);
 }
 
 TYPED_TEST(TensorTransformOpTypedTest, Reshape_3D_To2D) {
@@ -117,9 +117,9 @@ TYPED_TEST(TensorTransformOpTypedTest, Reshape_3D_To2D) {
     T v8 = T(8);
     Tensor<T> a3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto b3 = a3.reshape({4, 2});
-    EXPECT_EQ(b3.getShape().size(), 2u);
-    EXPECT_EQ(b3.getShape()[0], 4u);
-    EXPECT_EQ(b3.getShape()[1], 2u);
+    EXPECT_EQ(b3.getShapeVecRef().size(), 2u);
+    EXPECT_EQ(b3.getShapeVecRef()[0], 4u);
+    EXPECT_EQ(b3.getShapeVecRef()[1], 2u);
 }
 
 // ============================================================================
@@ -134,6 +134,6 @@ TYPED_TEST(TensorTransformOpTypedTest, Transpose_2D_Matrix) {
     T v4 = T(4);
     Tensor<T> a(NestedData<T>{{v1, v2}, {v3, v4}});
     auto c = a.transpose();
-    EXPECT_EQ(c.getShape()[0], 2u);
-    EXPECT_EQ(c.getShape()[1], 2u);
+    EXPECT_EQ(c.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(c.getShapeVecRef()[1], 2u);
 }

@@ -168,7 +168,7 @@ TYPED_TEST(TensorScalarOpTypedTest, ScalarTypes_0D_Scalar) {
     using T = TestFixture::Type;
     T val = TestFixture::scalarValue();
     Tensor<T> s0(val);
-    EXPECT_EQ(s0.getShape().size(), 0);
+    EXPECT_EQ(s0.getShapeVecRef().size(), 0);
     EXPECT_EQ(s0.getTotalSize(), 1);
     this->expectNear(s0.at({}), val);
     this->expectNear(s0.sum(), val);
@@ -178,8 +178,8 @@ TYPED_TEST(TensorScalarOpTypedTest, ScalarTypes_1D_SingleElement) {
     using T = TestFixture::Type;
     T val = TestFixture::scalarValue();
     Tensor<T> s1(NestedData<T>{val});
-    EXPECT_EQ(s1.getShape().size(), 1);
-    EXPECT_EQ(s1.getShape()[0], 1);
+    EXPECT_EQ(s1.getShapeVecRef().size(), 1);
+    EXPECT_EQ(s1.getShapeVecRef()[0], 1);
     EXPECT_EQ(s1.getTotalSize(), 1);
     this->expectNear(s1.at({0}), val);
     this->expectNear(s1.sum(), val);
@@ -189,9 +189,9 @@ TYPED_TEST(TensorScalarOpTypedTest, ScalarTypes_2D_SingleElement) {
     using T = TestFixture::Type;
     T val = TestFixture::scalarValue();
     Tensor<T> s2(NestedData<T>{{val}});
-    EXPECT_EQ(s2.getShape().size(), 2);
-    EXPECT_EQ(s2.getShape()[0], 1);
-    EXPECT_EQ(s2.getShape()[1], 1);
+    EXPECT_EQ(s2.getShapeVecRef().size(), 2);
+    EXPECT_EQ(s2.getShapeVecRef()[0], 1);
+    EXPECT_EQ(s2.getShapeVecRef()[1], 1);
     EXPECT_EQ(s2.getTotalSize(), 1);
     this->expectNear(s2.at({0, 0}), val);
     this->expectNear(s2.sum(), val);
@@ -201,10 +201,10 @@ TYPED_TEST(TensorScalarOpTypedTest, ScalarTypes_3D_SingleElement) {
     using T = TestFixture::Type;
     T val = TestFixture::scalarValue();
     Tensor<T> s3(NestedData<T>{{{val}}});
-    EXPECT_EQ(s3.getShape().size(), 3);
-    EXPECT_EQ(s3.getShape()[0], 1);
-    EXPECT_EQ(s3.getShape()[1], 1);
-    EXPECT_EQ(s3.getShape()[2], 1);
+    EXPECT_EQ(s3.getShapeVecRef().size(), 3);
+    EXPECT_EQ(s3.getShapeVecRef()[0], 1);
+    EXPECT_EQ(s3.getShapeVecRef()[1], 1);
+    EXPECT_EQ(s3.getShapeVecRef()[2], 1);
     EXPECT_EQ(s3.getTotalSize(), 1);
     this->expectNear(s3.at({0, 0, 0}), val);
     this->expectNear(s3.sum(), val);

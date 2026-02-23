@@ -262,7 +262,7 @@ template <typename T> class TensorData {
      * lists).
      * @param data The NestedData object containing flattened data and shape.
      */
-    explicit TensorData(NestedData<T>&& data) : shape_(data.getShape()) {
+    explicit TensorData(NestedData<T>&& data) : shape_(data.getShapeVecRef()) {
         if (const size_t size = data.getFlatData().size(); size > 0) {
             data_ = std::make_shared<T[]>(size);
             std::copy(
@@ -370,7 +370,7 @@ template <typename T> class TensorData {
      * @brief Get the tensor shape.
      * @return Const reference to the shape.
      */
-    [[nodiscard]] const TensorShape& getShape() const {
+    [[nodiscard]] const TensorShape& getShapeVecRef() const {
         return shape_;
     }
 

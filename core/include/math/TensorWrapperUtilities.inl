@@ -73,7 +73,7 @@ namespace hahaha::math {
 
 template <typename T>
 void TensorWrapper<T>::axpy(T alpha, const TensorWrapper& other) {
-    if (getShape() != other.getShape()) {
+    if (getShapeVecRef() != other.getShapeVecRef()) {
         throw std::invalid_argument("Shape mismatch in axpy");
     }
     checkSameDevice(other);
@@ -87,7 +87,7 @@ void TensorWrapper<T>::axpy(T alpha, const TensorWrapper& other) {
         }
     } else {
         // Slow path for non-contiguous tensors
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         const auto& strideA = data_.getStride().getStrideVec();
         const auto& strideB = other.data_.getStride().getStrideVec();
@@ -116,19 +116,19 @@ void TensorWrapper<T>::axpy(T alpha, const TensorWrapper& other) {
 }
 
 template <typename T> TensorWrapper<T> TensorWrapper<T>::ones() const {
-    TensorWrapper res(TensorShape(this->getShape()), T(1), this->getDevice());
+    TensorWrapper res(TensorShape(this->getShapeVecRef()), T(1), this->getDevice());
     return res;
 }
 
 template <typename T> TensorWrapper<T> TensorWrapper<T>::zeros() const {
-    TensorWrapper res(TensorShape(this->getShape()), T(0), this->getDevice());
+    TensorWrapper res(TensorShape(this->getShapeVecRef()), T(0), this->getDevice());
     return res;
 }
 
 template <typename T>
 TensorWrapper<T> TensorWrapper<T>::sameShapeWithValue(T initValue) const {
     TensorWrapper res(
-        TensorShape(this->getShape()), T(initValue), this->getDevice());
+        TensorShape(this->getShapeVecRef()), T(initValue), this->getDevice());
     return res;
 }
 
@@ -138,7 +138,7 @@ bool TensorWrapper<T>::isContiguous() const {
         return false;
     }
 
-    TensorStride defaultStride(data_.getShape());
+    TensorStride defaultStride(data_.getShapeVecRef());
     const auto& currentStrides = data_.getStride().getStrideVec();
     const auto& defaultStrides = defaultStride.getStrideVec();
 

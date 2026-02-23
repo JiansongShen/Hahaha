@@ -120,9 +120,9 @@ TYPED_TEST(TensorWrapperMatrixOpTypedTest, Matmul_2x3_3x2_Matrix) {
     TensorWrapper<T> m2x3(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}});
     TensorWrapper<T> m3x2(NestedData<T>{{v1, v2}, {v3, v4}, {v5, v6}});
     auto r2x2 = m2x3.matmul(m3x2);
-    EXPECT_EQ(r2x2.getShape().size(), 2);
-    EXPECT_EQ(r2x2.getShape()[0], 2);
-    EXPECT_EQ(r2x2.getShape()[1], 2);
+    EXPECT_EQ(r2x2.getShapeVecRef().size(), 2);
+    EXPECT_EQ(r2x2.getShapeVecRef()[0], 2);
+    EXPECT_EQ(r2x2.getShapeVecRef()[1], 2);
     T expected_00 = T(22); // 1*1 + 2*3 + 3*5 = 1+6+15 = 22
     this->expectNear(r2x2.at({0, 0}), expected_00);
 }
@@ -204,8 +204,8 @@ TYPED_TEST(TensorWrapperMatrixOpTypedTest, Transpose_2x3_Matrix) {
     T v6 = T(6);
     TensorWrapper<T> tensor_orig(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}}); // 2x3
     auto tensor_transposed = tensor_orig.transpose();                        // 3x2
-    EXPECT_EQ(tensor_transposed.getShape()[0], 3);
-    EXPECT_EQ(tensor_transposed.getShape()[1], 2);
+    EXPECT_EQ(tensor_transposed.getShapeVecRef()[0], 3);
+    EXPECT_EQ(tensor_transposed.getShapeVecRef()[1], 2);
     this->expectNear(tensor_transposed.at({0, 0}), v1);
     this->expectNear(tensor_transposed.at({0, 1}), v4);
     this->expectNear(tensor_transposed.at({2, 1}), v6);
@@ -216,8 +216,8 @@ TYPED_TEST(TensorWrapperMatrixOpTypedTest, Transpose_1x1_Matrix) {
     T val = T(5);
     TensorWrapper<T> m1x1(NestedData<T>{{val}});
     auto r1x1 = m1x1.transpose();
-    EXPECT_EQ(r1x1.getShape()[0], 1);
-    EXPECT_EQ(r1x1.getShape()[1], 1);
+    EXPECT_EQ(r1x1.getShapeVecRef()[0], 1);
+    EXPECT_EQ(r1x1.getShapeVecRef()[1], 1);
     this->expectNear(r1x1.at({0, 0}), val);
 }
 
@@ -231,8 +231,8 @@ TYPED_TEST(TensorWrapperMatrixOpTypedTest, Transpose_3x2_Matrix) {
     T v6 = T(6);
     TensorWrapper<T> m3x2(NestedData<T>{{v1, v2}, {v3, v4}, {v5, v6}});
     auto r2x3 = m3x2.transpose();
-    EXPECT_EQ(r2x3.getShape()[0], 2);
-    EXPECT_EQ(r2x3.getShape()[1], 3);
+    EXPECT_EQ(r2x3.getShapeVecRef()[0], 2);
+    EXPECT_EQ(r2x3.getShapeVecRef()[1], 3);
     this->expectNear(r2x3.at({0, 0}), v1);
     this->expectNear(r2x3.at({1, 2}), v6);
 }
@@ -281,7 +281,7 @@ TYPED_TEST(TensorWrapperMatrixOpTypedTest, Transpose_Transpose_Identity) {
     TensorWrapper<T> original(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}});
     auto transposed = original.transpose();
     auto double_transposed = transposed.transpose();
-    EXPECT_EQ(double_transposed.getShape(), original.getShape());
+    EXPECT_EQ(double_transposed.getShapeVecRef(), original.getShapeVecRef());
     this->expectNear(double_transposed.at({0, 0}), original.at({0, 0}));
     this->expectNear(double_transposed.at({1, 2}), original.at({1, 2}));
 }

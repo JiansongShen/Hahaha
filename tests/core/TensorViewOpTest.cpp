@@ -104,7 +104,7 @@ TYPED_TEST(TensorViewOpTypedTest, Narrow_1D_Shape) {
     Tensor<TypeParam> t(NestedData<TypeParam>{0, 1, 2, 3, 4});
     auto v = t.narrow(0, 1, 3);
     EXPECT_EQ(v.getDimensions(), 1u);
-    EXPECT_EQ(v.getShape()[0], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 3u);
     EXPECT_EQ(v.getTotalSize(), 3u);
 }
 
@@ -113,8 +113,8 @@ TYPED_TEST(TensorViewOpTypedTest, Narrow_2D_AlongDim0_Shape) {
     Tensor<TypeParam> t(NestedData<TypeParam>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}});
     auto v = t.narrow(0, 1, 2);
     EXPECT_EQ(v.getDimensions(), 2u);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 3u);
     EXPECT_EQ(v.getTotalSize(), 6u);
 }
 
@@ -123,8 +123,8 @@ TYPED_TEST(TensorViewOpTypedTest, Narrow_2D_AlongDim1_Shape) {
     Tensor<TypeParam> t(NestedData<TypeParam>{{0, 1, 2, 3}, {4, 5, 6, 7}});
     auto v = t.narrow(1, 1, 2);
     EXPECT_EQ(v.getDimensions(), 2u);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 2u);
     EXPECT_EQ(v.getTotalSize(), 4u);
 }
 
@@ -138,7 +138,7 @@ TYPED_TEST(TensorViewOpTypedTest, Select_2D_AlongDim0_ReducesDim) {
         NestedData<TypeParam>{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
     auto v = t.select(0, 1);
     EXPECT_EQ(v.getDimensions(), 1u);
-    EXPECT_EQ(v.getShape()[0], 4u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 4u);
 }
 
 TYPED_TEST(TensorViewOpTypedTest, Select_2D_AlongDim1_ReducesDim) {
@@ -146,7 +146,7 @@ TYPED_TEST(TensorViewOpTypedTest, Select_2D_AlongDim1_ReducesDim) {
     Tensor<TypeParam> t(NestedData<TypeParam>{{0, 1, 2}, {3, 4, 5}});
     auto v = t.select(1, 2);
     EXPECT_EQ(v.getDimensions(), 1u);
-    EXPECT_EQ(v.getShape()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
 }
 
 TYPED_TEST(TensorViewOpTypedTest, Select_3D_AlongDim0_Reduces3DTo2D) {
@@ -154,8 +154,8 @@ TYPED_TEST(TensorViewOpTypedTest, Select_3D_AlongDim0_Reduces3DTo2D) {
     Tensor<TypeParam> t(NestedData<TypeParam>{{{0, 1}, {2, 3}}, {{4, 5}, {6, 7}}});
     auto v = t.select(0, 1);
     EXPECT_EQ(v.getDimensions(), 2u);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 2u);
 }
 
 // =============================================================================
@@ -167,7 +167,7 @@ TYPED_TEST(TensorViewOpTypedTest, SliceDim_1D_Step1_Shape) {
     Tensor<TypeParam> t(NestedData<TypeParam>{0, 1, 2, 3, 4});
     auto v = t.sliceDim(0, 1, 4);
     EXPECT_EQ(v.getDimensions(), 1u);
-    EXPECT_EQ(v.getShape()[0], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 3u);
 }
 
 TYPED_TEST(TensorViewOpTypedTest, SliceDim_1D_Step2_Shape) {
@@ -175,7 +175,7 @@ TYPED_TEST(TensorViewOpTypedTest, SliceDim_1D_Step2_Shape) {
     Tensor<TypeParam> t(NestedData<TypeParam>{0, 1, 2, 3, 4});
     auto v = t.sliceDim(0, 0, 5, 2);
     EXPECT_EQ(v.getDimensions(), 1u);
-    EXPECT_EQ(v.getShape()[0], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 3u);
 }
 
 TYPED_TEST(TensorViewOpTypedTest, SliceDim_2D_AlongDim0_Shape) {
@@ -184,8 +184,8 @@ TYPED_TEST(TensorViewOpTypedTest, SliceDim_2D_AlongDim0_Shape) {
         NestedData<TypeParam>{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {9, 10, 11}});
     auto v = t.sliceDim(0, 0, 4, 2);
     EXPECT_EQ(v.getDimensions(), 2u);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 3u);
 }
 
 TYPED_TEST(TensorViewOpTypedTest, SliceDim_DefaultArgs_FullDimension) {
@@ -193,7 +193,7 @@ TYPED_TEST(TensorViewOpTypedTest, SliceDim_DefaultArgs_FullDimension) {
     Tensor<TypeParam> t(NestedData<TypeParam>{0, 1, 2, 3});
     auto v = t.sliceDim(0);
     EXPECT_EQ(v.getDimensions(), 1u);
-    EXPECT_EQ(v.getShape()[0], 4u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 4u);
 }
 
 // =============================================================================
@@ -206,8 +206,8 @@ TYPED_TEST(TensorViewOpTypedTest, Slice_OneDimSetting_Shape) {
     SliceSetting setting({{0, {1, 3, 1}}});
     auto v = t.slice(setting);
     EXPECT_EQ(v.getDimensions(), 2u);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 3u);
 }
 
 TYPED_TEST(TensorViewOpTypedTest, Slice_TwoDimSetting_Shape) {
@@ -217,8 +217,8 @@ TYPED_TEST(TensorViewOpTypedTest, Slice_TwoDimSetting_Shape) {
     SliceSetting setting({{0, {0, 2, 1}}, {1, {1, 3, 1}}});
     auto v = t.slice(setting);
     EXPECT_EQ(v.getDimensions(), 2u);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 2u);
 }
 
 // =============================================================================
@@ -229,8 +229,8 @@ TYPED_TEST(TensorViewOpTypedTest, BroadcastTo_1x3_To_2x3_Shape) {
     Tensor<TypeParam> t(NestedData<TypeParam>{{1, 2, 3}}); // shape (1,3)
     auto v = t.broadcastTo({2, 3});
     EXPECT_EQ(v.getDimensions(), 2u);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 3u);
     EXPECT_EQ(v.getTotalSize(), 6u);
 }
 
@@ -239,9 +239,9 @@ TYPED_TEST(TensorViewOpTypedTest, BroadcastTo_1D_To_3D_Shape) {
     Tensor<TypeParam> t(NestedData<TypeParam>{5}); // shape (1,)
     auto v = t.broadcastTo({2, 3, 1});
     EXPECT_EQ(v.getDimensions(), 3u);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 3u);
-    EXPECT_EQ(v.getShape()[2], 1u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[2], 1u);
 }
 
 // =============================================================================
@@ -349,7 +349,7 @@ TEST_F(TensorViewOpTest, SliceDim_1D_Step1_Values) {
     Tensor<float> t(NestedData<float>{0, 1, 2, 3, 4});
     auto v = t.sliceDim(0, 1, 4, 1);
     EXPECT_EQ(v.getDimensions(), 1u);
-    EXPECT_EQ(v.getShape()[0], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 3u);
     EXPECT_FLOAT_EQ(v.at({0}), 1.0f);
     EXPECT_FLOAT_EQ(v.at({1}), 2.0f);
     EXPECT_FLOAT_EQ(v.at({2}), 3.0f);
@@ -359,7 +359,7 @@ TEST_F(TensorViewOpTest, SliceDim_1D_Step2_Values) {
     // [0,1,2,3,4], sliceDim(0, 0, 5, 2) => [0,2,4]
     Tensor<float> t(NestedData<float>{0, 1, 2, 3, 4});
     auto v = t.sliceDim(0, 0, 5, 2);
-    EXPECT_EQ(v.getShape()[0], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 3u);
     EXPECT_FLOAT_EQ(v.at({0}), 0.0f);
     EXPECT_FLOAT_EQ(v.at({1}), 2.0f);
     EXPECT_FLOAT_EQ(v.at({2}), 4.0f);
@@ -369,8 +369,8 @@ TEST_F(TensorViewOpTest, SliceDim_2D_AlongDim0_Step2_Values) {
     // [[0,1],[2,3],[4,5],[6,7]], sliceDim(0,0,4,2) => rows 0,2 => [[0,1],[4,5]]
     Tensor<float> t(NestedData<float>{{0, 1}, {2, 3}, {4, 5}, {6, 7}});
     auto v = t.sliceDim(0, 0, 4, 2);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 2u);
     EXPECT_FLOAT_EQ(v.at({0, 0}), 0.0f);
     EXPECT_FLOAT_EQ(v.at({0, 1}), 1.0f);
     EXPECT_FLOAT_EQ(v.at({1, 0}), 4.0f);
@@ -380,7 +380,7 @@ TEST_F(TensorViewOpTest, SliceDim_2D_AlongDim0_Step2_Values) {
 TEST_F(TensorViewOpTest, SliceDim_DefaultArgs_AllElements) {
     Tensor<float> t(NestedData<float>{10, 20, 30});
     auto v = t.sliceDim(0);
-    EXPECT_EQ(v.getShape()[0], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 3u);
     EXPECT_FLOAT_EQ(v.at({0}), 10.0f);
     EXPECT_FLOAT_EQ(v.at({2}), 30.0f);
 }
@@ -423,7 +423,7 @@ TEST_F(TensorViewOpTest, Slice_WithStep2_Values) {
     Tensor<float> t(NestedData<float>{0, 1, 2, 3, 4, 5});
     SliceSetting setting({{0, {0, 6, 2}}});
     auto v = t.slice(setting);
-    EXPECT_EQ(v.getShape()[0], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 3u);
     EXPECT_FLOAT_EQ(v.at({0}), 0.0f);
     EXPECT_FLOAT_EQ(v.at({1}), 2.0f);
     EXPECT_FLOAT_EQ(v.at({2}), 4.0f);
@@ -434,8 +434,8 @@ TEST_F(TensorViewOpTest, Slice_UnsortedAxes_StillCorrect) {
     Tensor<float> t(NestedData<float>{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}});
     SliceSetting setting({{1, {1, 3, 1}}, {0, {0, 2, 1}}}); // dim1 before dim0
     auto v = t.slice(setting);
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 2u);
     EXPECT_FLOAT_EQ(v.at({0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(v.at({1, 1}), 6.0f);
 }
@@ -447,8 +447,8 @@ TEST_F(TensorViewOpTest, BroadcastTo_1x3_To_2x3_Values) {
     // Both rows should read the same values (stride[0] = 0)
     Tensor<float> t(NestedData<float>{{1, 2, 3}});
     auto v = t.broadcastTo({2, 3});
-    EXPECT_EQ(v.getShape()[0], 2u);
-    EXPECT_EQ(v.getShape()[1], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 2u);
+    EXPECT_EQ(v.getShapeVecRef()[1], 3u);
     // Row 0 and row 1 are identical
     EXPECT_FLOAT_EQ(v.at({0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(v.at({0, 1}), 2.0f);
@@ -471,7 +471,7 @@ TEST_F(TensorViewOpTest, BroadcastTo_IdentityBroadcast_ValuesUnchanged) {
     // Broadcasting to the same shape is a no-op
     Tensor<float> t(NestedData<float>{5, 6, 7}); // shape (3,)
     auto v = t.broadcastTo({3});
-    EXPECT_EQ(v.getShape()[0], 3u);
+    EXPECT_EQ(v.getShapeVecRef()[0], 3u);
     EXPECT_FLOAT_EQ(v.at({0}), 5.0f);
     EXPECT_FLOAT_EQ(v.at({1}), 6.0f);
     EXPECT_FLOAT_EQ(v.at({2}), 7.0f);
@@ -486,7 +486,7 @@ TEST_F(TensorViewOpTest, NarrowThenSelect_ChainedValues) {
     auto narrowed = t.narrow(0, 1, 2);     // shape (2,4)
     auto selected = narrowed.select(1, 1); // shape (2,): col 1 of each row
     EXPECT_EQ(selected.getDimensions(), 1u);
-    EXPECT_EQ(selected.getShape()[0], 2u);
+    EXPECT_EQ(selected.getShapeVecRef()[0], 2u);
     EXPECT_FLOAT_EQ(selected.at({0}), 5.0f);
     EXPECT_FLOAT_EQ(selected.at({1}), 9.0f);
 }
@@ -497,7 +497,7 @@ TEST_F(TensorViewOpTest, SliceDimThenNarrow_ChainedValues) {
     Tensor<float> t(NestedData<float>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
     auto sliced = t.sliceDim(0, 2, 8, 1);   // [2..7]
     auto narrowed = sliced.narrow(0, 1, 3); // [3,4,5]
-    EXPECT_EQ(narrowed.getShape()[0], 3u);
+    EXPECT_EQ(narrowed.getShapeVecRef()[0], 3u);
     EXPECT_FLOAT_EQ(narrowed.at({0}), 3.0f);
     EXPECT_FLOAT_EQ(narrowed.at({1}), 4.0f);
     EXPECT_FLOAT_EQ(narrowed.at({2}), 5.0f);

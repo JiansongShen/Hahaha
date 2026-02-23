@@ -48,8 +48,8 @@ std::expected<void, Error> dispatchElementwiseCpu(const math::TensorWrapper<T>& 
                                                   const math::TensorWrapper<T>& rhs,
                                                   math::TensorWrapper<T>& res,
                                                   CpuKernel&& kernel) {
-    const auto& shape = lhs.getShape();
-    if (shape != rhs.getShape() || shape != res.getShape()) {
+    const auto& shape = lhs.getShapeVecRef();
+    if (shape != rhs.getShapeVecRef() || shape != res.getShapeVecRef()) {
         return std::unexpected(InvalidArgumentError());
     }
     const auto& lStride = lhs.getStride().getStrideVec();
@@ -69,8 +69,8 @@ std::expected<void, Error> dispatchElementwiseCuda(const math::TensorWrapper<T>&
                                                    const math::TensorWrapper<T>& rhs,
                                                    math::TensorWrapper<T>& res,
                                                    CudaKernel&& kernel) {
-    const auto& shape = lhs.getShape();
-    if (shape != rhs.getShape() || shape != res.getShape()) {
+    const auto& shape = lhs.getShapeVecRef();
+    if (shape != rhs.getShapeVecRef() || shape != res.getShapeVecRef()) {
         return std::unexpected(InvalidArgumentError());
     }
     const auto& lStride = lhs.getStride().getStrideVec();
@@ -164,8 +164,8 @@ std::expected<void, Error> dispatchAdd(const DeviceType dev,
                                        math::TensorWrapper<T>& res) {
     if (dev != DeviceType::CPU)
         return std::unexpected(DeviceNotSupportedError());
-    const auto& shape = lhs.getShape();
-    if (shape != res.getShape())
+    const auto& shape = lhs.getShapeVecRef();
+    if (shape != res.getShapeVecRef())
         return std::unexpected(InvalidArgumentError());
     const auto& lStride = lhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
@@ -257,8 +257,8 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
                                        math::TensorWrapper<T>& res) {
     if (dev != DeviceType::CPU)
         return std::unexpected(DeviceNotSupportedError());
-    const auto& shape = lhs.getShape();
-    if (shape != res.getShape())
+    const auto& shape = lhs.getShapeVecRef();
+    if (shape != res.getShapeVecRef())
         return std::unexpected(InvalidArgumentError());
     const auto& lStride = lhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
@@ -279,8 +279,8 @@ std::expected<void, Error> dispatchSub(const DeviceType dev,
                                        math::TensorWrapper<T>& res) {
     if (dev != DeviceType::CPU)
         return std::unexpected(DeviceNotSupportedError());
-    const auto& shape = rhs.getShape();
-    if (shape != res.getShape())
+    const auto& shape = rhs.getShapeVecRef();
+    if (shape != res.getShapeVecRef())
         return std::unexpected(InvalidArgumentError());
     const auto& rStride = rhs.getStride().getStrideVec();
     auto rRaw = rhs.getRawData();
@@ -364,8 +364,8 @@ std::expected<void, Error> dispatchMul(const DeviceType dev,
                                        math::TensorWrapper<T>& res) {
     if (dev != DeviceType::CPU)
         return std::unexpected(DeviceNotSupportedError());
-    const auto& shape = lhs.getShape();
-    if (shape != res.getShape())
+    const auto& shape = lhs.getShapeVecRef();
+    if (shape != res.getShapeVecRef())
         return std::unexpected(InvalidArgumentError());
     const auto& lStride = lhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
@@ -459,8 +459,8 @@ std::expected<void, Error> dispatchDiv(const DeviceType dev,
         return std::unexpected(DeviceNotSupportedError());
     if (rhs == T(0))
         return std::unexpected(Error{ErrorCode::InvalidArgument});
-    const auto& shape = lhs.getShape();
-    if (shape != res.getShape())
+    const auto& shape = lhs.getShapeVecRef();
+    if (shape != res.getShapeVecRef())
         return std::unexpected(InvalidArgumentError());
     const auto& lStride = lhs.getStride().getStrideVec();
     auto lRaw = lhs.getRawData();
@@ -481,8 +481,8 @@ std::expected<void, Error> dispatchDiv(const DeviceType dev,
                                        math::TensorWrapper<T>& res) {
     if (dev != DeviceType::CPU)
         return std::unexpected(DeviceNotSupportedError());
-    const auto& shape = rhs.getShape();
-    if (shape != res.getShape())
+    const auto& shape = rhs.getShapeVecRef();
+    if (shape != res.getShapeVecRef())
         return std::unexpected(InvalidArgumentError());
     const auto& rStride = rhs.getStride().getStrideVec();
     auto rRaw = rhs.getRawData();
@@ -508,8 +508,8 @@ std::expected<void, Error> dispatchMatMul(const DeviceType dev,
     if (dev != DeviceType::CPU)
         return std::unexpected(DeviceNotSupportedError());
 
-    const auto& lhsDims = lhs.getShape();
-    const auto& rhsDims = rhs.getShape();
+    const auto& lhsDims = lhs.getShapeVecRef();
+    const auto& rhsDims = rhs.getShapeVecRef();
     const size_t rows = lhsDims[0];
     const size_t cols = rhsDims[1];
     const size_t inner = lhsDims[1];

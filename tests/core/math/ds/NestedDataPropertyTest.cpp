@@ -74,7 +74,7 @@ TYPED_TEST(NestedDataPropertyTypedTest, Getters) {
     NestedData<T> nd({v1, v2});
     ASSERT_EQ(nd.getFlatData().size(), 2);
     this->expectNear(nd.getFlatData().at(0), v1);
-    ASSERT_EQ(nd.getShape().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
 }
 
 TYPED_TEST(NestedDataPropertyTypedTest, DeepNesting) {
@@ -82,7 +82,7 @@ TYPED_TEST(NestedDataPropertyTypedTest, DeepNesting) {
     T v1 = T(1);
     NestedData<T> nd = {{{{v1}}}};
     ASSERT_EQ(nd.getFlatData().size(), 1);
-    ASSERT_EQ(nd.getShape().size(), 4);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 4);
 }
 
 TYPED_TEST(NestedDataPropertyTypedTest, LargeList) {
@@ -99,16 +99,16 @@ TYPED_TEST(NestedDataPropertyTypedTest, LargeList) {
     T v10 = T(10);
     NestedData<T> nd = {v1, v2, v3, v4, v5, v6, v7, v8, v9, v10};
     ASSERT_EQ(nd.getFlatData().size(), 10);
-    ASSERT_EQ(nd.getShape().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
 }
 
 TYPED_TEST(NestedDataPropertyTypedTest, SingleElementList) {
     using T = TestFixture::Type;
     T v1 = T(1);
     NestedData<T> nd = {{v1}};
-    ASSERT_EQ(nd.getShape().size(), 2);
-    ASSERT_EQ(nd.getShape()[0], 1);
-    ASSERT_EQ(nd.getShape()[1], 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 1);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 1);
 }
 
 // ============================================================================
@@ -253,7 +253,7 @@ TYPED_TEST(NestedDataPropertyTypedTest, ComplexNestedStructure_4D) {
         },
     };
     ASSERT_EQ(nd.getFlatData().size(), 16);
-    ASSERT_EQ(nd.getShape().size(), 4);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 4);
 }
 
 TYPED_TEST(NestedDataPropertyTypedTest, RectangularNestedStructure) {
@@ -269,7 +269,7 @@ TYPED_TEST(NestedDataPropertyTypedTest, RectangularNestedStructure) {
         {v4, v5, v6},
     };
     ASSERT_EQ(nd.getFlatData().size(), 6);
-    ASSERT_EQ(nd.getShape().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
 }
 
 TYPED_TEST(NestedDataPropertyTypedTest, VeryLargeNestedStructure) {
@@ -280,5 +280,5 @@ TYPED_TEST(NestedDataPropertyTypedTest, VeryLargeNestedStructure) {
         T(21), T(22), T(23), T(24), T(25), T(26), T(27), T(28), T(29), T(30),
     };
     ASSERT_EQ(nd.getFlatData().size(), 30);
-    ASSERT_EQ(nd.getShape().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
 }

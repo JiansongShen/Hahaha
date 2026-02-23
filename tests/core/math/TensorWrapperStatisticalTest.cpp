@@ -136,7 +136,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_WithAxes_EmptyAxes_ReturnsClon
     T v100 = T(100);
     TensorWrapper<T> tensor(NestedData<T>{{v1, v2}, {v3, v4}});
     auto res = tensor.sum({});
-    EXPECT_EQ(res.getShape(), tensor.getShape());
+    EXPECT_EQ(res.getShapeVecRef(), tensor.getShapeVecRef());
     this->expectNear(res.at({0, 0}), v1);
     tensor.at({0, 0}) = v100;
     this->expectNear(res.at({0, 0}), v1); // clone, not view
@@ -211,8 +211,8 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     T v6 = T(6);
     TensorWrapper<T> m2(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}}); // 2x3
     auto sum0 = m2.sum({0});
-    EXPECT_EQ(sum0.getShape().size(), 1);
-    EXPECT_EQ(sum0.getShape()[0], 3);
+    EXPECT_EQ(sum0.getShapeVecRef().size(), 1);
+    EXPECT_EQ(sum0.getShapeVecRef()[0], 3);
     T expected_0 = T(5); // 1+4
     T expected_2 = T(9); // 3+6
     this->expectNear(sum0.at({0}), expected_0);
@@ -230,8 +230,8 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     T v6 = T(6);
     TensorWrapper<T> m2(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}}); // 2x3
     auto sum1_2d = m2.sum({1});
-    EXPECT_EQ(sum1_2d.getShape().size(), 1);
-    EXPECT_EQ(sum1_2d.getShape()[0], 2);
+    EXPECT_EQ(sum1_2d.getShapeVecRef().size(), 1);
+    EXPECT_EQ(sum1_2d.getShapeVecRef()[0], 2);
     T expected_0 = T(6);  // 1+2+3
     T expected_1 = T(15); // 4+5+6
     this->expectNear(sum1_2d.at({0}), expected_0);
@@ -252,9 +252,9 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     TensorWrapper<T> t3(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}}); // 2x2x2
     auto sum0_3d = t3.sum({0});
-    EXPECT_EQ(sum0_3d.getShape().size(), 2);
-    EXPECT_EQ(sum0_3d.getShape()[0], 2);
-    EXPECT_EQ(sum0_3d.getShape()[1], 2);
+    EXPECT_EQ(sum0_3d.getShapeVecRef().size(), 2);
+    EXPECT_EQ(sum0_3d.getShapeVecRef()[0], 2);
+    EXPECT_EQ(sum0_3d.getShapeVecRef()[1], 2);
     T expected_00 = T(6);  // 1+5
     T expected_11 = T(12); // 4+8
     this->expectNear(sum0_3d.at({0, 0}), expected_00);
@@ -275,9 +275,9 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     TensorWrapper<T> t3(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}}); // 2x2x2
     auto sum1_3d = t3.sum({1});
-    EXPECT_EQ(sum1_3d.getShape().size(), 2);
-    EXPECT_EQ(sum1_3d.getShape()[0], 2);
-    EXPECT_EQ(sum1_3d.getShape()[1], 2);
+    EXPECT_EQ(sum1_3d.getShapeVecRef().size(), 2);
+    EXPECT_EQ(sum1_3d.getShapeVecRef()[0], 2);
+    EXPECT_EQ(sum1_3d.getShapeVecRef()[1], 2);
     T expected_00 = T(4);  // 1+3
     T expected_11 = T(14); // 6+8
     this->expectNear(sum1_3d.at({0, 0}), expected_00);
@@ -298,9 +298,9 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     TensorWrapper<T> t3(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}}); // 2x2x2
     auto sum2_3d = t3.sum({2});
-    EXPECT_EQ(sum2_3d.getShape().size(), 2);
-    EXPECT_EQ(sum2_3d.getShape()[0], 2);
-    EXPECT_EQ(sum2_3d.getShape()[1], 2);
+    EXPECT_EQ(sum2_3d.getShapeVecRef().size(), 2);
+    EXPECT_EQ(sum2_3d.getShapeVecRef()[0], 2);
+    EXPECT_EQ(sum2_3d.getShapeVecRef()[1], 2);
     T expected_00 = T(3);  // 1+2
     T expected_11 = T(15); // 7+8
     this->expectNear(sum2_3d.at({0, 0}), expected_00);
@@ -321,8 +321,8 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     TensorWrapper<T> t3(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}}); // 2x2x2
     auto sum01_3d = t3.sum({0, 1});
-    EXPECT_EQ(sum01_3d.getShape().size(), 1);
-    EXPECT_EQ(sum01_3d.getShape()[0], 2);
+    EXPECT_EQ(sum01_3d.getShapeVecRef().size(), 1);
+    EXPECT_EQ(sum01_3d.getShapeVecRef()[0], 2);
     T expected_0 = T(16); // Sum over first two axes for first element
     T expected_1 = T(20); // Sum over first two axes for second element
     this->expectNear(sum01_3d.at({0}), expected_0);
@@ -357,7 +357,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     TensorWrapper<T> v1_tensor(NestedData<T>{v1, v2, v3});
     auto sum1_keep = v1_tensor.sum({0}, true);
     // the result is a scalar
-    EXPECT_EQ(sum1_keep.getShape().size(), 0);
+    EXPECT_EQ(sum1_keep.getShapeVecRef().size(), 0);
     T expected = T(6);
     this->expectNear(sum1_keep.at({}), expected);
 }
@@ -373,9 +373,9 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     T v6 = T(6);
     TensorWrapper<T> m2(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}}); // 2x3
     auto sum0_keep = m2.sum({0}, true);
-    EXPECT_EQ(sum0_keep.getShape().size(), 2);
-    EXPECT_EQ(sum0_keep.getShape()[0], 1);
-    EXPECT_EQ(sum0_keep.getShape()[1], 3);
+    EXPECT_EQ(sum0_keep.getShapeVecRef().size(), 2);
+    EXPECT_EQ(sum0_keep.getShapeVecRef()[0], 1);
+    EXPECT_EQ(sum0_keep.getShapeVecRef()[1], 3);
     T expected = T(5); // 1+4
     this->expectNear(sum0_keep.at({0, 0}), expected);
 }
@@ -391,9 +391,9 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     T v6 = T(6);
     TensorWrapper<T> m2(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}}); // 2x3
     auto sum1_keep_2d = m2.sum({1}, true);
-    EXPECT_EQ(sum1_keep_2d.getShape().size(), 2);
-    EXPECT_EQ(sum1_keep_2d.getShape()[0], 2);
-    EXPECT_EQ(sum1_keep_2d.getShape()[1], 1);
+    EXPECT_EQ(sum1_keep_2d.getShapeVecRef().size(), 2);
+    EXPECT_EQ(sum1_keep_2d.getShapeVecRef()[0], 2);
+    EXPECT_EQ(sum1_keep_2d.getShapeVecRef()[1], 1);
     T expected = T(6); // 1+2+3
     this->expectNear(sum1_keep_2d.at({0, 0}), expected);
 }
@@ -412,10 +412,10 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     TensorWrapper<T> t3(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}}); // 2x2x2
     auto sum0_keep_3d = t3.sum({0}, true);
-    EXPECT_EQ(sum0_keep_3d.getShape().size(), 3);
-    EXPECT_EQ(sum0_keep_3d.getShape()[0], 1);
-    EXPECT_EQ(sum0_keep_3d.getShape()[1], 2);
-    EXPECT_EQ(sum0_keep_3d.getShape()[2], 2);
+    EXPECT_EQ(sum0_keep_3d.getShapeVecRef().size(), 3);
+    EXPECT_EQ(sum0_keep_3d.getShapeVecRef()[0], 1);
+    EXPECT_EQ(sum0_keep_3d.getShapeVecRef()[1], 2);
+    EXPECT_EQ(sum0_keep_3d.getShapeVecRef()[2], 2);
     T expected = T(6); // 1+5
     this->expectNear(sum0_keep_3d.at({0, 0, 0}), expected);
 }
@@ -429,12 +429,12 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     T v4 = T(4);
     TensorWrapper<T> tensor(NestedData<T>{{v1, v2}, {v3, v4}}); // 2x2
     auto sum0 = tensor.sum({0}, false);                         // Should be {2}
-    EXPECT_EQ(sum0.getShape().size(), 1);
-    EXPECT_EQ(sum0.getShape()[0], 2);
+    EXPECT_EQ(sum0.getShapeVecRef().size(), 1);
+    EXPECT_EQ(sum0.getShapeVecRef()[0], 2);
 
     auto sum1 = tensor.sum({1}, false); // Should be {2}
-    EXPECT_EQ(sum1.getShape().size(), 1);
-    EXPECT_EQ(sum1.getShape()[0], 2);
+    EXPECT_EQ(sum1.getShapeVecRef().size(), 1);
+    EXPECT_EQ(sum1.getShapeVecRef()[0], 2);
 }
 
 TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_0D_EmptyAxes_ReturnsSameValue) {
@@ -452,7 +452,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_1D_EmptyAxes_ReturnsClone) {
     T v3 = T(3);
     TensorWrapper<T> v1_tensor(NestedData<T>{v1, v2, v3});
     auto r1_empty = v1_tensor.sum({});
-    EXPECT_EQ(r1_empty.getShape(), v1_tensor.getShape());
+    EXPECT_EQ(r1_empty.getShapeVecRef(), v1_tensor.getShapeVecRef());
 }
 
 TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_2D_EmptyAxes_ReturnsClone) {
@@ -463,7 +463,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_2D_EmptyAxes_ReturnsClone) {
     T v4 = T(4);
     TensorWrapper<T> m2(NestedData<T>{{v1, v2}, {v3, v4}});
     auto r2_empty = m2.sum({});
-    EXPECT_EQ(r2_empty.getShape(), m2.getShape());
+    EXPECT_EQ(r2_empty.getShapeVecRef(), m2.getShapeVecRef());
 }
 
 TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_2D_AllAxes_ReducesToScalar) {
@@ -491,7 +491,7 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest, Sum_3D_EmptyAxes_ReturnsClone) {
     T v8 = T(8);
     TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r3_empty = t3.sum({});
-    EXPECT_EQ(r3_empty.getShape(), t3.getShape());
+    EXPECT_EQ(r3_empty.getShapeVecRef(), t3.getShapeVecRef());
 }
 
 TYPED_TEST(TensorWrapperStatisticalTypedTest,
@@ -507,8 +507,8 @@ TYPED_TEST(TensorWrapperStatisticalTypedTest,
     T v8 = T(8);
     TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r3_01 = t3.sum({0, 1});
-    EXPECT_EQ(r3_01.getShape().size(), 1);
-    EXPECT_EQ(r3_01.getShape()[0], 2);
+    EXPECT_EQ(r3_01.getShapeVecRef().size(), 1);
+    EXPECT_EQ(r3_01.getShapeVecRef()[0], 2);
     T expected = T(16);
     this->expectNear(r3_01.at({0}), expected);
 }

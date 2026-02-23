@@ -20,18 +20,22 @@
 #ifndef HAHAHA_MODEL_H_CC9C6DBC3C23404399CA13FD2F70E408
 #define HAHAHA_MODEL_H_CC9C6DBC3C23404399CA13FD2F70E408
 #include "ml/Parameters.h"
-#include "ml/optimizer/Optimizer.h"
+#include "ml/optimizer/SGDOptimizer.h"
 
 namespace hahaha::ml {
 
 template <typename T> class Model {
 
     static constexpr int DefaultMaxTrainIterations = 1000000;
+    static constexpr T DefaultLearningRate = 0.001;
 
-public:
+  public:
+    Model() {
+        optimizer_ = SGDOptimizer<T>({}, DefaultLearningRate);
+    }
     virtual ~Model() = default;
     virtual Parameters<T> getParameters() = 0;
-    virtual void train(math::TensorWrapper<T> x, math::TensorWrapper<T> y) = 0;
+    virtual void train() = 0;
     virtual math::TensorWrapper<T> predict(math::TensorWrapper<T> x) = 0;
     virtual void setOptimizer(Optimizer<T> optimizer) {
         optimizer_ = optimizer;
@@ -42,8 +46,8 @@ public:
     }
 
 protected:
-    math::TensorWrapper<T> loss_;
-    Optimizer<T> optimizer_;
+  math::TensorWrapper<T> loss_ = math::TensorWrapper<T>();
+  Optimizer<T> optimizer_ = SGDOptimizer<T>({}, DefaultLearningRate);
 };
 } // namespace hahaha::ml
 

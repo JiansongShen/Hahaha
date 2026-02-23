@@ -16,20 +16,27 @@
 // jiansongshen (https://github.com/jiansongshen) (jason.shen111@outlook.com)
 //
 
-#ifndef HAHAHA_COMPUTEGRAPHUTIL_H_4551481B2D15468D89E2B909B5F6B9F4
-#define HAHAHA_COMPUTEGRAPHUTIL_H_4551481B2D15468D89E2B909B5F6B9F4
+#ifndef COMPUTEGRAPHUTIL_D5D0C6D3_CB84_44D7_84BC_E873CAF1DE5F
+#define COMPUTEGRAPHUTIL_D5D0C6D3_CB84_44D7_84BC_E873CAF1DE5F
 #include <memory>
 
 #include "ComputeNode.h"
-
+#include "ml/compute/graph/TopoSort.h"
+#include "ml/compute/graph/cuda/ComputeGraphExecutor.h"
 namespace hahaha::ml {
 class ComputeGraphUtils {
 public:
     template<typename T>
     static std::shared_ptr<ComputeNode<T>> compute(std::shared_ptr<ComputeNode<T>> node) {
+        TopoSort<T> topoSort;
+        auto nodeMap = topoSort.toTopoList(node);
 
+        if (node->getData()->getDevice()->getType() == backend::DeviceType::CUDA) {
+            ComputeGraphExecutor executor;
+            executor.execute(node);
+        }
     }
 };
 }
 
-#endif // HAHAHA_COMPUTEGRAPHUTIL_H_4551481B2D15468D89E2B909B5F6B9F4
+#endif // COMPUTEGRAPHUTIL_D5D0C6D3_CB84_44D7_84BC_E873CAF1DE5F

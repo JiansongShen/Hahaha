@@ -64,7 +64,7 @@ TensorWrapper<T> TensorWrapper<T>::operator/(T scalar) const {
 template <typename T>
 TensorWrapper<T> TensorWrapper<T>::operator-() const {
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
+    result.data_.setShape(data_.getShapeVecRef());
     result.data_.setStride(data_.getStride());
     const size_t tensorSize = getTotalSize();
     result.data_.setData(std::shared_ptr<T[]>(new T[tensorSize]));
@@ -80,7 +80,7 @@ TensorWrapper<T>& TensorWrapper<T>::operator+=(const TensorWrapper& other) {
     if (other.getTotalSize() == 1) {
         return *this += other.data_.getData()[0];
     }
-    if (getShape() != other.getShape()) {
+    if (getShapeVecRef() != other.getShapeVecRef()) {
         throw std::invalid_argument(
             "Tensors must have the same shape for addition");
     }
@@ -101,7 +101,7 @@ TensorWrapper<T>& TensorWrapper<T>::operator-=(const TensorWrapper& other) {
     if (other.getTotalSize() == 1) {
         return *this -= other.data_.getData()[0];
     }
-    if (getShape() != other.getShape()) {
+    if (getShapeVecRef() != other.getShapeVecRef()) {
         throw std::invalid_argument(
             "Tensors must have the same shape for subtraction");
     }
@@ -122,7 +122,7 @@ TensorWrapper<T>& TensorWrapper<T>::operator*=(const TensorWrapper& other) {
     if (other.getTotalSize() == 1) {
         return *this *= other.data_.getData()[0];
     }
-    if (getShape() != other.getShape()) {
+    if (getShapeVecRef() != other.getShapeVecRef()) {
         throw std::invalid_argument(
             "Tensors must have the same shape for multiplication");
     }
@@ -143,7 +143,7 @@ TensorWrapper<T>& TensorWrapper<T>::operator/=(const TensorWrapper& other) {
     if (other.getTotalSize() == 1) {
         return *this /= other.data_.getData()[0];
     }
-    if (getShape() != other.getShape()) {
+    if (getShapeVecRef() != other.getShapeVecRef()) {
         throw std::invalid_argument(
             "Tensors must have the same shape for division");
     }

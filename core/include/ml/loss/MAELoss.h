@@ -17,51 +17,54 @@
 //
 //
 
-#ifndef MSELOSS_CD27251A_6A1C_4A58_89BA_192C683604E8
-#define MSELOSS_CD27251A_6A1C_4A58_89BA_192C683604E8
+#ifndef MAELOSS_E8F2A1B9_7C3D_4F6E_9A8B_2D5C1E3F7A9B
+#define MAELOSS_E8F2A1B9_7C3D_4F6E_9A8B_2D5C1E3F7A9B
 
+// Project includes
 #include "Loss.h"
 
 namespace hahaha::ml {
 
 /**
- * @brief Mean Squared Error (MSE) loss function.
+ * @brief Mean Absolute Error (MAE) loss function.
  *
- * MSE loss computes the mean of the squared differences between predicted
- * and true values. Formula: MSE = mean((yTrue - yPredict)^2)
+ * MAE loss computes the mean of the absolute differences between predicted
+ * and true values. Formula: MAE = mean(|yTrue - yPredict|)
  *
  * @tparam T The numeric type.
  */
-template <typename T> class MSELoss : public Loss<T> {
+template <typename T> class MAELoss : public Loss<T> {
   public:
     /**
-     * @brief Compute the MSE loss between true and predicted values.
+     * @brief Compute the MAE loss between true and predicted values.
      * @param yTrue The true (target) values.
      * @param yPredict The predicted values.
-     * @return TensorWrapper<T> The computed MSE loss value.
+     * @return TensorWrapper<T> The computed MAE loss value.
      */
     TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
         // NOTE: TensorWrapper::sum() currently returns a scalar value (T), not a
         // TensorWrapper. Wrap it back into a scalar TensorWrapper.
-        auto diff = yTrue - yPredict;
-        diff.squareInPlace();
-        return TensorWrapper<T>(diff.sum());
+
+        // The absolute value is computed in-place to avoid unnecessary copying. The
+        // original error tensor is modified, but since it's a temporary object
+        // created by the subtraction, it won't affect
+        return TensorWrapper<T>(((yTrue - yPredict).absInPlace()).sum());
     }
 };
 
 /**
- * @brief Convenience function to compute MSE loss.
+ * @brief Convenience function to compute MAE loss.
  * @tparam T The numeric type.
  * @param yTrue The true (target) values.
  * @param yPredict The predicted values.
- * @return TensorWrapper<T> The computed MSE loss value.
+ * @return TensorWrapper<T> The computed MAE loss value.
  */
 template <typename T>
-TensorWrapper<T> computeMSELoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
-    static MSELoss<T> loss;
+TensorWrapper<T> computeMAELoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+    static MAELoss<T> loss;
     return loss.computeLoss(yTrue, yPredict);
 }
 
 } // namespace hahaha::ml
 
-#endif // MSELOSS_CD27251A_6A1C_4A58_89BA_192C683604E8
+#endif // MAELOSS_E8F2A1B9_7C3D_4F6E_9A8B_2D5C1E3F7A9B

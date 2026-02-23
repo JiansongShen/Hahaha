@@ -37,8 +37,8 @@ TensorWrapper<T> TensorWrapper<T>::matmul(const TensorWrapper& other) const {
 
     checkSameDevice(other);
 
-    const auto& thisDims = data_.getShape().getDims();
-    const auto& otherDims = other.data_.getShape().getDims();
+    const auto& thisDims = data_.getShapeVecRef().getDims();
+    const auto& otherDims = other.data_.getShapeVecRef().getDims();
 
     if (thisDims[1] != otherDims[0]) {
         throw std::invalid_argument(
@@ -54,7 +54,7 @@ TensorWrapper<T> TensorWrapper<T>::matmul(const TensorWrapper& other) const {
 
     TensorWrapper result;
     result.data_.setShape(TensorShape({rows, cols}));
-    result.data_.setStride(TensorStride(result.data_.getShape()));
+    result.data_.setStride(TensorStride(result.data_.getShapeVecRef()));
     result.data_.setDevice(data_.getDevice());
     result.data_.setData(std::shared_ptr<T[]>(new T[rows * cols]));
     // Initialize result with zeros as matmul accumulates
@@ -81,13 +81,13 @@ TensorWrapper<T> TensorWrapper<T>::transpose() const {
         throw std::invalid_argument("transpose is not supported for non-contiguous tensors. Call clone() first.");
     }
 
-    const auto& shapeDims = data_.getShape().getDims();
+    const auto& shapeDims = data_.getShapeVecRef().getDims();
     size_t rows = shapeDims[0];
     size_t cols = shapeDims[1];
 
     TensorWrapper result;
     result.data_.setShape(TensorShape({cols, rows}));
-    result.data_.setStride(TensorStride(result.data_.getShape()));
+    result.data_.setStride(TensorStride(result.data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     result.data_.setDevice(data_.getDevice());
     
@@ -116,7 +116,7 @@ T TensorWrapper<T>::sum() const {
         }
     } else {
         // Slow path for non-contiguous
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         size_t dims = shape.size();
         std::vector<size_t> coords(dims, 0);
         
@@ -156,7 +156,7 @@ TensorWrapper<T> TensorWrapper<T>::sum(std::vector<size_t> axes,
 
     // 1. get target shape
     std::vector<bool> isReduced;
-    const std::vector<size_t>& srcShape = getShape();
+    const std::vector<size_t>& srcShape = getShapeVecRef();
     std::vector<size_t> resShape;
 
     isReduced.resize(srcShape.size(), false);
@@ -168,17 +168,17 @@ TensorWrapper<T> TensorWrapper<T>::sum(std::vector<size_t> axes,
         isReduced[axe] = true;
     }
 
-    if (axes.size() == this->getShape().size()) {
+    if (axes.size() == this->getShapeVecRef().size()) {
         TensorWrapper result;
         result.data_.setShape(TensorShape({}));
-        result.data_.setStride(TensorStride(result.data_.getShape()));
+        result.data_.setStride(TensorStride(result.data_.getShapeVecRef()));
         result.data_.setData(std::make_shared<T[]>(1));
         result.data_.setDevice(data_.getDevice());
         result.getRawData().get()[0] = this->sum();
         return result;
     }
 
-    if (this->getShape().size() == 0) {
+    if (this->getShapeVecRef().size() == 0) {
         return this->clone();
     }
 

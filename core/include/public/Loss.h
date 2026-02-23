@@ -21,14 +21,13 @@
 
 #include <memory>
 
-// Public Tensor type — the only type users touch.
-#include "Tensor.h"
-
 // Inner implementations (not part of the public contract).
 #include "ml/loss/Loss.h"
 #include "ml/loss/MSELoss.h"
 
 namespace hahaha {
+
+using hahaha::math::TensorWrapper;
 
 /**
  * @brief Public handle for loss functions (pimpl).
@@ -45,11 +44,12 @@ template <typename T> class Loss {
 
     /**
      * @brief Compute the loss between true values and predictions.
-     * @param yTrue  Ground-truth tensor.
-     * @param yPred  Predicted tensor.
-     * @return Scalar @ref Tensor<T> holding the loss value.
+     * @param yTrue  Ground-truth tensorWrapper.
+     * @param yPred  Predicted tensorWrapper.
+     * @return Scalar @ref TensorWrapper<T> holding the loss value.
      */
-    Tensor<T> computeLoss(Tensor<T> yTrue, Tensor<T> yPred) const {
+    TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue,
+                                 TensorWrapper<T> yPred) const {
         return impl_->computeLoss(std::move(yTrue), std::move(yPred));
     }
 
@@ -77,7 +77,8 @@ template <typename T> class MSELoss : public Loss<T> {
 /**
  * @brief Free-function convenience wrapper around @ref MSELoss.
  */
-template <typename T> Tensor<T> computeMSELoss(Tensor<T> yTrue, Tensor<T> yPred) {
+template <typename T>
+TensorWrapper<T> computeMSELoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPred) {
     return MSELoss<T>().computeLoss(std::move(yTrue), std::move(yPred));
 }
 

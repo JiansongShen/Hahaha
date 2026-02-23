@@ -121,9 +121,9 @@ TYPED_TEST_SUITE(TensorTypedTest, NumericTypes);
 TYPED_TEST(TensorTypedTest, Constructor_FromNestedData_CreatesCorrectTensor) {
     using T = TestFixture::Type;
     Tensor<T> tensor(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
-    EXPECT_EQ(tensor.getShape().size(), 2);
-    EXPECT_EQ(tensor.getShape()[0], 2);
-    EXPECT_EQ(tensor.getShape()[1], 2);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[0], 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[1], 2);
     EXPECT_EQ(tensor.at({0, 0}), T(1));
     EXPECT_EQ(tensor.at({1, 1}), T(4));
 }
@@ -133,15 +133,15 @@ TYPED_TEST(TensorTypedTest, Constructor_FromScalar_CreatesScalarTensor) {
     T scalarValue = T(99);
     Tensor<T> tensor(scalarValue);
     EXPECT_EQ(tensor.getTotalSize(), 1);
-    EXPECT_EQ(tensor.getShape().size(), 0); // Scalar tensor
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 0); // Scalar tensor
     EXPECT_EQ(tensor.at({}), scalarValue);
 }
 
 TYPED_TEST(TensorTypedTest, BuildFromVector_Creates1DTensor) {
     using T = TestFixture::Type;
     auto t = Tensor<T>::buildFromVector({T(1), T(2), T(3)});
-    EXPECT_EQ(t.getShape().size(), 1);
-    EXPECT_EQ(t.getShape()[0], 3);
+    EXPECT_EQ(t.getShapeVecRef().size(), 1);
+    EXPECT_EQ(t.getShapeVecRef()[0], 3);
     EXPECT_EQ(t.at({0}), T(1));
     EXPECT_EQ(t.at({2}), T(3));
 }
@@ -458,7 +458,7 @@ TYPED_TEST(TensorTypedTest, Reshape_ValidNewShape_CorrectResult) {
     using T = TestFixture::Type;
     Tensor<T> tensor_orig(NestedData<T>{T(1), T(2), T(3), T(4), T(5), T(6)});
     auto tensor_reshaped = tensor_orig.reshape({2, 3});
-    EXPECT_EQ(tensor_reshaped.getShape().size(), 2);
+    EXPECT_EQ(tensor_reshaped.getShapeVecRef().size(), 2);
     EXPECT_EQ(tensor_reshaped.at({0, 0}), T(1));
     EXPECT_EQ(tensor_reshaped.at({1, 2}), T(6));
 }
@@ -471,8 +471,8 @@ TYPED_TEST(TensorTypedTest, Transpose_Valid2DTensor_CorrectResult) {
     using T = TestFixture::Type;
     Tensor<T> tensor_orig(NestedData<T>{{T(1), T(2), T(3)}, {T(4), T(5), T(6)}});
     auto tensor_transposed = tensor_orig.transpose();
-    EXPECT_EQ(tensor_transposed.getShape()[0], 3);
-    EXPECT_EQ(tensor_transposed.getShape()[1], 2);
+    EXPECT_EQ(tensor_transposed.getShapeVecRef()[0], 3);
+    EXPECT_EQ(tensor_transposed.getShapeVecRef()[1], 2);
     EXPECT_EQ(tensor_transposed.at({0, 0}), T(1));
     EXPECT_EQ(tensor_transposed.at({0, 1}), T(4));
     EXPECT_EQ(tensor_transposed.at({2, 1}), T(6));
@@ -593,7 +593,7 @@ TYPED_TEST(TensorTypedTest, Constructor_NestedData_3D_CorrectlyInitializes) {
     using T = TestFixture::Type;
     Tensor<T> tensor(
         NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}}, {{T(5), T(6)}, {T(7), T(8)}}});
-    EXPECT_EQ(tensor.getShape().size(), 3);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 3);
     EXPECT_EQ(tensor.getTotalSize(), 8);
     EXPECT_EQ(tensor.at({0, 0, 0}), T(1));
     EXPECT_EQ(tensor.at({1, 1, 1}), T(8));
@@ -617,26 +617,26 @@ TYPED_TEST(TensorTypedTest,
 TYPED_TEST(TensorTypedTest, GetShape_ReturnsCorrectDimensionsAndSize) {
     using T = TestFixture::Type;
     Tensor<T> tensor_2d(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
-    EXPECT_EQ(tensor_2d.getShape()[0], 2);
-    EXPECT_EQ(tensor_2d.getShape()[1], 2);
+    EXPECT_EQ(tensor_2d.getShapeVecRef()[0], 2);
+    EXPECT_EQ(tensor_2d.getShapeVecRef()[1], 2);
     EXPECT_EQ(tensor_2d.getTotalSize(), 4);
 
     Tensor<T> tensor_3d(
         NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}}, {{T(5), T(6)}, {T(7), T(8)}}});
-    EXPECT_EQ(tensor_3d.getShape()[0], 2);
-    EXPECT_EQ(tensor_3d.getShape()[1], 2);
-    EXPECT_EQ(tensor_3d.getShape()[2], 2);
+    EXPECT_EQ(tensor_3d.getShapeVecRef()[0], 2);
+    EXPECT_EQ(tensor_3d.getShapeVecRef()[1], 2);
+    EXPECT_EQ(tensor_3d.getShapeVecRef()[2], 2);
     EXPECT_EQ(tensor_3d.getTotalSize(), 8);
 }
 
 TYPED_TEST(TensorTypedTest, GetDimensions_ReturnsCorrectCount) {
     using T = TestFixture::Type;
     Tensor<T> tensor_scalar(T(1));
-    EXPECT_EQ(tensor_scalar.getShape().size(), 0); // Scalar has 0 dimensions
+    EXPECT_EQ(tensor_scalar.getShapeVecRef().size(), 0); // Scalar has 0 dimensions
     Tensor<T> tensor_1d(NestedData<T>{T(1), T(2), T(3)});
-    EXPECT_EQ(tensor_1d.getShape().size(), 1);
+    EXPECT_EQ(tensor_1d.getShapeVecRef().size(), 1);
     Tensor<T> tensor_2d(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
-    EXPECT_EQ(tensor_2d.getShape().size(), 2);
+    EXPECT_EQ(tensor_2d.getShapeVecRef().size(), 2);
 }
 
 TYPED_TEST(TensorTypedTest, ElementAccess_OutOfBounds_ThrowsOutOfRange) {

@@ -144,7 +144,7 @@ template <typename T> class TensorWrapper {
      * @brief Get the tensor's shape.
      * @return const std::vector<size_t>& reference to internal shape.
      */
-    [[nodiscard]] const std::vector<size_t>& getShape() const;
+    [[nodiscard]] const std::vector<size_t>& getShapeVecRef() const;
 
     /**
      * @brief Get the tensor's shape.
@@ -435,10 +435,10 @@ template <typename T> class TensorWrapper {
         if (dim >= getDimensions()) {
             throw std::out_of_range("Dimension out of range");
         }
-        if (start >= getShape()[dim]) {
+        if (start >= getShapeVecRef()[dim]) {
             throw std::out_of_range("Start index out of range");
         }
-        if (start + length > getShape()[dim]) {
+        if (start + length > getShapeVecRef()[dim]) {
             throw std::out_of_range("Length out of range");
         }
 
@@ -450,7 +450,7 @@ template <typename T> class TensorWrapper {
         result.data_.setOffset(newOffset);
 
         // Update shape: only the sliced dimension changes
-        std::vector<size_t> newShape = getShape();
+        std::vector<size_t> newShape = getShapeVecRef();
         newShape[dim] = length;
         result.data_.setShape(TensorShape(newShape));
 
@@ -486,13 +486,13 @@ template <typename T> class TensorWrapper {
         if (dim >= getDimensions()) {
             throw std::out_of_range("Dimension out of range");
         }
-        if (index >= getShape()[dim]) {
+        if (index >= getShapeVecRef()[dim]) {
             throw std::out_of_range("Index out of range");
         }
         TensorWrapper res;
         res.data_ = data_.share();
         res.data_.setOffset(data_.getOffset() + index * getStride()[dim]);
-        std::vector<size_t> newShape = getShape();
+        std::vector<size_t> newShape = getShapeVecRef();
         newShape.erase(newShape.begin() + static_cast<int>(dim));
         res.data_.setShape(TensorShape(newShape));
         TensorStride newStrideTS = getStride();
@@ -544,13 +544,13 @@ template <typename T> class TensorWrapper {
 
         // Handle default values for optional parameters
         size_t startVal = start.has_value() ? start.value() : 0;
-        size_t endVal = end.has_value() ? end.value() : getShape()[dim];
+        size_t endVal = end.has_value() ? end.value() : getShapeVecRef()[dim];
 
         // Validate bounds
-        if (startVal >= getShape()[dim]) {
+        if (startVal >= getShapeVecRef()[dim]) {
             throw std::out_of_range("Start index out of range");
         }
-        if (endVal > getShape()[dim]) {
+        if (endVal > getShapeVecRef()[dim]) {
             throw std::out_of_range("End index out of range");
         }
         if (startVal >= endVal) {
@@ -565,7 +565,7 @@ template <typename T> class TensorWrapper {
         res.data_.setOffset(newOffset);
 
         // Calculate new shape: the sliced dimension size
-        std::vector<size_t> newShape = getShape();
+        std::vector<size_t> newShape = getShapeVecRef();
         size_t sliceSize = (endVal - startVal + step - 1) / step; // Ceiling division
         newShape[dim] = sliceSize;
         res.data_.setShape(TensorShape(newShape));
@@ -770,6 +770,21 @@ template <typename T> class TensorWrapper {
      * @brief Square root all elements in place.
      */
     void sqrtInPlace();
+
+    /**
+     * @brief Take the absolute value of all elements in place.
+     */
+    void absInPlace();
+
+    /**
+     * @brief Take the exponential of all elements in place.
+     */
+    void expInPlace();
+
+    /**
+     * @brief Take the natural logarithm of all elements in place.
+     */
+    void logInPlace();
 
     /**
      * @brief Creates a new tensor of the same shape and device filled with

@@ -58,7 +58,7 @@ void TensorWrapper<T>::to(std::shared_ptr<backend::Device> targetDevice) {
 
 template <typename T>
 T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) {
-    const auto& shapeDims = data_.getShape().getDims();
+    const auto& shapeDims = data_.getShapeVecRef().getDims();
     if (indices.size() != shapeDims.size()) {
         throw std::out_of_range("Dimension mismatch: expected "
                                 + std::to_string(shapeDims.size())
@@ -86,7 +86,7 @@ T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) {
 
 template <typename T>
 const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) const {
-    const auto& shapeDims = data_.getShape().getDims();
+    const auto& shapeDims = data_.getShapeVecRef().getDims();
     if (indices.size() != shapeDims.size()) {
         throw std::out_of_range("Dimension mismatch");
     }
@@ -109,7 +109,7 @@ const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) cons
 
 // template <typename T>
 // T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) {
-//     const auto& shapeDims = data_.getShape().getDims();
+//     const auto& shapeDims = data_.getShapeVecRef().getDims();
 //     if (indices.size() != shapeDims.size()) {
 //         throw std::out_of_range("Dimension mismatch: expected "
 //                                 + std::to_string(shapeDims.size())
@@ -137,7 +137,7 @@ const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) cons
 // template <typename T>
 // const T& TensorWrapper<T>::at(const std::initializer_list<size_t>& indices) const
 // {
-//     const auto& shapeDims = data_.getShape().getDims();
+//     const auto& shapeDims = data_.getShapeVecRef().getDims();
 //     if (indices.size() != shapeDims.size()) {
 //         throw std::out_of_range("Dimension mismatch");
 //     }

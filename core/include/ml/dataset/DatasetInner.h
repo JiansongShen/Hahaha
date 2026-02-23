@@ -269,7 +269,7 @@ template <typename T> class DatasetInner {
         if (samples_.getDimensions() == 0) {
             return iterator(this, 0);
         }
-        return iterator(this, static_cast<long>(samples_.getShape()[0]));
+        return iterator(this, static_cast<long>(samples_.getShapeVecRef()[0]));
     }
 
     const_iterator begin() const {
@@ -280,7 +280,7 @@ template <typename T> class DatasetInner {
         if (samples_.getDimensions() == 0) {
             return const_iterator(this, 0);
         }
-        return const_iterator(this, static_cast<long>(samples_.getShape()[0]));
+        return const_iterator(this, static_cast<long>(samples_.getShapeVecRef()[0]));
     }
 
     const_iterator cbegin() const noexcept {
@@ -298,7 +298,7 @@ template <typename T> class DatasetInner {
         if (samples_.getDimensions() == 0) {
             return 0;
         }
-        return samples_.getShape()[0];
+        return samples_.getShapeVecRef()[0];
     }
 
     /**

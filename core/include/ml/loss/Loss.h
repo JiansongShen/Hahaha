@@ -19,9 +19,12 @@
 
 #ifndef HAHAHA_LOSS_H_B47FE5F8D49547D19923C1D379D9C24C
 #define HAHAHA_LOSS_H_B47FE5F8D49547D19923C1D379D9C24C
-#include "public/Tensor.h"
+
+#include "math/TensorWrapper.h"
 
 namespace hahaha::ml {
+
+using math::TensorWrapper;
 
 /**
  * @brief Base class for all loss functions.
@@ -43,15 +46,15 @@ template <typename T> class Loss {
      * @brief Compute the loss between true and predicted values.
      * @param yTrue The true (target) values.
      * @param yPredict The predicted values.
-     * @return Tensor<T> The computed loss value.
+     * @return TensorWrapper<T> The computed loss value.
      */
-    virtual Tensor<T> computeLoss(Tensor<T> /*yTrue*/, Tensor<T> /*yPredict*/) {
-        return Tensor<T>(T(0));
+    virtual TensorWrapper<T> computeLoss(TensorWrapper<T> /*yTrue*/,
+                                         TensorWrapper<T> /*yPredict*/) {
+        return TensorWrapper<T>(T(0));
     }
 
-    virtual Tensor<T> operator()(Tensor<T> /* yTrue */, Tensor<T> /* yPreedict */);
-
-    virtual Tensor<T> predict(Tensor<T> x);
+    virtual TensorWrapper<T> operator()(TensorWrapper<T> /* yTrue */,
+                                        TensorWrapper<T> /* yPreedict */);
 };
 
 } // namespace hahaha::ml

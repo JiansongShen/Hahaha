@@ -681,9 +681,9 @@ TEST_F(AutogradTest, Reshape_Backward_PropagatesNonUniformGrad) {
     c.backward();
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape().size(), 2);
-    EXPECT_EQ(a.grad().getShape()[0], 2);
-    EXPECT_EQ(a.grad().getShape()[1], 3);
+    EXPECT_EQ(a.grad().getShapeVecRef().size(), 2);
+    EXPECT_EQ(a.grad().getShapeVecRef()[0], 2);
+    EXPECT_EQ(a.grad().getShapeVecRef()[1], 3);
 
     // b.grad should be w (since d(b*w)/db = w), then reshaped back to (2,3)
     // flatten(w) = [10,20,30,40,50,60] -> reshape(2,3) =
@@ -708,9 +708,9 @@ TEST_F(AutogradTest, Transpose_Backward_PropagatesNonUniformGrad) {
     c.backward();
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape().size(), 2);
-    EXPECT_EQ(a.grad().getShape()[0], 2);
-    EXPECT_EQ(a.grad().getShape()[1], 3);
+    EXPECT_EQ(a.grad().getShapeVecRef().size(), 2);
+    EXPECT_EQ(a.grad().getShapeVecRef()[0], 2);
+    EXPECT_EQ(a.grad().getShapeVecRef()[1], 3);
 
     // b.grad = w, so a.grad = w.transpose() = [[1,3,5],[2,4,6]]
     EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 1.0f);

@@ -34,8 +34,8 @@ class NestedDataTest : public ::testing::Test {
 TEST_F(NestedDataTest, InitializeViaInitializerList) {
     NestedData<int> nd({1, 2, 3, 4, 5});
     ASSERT_EQ(nd.getFlatData().size(), 5);
-    ASSERT_EQ(nd.getShape().size(), 1);
-    ASSERT_EQ(nd.getShape().at(0), 5);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef().at(0), 5);
     ASSERT_EQ(nd.getFlatData().at(0), 1);
     ASSERT_EQ(nd.getFlatData().at(1), 2);
     ASSERT_EQ(nd.getFlatData().at(2), 3);
@@ -50,9 +50,9 @@ TEST_F(NestedDataTest, InitializeViaNestedInitializerList1) {
         NestedData<int>({7, 8, 9}),
     };
     ASSERT_EQ(nd.getFlatData().size(), 9);
-    ASSERT_EQ(nd.getShape().size(), 2);
-    ASSERT_EQ(nd.getShape().at(0), 3);
-    ASSERT_EQ(nd.getShape().at(1), 3);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef().at(0), 3);
+    ASSERT_EQ(nd.getShapeVecRef().at(1), 3);
     ASSERT_EQ(nd.getFlatData().at(0), 1);
     ASSERT_EQ(nd.getFlatData().at(1), 2);
     ASSERT_EQ(nd.getFlatData().at(2), 3);
@@ -76,10 +76,10 @@ TEST_F(NestedDataTest, InitializeViaNestedInitializerList2) {
         },
     };
     ASSERT_EQ(nd.getFlatData().size(), 8);
-    ASSERT_EQ(nd.getShape().size(), 3);
-    ASSERT_EQ(nd.getShape().at(0), 2);
-    ASSERT_EQ(nd.getShape().at(1), 2);
-    ASSERT_EQ(nd.getShape().at(2), 2);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 3);
+    ASSERT_EQ(nd.getShapeVecRef().at(0), 2);
+    ASSERT_EQ(nd.getShapeVecRef().at(1), 2);
+    ASSERT_EQ(nd.getShapeVecRef().at(2), 2);
     ASSERT_EQ(nd.getFlatData().at(0), 1);
     ASSERT_EQ(nd.getFlatData().at(1), 2);
     ASSERT_EQ(nd.getFlatData().at(2), 3);
@@ -103,10 +103,10 @@ TEST_F(NestedDataTest, InitializeViaNestedInitializerList3) {
     });
 
     ASSERT_EQ(nestedData.getFlatData().size(), 8);
-    ASSERT_EQ(nestedData.getShape().size(), 3);
-    ASSERT_EQ(nestedData.getShape().at(0), 2);
-    ASSERT_EQ(nestedData.getShape().at(1), 2);
-    ASSERT_EQ(nestedData.getShape().at(2), 2);
+    ASSERT_EQ(nestedData.getShapeVecRef().size(), 3);
+    ASSERT_EQ(nestedData.getShapeVecRef().at(0), 2);
+    ASSERT_EQ(nestedData.getShapeVecRef().at(1), 2);
+    ASSERT_EQ(nestedData.getShapeVecRef().at(2), 2);
     ASSERT_EQ(nestedData.getFlatData().at(0), 1);
     ASSERT_EQ(nestedData.getFlatData().at(1), 2);
     ASSERT_EQ(nestedData.getFlatData().at(2), 3);
@@ -121,14 +121,14 @@ TEST_F(NestedDataTest, InitializeWithEmptyList) {
     ASSERT_NO_THROW(NestedData<int> nd({}));
     NestedData<int> nd({});
     ASSERT_EQ(nd.getFlatData().size(), 0);
-    ASSERT_EQ(nd.getShape().size(), 0);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 0);
 }
 
 TEST_F(NestedDataTest, SingleValueConstruction) {
     NestedData<int> nd(42);
     ASSERT_EQ(nd.getFlatData().size(), 1);
     ASSERT_EQ(nd.getFlatData()[0], 42);
-    ASSERT_EQ(nd.getShape().size(), 0);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 0);
 }
 
 TEST_F(NestedDataTest, InconsistentShapesThrows) {
@@ -140,34 +140,34 @@ TEST_F(NestedDataTest, Getters) {
     ASSERT_EQ(nd.getFlatData().size(), 2);
     ASSERT_EQ(nd.getFlatData().at(0), 1);
     ASSERT_EQ(nd.getFlatData().at(1), 2);
-    ASSERT_EQ(nd.getShape().size(), 1);
-    ASSERT_EQ(nd.getShape().at(0), 2);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef().at(0), 2);
 }
 
 TEST_F(NestedDataTest, DifferentTypes) {
     NestedData<double> nd = {{1.1, 2.2}, {3.3, 4.4}};
     ASSERT_EQ(nd.getFlatData().size(), 4);
     ASSERT_DOUBLE_EQ(nd.getFlatData().at(0), 1.1);
-    ASSERT_EQ(nd.getShape().size(), 2);
-    ASSERT_EQ(nd.getShape().at(0), 2);
-    ASSERT_EQ(nd.getShape().at(1), 2);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef().at(0), 2);
+    ASSERT_EQ(nd.getShapeVecRef().at(1), 2);
 }
 
 TEST_F(NestedDataTest, DeepNesting) {
     NestedData<int> nd = {{{{1}}}};
     ASSERT_EQ(nd.getFlatData().size(), 1);
-    ASSERT_EQ(nd.getShape().size(), 4);
-    ASSERT_EQ(nd.getShape().at(0), 1);
-    ASSERT_EQ(nd.getShape().at(1), 1);
-    ASSERT_EQ(nd.getShape().at(2), 1);
-    ASSERT_EQ(nd.getShape().at(3), 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 4);
+    ASSERT_EQ(nd.getShapeVecRef().at(0), 1);
+    ASSERT_EQ(nd.getShapeVecRef().at(1), 1);
+    ASSERT_EQ(nd.getShapeVecRef().at(2), 1);
+    ASSERT_EQ(nd.getShapeVecRef().at(3), 1);
 }
 
 TEST_F(NestedDataTest, LargeList) {
     NestedData<int> nd = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     ASSERT_EQ(nd.getFlatData().size(), 10);
-    ASSERT_EQ(nd.getShape().size(), 1);
-    ASSERT_EQ(nd.getShape().at(0), 10);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef().at(0), 10);
 }
 
 TEST_F(NestedDataTest, NestedEmptyListThrows) {
@@ -190,9 +190,9 @@ TEST_F(NestedDataTest, InconsistentShapesDeeper) {
 
 TEST_F(NestedDataTest, SingleElementList) {
     NestedData<int> nd = {{1}};
-    ASSERT_EQ(nd.getShape().size(), 2);
-    ASSERT_EQ(nd.getShape()[0], 1);
-    ASSERT_EQ(nd.getShape()[1], 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 1);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 1);
 }
 
 // ============================================================================
@@ -204,15 +204,15 @@ TEST_F(NestedDataTest, ZeroDimension_Scalar) {
     NestedData<int> nd(42);
     ASSERT_EQ(nd.getFlatData().size(), 1);
     ASSERT_EQ(nd.getFlatData()[0], 42);
-    ASSERT_EQ(nd.getShape().size(), 0);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 0);
 }
 
 TEST_F(NestedDataTest, OneDimension_Vector) {
     // 1D: [1, 2, 3]
     NestedData<int> nd({1, 2, 3});
     ASSERT_EQ(nd.getFlatData().size(), 3);
-    ASSERT_EQ(nd.getShape().size(), 1);
-    ASSERT_EQ(nd.getShape()[0], 3);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 3);
     ASSERT_EQ(nd.getFlatData()[0], 1);
     ASSERT_EQ(nd.getFlatData()[2], 3);
 }
@@ -221,8 +221,8 @@ TEST_F(NestedDataTest, OneDimension_SingleElement) {
     // 1D with single element: [1] (different from scalar)
     NestedData<int> nd{1};
     ASSERT_EQ(nd.getFlatData().size(), 1);
-    ASSERT_EQ(nd.getShape().size(), 1);
-    ASSERT_EQ(nd.getShape()[0], 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 1);
     ASSERT_EQ(nd.getFlatData()[0], 1);
 }
 
@@ -230,9 +230,9 @@ TEST_F(NestedDataTest, TwoDimension_Matrix) {
     // 2D: {{1, 2}, {3, 4}}
     NestedData<int> nd = {{1, 2}, {3, 4}};
     ASSERT_EQ(nd.getFlatData().size(), 4);
-    ASSERT_EQ(nd.getShape().size(), 2);
-    ASSERT_EQ(nd.getShape()[0], 2);
-    ASSERT_EQ(nd.getShape()[1], 2);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 2);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 2);
     ASSERT_EQ(nd.getFlatData()[0], 1);
     ASSERT_EQ(nd.getFlatData()[3], 4);
 }
@@ -241,9 +241,9 @@ TEST_F(NestedDataTest, TwoDimension_SingleElement) {
     // 2D with single element: {{1}} (high-dimensional scalar)
     NestedData<int> nd = {{1}};
     ASSERT_EQ(nd.getFlatData().size(), 1);
-    ASSERT_EQ(nd.getShape().size(), 2);
-    ASSERT_EQ(nd.getShape()[0], 1);
-    ASSERT_EQ(nd.getShape()[1], 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 1);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 1);
     ASSERT_EQ(nd.getFlatData()[0], 1);
 }
 
@@ -251,10 +251,10 @@ TEST_F(NestedDataTest, ThreeDimension_Tensor) {
     // 3D: {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}}
     NestedData<int> nd = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}};
     ASSERT_EQ(nd.getFlatData().size(), 8);
-    ASSERT_EQ(nd.getShape().size(), 3);
-    ASSERT_EQ(nd.getShape()[0], 2);
-    ASSERT_EQ(nd.getShape()[1], 2);
-    ASSERT_EQ(nd.getShape()[2], 2);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 3);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 2);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 2);
+    ASSERT_EQ(nd.getShapeVecRef()[2], 2);
     ASSERT_EQ(nd.getFlatData()[0], 1);
     ASSERT_EQ(nd.getFlatData()[7], 8);
 }
@@ -263,10 +263,10 @@ TEST_F(NestedDataTest, ThreeDimension_SingleElement) {
     // 3D with single element: {{{1}}} (3D scalar)
     NestedData<int> nd = {{{1}}};
     ASSERT_EQ(nd.getFlatData().size(), 1);
-    ASSERT_EQ(nd.getShape().size(), 3);
-    ASSERT_EQ(nd.getShape()[0], 1);
-    ASSERT_EQ(nd.getShape()[1], 1);
-    ASSERT_EQ(nd.getShape()[2], 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 3);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 1);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 1);
+    ASSERT_EQ(nd.getShapeVecRef()[2], 1);
     ASSERT_EQ(nd.getFlatData()[0], 1);
 }
 
@@ -281,7 +281,7 @@ TEST_F(NestedDataTest, EmptyNestedDataConstruction) {
     // Test construction with completely empty nested data
     NestedData<int> nd({});
     ASSERT_EQ(nd.getFlatData().size(), 0);
-    ASSERT_EQ(nd.getShape().size(), 0);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 0);
 }
 
 TEST_F(NestedDataTest, ConsistencyCheckInConstructor) {
@@ -294,17 +294,17 @@ TEST_F(NestedDataTest, ComplexNestedStructure) {
     // Test with more complex nested structures
     NestedData<int> nd = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
     ASSERT_EQ(nd.getFlatData().size(), 12);
-    ASSERT_EQ(nd.getShape().size(), 3);
-    ASSERT_EQ(nd.getShape()[0], 3); // 3 major groups
-    ASSERT_EQ(nd.getShape()[1], 2); // 2 rows in each group
-    ASSERT_EQ(nd.getShape()[2], 2); // 2 elements in each row
+    ASSERT_EQ(nd.getShapeVecRef().size(), 3);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 3); // 3 major groups
+    ASSERT_EQ(nd.getShapeVecRef()[1], 2); // 2 rows in each group
+    ASSERT_EQ(nd.getShapeVecRef()[2], 2); // 2 elements in each row
 }
 
 TEST_F(NestedDataTest, GettersAccessors) {
     // Test the const getter accessors
     const NestedData<int> nd({1, 2, 3, 4});
     const auto& flatData = nd.getFlatData();
-    const auto& shape = nd.getShape();
+    const auto& shape = nd.getShapeVecRef();
 
     ASSERT_EQ(flatData.size(), 4);
     ASSERT_EQ(shape.size(), 1);

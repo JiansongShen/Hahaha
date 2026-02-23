@@ -38,34 +38,34 @@ using hahaha::math::TensorData;
 
 TEST_F(TensorDataTest, InitWithInitializerList) {
     TensorData<int> singleValueTensor(hahaha::math::NestedData<int>{1});
-    EXPECT_EQ(singleValueTensor.getShape().getDims().size(), 1);
-    EXPECT_EQ(singleValueTensor.getShape().getDims()[0], 1);
+    EXPECT_EQ(singleValueTensor.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(singleValueTensor.getShapeVecRef().getDims()[0], 1);
     EXPECT_EQ(singleValueTensor.getData()[0], 1);
 
     TensorData<int> twoElementTensor(hahaha::math::NestedData<int>{{1}, {2}});
-    EXPECT_EQ(twoElementTensor.getShape().getDims().size(), 2);
-    EXPECT_EQ(twoElementTensor.getShape().getDims()[0], 2);
-    EXPECT_EQ(twoElementTensor.getShape().getDims()[1], 1);
+    EXPECT_EQ(twoElementTensor.getShapeVecRef().getDims().size(), 2);
+    EXPECT_EQ(twoElementTensor.getShapeVecRef().getDims()[0], 2);
+    EXPECT_EQ(twoElementTensor.getShapeVecRef().getDims()[1], 1);
     EXPECT_EQ(twoElementTensor.getData()[0], 1);
     EXPECT_EQ(twoElementTensor.getData()[1], 2);
 }
 
 TEST_F(TensorDataTest, InitWithEmptyNestedData_ProducesNullDataAndScalarShape) {
     TensorData<int> empty(hahaha::math::NestedData<int>{});
-    EXPECT_EQ(empty.getShape().getDims().size(), 0);
+    EXPECT_EQ(empty.getShapeVecRef().getDims().size(), 0);
     EXPECT_EQ(empty.getData().get(), nullptr);
 }
 
 TEST_F(TensorDataTest, DefaultConstructor) {
     TensorData<float> defaultConstructedTensor;
-    EXPECT_EQ(defaultConstructedTensor.getShape().getDims().size(), 0);
+    EXPECT_EQ(defaultConstructedTensor.getShapeVecRef().getDims().size(), 0);
     EXPECT_EQ(defaultConstructedTensor.getData().get(), nullptr);
 }
 
 TEST_F(TensorDataTest, ShapeOnlyConstructor_DefaultDeviceAllocates) {
     hahaha::math::TensorShape shape({2, 2});
     TensorData<int> td(shape);
-    EXPECT_EQ(td.getShape().getTotalSize(), 4);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 4);
     EXPECT_NE(td.getData().get(), nullptr);
 }
 
@@ -86,8 +86,8 @@ TEST_F(TensorDataTest, ShapeOnlyConstructor_GpuDevice_ThrowsRuntimeError) {
 TEST_F(TensorDataTest, InitVecConstructor_Creates1DTensor) {
     std::vector<int> vec = {7, 8, 9};
     TensorData<int> td(vec);
-    EXPECT_EQ(td.getShape().getDims().size(), 1);
-    EXPECT_EQ(td.getShape().getDims()[0], 3);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 3);
     EXPECT_EQ(td.getStride().getStrideSize(), 1);
     EXPECT_EQ(td.getStride()[0], 1);
     EXPECT_EQ(td.getData()[0], 7);
@@ -97,7 +97,7 @@ TEST_F(TensorDataTest, InitVecConstructor_Creates1DTensor) {
 TEST_F(TensorDataTest, ShapeValueConstructor) {
     hahaha::math::TensorShape shape({2, 3});
     TensorData<int> tensor_data(shape, 7);
-    EXPECT_EQ(tensor_data.getShape().getTotalSize(), 6);
+    EXPECT_EQ(tensor_data.getShapeVecRef().getTotalSize(), 6);
     for (size_t i = 0; i < 6; ++i) {
         EXPECT_EQ(tensor_data.getData()[i], 7);
     }
@@ -108,7 +108,7 @@ TEST_F(TensorDataTest, ShapeValueConstructor) {
 
 TEST_F(TensorDataTest, OneDimensionalTensor) {
     TensorData<int> tensor_1d(hahaha::math::NestedData<int>{1, 2, 3, 4, 5});
-    EXPECT_EQ(tensor_1d.getShape().getTotalSize(), 5);
+    EXPECT_EQ(tensor_1d.getShapeVecRef().getTotalSize(), 5);
     for (int i = 0; i < 5; ++i) {
         EXPECT_EQ(tensor_1d.getData()[i], i + 1);
     }
@@ -118,10 +118,10 @@ TEST_F(TensorDataTest, CopyConstructor) {
     TensorData<int> original(hahaha::math::NestedData<int>{{1, 2}, {3, 4}});
     TensorData<int> copied(original);
 
-    EXPECT_EQ(copied.getShape(), original.getShape());
+    EXPECT_EQ(copied.getShapeVecRef(), original.getShapeVecRef());
     EXPECT_EQ(copied.getStride().getStrideSize(),
               original.getStride().getStrideSize());
-    for (size_t i = 0; i < original.getShape().getTotalSize(); ++i) {
+    for (size_t i = 0; i < original.getShapeVecRef().getTotalSize(); ++i) {
         EXPECT_EQ(copied.getData()[i], original.getData()[i]);
     }
 
@@ -136,10 +136,10 @@ TEST_F(TensorDataTest, Clone) {
     TensorData<int> original(hahaha::math::NestedData<int>{{1, 2}, {3, 4}});
     TensorData<int> cloned = original.clone();
 
-    EXPECT_EQ(cloned.getShape(), original.getShape());
+    EXPECT_EQ(cloned.getShapeVecRef(), original.getShapeVecRef());
     EXPECT_EQ(cloned.getStride().getStrideSize(),
               original.getStride().getStrideSize());
-    for (size_t i = 0; i < original.getShape().getTotalSize(); ++i) {
+    for (size_t i = 0; i < original.getShapeVecRef().getTotalSize(); ++i) {
         EXPECT_EQ(cloned.getData()[i], original.getData()[i]);
     }
 
@@ -156,10 +156,10 @@ TEST_F(TensorDataTest, MoveConstructor) {
 
     TensorData<int> moved(std::move(original));
 
-    EXPECT_EQ(moved.getShape().getTotalSize(), 3);
+    EXPECT_EQ(moved.getShapeVecRef().getTotalSize(), 3);
     EXPECT_EQ(moved.getData().get(), originalPtr);
     EXPECT_EQ(original.getData().get(), nullptr);
-    EXPECT_EQ(original.getShape().getDims().size(), 0);
+    EXPECT_EQ(original.getShapeVecRef().getDims().size(), 0);
 }
 
 TEST_F(TensorDataTest, MoveAssignment) {
@@ -169,7 +169,7 @@ TEST_F(TensorDataTest, MoveAssignment) {
 
     moved = std::move(original);
 
-    EXPECT_EQ(moved.getShape().getTotalSize(), 3);
+    EXPECT_EQ(moved.getShapeVecRef().getTotalSize(), 3);
     EXPECT_EQ(moved.getData().get(), originalPtr);
     EXPECT_EQ(original.getData().get(), nullptr);
 }
@@ -184,7 +184,7 @@ TEST_F(TensorDataTest, SettersAndGetters) {
     td.setStride(hahaha::math::TensorStride(hahaha::math::TensorShape({2, 2})));
 
     EXPECT_EQ(td.getData()[0], 10);
-    EXPECT_EQ(td.getShape().getTotalSize(), 4);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 4);
     EXPECT_EQ(td.getStride()[0], 2);
 }
 
@@ -195,7 +195,7 @@ TEST_F(TensorDataTest, Share_SharesBufferButCopiesMetadata) {
     // Shares underlying buffer
     EXPECT_EQ(shared.getData().get(), original.getData().get());
     // Metadata is value-copied
-    EXPECT_EQ(shared.getShape(), original.getShape());
+    EXPECT_EQ(shared.getShapeVecRef(), original.getShapeVecRef());
     EXPECT_EQ(shared.getStride().toString(), original.getStride().toString());
 
     // Mutating shared data mutates original data (same buffer)
@@ -204,7 +204,7 @@ TEST_F(TensorDataTest, Share_SharesBufferButCopiesMetadata) {
 
     // Mutating metadata on shared should not affect original
     shared.setShape(hahaha::math::TensorShape({4}));
-    EXPECT_NE(shared.getShape(), original.getShape());
+    EXPECT_NE(shared.getShapeVecRef(), original.getShapeVecRef());
 }
 
 TEST_F(TensorDataTest, Device_GetSet_Works) {
@@ -254,7 +254,7 @@ TEST_F(TensorDataTest, Share_NullData) {
     TensorData<int> original;
     auto shared = original.share();
     EXPECT_EQ(shared.getData().get(), nullptr);
-    EXPECT_EQ(shared.getShape().getDims().size(), 0);
+    EXPECT_EQ(shared.getShapeVecRef().getDims().size(), 0);
 }
 
 TEST_F(TensorDataTest, DoubleTypeTensor) {
@@ -278,17 +278,17 @@ TEST_F(TensorDataTest, ZeroDimension_Scalar) {
     // 0D scalar: SingleValueConstruction
     auto nData = hahaha::math::NestedData(42);
     TensorData td(std::move(nData));
-    EXPECT_EQ(td.getShape().getDims().size(), 0);
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 0);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], 42);
 }
 
 TEST_F(TensorDataTest, OneDimension_Vector) {
     // 1D: [1, 2, 3]
     TensorData<int> td(hahaha::math::NestedData<int>{1, 2, 3});
-    EXPECT_EQ(td.getShape().getDims().size(), 1);
-    EXPECT_EQ(td.getShape().getDims()[0], 3);
-    EXPECT_EQ(td.getShape().getTotalSize(), 3);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 3);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 3);
     EXPECT_EQ(td.getData()[0], 1);
     EXPECT_EQ(td.getData()[2], 3);
 }
@@ -296,19 +296,19 @@ TEST_F(TensorDataTest, OneDimension_Vector) {
 TEST_F(TensorDataTest, OneDimension_SingleElement) {
     // 1D with single element: [1] (different from scalar)
     TensorData<int> td(hahaha::math::NestedData<int>{1});
-    EXPECT_EQ(td.getShape().getDims().size(), 1);
-    EXPECT_EQ(td.getShape().getDims()[0], 1);
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 1);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], 1);
 }
 
 TEST_F(TensorDataTest, TwoDimension_Matrix) {
     // 2D: {{1, 2}, {3, 4}}
     TensorData<int> td(hahaha::math::NestedData<int>{{1, 2}, {3, 4}});
-    EXPECT_EQ(td.getShape().getDims().size(), 2);
-    EXPECT_EQ(td.getShape().getDims()[0], 2);
-    EXPECT_EQ(td.getShape().getDims()[1], 2);
-    EXPECT_EQ(td.getShape().getTotalSize(), 4);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[1], 2);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 4);
     EXPECT_EQ(td.getData()[0], 1);
     EXPECT_EQ(td.getData()[3], 4);
 }
@@ -316,10 +316,10 @@ TEST_F(TensorDataTest, TwoDimension_Matrix) {
 TEST_F(TensorDataTest, TwoDimension_SingleElement) {
     // 2D with single element: {{1}} (high-dimensional scalar)
     TensorData<int> td(hahaha::math::NestedData<int>{{1}});
-    EXPECT_EQ(td.getShape().getDims().size(), 2);
-    EXPECT_EQ(td.getShape().getDims()[0], 1);
-    EXPECT_EQ(td.getShape().getDims()[1], 1);
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[1], 1);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], 1);
 }
 
@@ -327,11 +327,11 @@ TEST_F(TensorDataTest, ThreeDimension_Tensor) {
     // 3D: {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}}
     TensorData<int> td(
         hahaha::math::NestedData<int>{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}});
-    EXPECT_EQ(td.getShape().getDims().size(), 3);
-    EXPECT_EQ(td.getShape().getDims()[0], 2);
-    EXPECT_EQ(td.getShape().getDims()[1], 2);
-    EXPECT_EQ(td.getShape().getDims()[2], 2);
-    EXPECT_EQ(td.getShape().getTotalSize(), 8);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 3);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[1], 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[2], 2);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 8);
     EXPECT_EQ(td.getData()[0], 1);
     EXPECT_EQ(td.getData()[7], 8);
 }
@@ -339,11 +339,11 @@ TEST_F(TensorDataTest, ThreeDimension_Tensor) {
 TEST_F(TensorDataTest, ThreeDimension_SingleElement) {
     // 3D with single element: {{{1}}} (3D scalar)
     TensorData<int> td(hahaha::math::NestedData<int>{{{1}}});
-    EXPECT_EQ(td.getShape().getDims().size(), 3);
-    EXPECT_EQ(td.getShape().getDims()[0], 1);
-    EXPECT_EQ(td.getShape().getDims()[1], 1);
-    EXPECT_EQ(td.getShape().getDims()[2], 1);
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 3);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[1], 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[2], 1);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], 1);
 }
 
@@ -354,16 +354,16 @@ TEST_F(TensorDataTest, ThreeDimension_SingleElement) {
 TEST_F(TensorDataTest, ShapeValueConstructor_0D_Scalar) {
     hahaha::math::TensorShape shape0D({});
     TensorData<int> td0D(shape0D, 42);
-    EXPECT_EQ(td0D.getShape().getDims().size(), 0);
-    EXPECT_EQ(td0D.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td0D.getShapeVecRef().getDims().size(), 0);
+    EXPECT_EQ(td0D.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td0D.getData()[0], 42);
 }
 
 TEST_F(TensorDataTest, ShapeValueConstructor_1D_Vector) {
     hahaha::math::TensorShape shape1D({3});
     TensorData<int> td1D(shape1D, 7);
-    EXPECT_EQ(td1D.getShape().getDims().size(), 1);
-    EXPECT_EQ(td1D.getShape().getTotalSize(), 3);
+    EXPECT_EQ(td1D.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(td1D.getShapeVecRef().getTotalSize(), 3);
     for (size_t i = 0; i < 3; ++i) {
         EXPECT_EQ(td1D.getData()[i], 7);
     }
@@ -372,8 +372,8 @@ TEST_F(TensorDataTest, ShapeValueConstructor_1D_Vector) {
 TEST_F(TensorDataTest, ShapeValueConstructor_2D_Matrix) {
     hahaha::math::TensorShape shape2D({2, 3});
     TensorData<int> td2D(shape2D, 5);
-    EXPECT_EQ(td2D.getShape().getDims().size(), 2);
-    EXPECT_EQ(td2D.getShape().getTotalSize(), 6);
+    EXPECT_EQ(td2D.getShapeVecRef().getDims().size(), 2);
+    EXPECT_EQ(td2D.getShapeVecRef().getTotalSize(), 6);
     for (size_t i = 0; i < 6; ++i) {
         EXPECT_EQ(td2D.getData()[i], 5);
     }
@@ -382,8 +382,8 @@ TEST_F(TensorDataTest, ShapeValueConstructor_2D_Matrix) {
 TEST_F(TensorDataTest, ShapeValueConstructor_3D_Tensor) {
     hahaha::math::TensorShape shape3D({2, 2, 2});
     TensorData<int> td3D(shape3D, 9);
-    EXPECT_EQ(td3D.getShape().getDims().size(), 3);
-    EXPECT_EQ(td3D.getShape().getTotalSize(), 8);
+    EXPECT_EQ(td3D.getShapeVecRef().getDims().size(), 3);
+    EXPECT_EQ(td3D.getShapeVecRef().getTotalSize(), 8);
     for (size_t i = 0; i < 8; ++i) {
         EXPECT_EQ(td3D.getData()[i], 9);
     }
@@ -397,7 +397,7 @@ TEST_F(TensorDataTest, CopyConstructor_GpuDevice_DoesNotThrow) {
     // Shadow copy should work even with GPU device
     TensorData<int> copied(original);
     EXPECT_EQ(copied.getDevice(), original.getDevice());
-    EXPECT_EQ(copied.getShape(), original.getShape());
+    EXPECT_EQ(copied.getShapeVecRef(), original.getShapeVecRef());
 }
 
 TEST_F(TensorDataTest, Clone_GpuDevice_ThrowsRuntimeError) {
@@ -411,16 +411,16 @@ TEST_F(TensorDataTest, Clone_GpuDevice_ThrowsRuntimeError) {
 TEST_F(TensorDataTest, MoveConstructor_PreservesAllData) {
     hahaha::math::TensorShape shape({2, 3});
     TensorData<int> original(shape, 42);
-    auto originalShape = original.getShape();
+    auto originalShape = original.getShapeVecRef();
     auto originalStride = original.getStride();
     auto originalDevice = original.getDevice();
 
     TensorData<int> moved(std::move(original));
 
-    EXPECT_EQ(moved.getShape(), originalShape);
+    EXPECT_EQ(moved.getShapeVecRef(), originalShape);
     EXPECT_EQ(moved.getStride().toString(), originalStride.toString());
     EXPECT_EQ(moved.getDevice(), originalDevice);
-    EXPECT_EQ(moved.getShape().getTotalSize(), 6);
+    EXPECT_EQ(moved.getShapeVecRef().getTotalSize(), 6);
 }
 
 TEST_F(TensorDataTest, Share_PreservesOriginalState) {
@@ -431,7 +431,7 @@ TEST_F(TensorDataTest, Share_PreservesOriginalState) {
 
     // Verify shared data is the same
     EXPECT_EQ(shared.getData().get(), original.getData().get());
-    EXPECT_EQ(shared.getShape(), original.getShape());
+    EXPECT_EQ(shared.getShapeVecRef(), original.getShapeVecRef());
     EXPECT_EQ(shared.getStride().toString(), original.getStride().toString());
 
     // Modify shared and verify original is affected

@@ -84,8 +84,8 @@ TYPED_TEST(NestedDataConstructionTypedTest, InitializeViaInitializerList_1D) {
     T v5 = T(5);
     NestedData<T> nd(NestedData<T>{v1, v2, v3, v4, v5});
     ASSERT_EQ(nd.getFlatData().size(), 5);
-    ASSERT_EQ(nd.getShape().size(), 1);
-    ASSERT_EQ(nd.getShape().at(0), 5);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef().at(0), 5);
     this->expectNear(nd.getFlatData().at(0), v1);
 }
 
@@ -95,7 +95,7 @@ TYPED_TEST(NestedDataConstructionTypedTest, ZeroDimension_Scalar) {
     NestedData<T> nd(value);
     ASSERT_EQ(nd.getFlatData().size(), 1);
     this->expectNear(nd.getFlatData()[0], value);
-    ASSERT_EQ(nd.getShape().size(), 0);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 0);
 }
 
 TYPED_TEST(NestedDataConstructionTypedTest, OneDimension_Vector) {
@@ -105,8 +105,8 @@ TYPED_TEST(NestedDataConstructionTypedTest, OneDimension_Vector) {
     T v3 = T(3);
     NestedData<T> nd({v1, v2, v3});
     ASSERT_EQ(nd.getFlatData().size(), 3);
-    ASSERT_EQ(nd.getShape().size(), 1);
-    ASSERT_EQ(nd.getShape()[0], 3);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 1);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 3);
 }
 
 TYPED_TEST(NestedDataConstructionTypedTest, TwoDimension_Matrix) {
@@ -117,9 +117,9 @@ TYPED_TEST(NestedDataConstructionTypedTest, TwoDimension_Matrix) {
     T v4 = T(4);
     NestedData<T> nd = {{v1, v2}, {v3, v4}};
     ASSERT_EQ(nd.getFlatData().size(), 4);
-    ASSERT_EQ(nd.getShape().size(), 2);
-    ASSERT_EQ(nd.getShape()[0], 2);
-    ASSERT_EQ(nd.getShape()[1], 2);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 2);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 2);
 }
 
 TYPED_TEST(NestedDataConstructionTypedTest, ThreeDimension_Tensor) {
@@ -134,17 +134,17 @@ TYPED_TEST(NestedDataConstructionTypedTest, ThreeDimension_Tensor) {
     T v8 = T(8);
     NestedData<T> nd = {{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}};
     ASSERT_EQ(nd.getFlatData().size(), 8);
-    ASSERT_EQ(nd.getShape().size(), 3);
-    ASSERT_EQ(nd.getShape()[0], 2);
-    ASSERT_EQ(nd.getShape()[1], 2);
-    ASSERT_EQ(nd.getShape()[2], 2);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 3);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 2);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 2);
+    ASSERT_EQ(nd.getShapeVecRef()[2], 2);
 }
 
 TYPED_TEST(NestedDataConstructionTypedTest, InitializeWithEmptyList) {
     using T = TestFixture::Type;
     NestedData<T> nd({});
     ASSERT_EQ(nd.getFlatData().size(), 0);
-    ASSERT_EQ(nd.getShape().size(), 0);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 0);
 }
 
 TYPED_TEST(NestedDataConstructionTypedTest, ScalarImplicitConversion) {
@@ -162,8 +162,8 @@ TYPED_TEST(NestedDataConstructionTypedTest, OneDimension_SingleElement) {
     // T v1 = T(1);
     // NestedData<T> nd(v1);
     // ASSERT_EQ(nd.getFlatData().size(), 1);
-    // ASSERT_EQ(nd.getShape().size(), 1);
-    // ASSERT_EQ(nd.getShape()[0], 1);
+    // ASSERT_EQ(nd.getShapeVecRef().size(), 1);
+    // ASSERT_EQ(nd.getShapeVecRef()[0], 1);
     // this->expectNear(nd.getFlatData()[0], v1);
     GTEST_SKIP() << "Skipped";
 }
@@ -173,9 +173,9 @@ TYPED_TEST(NestedDataConstructionTypedTest, TwoDimension_SingleElement) {
     T v1 = T(1);
     NestedData<T> nd = {{v1}};
     ASSERT_EQ(nd.getFlatData().size(), 1);
-    ASSERT_EQ(nd.getShape().size(), 2);
-    ASSERT_EQ(nd.getShape()[0], 1);
-    ASSERT_EQ(nd.getShape()[1], 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 2);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 1);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 1);
     this->expectNear(nd.getFlatData()[0], v1);
 }
 
@@ -184,9 +184,9 @@ TYPED_TEST(NestedDataConstructionTypedTest, ThreeDimension_SingleElement) {
     T v1 = T(1);
     NestedData<T> nd = {{{v1}}};
     ASSERT_EQ(nd.getFlatData().size(), 1);
-    ASSERT_EQ(nd.getShape().size(), 3);
-    ASSERT_EQ(nd.getShape()[0], 1);
-    ASSERT_EQ(nd.getShape()[1], 1);
-    ASSERT_EQ(nd.getShape()[2], 1);
+    ASSERT_EQ(nd.getShapeVecRef().size(), 3);
+    ASSERT_EQ(nd.getShapeVecRef()[0], 1);
+    ASSERT_EQ(nd.getShapeVecRef()[1], 1);
+    ASSERT_EQ(nd.getShapeVecRef()[2], 1);
     this->expectNear(nd.getFlatData()[0], v1);
 }

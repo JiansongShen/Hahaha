@@ -41,7 +41,7 @@ TensorWrapper<T> TensorWrapper<T>::reshape(const std::vector<size_t>& newShape) 
 
     TensorWrapper result;
     result.data_.setShape(TensorShape(newShape));
-    result.data_.setStride(TensorStride(result.data_.getShape()));
+    result.data_.setStride(TensorStride(result.data_.getShapeVecRef()));
 
     size_t currentSize = getTotalSize();
     result.data_.setData(std::shared_ptr<T[]>(new T[currentSize]));
@@ -56,39 +56,39 @@ TensorWrapper<T> TensorWrapper<T>::reshape(const std::vector<size_t>& newShape) 
 
 template <typename T>
 size_t TensorWrapper<T>::getDimensions() const {
-    return data_.getShape().getDims().size();
+    return data_.getShapeVecRef().getDims().size();
 }
 
 template <typename T>
 TensorWrapper<T> TensorWrapper<T>::broadcastTo(const TensorShape& newShape) {
     auto broadcasted =
-        TensorShape::broadcastShape(this->data_.getShape(), newShape);
+        TensorShape::broadcastShape(this->data_.getShapeVecRef(), newShape);
     if (!broadcasted.has_value() || TensorShape(*broadcasted) != newShape) {
         throw std::invalid_argument("Cannot broadcast shape "
-                                    + this->data_.getShape().toString()
+                                    + this->data_.getShapeVecRef().toString()
                                     + " to " + newShape.toString());
     }
 
     TensorWrapper result;
     result.data_ = this->data_.share();
-    if (newShape.getDims().size() < this->getShape().size()) {
+    if (newShape.getDims().size() < this->getShapeVecRef().size()) {
         throw std::invalid_argument(
             "invalid argument of broadcastTo(), the target shape is "
             + newShape.toString() + " but current shape is "
-            + this->data_.getShape().toString());
+            + this->data_.getShapeVecRef().toString());
     }
 
     TensorStride newStride = this->data_.getStride();
-    auto shapeDiff = newShape.getDims().size() - this->getShape().size();
+    auto shapeDiff = newShape.getDims().size() - this->getShapeVecRef().size();
     newStride.getStrideVec().insert(
         newStride.getStrideVec().begin(), shapeDiff, 0);
 
     long newShapeIdx = static_cast<long>(newShape.getDims().size() - 1);
-    long selfShapeIdx = static_cast<long>(this->getShape().size() - 1);
+    long selfShapeIdx = static_cast<long>(this->getShapeVecRef().size() - 1);
 
     while (selfShapeIdx >= 0) {
         if (newShape.getDims()[newShapeIdx] != 1
-            && getShape()[selfShapeIdx] == 1) {
+            && getShapeVecRef()[selfShapeIdx] == 1) {
             newStride.getStrideVec()[newShapeIdx] = 0;
         }
 
@@ -106,8 +106,9 @@ TensorWrapper<T> TensorWrapper<T>::broadcastTo(const TensorShape& newShape) {
 template <typename T>
 TensorWrapper<T> TensorWrapper<T>::clone() const {
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape())); // Default contiguous stride
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(
+        TensorStride(data_.getShapeVecRef())); // Default contiguous stride
     result.data_.setDevice(data_.getDevice());
     result.data_.setData(std::make_shared<T[]>(getTotalSize()));
     
@@ -118,7 +119,7 @@ TensorWrapper<T> TensorWrapper<T>::clone() const {
                   result.data_.getData().get());
     } else {
         // Slow path for non-contiguous views
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         size_t dims = shape.size();
         std::vector<size_t> coords(dims, 0);
         
@@ -160,7 +161,7 @@ void TensorWrapper<T>::clear() {
                   T());
     } else {
         // Non-contiguous: must iterate
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         size_t dims = shape.size();
         std::vector<size_t> coords(dims, 0);
         size_t totalSize = getTotalSize();

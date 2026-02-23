@@ -18,9 +18,9 @@
 
 #include <gtest/gtest.h>
 
+#include "math/TensorWrapper.h"
 #include "math/ds/TensorData.h"
 #include "public/Loss.h"
-#include "public/Tensor.h"
 
 using namespace hahaha;
 using namespace hahaha::math;
@@ -39,11 +39,11 @@ class PublicLossBaseTest : public ::testing::Test {
     }
 };
 
-TEST_F(PublicLossBaseTest, ComputeLossReturnsTensorType) {
+TEST_F(PublicLossBaseTest, ComputeLossReturnsTensorWrapperType) {
     MSELoss<f32> loss;
-    auto result = loss.computeLoss(Tensor<f32>(NestedData<f32>(1.0f)),
-                                   Tensor<f32>(NestedData<f32>(1.0f)));
-    // Result must be accessible as a scalar tensor.
+    auto result = loss.computeLoss(TensorWrapper<f32>(NestedData<f32>(1.0f)),
+                                   TensorWrapper<f32>(NestedData<f32>(1.0f)));
+    // Result must be accessible as a scalar tensorWrapper.
     EXPECT_FLOAT_EQ(result.at({}), 0.0f);
 }
 
@@ -57,35 +57,35 @@ class PublicMSELossTest : public ::testing::Test {
 };
 
 TEST_F(PublicMSELossTest, ZeroLoss_WhenPredictionMatchesTarget) {
-    auto yTrue = Tensor<f32>(NestedData<f32>(3.0f));
-    auto yPred = Tensor<f32>(NestedData<f32>(3.0f));
+    auto yTrue = TensorWrapper<f32>(NestedData<f32>(3.0f));
+    auto yPred = TensorWrapper<f32>(NestedData<f32>(3.0f));
     EXPECT_FLOAT_EQ(loss_.computeLoss(yTrue, yPred).at({}), 0.0f);
 }
 
 TEST_F(PublicMSELossTest, ScalarInputs_SquaredError) {
     // (3 - 1)^2 = 4
-    auto yTrue = Tensor<f32>(NestedData<f32>(3.0f));
-    auto yPred = Tensor<f32>(NestedData<f32>(1.0f));
+    auto yTrue = TensorWrapper<f32>(NestedData<f32>(3.0f));
+    auto yPred = TensorWrapper<f32>(NestedData<f32>(1.0f));
     EXPECT_FLOAT_EQ(loss_.computeLoss(yTrue, yPred).at({}), 4.0f);
 }
 
 TEST_F(PublicMSELossTest, VectorInputs_SumOfSquaredErrors) {
     // (1-2)^2 + (2-0)^2 + (3-5)^2 = 1 + 4 + 4 = 9
-    Tensor<f32> yTrue(NestedData<f32>{1.0f, 2.0f, 3.0f});
-    Tensor<f32> yPred(NestedData<f32>{2.0f, 0.0f, 5.0f});
+    TensorWrapper<f32> yTrue(NestedData<f32>{1.0f, 2.0f, 3.0f});
+    TensorWrapper<f32> yPred(NestedData<f32>{2.0f, 0.0f, 5.0f});
     EXPECT_FLOAT_EQ(loss_.computeLoss(yTrue, yPred).at({}), 9.0f);
 }
 
 TEST_F(PublicMSELossTest, MatrixInputs_SumOfSquaredErrors) {
     // (1-2)^2 + (2-1)^2 + (3-2)^2 + (4-5)^2 = 4
-    Tensor<f32> yTrue(NestedData<f32>{{1.0f, 2.0f}, {3.0f, 4.0f}});
-    Tensor<f32> yPred(NestedData<f32>{{2.0f, 1.0f}, {2.0f, 5.0f}});
+    TensorWrapper<f32> yTrue(NestedData<f32>{{1.0f, 2.0f}, {3.0f, 4.0f}});
+    TensorWrapper<f32> yPred(NestedData<f32>{{2.0f, 1.0f}, {2.0f, 5.0f}});
     EXPECT_FLOAT_EQ(loss_.computeLoss(yTrue, yPred).at({}), 4.0f);
 }
 
 TEST_F(PublicMSELossTest, ResultIsAlwaysNonNegative) {
-    Tensor<f32> yTrue(NestedData<f32>{-1.0f, 2.0f});
-    Tensor<f32> yPred(NestedData<f32>{3.0f, -2.0f});
+    TensorWrapper<f32> yTrue(NestedData<f32>{-1.0f, 2.0f});
+    TensorWrapper<f32> yPred(NestedData<f32>{3.0f, -2.0f});
     EXPECT_GE(loss_.computeLoss(yTrue, yPred).at({}), 0.0f);
 }
 
@@ -94,20 +94,20 @@ TEST_F(PublicMSELossTest, ResultIsAlwaysNonNegative) {
 // ===========================================================================
 
 TEST(PublicComputeMSELossTest, MatchesMSELossClass_ZeroError) {
-    Tensor<f32> y(NestedData<f32>{0.0f, 1.0f});
+    TensorWrapper<f32> y(NestedData<f32>{0.0f, 1.0f});
     EXPECT_FLOAT_EQ(computeMSELoss<f32>(y, y).at({}), 0.0f);
 }
 
 TEST(PublicComputeMSELossTest, CorrectValue) {
     // (2 - 0)^2 = 4
-    Tensor<f32> yTrue(NestedData<f32>(0.0f));
-    Tensor<f32> yPred(NestedData<f32>(2.0f));
+    TensorWrapper<f32> yTrue(NestedData<f32>(0.0f));
+    TensorWrapper<f32> yPred(NestedData<f32>(2.0f));
     EXPECT_FLOAT_EQ(computeMSELoss<f32>(yTrue, yPred).at({}), 4.0f);
 }
 
 // Double-precision variant
 TEST(PublicComputeMSELossTest, DoublePrecision) {
-    Tensor<f64> yTrue(NestedData<f64>(0.0));
-    Tensor<f64> yPred(NestedData<f64>(3.0));
+    TensorWrapper<f64> yTrue(NestedData<f64>(0.0));
+    TensorWrapper<f64> yPred(NestedData<f64>(3.0));
     EXPECT_DOUBLE_EQ(computeMSELoss<f64>(yTrue, yPred).at({}), 9.0);
 }

@@ -37,8 +37,8 @@ std::uintptr_t TensorWrapper<T>::getRawGpuPtr() const {
 }
 
 template <typename T>
-const std::vector<size_t>& TensorWrapper<T>::getShape() const {
-    return data_.getShape().getDims();
+const std::vector<size_t>& TensorWrapper<T>::getShapeVecRef() const {
+    return data_.getShapeVecRef().getDims();
 }
 
 template <typename T>
@@ -46,7 +46,7 @@ size_t TensorWrapper<T>::getTotalSize() const {
     if (data_.getData() == nullptr) {
         return 0;
     }
-    return data_.getShape().getTotalSize();
+    return data_.getShapeVecRef().getTotalSize();
 }
 
 template <typename T>

@@ -40,7 +40,7 @@ TEST_F(BroadcastTest, BroadcastTo_LeadingDims) {
         hahaha::ml::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
-    EXPECT_EQ(b.getShape(), targetShape);
+    EXPECT_EQ(b.getShapeVecRef(), targetShape);
     EXPECT_FLOAT_EQ(b.at({0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(b.at({0, 1}), 2.0f);
     EXPECT_FLOAT_EQ(b.at({0, 2}), 3.0f);
@@ -58,7 +58,7 @@ TEST_F(BroadcastTest, BroadcastTo_Scalar) {
         hahaha::ml::broadcast(a.getComputeNode(), targetShape);
     Tensor<float> b(broadcastedNode);
 
-    EXPECT_EQ(b.getShape(), targetShape);
+    EXPECT_EQ(b.getShapeVecRef(), targetShape);
     EXPECT_FLOAT_EQ(b.at({0, 0}), 5.0f);
     EXPECT_FLOAT_EQ(b.at({0, 1}), 5.0f);
     EXPECT_FLOAT_EQ(b.at({1, 0}), 5.0f);
@@ -88,8 +88,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_LeadingDims) {
     b.backward();
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape().size(), 1);
-    EXPECT_EQ(a.grad().getShape()[0], 3);
+    EXPECT_EQ(a.grad().getShapeVecRef().size(), 1);
+    EXPECT_EQ(a.grad().getShapeVecRef()[0], 3);
 
     EXPECT_FLOAT_EQ(a.grad().at({0}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad().at({1}), 2.0f);
@@ -132,8 +132,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_InnerDims) {
     b.backward();
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape()[0], 3);
-    EXPECT_EQ(a.grad().getShape()[1], 1);
+    EXPECT_EQ(a.grad().getShapeVecRef()[0], 3);
+    EXPECT_EQ(a.grad().getShapeVecRef()[1], 1);
 
     EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad().at({1, 0}), 2.0f);
@@ -164,8 +164,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_Multiple_LeadingDims) {
     b.backward();
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape().size(), 1);
-    EXPECT_EQ(a.grad().getShape()[0], 3);
+    EXPECT_EQ(a.grad().getShapeVecRef().size(), 1);
+    EXPECT_EQ(a.grad().getShapeVecRef()[0], 3);
 
     // Each element broadcasted 2 * 4 = 8 times
     EXPECT_FLOAT_EQ(a.grad().at({0}), 8.0f);
@@ -187,7 +187,7 @@ TEST_F(BroadcastTest, Broadcast_Gradient_Identity_Loop_Check) {
     b.backward();
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape(), targetShape);
+    EXPECT_EQ(a.grad().getShapeVecRef(), targetShape);
 
     EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(a.grad().at({0, 1}), 1.0f);
@@ -210,8 +210,8 @@ TEST_F(BroadcastTest, Broadcast_Gradient_NonUniform_LeadingDims) {
     c.backward();
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape().size(), 1);
-    EXPECT_EQ(a.grad().getShape()[0], 3);
+    EXPECT_EQ(a.grad().getShapeVecRef().size(), 1);
+    EXPECT_EQ(a.grad().getShapeVecRef()[0], 3);
 
     // For leading-dim broadcast, grad is summed over axis 0:
     // [[1,2,3],[4,5,6]] -> [5,7,9]
@@ -235,9 +235,9 @@ TEST_F(BroadcastTest, Broadcast_Gradient_NonUniform_InnerDims) {
     c.backward();
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape().size(), 2);
-    EXPECT_EQ(a.grad().getShape()[0], 3);
-    EXPECT_EQ(a.grad().getShape()[1], 1);
+    EXPECT_EQ(a.grad().getShapeVecRef().size(), 2);
+    EXPECT_EQ(a.grad().getShapeVecRef()[0], 3);
+    EXPECT_EQ(a.grad().getShapeVecRef()[1], 1);
 
     // Sum over inner axis: [1+2, 3+4, 5+6] = [3, 7, 11], keepDims => (3,1)
     EXPECT_FLOAT_EQ(a.grad().at({0, 0}), 3.0f);
@@ -281,7 +281,7 @@ TEST_F(BroadcastTest, AutoBroadcast_Add_VectorToMatrix_ForwardAndGrad) {
 
     auto c = w + a; // should auto-broadcast a to (2,3)
 
-    EXPECT_EQ(c.getShape(), (std::vector<size_t>{2, 3}));
+    EXPECT_EQ(c.getShapeVecRef(), (std::vector<size_t>{2, 3}));
     EXPECT_FLOAT_EQ(c.at({0, 0}), 11.0f);
     EXPECT_FLOAT_EQ(c.at({0, 1}), 22.0f);
     EXPECT_FLOAT_EQ(c.at({0, 2}), 33.0f);
@@ -294,12 +294,12 @@ TEST_F(BroadcastTest, AutoBroadcast_Add_VectorToMatrix_ForwardAndGrad) {
     c.backward();
 
     ASSERT_FALSE(w.grad().isEmpty());
-    EXPECT_EQ(w.grad().getShape(), (std::vector<size_t>{2, 3}));
+    EXPECT_EQ(w.grad().getShapeVecRef(), (std::vector<size_t>{2, 3}));
     EXPECT_FLOAT_EQ(w.grad().at({0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(w.grad().at({1, 2}), 1.0f);
 
     ASSERT_FALSE(a.grad().isEmpty());
-    EXPECT_EQ(a.grad().getShape(), (std::vector<size_t>{3}));
+    EXPECT_EQ(a.grad().getShapeVecRef(), (std::vector<size_t>{3}));
     EXPECT_FLOAT_EQ(a.grad().at({0}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad().at({1}), 2.0f);
     EXPECT_FLOAT_EQ(a.grad().at({2}), 2.0f);
@@ -344,7 +344,7 @@ TEST_F(BroadcastTest, Broadcast_0Dvs0D_ScalarToScalar) {
     std::vector<size_t> target0D = {};
     auto b = hahaha::ml::broadcast(s0.getComputeNode(), target0D);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 0);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 0);
     EXPECT_FLOAT_EQ(bt.at({}), 5.0f);
 }
 
@@ -354,8 +354,8 @@ TEST_F(BroadcastTest, Broadcast_0Dvs1D_ScalarToVector) {
     std::vector<size_t> target1D = {3};
     auto b = hahaha::ml::broadcast(s0.getComputeNode(), target1D);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 1);
-    EXPECT_EQ(bt.getShape()[0], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 1);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 3);
     EXPECT_FLOAT_EQ(bt.at({0}), 5.0f);
     EXPECT_FLOAT_EQ(bt.at({2}), 5.0f);
 }
@@ -366,9 +366,9 @@ TEST_F(BroadcastTest, Broadcast_0Dvs2D_ScalarToMatrix) {
     std::vector<size_t> target2D = {2, 3};
     auto b = hahaha::ml::broadcast(s0.getComputeNode(), target2D);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 2);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 2);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 3);
     EXPECT_FLOAT_EQ(bt.at({0, 0}), 5.0f);
     EXPECT_FLOAT_EQ(bt.at({1, 2}), 5.0f);
 }
@@ -379,10 +379,10 @@ TEST_F(BroadcastTest, Broadcast_0Dvs3D_ScalarToTensor) {
     std::vector<size_t> target3D = {2, 2, 3};
     auto b = hahaha::ml::broadcast(s0.getComputeNode(), target3D);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 3);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 2);
-    EXPECT_EQ(bt.getShape()[2], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 3);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[2], 3);
     EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 5.0f);
     EXPECT_FLOAT_EQ(bt.at({1, 1, 2}), 5.0f);
 }
@@ -393,8 +393,8 @@ TEST_F(BroadcastTest, Broadcast_1Dvs1D_SameShape) {
     std::vector<size_t> target1D_same = {3};
     auto b = hahaha::ml::broadcast(v1.getComputeNode(), target1D_same);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 1);
-    EXPECT_EQ(bt.getShape()[0], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 1);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 3);
     EXPECT_FLOAT_EQ(bt.at({0}), 1.0f);
 }
 
@@ -404,9 +404,9 @@ TEST_F(BroadcastTest, Broadcast_1Dvs2D_VectorToMatrix) {
     std::vector<size_t> target1D2D = {2, 3};
     auto b = hahaha::ml::broadcast(v1.getComputeNode(), target1D2D);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 2);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 2);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 3);
     EXPECT_FLOAT_EQ(bt.at({0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(bt.at({1, 0}), 1.0f); // broadcast first dim
 }
@@ -417,10 +417,10 @@ TEST_F(BroadcastTest, Broadcast_1Dvs3D_VectorToTensor) {
     std::vector<size_t> target1D3D = {2, 2, 3};
     auto b = hahaha::ml::broadcast(v1.getComputeNode(), target1D3D);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 3);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 2);
-    EXPECT_EQ(bt.getShape()[2], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 3);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[2], 3);
     EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(bt.at({1, 1, 0}), 1.0f); // broadcast first two dims
 }
@@ -440,9 +440,9 @@ TEST_F(BroadcastTest, Broadcast_2Dvs2D_SameShape) {
     std::vector<size_t> target2D_same = {2, 2};
     auto b = hahaha::ml::broadcast(m1.getComputeNode(), target2D_same);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 2);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 2);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 2);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 2);
     EXPECT_FLOAT_EQ(bt.at({0, 0}), 1.0f);
 }
 
@@ -451,9 +451,9 @@ TEST_F(BroadcastTest, Broadcast_2Dvs2D_DimOneBroadcasting) {
     std::vector<size_t> target2D_broadcast = {2, 3};
     auto b = hahaha::ml::broadcast(m2.getComputeNode(), target2D_broadcast);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 2);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 2);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 3);
     EXPECT_FLOAT_EQ(bt.at({0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(bt.at({1, 0}), 1.0f); // broadcast first dim
 }
@@ -463,10 +463,10 @@ TEST_F(BroadcastTest, Broadcast_2Dvs3D_MatrixToTensor) {
     std::vector<size_t> target2D3D = {2, 2, 3};
     auto b = hahaha::ml::broadcast(m2.getComputeNode(), target2D3D);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 3);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 2);
-    EXPECT_EQ(bt.getShape()[2], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 3);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[2], 3);
     EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(bt.at({1, 1, 0}), 1.0f); // broadcast first dim
 }
@@ -487,10 +487,10 @@ TEST_F(BroadcastTest, Broadcast_3Dvs3D_SameShape) {
     std::vector<size_t> target3D_same = {2, 2, 2};
     auto b = hahaha::ml::broadcast(t1.getComputeNode(), target3D_same);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 3);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 2);
-    EXPECT_EQ(bt.getShape()[2], 2);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 3);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[2], 2);
     EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 1.0f);
 }
 
@@ -499,10 +499,10 @@ TEST_F(BroadcastTest, Broadcast_3Dvs3D_DimOneBroadcasting) {
     std::vector<size_t> target3D_broadcast = {2, 2, 3};
     auto b = hahaha::ml::broadcast(t2.getComputeNode(), target3D_broadcast);
     Tensor<float> bt(b);
-    EXPECT_EQ(bt.getShape().size(), 3);
-    EXPECT_EQ(bt.getShape()[0], 2);
-    EXPECT_EQ(bt.getShape()[1], 2);
-    EXPECT_EQ(bt.getShape()[2], 3);
+    EXPECT_EQ(bt.getShapeVecRef().size(), 3);
+    EXPECT_EQ(bt.getShapeVecRef()[0], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[1], 2);
+    EXPECT_EQ(bt.getShapeVecRef()[2], 3);
     EXPECT_FLOAT_EQ(bt.at({0, 0, 0}), 1.0f);
     EXPECT_FLOAT_EQ(bt.at({1, 1, 0}), 1.0f); // broadcast first two dims
 }

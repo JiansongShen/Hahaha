@@ -125,7 +125,7 @@ TYPED_TEST_SUITE(TensorDataTypedTest, NumericTypes);
 TYPED_TEST(TensorDataTypedTest, DefaultConstructor) {
     using T = TestFixture::Type;
     TensorData<T> defaultConstructedTensor;
-    EXPECT_EQ(defaultConstructedTensor.getShape().getDims().size(), 0);
+    EXPECT_EQ(defaultConstructedTensor.getShapeVecRef().getDims().size(), 0);
     EXPECT_EQ(defaultConstructedTensor.getData().get(), nullptr);
 }
 
@@ -133,7 +133,7 @@ TYPED_TEST(TensorDataTypedTest, ShapeOnlyConstructor_DefaultDeviceAllocates) {
     using T = TestFixture::Type;
     TensorShape shape({2, 2});
     TensorData<T> td(shape);
-    EXPECT_EQ(td.getShape().getTotalSize(), 4);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 4);
     EXPECT_NE(td.getData().get(), nullptr);
     // All elements should be zero-initialized
     for (size_t i = 0; i < 4; ++i) {
@@ -146,7 +146,7 @@ TYPED_TEST(TensorDataTypedTest, ShapeValueConstructor) {
     TensorShape shape({2, 3});
     T initValue = T(7);
     TensorData<T> tensor_data(shape, initValue);
-    EXPECT_EQ(tensor_data.getShape().getTotalSize(), 6);
+    EXPECT_EQ(tensor_data.getShapeVecRef().getTotalSize(), 6);
     for (size_t i = 0; i < 6; ++i) {
         EXPECT_EQ(tensor_data.getData()[i], initValue);
     }
@@ -158,14 +158,14 @@ TYPED_TEST(TensorDataTypedTest, ShapeValueConstructor) {
 TYPED_TEST(TensorDataTypedTest, InitWithNestedData) {
     using T = TestFixture::Type;
     TensorData<T> singleValueTensor(NestedData<T>{T(1)});
-    EXPECT_EQ(singleValueTensor.getShape().getDims().size(), 1);
-    EXPECT_EQ(singleValueTensor.getShape().getDims()[0], 1);
+    EXPECT_EQ(singleValueTensor.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(singleValueTensor.getShapeVecRef().getDims()[0], 1);
     EXPECT_EQ(singleValueTensor.getData()[0], T(1));
 
     TensorData<T> twoElementTensor(NestedData<T>{{T(1)}, {T(2)}});
-    EXPECT_EQ(twoElementTensor.getShape().getDims().size(), 2);
-    EXPECT_EQ(twoElementTensor.getShape().getDims()[0], 2);
-    EXPECT_EQ(twoElementTensor.getShape().getDims()[1], 1);
+    EXPECT_EQ(twoElementTensor.getShapeVecRef().getDims().size(), 2);
+    EXPECT_EQ(twoElementTensor.getShapeVecRef().getDims()[0], 2);
+    EXPECT_EQ(twoElementTensor.getShapeVecRef().getDims()[1], 1);
     EXPECT_EQ(twoElementTensor.getData()[0], T(1));
     EXPECT_EQ(twoElementTensor.getData()[1], T(2));
 }
@@ -174,7 +174,7 @@ TYPED_TEST(TensorDataTypedTest,
            InitWithEmptyNestedData_ProducesNullDataAndScalarShape) {
     using T = TestFixture::Type;
     TensorData<T> empty(NestedData<T>{});
-    EXPECT_EQ(empty.getShape().getDims().size(), 0);
+    EXPECT_EQ(empty.getShapeVecRef().getDims().size(), 0);
     EXPECT_EQ(empty.getData().get(), nullptr);
 }
 
@@ -182,8 +182,8 @@ TYPED_TEST(TensorDataTypedTest, InitVecConstructor_Creates1DTensor) {
     using T = TestFixture::Type;
     std::vector<T> vec = {T(7), T(8), T(9)};
     TensorData<T> td(vec);
-    EXPECT_EQ(td.getShape().getDims().size(), 1);
-    EXPECT_EQ(td.getShape().getDims()[0], 3);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 3);
     EXPECT_EQ(td.getStride().getStrideSize(), 1);
     EXPECT_EQ(td.getStride()[0], 1);
     EXPECT_EQ(td.getData()[0], T(7));
@@ -193,7 +193,7 @@ TYPED_TEST(TensorDataTypedTest, InitVecConstructor_Creates1DTensor) {
 TYPED_TEST(TensorDataTypedTest, OneDimensionalTensor) {
     using T = TestFixture::Type;
     TensorData<T> tensor_1d(NestedData<T>{T(1), T(2), T(3), T(4), T(5)});
-    EXPECT_EQ(tensor_1d.getShape().getTotalSize(), 5);
+    EXPECT_EQ(tensor_1d.getShapeVecRef().getTotalSize(), 5);
     for (int i = 0; i < 5; ++i) {
         EXPECT_EQ(tensor_1d.getData()[i], T(i + 1));
     }
@@ -208,10 +208,10 @@ TYPED_TEST(TensorDataTypedTest, CopyConstructor) {
     TensorData<T> original(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     TensorData<T> copied(original);
 
-    EXPECT_EQ(copied.getShape(), original.getShape());
+    EXPECT_EQ(copied.getShapeVecRef(), original.getShapeVecRef());
     EXPECT_EQ(copied.getStride().getStrideSize(),
               original.getStride().getStrideSize());
-    for (size_t i = 0; i < original.getShape().getTotalSize(); ++i) {
+    for (size_t i = 0; i < original.getShapeVecRef().getTotalSize(); ++i) {
         EXPECT_EQ(copied.getData()[i], original.getData()[i]);
     }
 
@@ -227,10 +227,10 @@ TYPED_TEST(TensorDataTypedTest, Clone) {
     TensorData<T> original(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
     TensorData<T> cloned = original.clone();
 
-    EXPECT_EQ(cloned.getShape(), original.getShape());
+    EXPECT_EQ(cloned.getShapeVecRef(), original.getShapeVecRef());
     EXPECT_EQ(cloned.getStride().getStrideSize(),
               original.getStride().getStrideSize());
-    for (size_t i = 0; i < original.getShape().getTotalSize(); ++i) {
+    for (size_t i = 0; i < original.getShapeVecRef().getTotalSize(); ++i) {
         EXPECT_EQ(cloned.getData()[i], original.getData()[i]);
     }
 
@@ -248,10 +248,10 @@ TYPED_TEST(TensorDataTypedTest, MoveConstructor) {
 
     TensorData<T> moved(std::move(original));
 
-    EXPECT_EQ(moved.getShape().getTotalSize(), 3);
+    EXPECT_EQ(moved.getShapeVecRef().getTotalSize(), 3);
     EXPECT_EQ(moved.getData().get(), originalPtr);
     EXPECT_EQ(original.getData().get(), nullptr);
-    EXPECT_EQ(original.getShape().getDims().size(), 0);
+    EXPECT_EQ(original.getShapeVecRef().getDims().size(), 0);
 }
 
 TYPED_TEST(TensorDataTypedTest, MoveAssignment) {
@@ -262,7 +262,7 @@ TYPED_TEST(TensorDataTypedTest, MoveAssignment) {
 
     moved = std::move(original);
 
-    EXPECT_EQ(moved.getShape().getTotalSize(), 3);
+    EXPECT_EQ(moved.getShapeVecRef().getTotalSize(), 3);
     EXPECT_EQ(moved.getData().get(), originalPtr);
     EXPECT_EQ(original.getData().get(), nullptr);
 }
@@ -279,7 +279,7 @@ TYPED_TEST(TensorDataTypedTest, Share_SharesBufferButCopiesMetadata) {
     // Shares underlying buffer
     EXPECT_EQ(shared.getData().get(), original.getData().get());
     // Metadata is value-copied
-    EXPECT_EQ(shared.getShape(), original.getShape());
+    EXPECT_EQ(shared.getShapeVecRef(), original.getShapeVecRef());
     EXPECT_EQ(shared.getStride().toString(), original.getStride().toString());
 
     // Mutating shared data mutates original data (same buffer)
@@ -288,7 +288,7 @@ TYPED_TEST(TensorDataTypedTest, Share_SharesBufferButCopiesMetadata) {
 
     // Mutating metadata on shared should not affect original
     shared.setShape(TensorShape({4}));
-    EXPECT_NE(shared.getShape(), original.getShape());
+    EXPECT_NE(shared.getShapeVecRef(), original.getShapeVecRef());
 }
 
 TYPED_TEST(TensorDataTypedTest, Share_NullData) {
@@ -296,7 +296,7 @@ TYPED_TEST(TensorDataTypedTest, Share_NullData) {
     TensorData<T> original;
     auto shared = original.share();
     EXPECT_EQ(shared.getData().get(), nullptr);
-    EXPECT_EQ(shared.getShape().getDims().size(), 0);
+    EXPECT_EQ(shared.getShapeVecRef().getDims().size(), 0);
 }
 
 // ============================================================================
@@ -400,7 +400,7 @@ TYPED_TEST(TensorDataTypedTest, LargeTensor_Allocation) {
     // Test with a reasonably large tensor (1000 elements)
     TensorShape shape({10, 10, 10});
     TensorData<T> td(shape, T(5));
-    EXPECT_EQ(td.getShape().getTotalSize(), 1000);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1000);
     EXPECT_NE(td.getData().get(), nullptr);
     // Check a few elements
     EXPECT_EQ(td.getData()[0], T(5));
@@ -417,9 +417,9 @@ TYPED_TEST(TensorDataTypedTest, ZeroDimension_Scalar) {
     // 0D scalar: SingleValueConstruction
     T value = T(42);
     TensorData<T> td(NestedData<T>{value});
-    EXPECT_EQ(td.getShape().getDims().size(),
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(),
               1); // NestedData{value} creates 1D
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], value);
 }
 
@@ -428,8 +428,8 @@ TYPED_TEST(TensorDataTypedTest, ZeroDimension_Scalar_Direct) {
     // 0D scalar: using TensorShape({})
     TensorShape shape0D({});
     TensorData<T> td(shape0D, T(42));
-    EXPECT_EQ(td.getShape().getDims().size(), 0);
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 0);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], T(42));
 }
 
@@ -437,9 +437,9 @@ TYPED_TEST(TensorDataTypedTest, OneDimension_Vector) {
     using T = TestFixture::Type;
     // 1D: [1, 2, 3]
     TensorData<T> td(NestedData<T>{T(1), T(2), T(3)});
-    EXPECT_EQ(td.getShape().getDims().size(), 1);
-    EXPECT_EQ(td.getShape().getDims()[0], 3);
-    EXPECT_EQ(td.getShape().getTotalSize(), 3);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 3);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 3);
     EXPECT_EQ(td.getData()[0], T(1));
     EXPECT_EQ(td.getData()[2], T(3));
 }
@@ -448,9 +448,9 @@ TYPED_TEST(TensorDataTypedTest, OneDimension_SingleElement) {
     using T = TestFixture::Type;
     // 1D with single element: [1] (different from scalar)
     TensorData<T> td(NestedData<T>{T(1)});
-    EXPECT_EQ(td.getShape().getDims().size(), 1);
-    EXPECT_EQ(td.getShape().getDims()[0], 1);
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 1);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], T(1));
 }
 
@@ -458,10 +458,10 @@ TYPED_TEST(TensorDataTypedTest, TwoDimension_Matrix) {
     using T = TestFixture::Type;
     // 2D: {{1, 2}, {3, 4}}
     TensorData<T> td(NestedData<T>{{T(1), T(2)}, {T(3), T(4)}});
-    EXPECT_EQ(td.getShape().getDims().size(), 2);
-    EXPECT_EQ(td.getShape().getDims()[0], 2);
-    EXPECT_EQ(td.getShape().getDims()[1], 2);
-    EXPECT_EQ(td.getShape().getTotalSize(), 4);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[1], 2);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 4);
     EXPECT_EQ(td.getData()[0], T(1));
     EXPECT_EQ(td.getData()[3], T(4));
 }
@@ -470,10 +470,10 @@ TYPED_TEST(TensorDataTypedTest, TwoDimension_SingleElement) {
     using T = TestFixture::Type;
     // 2D with single element: {{1}} (high-dimensional scalar)
     TensorData<T> td(NestedData<T>{{T(1)}});
-    EXPECT_EQ(td.getShape().getDims().size(), 2);
-    EXPECT_EQ(td.getShape().getDims()[0], 1);
-    EXPECT_EQ(td.getShape().getDims()[1], 1);
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[1], 1);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], T(1));
 }
 
@@ -482,11 +482,11 @@ TYPED_TEST(TensorDataTypedTest, ThreeDimension_Tensor) {
     // 3D: {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}}
     TensorData<T> td(
         NestedData<T>{{{T(1), T(2)}, {T(3), T(4)}}, {{T(5), T(6)}, {T(7), T(8)}}});
-    EXPECT_EQ(td.getShape().getDims().size(), 3);
-    EXPECT_EQ(td.getShape().getDims()[0], 2);
-    EXPECT_EQ(td.getShape().getDims()[1], 2);
-    EXPECT_EQ(td.getShape().getDims()[2], 2);
-    EXPECT_EQ(td.getShape().getTotalSize(), 8);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 3);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[1], 2);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[2], 2);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 8);
     EXPECT_EQ(td.getData()[0], T(1));
     EXPECT_EQ(td.getData()[7], T(8));
 }
@@ -495,11 +495,11 @@ TYPED_TEST(TensorDataTypedTest, ThreeDimension_SingleElement) {
     using T = TestFixture::Type;
     // 3D with single element: {{{1}}} (3D scalar)
     TensorData<T> td(NestedData<T>{{{T(1)}}});
-    EXPECT_EQ(td.getShape().getDims().size(), 3);
-    EXPECT_EQ(td.getShape().getDims()[0], 1);
-    EXPECT_EQ(td.getShape().getDims()[1], 1);
-    EXPECT_EQ(td.getShape().getDims()[2], 1);
-    EXPECT_EQ(td.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims().size(), 3);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[0], 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[1], 1);
+    EXPECT_EQ(td.getShapeVecRef().getDims()[2], 1);
+    EXPECT_EQ(td.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td.getData()[0], T(1));
 }
 
@@ -511,8 +511,8 @@ TYPED_TEST(TensorDataTypedTest, ShapeValueConstructor_0D_Scalar) {
     using T = TestFixture::Type;
     TensorShape shape0D({});
     TensorData<T> td0D(shape0D, T(42));
-    EXPECT_EQ(td0D.getShape().getDims().size(), 0);
-    EXPECT_EQ(td0D.getShape().getTotalSize(), 1);
+    EXPECT_EQ(td0D.getShapeVecRef().getDims().size(), 0);
+    EXPECT_EQ(td0D.getShapeVecRef().getTotalSize(), 1);
     EXPECT_EQ(td0D.getData()[0], T(42));
 }
 
@@ -520,8 +520,8 @@ TYPED_TEST(TensorDataTypedTest, ShapeValueConstructor_1D_Vector) {
     using T = TestFixture::Type;
     TensorShape shape1D({3});
     TensorData<T> td1D(shape1D, T(7));
-    EXPECT_EQ(td1D.getShape().getDims().size(), 1);
-    EXPECT_EQ(td1D.getShape().getTotalSize(), 3);
+    EXPECT_EQ(td1D.getShapeVecRef().getDims().size(), 1);
+    EXPECT_EQ(td1D.getShapeVecRef().getTotalSize(), 3);
     for (size_t i = 0; i < 3; ++i) {
         EXPECT_EQ(td1D.getData()[i], T(7));
     }
@@ -531,8 +531,8 @@ TYPED_TEST(TensorDataTypedTest, ShapeValueConstructor_2D_Matrix) {
     using T = TestFixture::Type;
     TensorShape shape2D({2, 3});
     TensorData<T> td2D(shape2D, T(5));
-    EXPECT_EQ(td2D.getShape().getDims().size(), 2);
-    EXPECT_EQ(td2D.getShape().getTotalSize(), 6);
+    EXPECT_EQ(td2D.getShapeVecRef().getDims().size(), 2);
+    EXPECT_EQ(td2D.getShapeVecRef().getTotalSize(), 6);
     for (size_t i = 0; i < 6; ++i) {
         EXPECT_EQ(td2D.getData()[i], T(5));
     }
@@ -542,8 +542,8 @@ TYPED_TEST(TensorDataTypedTest, ShapeValueConstructor_3D_Tensor) {
     using T = TestFixture::Type;
     TensorShape shape3D({2, 2, 2});
     TensorData<T> td3D(shape3D, T(9));
-    EXPECT_EQ(td3D.getShape().getDims().size(), 3);
-    EXPECT_EQ(td3D.getShape().getTotalSize(), 8);
+    EXPECT_EQ(td3D.getShapeVecRef().getDims().size(), 3);
+    EXPECT_EQ(td3D.getShapeVecRef().getTotalSize(), 8);
     for (size_t i = 0; i < 8; ++i) {
         EXPECT_EQ(td3D.getData()[i], T(9));
     }

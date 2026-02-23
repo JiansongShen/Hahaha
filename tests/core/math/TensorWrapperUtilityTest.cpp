@@ -288,7 +288,7 @@ TYPED_TEST(TensorWrapperUtilityTypedTest, Clone_PreservesShapeAndStride) {
     TensorWrapper<T> original(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto copy = original.clone();
-    EXPECT_EQ(copy.getShape(), original.getShape());
+    EXPECT_EQ(copy.getShapeVecRef(), original.getShapeVecRef());
     EXPECT_EQ(copy.getStride().toString(), original.getStride().toString());
     EXPECT_EQ(copy.getDevice()->getType(), original.getDevice()->getType());
 }

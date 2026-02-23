@@ -19,6 +19,7 @@
 #ifndef HAHAHA_MATH_TENSOR_WRAPPER_ARITHMETIC_INL
 #define HAHAHA_MATH_TENSOR_WRAPPER_ARITHMETIC_INL
 
+#include <cstddef>
 namespace hahaha::math {
 
 template <typename T>
@@ -34,29 +35,28 @@ TensorWrapper<T> TensorWrapper<T>::add(const TensorWrapper& other) const {
 
     if (getTotalSize() == 1 && other.getTotalSize() == 1) {
         TensorWrapper result;
-        result.data_.setShape(data_.getShape());
-        result.data_.setStride(TensorStride(data_.getShape()));
+        result.data_.setShape(data_.getShapeVecRef());
+        result.data_.setStride(TensorStride(data_.getShapeVecRef()));
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[1]));
-        result.data_.getData()[0] =
-            data_.getData()[data_.getOffset()] + other.data_.getData()[other.data_.getOffset()];
+        result.data_.getData()[0] = data_.getData()[data_.getOffset()]
+            + other.data_.getData()[other.data_.getOffset()];
         return result;
     }
 
-    if (getShape() != other.getShape()) {
-        throw std::invalid_argument(
-            "Tensors must have the same shape for addition");
+    if (getShapeVecRef() != other.getShapeVecRef()) {
+        throw std::invalid_argument("Tensors must have the same shape for addition");
     }
 
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
     }
     result.data_.setDevice(data_.getDevice());
-    
+
     // If both are contiguous, we can use the fast path (dispatch)
     if (isContiguous() && other.isContiguous()) {
         auto res = backend::dispatchAdd<T>(
@@ -67,7 +67,7 @@ TensorWrapper<T> TensorWrapper<T>::add(const TensorWrapper& other) const {
         }
     } else {
         // Slow path for non-contiguous tensors
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& strideA = data_.getStride().getStrideVec();
@@ -85,7 +85,7 @@ TensorWrapper<T> TensorWrapper<T>::add(const TensorWrapper& other) const {
                 idxB += coord[d] * strideB[d];
             }
             resPtr[i] = ptrA[offsetA + idxA] + ptrB[offsetB + idxB];
-            
+
             // Advance coord
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
@@ -111,23 +111,23 @@ TensorWrapper<T> TensorWrapper<T>::subtract(const TensorWrapper& other) const {
     }
     if (getTotalSize() == 1 && other.getTotalSize() == 1) {
         TensorWrapper result;
-        result.data_.setShape(data_.getShape());
-        result.data_.setStride(TensorStride(data_.getShape()));
+        result.data_.setShape(data_.getShapeVecRef());
+        result.data_.setStride(TensorStride(data_.getShapeVecRef()));
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[1]));
-        result.data_.getData()[0] =
-            data_.getData()[data_.getOffset()] - other.data_.getData()[other.data_.getOffset()];
+        result.data_.getData()[0] = data_.getData()[data_.getOffset()]
+            - other.data_.getData()[other.data_.getOffset()];
         return result;
     }
 
-    if (getShape() != other.getShape()) {
+    if (getShapeVecRef() != other.getShapeVecRef()) {
         throw std::invalid_argument(
             "Tensors must have the same shape for subtraction");
     }
 
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -143,7 +143,7 @@ TensorWrapper<T> TensorWrapper<T>::subtract(const TensorWrapper& other) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& strideA = data_.getStride().getStrideVec();
@@ -161,7 +161,7 @@ TensorWrapper<T> TensorWrapper<T>::subtract(const TensorWrapper& other) const {
                 idxB += coord[d] * strideB[d];
             }
             resPtr[i] = ptrA[offsetA + idxA] - ptrB[offsetB + idxB];
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -185,23 +185,23 @@ TensorWrapper<T> TensorWrapper<T>::multiply(const TensorWrapper& other) const {
     }
     if (getTotalSize() == 1 && other.getTotalSize() == 1) {
         TensorWrapper result;
-        result.data_.setShape(data_.getShape());
-        result.data_.setStride(TensorStride(data_.getShape()));
+        result.data_.setShape(data_.getShapeVecRef());
+        result.data_.setStride(TensorStride(data_.getShapeVecRef()));
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[1]));
-        result.data_.getData()[0] =
-            data_.getData()[data_.getOffset()] * other.data_.getData()[other.data_.getOffset()];
+        result.data_.getData()[0] = data_.getData()[data_.getOffset()]
+            * other.data_.getData()[other.data_.getOffset()];
         return result;
     }
 
-    if (getShape() != other.getShape()) {
+    if (getShapeVecRef() != other.getShapeVecRef()) {
         throw std::invalid_argument(
             "Tensors must have the same shape for multiplication");
     }
 
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -217,7 +217,7 @@ TensorWrapper<T> TensorWrapper<T>::multiply(const TensorWrapper& other) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& strideA = data_.getStride().getStrideVec();
@@ -235,7 +235,7 @@ TensorWrapper<T> TensorWrapper<T>::multiply(const TensorWrapper& other) const {
                 idxB += coord[d] * strideB[d];
             }
             resPtr[i] = ptrA[offsetA + idxA] * ptrB[offsetB + idxB];
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -263,23 +263,22 @@ TensorWrapper<T> TensorWrapper<T>::divide(const TensorWrapper& other) const {
             throw std::runtime_error("Division by zero");
         }
         TensorWrapper result;
-        result.data_.setShape(data_.getShape());
-        result.data_.setStride(TensorStride(data_.getShape()));
+        result.data_.setShape(data_.getShapeVecRef());
+        result.data_.setStride(TensorStride(data_.getShapeVecRef()));
         result.data_.setDevice(data_.getDevice());
         result.data_.setData(std::shared_ptr<T[]>(new T[1]));
-        result.data_.getData()[0] =
-            data_.getData()[data_.getOffset()] / other.data_.getData()[other.data_.getOffset()];
+        result.data_.getData()[0] = data_.getData()[data_.getOffset()]
+            / other.data_.getData()[other.data_.getOffset()];
         return result;
     }
 
-    if (getShape() != other.getShape()) {
-        throw std::invalid_argument(
-            "Tensors must have the same shape for division");
+    if (getShapeVecRef() != other.getShapeVecRef()) {
+        throw std::invalid_argument("Tensors must have the same shape for division");
     }
 
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -295,7 +294,7 @@ TensorWrapper<T> TensorWrapper<T>::divide(const TensorWrapper& other) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& strideA = data_.getStride().getStrideVec();
@@ -316,7 +315,7 @@ TensorWrapper<T> TensorWrapper<T>::divide(const TensorWrapper& other) const {
                 throw std::runtime_error("Division by zero");
             }
             resPtr[i] = ptrA[offsetA + idxA] / ptrB[offsetB + idxB];
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -329,11 +328,10 @@ TensorWrapper<T> TensorWrapper<T>::divide(const TensorWrapper& other) const {
     return result;
 }
 
-template <typename T>
-TensorWrapper<T> TensorWrapper<T>::add(T scalar) const {
+template <typename T> TensorWrapper<T> TensorWrapper<T>::add(T scalar) const {
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -348,7 +346,7 @@ TensorWrapper<T> TensorWrapper<T>::add(T scalar) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& stride = data_.getStride().getStrideVec();
@@ -361,7 +359,7 @@ TensorWrapper<T> TensorWrapper<T>::add(T scalar) const {
                 idx += coord[d] * stride[d];
             }
             resPtr[i] = ptr[offset + idx] + scalar;
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -374,11 +372,10 @@ TensorWrapper<T> TensorWrapper<T>::add(T scalar) const {
     return result;
 }
 
-template <typename T>
-TensorWrapper<T> TensorWrapper<T>::subtract(T scalar) const {
+template <typename T> TensorWrapper<T> TensorWrapper<T>::subtract(T scalar) const {
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -393,7 +390,7 @@ TensorWrapper<T> TensorWrapper<T>::subtract(T scalar) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& stride = data_.getStride().getStrideVec();
@@ -406,7 +403,7 @@ TensorWrapper<T> TensorWrapper<T>::subtract(T scalar) const {
                 idx += coord[d] * stride[d];
             }
             resPtr[i] = ptr[offset + idx] - scalar;
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -419,11 +416,10 @@ TensorWrapper<T> TensorWrapper<T>::subtract(T scalar) const {
     return result;
 }
 
-template <typename T>
-TensorWrapper<T> TensorWrapper<T>::multiply(T scalar) const {
+template <typename T> TensorWrapper<T> TensorWrapper<T>::multiply(T scalar) const {
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -438,7 +434,7 @@ TensorWrapper<T> TensorWrapper<T>::multiply(T scalar) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& stride = data_.getStride().getStrideVec();
@@ -451,7 +447,7 @@ TensorWrapper<T> TensorWrapper<T>::multiply(T scalar) const {
                 idx += coord[d] * stride[d];
             }
             resPtr[i] = ptr[offset + idx] * scalar;
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -464,11 +460,10 @@ TensorWrapper<T> TensorWrapper<T>::multiply(T scalar) const {
     return result;
 }
 
-template <typename T>
-TensorWrapper<T> TensorWrapper<T>::divide(T scalar) const {
+template <typename T> TensorWrapper<T> TensorWrapper<T>::divide(T scalar) const {
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -483,7 +478,7 @@ TensorWrapper<T> TensorWrapper<T>::divide(T scalar) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& stride = data_.getStride().getStrideVec();
@@ -496,7 +491,7 @@ TensorWrapper<T> TensorWrapper<T>::divide(T scalar) const {
                 idx += coord[d] * stride[d];
             }
             resPtr[i] = ptr[offset + idx] / scalar;
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -512,8 +507,8 @@ TensorWrapper<T> TensorWrapper<T>::divide(T scalar) const {
 template <typename T>
 TensorWrapper<T> TensorWrapper<T>::subtractFrom(T scalar) const {
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -528,7 +523,7 @@ TensorWrapper<T> TensorWrapper<T>::subtractFrom(T scalar) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& stride = data_.getStride().getStrideVec();
@@ -541,7 +536,7 @@ TensorWrapper<T> TensorWrapper<T>::subtractFrom(T scalar) const {
                 idx += coord[d] * stride[d];
             }
             resPtr[i] = scalar - ptr[offset + idx];
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -554,11 +549,10 @@ TensorWrapper<T> TensorWrapper<T>::subtractFrom(T scalar) const {
     return result;
 }
 
-template <typename T>
-TensorWrapper<T> TensorWrapper<T>::divideInto(T scalar) const {
+template <typename T> TensorWrapper<T> TensorWrapper<T>::divideInto(T scalar) const {
     TensorWrapper result;
-    result.data_.setShape(data_.getShape());
-    result.data_.setStride(TensorStride(data_.getShape()));
+    result.data_.setShape(data_.getShapeVecRef());
+    result.data_.setStride(TensorStride(data_.getShapeVecRef()));
     result.data_.setData(std::shared_ptr<T[]>(new T[getTotalSize()]));
     if (data_.getDevice()->getType() == backend::DeviceType::CUDA) {
         result.to(data_.getDevice());
@@ -573,7 +567,7 @@ TensorWrapper<T> TensorWrapper<T>::divideInto(T scalar) const {
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         T* resPtr = result.data_.getData().get();
         const auto& stride = data_.getStride().getStrideVec();
@@ -589,7 +583,7 @@ TensorWrapper<T> TensorWrapper<T>::divideInto(T scalar) const {
                 throw std::runtime_error("Division by zero");
             }
             resPtr[i] = scalar / ptr[offset + idx];
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -602,13 +596,12 @@ TensorWrapper<T> TensorWrapper<T>::divideInto(T scalar) const {
     return result;
 }
 
-template <typename T>
-void TensorWrapper<T>::squareInPlace() {
+template <typename T> void TensorWrapper<T>::squareInPlace() {
     if (isContiguous()) {
         *this *= *this;
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         const auto& stride = data_.getStride().getStrideVec();
         T* ptr = data_.getData().get();
@@ -620,7 +613,7 @@ void TensorWrapper<T>::squareInPlace() {
                 idx += coord[d] * stride[d];
             }
             ptr[offset + idx] *= ptr[offset + idx];
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -631,15 +624,15 @@ void TensorWrapper<T>::squareInPlace() {
     }
 }
 
-template <typename T>
-void TensorWrapper<T>::sqrtInPlace() {
+template <typename T> void TensorWrapper<T>::sqrtInPlace() {
     if (isContiguous()) {
         for (size_t i = 0; i < getTotalSize(); ++i) {
-            data_.getData()[data_.getOffset() + i] = std::sqrt(data_.getData()[data_.getOffset() + i]);
+            data_.getData()[data_.getOffset() + i] =
+                std::sqrt(data_.getData()[data_.getOffset() + i]);
         }
     } else {
         // Slow path
-        const auto& shape = getShape();
+        const auto& shape = getShapeVecRef();
         std::vector<size_t> coord(shape.size(), 0);
         const auto& stride = data_.getStride().getStrideVec();
         T* ptr = data_.getData().get();
@@ -651,7 +644,7 @@ void TensorWrapper<T>::sqrtInPlace() {
                 idx += coord[d] * stride[d];
             }
             ptr[offset + idx] = std::sqrt(ptr[offset + idx]);
-            
+
             for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
                 if (++coord[d] < shape[d]) {
                     break;
@@ -662,8 +655,48 @@ void TensorWrapper<T>::sqrtInPlace() {
     }
 }
 
+template <typename T> void TensorWrapper<T>::absInPlace() {
+    if (isContiguous()) {
+        for (size_t i = 0; i < getTotalSize(); ++i)
+            data_.getData()[data_.getOffset() + i] =
+                std::abs(data_.getData()[data_.getOffset() + i]);
+    } else {
+        // Slow path
+        const auto& shape = getShapeVecRef();
+        std::vector<size_t> coord(shape.size(), 0);
+        const auto& stride = data_.getStride().getStrideVec();
+        T* ptr = data_.getData().get();
+        size_t offset = data_.getOffset();
+
+        for (size_t i = 0; i < getTotalSize(); ++i) {
+            size_t idx = 0;
+            for (size_t d = 0; d < shape.size(); ++d) {
+                idx += coord[d] * stride[d];
+            }
+            ptr[offset + idx] = std::abs(ptr[offset + idx]);
+
+            for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
+                if (++coord[d] < shape[d]) {
+                    break;
+                }
+                coord[d] = 0;
+            }
+        }
+    }
+}
+
+template <typename T> void TensorWrapper<T>::expInPlace() {
+    if (isContiguous()) {
+        for (size_t i = 0; i < getTotalSize(); ++i)
+            data_.getData()[data_.getOffset() + i] =
+                std::exp(data_.getData()[data_.getOffset() + i]);
+    } else {
+        const auto shape = getShapeVecRef();
+        std::vector<std::size_t> coord(shape.size(), 0);
+        const auto stride = data_.getStride().getStrideVec();
+    }
+}
+
 } // namespace hahaha::math
 
 #endif // HAHAHA_MATH_TENSOR_WRAPPER_ARITHMETIC_INL
-
-

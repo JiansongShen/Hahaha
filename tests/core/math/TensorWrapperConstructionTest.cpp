@@ -96,7 +96,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, Default_CreatesEmptyTensor) {
     using T = TestFixture::Type;
     TensorWrapper<T> tensor;
     EXPECT_EQ(tensor.getTotalSize(), 0);
-    EXPECT_EQ(tensor.getShape().size(), 0);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 0);
 }
 
 // ============================================================================
@@ -108,9 +108,9 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, ShapeInitValue_CreatesCorrectTens
     T val = TestFixture::testValue();
     TensorWrapper<T> tensor(TensorShape({2, 3}), val);
     EXPECT_EQ(tensor.getTotalSize(), 6);
-    EXPECT_EQ(tensor.getShape().size(), 2);
-    EXPECT_EQ(tensor.getShape()[0], 2);
-    EXPECT_EQ(tensor.getShape()[1], 3);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[0], 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[1], 3);
     this->expectNear(tensor.at({0, 0}), val);
     this->expectNear(tensor.at({1, 2}), val);
 }
@@ -122,7 +122,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
     TensorWrapper<T> tensor(
         TensorShape({2, 3}), val, std::make_shared<hahaha::backend::CPUDevice>());
     EXPECT_EQ(tensor.getTotalSize(), 6);
-    EXPECT_EQ(tensor.getShape().size(), 2);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 2);
     EXPECT_EQ(tensor.getDevice()->getType(), DeviceType::CPU);
     this->expectNear(tensor.at({0, 0}), val);
 }
@@ -133,7 +133,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
     TensorWrapper<T> tensor(TensorShape({2, 2}),
                             std::make_shared<hahaha::backend::CPUDevice>());
     EXPECT_EQ(tensor.getTotalSize(), 4);
-    EXPECT_EQ(tensor.getShape().size(), 2);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 2);
     EXPECT_EQ(tensor.getDevice()->getType(), DeviceType::CPU);
     T expectedDefault = T(0);
     this->expectNear(tensor.at({0, 0}), expectedDefault);
@@ -148,7 +148,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, NestedData_0D_Scalar) {
     T val = TestFixture::scalarValue();
     TensorWrapper<T> tensor(val);
     EXPECT_EQ(tensor.getTotalSize(), 1);
-    EXPECT_EQ(tensor.getShape().size(), 0); // Scalar tensor has 0 dimensions
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 0); // Scalar tensor has 0 dimensions
     this->expectNear(tensor.at({}), val);
 }
 
@@ -159,8 +159,8 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, NestedData_1D_Vector) {
     T v3 = T(3);
     TensorWrapper<T> tensor(NestedData<T>{v1, v2, v3});
     EXPECT_EQ(tensor.getTotalSize(), 3);
-    EXPECT_EQ(tensor.getShape().size(), 1);
-    EXPECT_EQ(tensor.getShape()[0], 3);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 1);
+    EXPECT_EQ(tensor.getShapeVecRef()[0], 3);
     this->expectNear(tensor.at({0}), v1);
     this->expectNear(tensor.at({2}), v3);
 }
@@ -170,8 +170,8 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, NestedData_1D_SingleElement) {
     T val = T(1);
     TensorWrapper<T> tensor(NestedData<T>{val});
     EXPECT_EQ(tensor.getTotalSize(), 1);
-    EXPECT_EQ(tensor.getShape().size(), 1);
-    EXPECT_EQ(tensor.getShape()[0], 1);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 1);
+    EXPECT_EQ(tensor.getShapeVecRef()[0], 1);
     this->expectNear(tensor.at({0}), val);
 }
 
@@ -183,9 +183,9 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, NestedData_2D_Matrix) {
     T v4 = T(4);
     TensorWrapper<T> tensor(NestedData<T>{{v1, v2}, {v3, v4}});
     EXPECT_EQ(tensor.getTotalSize(), 4);
-    EXPECT_EQ(tensor.getShape().size(), 2);
-    EXPECT_EQ(tensor.getShape()[0], 2);
-    EXPECT_EQ(tensor.getShape()[1], 2);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[0], 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[1], 2);
     this->expectNear(tensor.at({0, 0}), v1);
     this->expectNear(tensor.at({1, 1}), v4);
 }
@@ -195,9 +195,9 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, NestedData_2D_SingleElement) {
     T val = T(1);
     TensorWrapper<T> tensor(NestedData<T>{{val}});
     EXPECT_EQ(tensor.getTotalSize(), 1);
-    EXPECT_EQ(tensor.getShape().size(), 2);
-    EXPECT_EQ(tensor.getShape()[0], 1);
-    EXPECT_EQ(tensor.getShape()[1], 1);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[0], 1);
+    EXPECT_EQ(tensor.getShapeVecRef()[1], 1);
     this->expectNear(tensor.at({0, 0}), val);
 }
 
@@ -214,10 +214,10 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, NestedData_3D_Tensor) {
     TensorWrapper<T> tensor(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     EXPECT_EQ(tensor.getTotalSize(), 8);
-    EXPECT_EQ(tensor.getShape().size(), 3);
-    EXPECT_EQ(tensor.getShape()[0], 2);
-    EXPECT_EQ(tensor.getShape()[1], 2);
-    EXPECT_EQ(tensor.getShape()[2], 2);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 3);
+    EXPECT_EQ(tensor.getShapeVecRef()[0], 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[1], 2);
+    EXPECT_EQ(tensor.getShapeVecRef()[2], 2);
     this->expectNear(tensor.at({0, 0, 0}), v1);
     this->expectNear(tensor.at({1, 1, 1}), v8);
 }
@@ -227,10 +227,10 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, NestedData_3D_SingleElement) {
     T val = T(1);
     TensorWrapper<T> tensor(NestedData<T>{{{val}}});
     EXPECT_EQ(tensor.getTotalSize(), 1);
-    EXPECT_EQ(tensor.getShape().size(), 3);
-    EXPECT_EQ(tensor.getShape()[0], 1);
-    EXPECT_EQ(tensor.getShape()[1], 1);
-    EXPECT_EQ(tensor.getShape()[2], 1);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 3);
+    EXPECT_EQ(tensor.getShapeVecRef()[0], 1);
+    EXPECT_EQ(tensor.getShapeVecRef()[1], 1);
+    EXPECT_EQ(tensor.getShapeVecRef()[2], 1);
     this->expectNear(tensor.at({0, 0, 0}), val);
 }
 
@@ -263,7 +263,7 @@ TYPED_TEST(TensorWrapperConstructionTypedTest, Vector_CorrectlyInitializes) {
     std::vector<T> vec = {v1, v2, v3};
     TensorWrapper<T> tensor(vec);
     EXPECT_EQ(tensor.getTotalSize(), 3);
-    EXPECT_EQ(tensor.getShape().size(), 1);
+    EXPECT_EQ(tensor.getShapeVecRef().size(), 1);
     this->expectNear(tensor.at({0}), v1);
     this->expectNear(tensor.at({2}), v3);
 }
@@ -320,8 +320,8 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
     T v3 = T(3);
     T v4 = T(4);
     TensorWrapper<T> tensor_2d(NestedData<T>{{v1, v2}, {v3, v4}});
-    EXPECT_EQ(tensor_2d.getShape()[0], 2);
-    EXPECT_EQ(tensor_2d.getShape()[1], 2);
+    EXPECT_EQ(tensor_2d.getShapeVecRef()[0], 2);
+    EXPECT_EQ(tensor_2d.getShapeVecRef()[1], 2);
     EXPECT_EQ(tensor_2d.getTotalSize(), 4);
 
     T v5 = T(5);
@@ -330,9 +330,9 @@ TYPED_TEST(TensorWrapperConstructionTypedTest,
     T v8 = T(8);
     TensorWrapper<T> tensor_3d(
         NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
-    EXPECT_EQ(tensor_3d.getShape()[0], 2);
-    EXPECT_EQ(tensor_3d.getShape()[1], 2);
-    EXPECT_EQ(tensor_3d.getShape()[2], 2);
+    EXPECT_EQ(tensor_3d.getShapeVecRef()[0], 2);
+    EXPECT_EQ(tensor_3d.getShapeVecRef()[1], 2);
+    EXPECT_EQ(tensor_3d.getShapeVecRef()[2], 2);
     EXPECT_EQ(tensor_3d.getTotalSize(), 8);
 }
 

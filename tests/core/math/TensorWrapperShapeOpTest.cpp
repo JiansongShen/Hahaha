@@ -88,9 +88,9 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_1D_To2D) {
     T v6 = T(6);
     TensorWrapper<T> v1_tensor(NestedData<T>{v1, v2, v3, v4, v5, v6});
     auto r1 = v1_tensor.reshape({2, 3});
-    EXPECT_EQ(r1.getShape().size(), 2);
-    EXPECT_EQ(r1.getShape()[0], 2);
-    EXPECT_EQ(r1.getShape()[1], 3);
+    EXPECT_EQ(r1.getShapeVecRef().size(), 2);
+    EXPECT_EQ(r1.getShapeVecRef()[0], 2);
+    EXPECT_EQ(r1.getShapeVecRef()[1], 3);
     this->expectNear(r1.at({0, 0}), v1);
     this->expectNear(r1.at({1, 2}), v6);
 }
@@ -107,10 +107,10 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_1D_To3D) {
     T v8 = T(8);
     TensorWrapper<T> v2_tensor(NestedData<T>{v1, v2, v3, v4, v5, v6, v7, v8});
     auto r2 = v2_tensor.reshape({2, 2, 2});
-    EXPECT_EQ(r2.getShape().size(), 3);
-    EXPECT_EQ(r2.getShape()[0], 2);
-    EXPECT_EQ(r2.getShape()[1], 2);
-    EXPECT_EQ(r2.getShape()[2], 2);
+    EXPECT_EQ(r2.getShapeVecRef().size(), 3);
+    EXPECT_EQ(r2.getShapeVecRef()[0], 2);
+    EXPECT_EQ(r2.getShapeVecRef()[1], 2);
+    EXPECT_EQ(r2.getShapeVecRef()[2], 2);
     this->expectNear(r2.at({0, 0, 0}), v1);
     this->expectNear(r2.at({1, 1, 1}), v8);
 }
@@ -123,8 +123,8 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_2D_To1D) {
     T v4 = T(4);
     TensorWrapper<T> m2(NestedData<T>{{v1, v2}, {v3, v4}});
     auto r3 = m2.reshape({4});
-    EXPECT_EQ(r3.getShape().size(), 1);
-    EXPECT_EQ(r3.getShape()[0], 4);
+    EXPECT_EQ(r3.getShapeVecRef().size(), 1);
+    EXPECT_EQ(r3.getShapeVecRef()[0], 4);
     this->expectNear(r3.at({0}), v1);
     this->expectNear(r3.at({3}), v4);
 }
@@ -139,9 +139,9 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_2D_To2D_DifferentShape) {
     T v6 = T(6);
     TensorWrapper<T> m2a(NestedData<T>{{v1, v2, v3}, {v4, v5, v6}});
     auto r4 = m2a.reshape({3, 2});
-    EXPECT_EQ(r4.getShape().size(), 2);
-    EXPECT_EQ(r4.getShape()[0], 3);
-    EXPECT_EQ(r4.getShape()[1], 2);
+    EXPECT_EQ(r4.getShapeVecRef().size(), 2);
+    EXPECT_EQ(r4.getShapeVecRef()[0], 3);
+    EXPECT_EQ(r4.getShapeVecRef()[1], 2);
     this->expectNear(r4.at({0, 0}), v1);
     this->expectNear(r4.at({2, 1}), v6);
 }
@@ -158,10 +158,10 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_2D_To3D) {
     T v8 = T(8);
     TensorWrapper<T> m2b(NestedData<T>{{v1, v2, v3, v4}, {v5, v6, v7, v8}});
     auto r5 = m2b.reshape({2, 2, 2});
-    EXPECT_EQ(r5.getShape().size(), 3);
-    EXPECT_EQ(r5.getShape()[0], 2);
-    EXPECT_EQ(r5.getShape()[1], 2);
-    EXPECT_EQ(r5.getShape()[2], 2);
+    EXPECT_EQ(r5.getShapeVecRef().size(), 3);
+    EXPECT_EQ(r5.getShapeVecRef()[0], 2);
+    EXPECT_EQ(r5.getShapeVecRef()[1], 2);
+    EXPECT_EQ(r5.getShapeVecRef()[2], 2);
     this->expectNear(r5.at({0, 0, 0}), v1);
     this->expectNear(r5.at({1, 1, 1}), v8);
 }
@@ -178,8 +178,8 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_3D_To1D) {
     T v8 = T(8);
     TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r6 = t3.reshape({8});
-    EXPECT_EQ(r6.getShape().size(), 1);
-    EXPECT_EQ(r6.getShape()[0], 8);
+    EXPECT_EQ(r6.getShapeVecRef().size(), 1);
+    EXPECT_EQ(r6.getShapeVecRef()[0], 8);
     this->expectNear(r6.at({0}), v1);
     this->expectNear(r6.at({7}), v8);
 }
@@ -196,9 +196,9 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_3D_To2D) {
     T v8 = T(8);
     TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto r7 = t3.reshape({4, 2});
-    EXPECT_EQ(r7.getShape().size(), 2);
-    EXPECT_EQ(r7.getShape()[0], 4);
-    EXPECT_EQ(r7.getShape()[1], 2);
+    EXPECT_EQ(r7.getShapeVecRef().size(), 2);
+    EXPECT_EQ(r7.getShapeVecRef()[0], 4);
+    EXPECT_EQ(r7.getShapeVecRef()[1], 2);
     this->expectNear(r7.at({0, 0}), v1);
     this->expectNear(r7.at({3, 1}), v8);
 }
@@ -224,10 +224,10 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, Reshape_3D_To3D_DifferentShape) {
     TensorWrapper<T> t3a(NestedData<T>{{{v1, v2, v3, v4}, {v5, v6, v7, v8}},
                                        {{v9, v10, v11, v12}, {v13, v14, v15, v16}}});
     auto r8 = t3a.reshape({2, 4, 2});
-    EXPECT_EQ(r8.getShape().size(), 3);
-    EXPECT_EQ(r8.getShape()[0], 2);
-    EXPECT_EQ(r8.getShape()[1], 4);
-    EXPECT_EQ(r8.getShape()[2], 2);
+    EXPECT_EQ(r8.getShapeVecRef().size(), 3);
+    EXPECT_EQ(r8.getShapeVecRef()[0], 2);
+    EXPECT_EQ(r8.getShapeVecRef()[1], 4);
+    EXPECT_EQ(r8.getShapeVecRef()[2], 2);
     this->expectNear(r8.at({0, 0, 0}), v1);
     this->expectNear(r8.at({1, 3, 1}), v16);
 }
@@ -321,7 +321,7 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_0D_To0D_SameShape) {
     T val = TestFixture::testValue();
     TensorWrapper<T> s0(val);
     auto b00 = s0.broadcastTo(TensorShape({}));
-    EXPECT_EQ(b00.getShape().size(), 0);
+    EXPECT_EQ(b00.getShapeVecRef().size(), 0);
     this->expectNear(b00.at({}), val);
 }
 
@@ -330,8 +330,8 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_0D_To1D) {
     T val = TestFixture::testValue();
     TensorWrapper<T> s0(val);
     auto b01 = s0.broadcastTo(TensorShape({3}));
-    EXPECT_EQ(b01.getShape().size(), 1);
-    EXPECT_EQ(b01.getShape()[0], 3);
+    EXPECT_EQ(b01.getShapeVecRef().size(), 1);
+    EXPECT_EQ(b01.getShapeVecRef()[0], 3);
     this->expectNear(b01.at({0}), val);
     this->expectNear(b01.at({2}), val);
 }
@@ -341,9 +341,9 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_0D_To2D) {
     T val = TestFixture::testValue();
     TensorWrapper<T> s0(val);
     auto b02 = s0.broadcastTo(TensorShape({2, 3}));
-    EXPECT_EQ(b02.getShape().size(), 2);
-    EXPECT_EQ(b02.getShape()[0], 2);
-    EXPECT_EQ(b02.getShape()[1], 3);
+    EXPECT_EQ(b02.getShapeVecRef().size(), 2);
+    EXPECT_EQ(b02.getShapeVecRef()[0], 2);
+    EXPECT_EQ(b02.getShapeVecRef()[1], 3);
     this->expectNear(b02.at({0, 0}), val);
     this->expectNear(b02.at({1, 2}), val);
 }
@@ -353,10 +353,10 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_0D_To3D) {
     T val = TestFixture::testValue();
     TensorWrapper<T> s0(val);
     auto b03 = s0.broadcastTo(TensorShape({2, 2, 3}));
-    EXPECT_EQ(b03.getShape().size(), 3);
-    EXPECT_EQ(b03.getShape()[0], 2);
-    EXPECT_EQ(b03.getShape()[1], 2);
-    EXPECT_EQ(b03.getShape()[2], 3);
+    EXPECT_EQ(b03.getShapeVecRef().size(), 3);
+    EXPECT_EQ(b03.getShapeVecRef()[0], 2);
+    EXPECT_EQ(b03.getShapeVecRef()[1], 2);
+    EXPECT_EQ(b03.getShapeVecRef()[2], 3);
     this->expectNear(b03.at({0, 0, 0}), val);
     this->expectNear(b03.at({1, 1, 2}), val);
 }
@@ -368,8 +368,8 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_1D_To1D_SameShape) {
     T v3 = T(3);
     TensorWrapper<T> v1_tensor(NestedData<T>{v1, v2, v3});
     auto b11 = v1_tensor.broadcastTo(TensorShape({3}));
-    EXPECT_EQ(b11.getShape().size(), 1);
-    EXPECT_EQ(b11.getShape()[0], 3);
+    EXPECT_EQ(b11.getShapeVecRef().size(), 1);
+    EXPECT_EQ(b11.getShapeVecRef()[0], 3);
     this->expectNear(b11.at({0}), v1);
 }
 
@@ -380,9 +380,9 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_1D_To2D) {
     T v3 = T(3);
     TensorWrapper<T> v1_tensor(NestedData<T>{v1, v2, v3});
     auto b12 = v1_tensor.broadcastTo(TensorShape({2, 3}));
-    EXPECT_EQ(b12.getShape().size(), 2);
-    EXPECT_EQ(b12.getShape()[0], 2);
-    EXPECT_EQ(b12.getShape()[1], 3);
+    EXPECT_EQ(b12.getShapeVecRef().size(), 2);
+    EXPECT_EQ(b12.getShapeVecRef()[0], 2);
+    EXPECT_EQ(b12.getShapeVecRef()[1], 3);
     this->expectNear(b12.at({0, 0}), v1);
     this->expectNear(b12.at({1, 0}), v1); // broadcast first dim
     this->expectNear(b12.at({0, 2}), v3);
@@ -395,10 +395,10 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_1D_To3D) {
     T v3 = T(3);
     TensorWrapper<T> v1_tensor(NestedData<T>{v1, v2, v3});
     auto b13 = v1_tensor.broadcastTo(TensorShape({2, 2, 3}));
-    EXPECT_EQ(b13.getShape().size(), 3);
-    EXPECT_EQ(b13.getShape()[0], 2);
-    EXPECT_EQ(b13.getShape()[1], 2);
-    EXPECT_EQ(b13.getShape()[2], 3);
+    EXPECT_EQ(b13.getShapeVecRef().size(), 3);
+    EXPECT_EQ(b13.getShapeVecRef()[0], 2);
+    EXPECT_EQ(b13.getShapeVecRef()[1], 2);
+    EXPECT_EQ(b13.getShapeVecRef()[2], 3);
     this->expectNear(b13.at({0, 0, 0}), v1);
     this->expectNear(b13.at({1, 1, 0}), v1); // broadcast first two dims
 }
@@ -411,9 +411,9 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_2D_To2D_SameShape) {
     T v4 = T(4);
     TensorWrapper<T> m2(NestedData<T>{{v1, v2}, {v3, v4}});
     auto b22 = m2.broadcastTo(TensorShape({2, 2}));
-    EXPECT_EQ(b22.getShape().size(), 2);
-    EXPECT_EQ(b22.getShape()[0], 2);
-    EXPECT_EQ(b22.getShape()[1], 2);
+    EXPECT_EQ(b22.getShapeVecRef().size(), 2);
+    EXPECT_EQ(b22.getShapeVecRef()[0], 2);
+    EXPECT_EQ(b22.getShapeVecRef()[1], 2);
     EXPECT_EQ(b22.getStride().toString(), m2.getStride().toString());
     EXPECT_EQ(b22.getRawData().get(), m2.getRawData().get());
 }
@@ -425,9 +425,9 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_2D_To2D_Dim1_Broadcasting)
     T v3 = T(3);
     TensorWrapper<T> m2a(NestedData<T>{{v1, v2, v3}}); // [1, 3]
     auto b22b = m2a.broadcastTo(TensorShape({2, 3}));
-    EXPECT_EQ(b22b.getShape().size(), 2);
-    EXPECT_EQ(b22b.getShape()[0], 2);
-    EXPECT_EQ(b22b.getShape()[1], 3);
+    EXPECT_EQ(b22b.getShapeVecRef().size(), 2);
+    EXPECT_EQ(b22b.getShapeVecRef()[0], 2);
+    EXPECT_EQ(b22b.getShapeVecRef()[1], 3);
     this->expectNear(b22b.at({0, 0}), v1);
     this->expectNear(b22b.at({1, 0}), v1); // broadcast first dim
 }
@@ -440,10 +440,10 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_2D_To3D) {
     T v4 = T(4);
     TensorWrapper<T> m2b(NestedData<T>{{v1, v2}, {v3, v4}});
     auto b23 = m2b.broadcastTo(TensorShape({2, 2, 2}));
-    EXPECT_EQ(b23.getShape().size(), 3);
-    EXPECT_EQ(b23.getShape()[0], 2);
-    EXPECT_EQ(b23.getShape()[1], 2);
-    EXPECT_EQ(b23.getShape()[2], 2);
+    EXPECT_EQ(b23.getShapeVecRef().size(), 3);
+    EXPECT_EQ(b23.getShapeVecRef()[0], 2);
+    EXPECT_EQ(b23.getShapeVecRef()[1], 2);
+    EXPECT_EQ(b23.getShapeVecRef()[2], 2);
     this->expectNear(b23.at({0, 0, 0}), v1);
     this->expectNear(b23.at({1, 0, 0}), v1); // broadcast first dim
 }
@@ -460,10 +460,10 @@ TYPED_TEST(TensorWrapperShapeOpTypedTest, BroadcastTo_3D_To3D_SameShape) {
     T v8 = T(8);
     TensorWrapper<T> t3(NestedData<T>{{{v1, v2}, {v3, v4}}, {{v5, v6}, {v7, v8}}});
     auto b33 = t3.broadcastTo(TensorShape({2, 2, 2}));
-    EXPECT_EQ(b33.getShape().size(), 3);
-    EXPECT_EQ(b33.getShape()[0], 2);
-    EXPECT_EQ(b33.getShape()[1], 2);
-    EXPECT_EQ(b33.getShape()[2], 2);
+    EXPECT_EQ(b33.getShapeVecRef().size(), 3);
+    EXPECT_EQ(b33.getShapeVecRef()[0], 2);
+    EXPECT_EQ(b33.getShapeVecRef()[1], 2);
+    EXPECT_EQ(b33.getShapeVecRef()[2], 2);
     EXPECT_EQ(b33.getStride().toString(), t3.getStride().toString());
     EXPECT_EQ(b33.getRawData().get(), t3.getRawData().get());
 }
@@ -512,9 +512,9 @@ TEST_F(TensorWrapperShapeOpTest, BroadcastTo_SameShape_ReturnsViewWithSameStride
     TensorWrapper<int> src(NestedData<int>{{1, 2}, {3, 4}}); // shape (2,2)
     auto view = src.broadcastTo(TensorShape({2, 2}));
 
-    EXPECT_EQ(view.getShape().size(), 2);
-    EXPECT_EQ(view.getShape()[0], 2);
-    EXPECT_EQ(view.getShape()[1], 2);
+    EXPECT_EQ(view.getShapeVecRef().size(), 2);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2);
+    EXPECT_EQ(view.getShapeVecRef()[1], 2);
     EXPECT_EQ(view.getStride().toString(), src.getStride().toString());
     EXPECT_EQ(view.getRawData().get(), src.getRawData().get());
 }
@@ -522,9 +522,9 @@ TEST_F(TensorWrapperShapeOpTest, BroadcastTo_SameShape_ReturnsViewWithSameStride
 TEST_F(TensorWrapperShapeOpTest, BroadcastTo_PrefixDim_InsertsZeroStride) {
     TensorWrapper<int> src(NestedData<int>{1, 2, 3}); // shape (3)
     auto view = src.broadcastTo(TensorShape({2, 3})); // view shape (2,3)
-    EXPECT_EQ(view.getShape().size(), 2);
-    EXPECT_EQ(view.getShape()[0], 2);
-    EXPECT_EQ(view.getShape()[1], 3);
+    EXPECT_EQ(view.getShapeVecRef().size(), 2);
+    EXPECT_EQ(view.getShapeVecRef()[0], 2);
+    EXPECT_EQ(view.getShapeVecRef()[1], 3);
 
     // prefix dim stride is 0, last dim stride is original 1
     ASSERT_EQ(view.getStride().getStrideVec().size(), 2);

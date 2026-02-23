@@ -255,8 +255,8 @@ template <typename T> class Tensor {
         computeNode_->getData()->to(device);
     }
 
-    [[nodiscard]] const std::vector<size_t>& getShape() const {
-        return computeNode_->getData()->getShape();
+    [[nodiscard]] const std::vector<size_t>& getShapeVecRef() const {
+        return computeNode_->getData()->getShapeVecRef();
     }
 
     /** @brief Get the device where the tensor resides. */

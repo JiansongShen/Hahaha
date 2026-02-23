@@ -48,7 +48,7 @@ reshape(const std::shared_ptr<ComputeNode<T>>& parent,
 
     std::weak_ptr<ComputeNode<T>> weakRes = resNode;
     std::weak_ptr<ComputeNode<T>> weakParent = parent;
-    auto originalShape = parent->getData()->getShape();
+    auto originalShape = parent->getData()->getShapeVecRef();
 
     resNode->setGradFun([weakParent, weakRes, originalShape]() {
         auto res = weakRes.lock();
