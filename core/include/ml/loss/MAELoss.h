@@ -48,7 +48,10 @@ template <typename T> class MAELoss : public Loss<T> {
         // The absolute value is computed in-place to avoid unnecessary copying. The
         // original error tensor is modified, but since it's a temporary object
         // created by the subtraction, it won't affect
-        return TensorWrapper<T>(((yTrue - yPredict).absInPlace()).sum());
+        auto absError = yTrue - yPredict;
+        absError.absInPlace();
+        const auto totalSize = absError.getTotalSize();
+        return TensorWrapper<T>(absError.sum() / static_cast<T>(totalSize));
     }
 };
 

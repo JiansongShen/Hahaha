@@ -50,11 +50,12 @@ template <typename T> class CrossEntropyLoss : public Loss<T> {
      */
     TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
         // Add epsilon to prevent log(0)
-        TensorWrapper<T> safePredict = yPredict + epsilon;
+        TensorWrapper<T> temp = yPredict + epsilon;
+        TensorWrapper<T> safePredict = temp.clone();
         // Compute log of predictions
-        TensorWrapper<T> logPredict = safePredict.logInPlace();
+        safePredict.logInPlace();
         // Compute cross entropy: -sum(yTrue * log(yPredict))
-        return TensorWrapper<T>((-(yTrue * logPredict).sum()));
+        return TensorWrapper<T>((-(yTrue * safePredict).sum()));
     }
 };
 

@@ -694,6 +694,52 @@ template <typename T> void TensorWrapper<T>::expInPlace() {
         const auto shape = getShapeVecRef();
         std::vector<std::size_t> coord(shape.size(), 0);
         const auto stride = data_.getStride().getStrideVec();
+        T* ptr = data_.getData().get();
+        size_t offset = data_.getOffset();
+
+        for (size_t i = 0; i < getTotalSize(); ++i) {
+            size_t idx = 0;
+            for (size_t d = 0; d < shape.size(); ++d) {
+                idx += coord[d] * stride[d];
+            }
+            ptr[offset + idx] = std::exp(ptr[offset + idx]);
+
+            for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
+                if (++coord[d] < shape[d]) {
+                    break;
+                }
+                coord[d] = 0;
+            }
+        }
+    }
+}
+
+template <typename T> void TensorWrapper<T>::logInPlace() {
+    if (isContiguous()) {
+        for (size_t i = 0; i < getTotalSize(); ++i)
+            data_.getData()[data_.getOffset() + i] =
+                std::log(data_.getData()[data_.getOffset() + i]);
+    } else {
+        const auto shape = getShapeVecRef();
+        std::vector<std::size_t> coord(shape.size(), 0);
+        const auto stride = data_.getStride().getStrideVec();
+        T* ptr = data_.getData().get();
+        size_t offset = data_.getOffset();
+
+        for (size_t i = 0; i < getTotalSize(); ++i) {
+            size_t idx = 0;
+            for (size_t d = 0; d < shape.size(); ++d) {
+                idx += coord[d] * stride[d];
+            }
+            ptr[offset + idx] = std::log(ptr[offset + idx]);
+
+            for (long d = static_cast<long>(shape.size()) - 1; d >= 0; --d) {
+                if (++coord[d] < shape[d]) {
+                    break;
+                }
+                coord[d] = 0;
+            }
+        }
     }
 }
 

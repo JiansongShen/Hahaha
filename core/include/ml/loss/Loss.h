@@ -53,8 +53,16 @@ template <typename T> class Loss {
         return TensorWrapper<T>(T(0));
     }
 
-    virtual TensorWrapper<T> operator()(TensorWrapper<T> /* yTrue */,
-                                        TensorWrapper<T> /* yPreedict */);
+    /**
+     * @brief Operator overload for computing loss.
+     * @param yTrue The true (target) values.
+     * @param yPredict The predicted values.
+     * @return TensorWrapper<T> The computed loss value.
+     */
+    virtual TensorWrapper<T> operator()(TensorWrapper<T> yTrue,
+                                        TensorWrapper<T> yPredict) {
+        return computeLoss(yTrue, yPredict);
+    }
 };
 
 } // namespace hahaha::ml

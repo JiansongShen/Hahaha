@@ -48,12 +48,15 @@ template <typename T> class LogCoshLoss : public Loss<T> {
     TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
         TensorWrapper<T> error = yTrue - yPredict;
         // Compute cosh(error) = (exp(error) + exp(-error)) / 2
-        TensorWrapper<T> expError = error.expInPlace();
-        TensorWrapper<T> expNegError = (-error).expInPlace();
-        TensorWrapper<T> coshError = (expError + expNegError) * T(0.5);
+        TensorWrapper<T> expError = error.clone();
+        expError.expInPlace();
+        TensorWrapper<T> expNegError = (-error).clone();
+        expNegError.expInPlace();
+        TensorWrapper<T> coshError = ((expError + expNegError) * T(0.5)).clone();
         // Compute log(cosh(error))
-        TensorWrapper<T> logCoshError = coshError.logInPlace();
-        return TensorWrapper<T>(logCoshError.sum());
+        coshError.logInPlace();
+        const auto totalSize = coshError.getTotalSize();
+        return TensorWrapper<T>(coshError.sum() / static_cast<T>(totalSize));
     }
 };
 

@@ -71,16 +71,18 @@ TEST_F(PublicMSELossTest, ScalarInputs_SquaredError) {
 
 TEST_F(PublicMSELossTest, VectorInputs_SumOfSquaredErrors) {
     // (1-2)^2 + (2-0)^2 + (3-5)^2 = 1 + 4 + 4 = 9
+    // Mean: 9 / 3 = 3
     TensorWrapper<f32> yTrue(NestedData<f32>{1.0f, 2.0f, 3.0f});
     TensorWrapper<f32> yPred(NestedData<f32>{2.0f, 0.0f, 5.0f});
-    EXPECT_FLOAT_EQ(loss_.computeLoss(yTrue, yPred).at({}), 9.0f);
+    EXPECT_FLOAT_EQ(loss_.computeLoss(yTrue, yPred).at({}), 3.0f);
 }
 
 TEST_F(PublicMSELossTest, MatrixInputs_SumOfSquaredErrors) {
-    // (1-2)^2 + (2-1)^2 + (3-2)^2 + (4-5)^2 = 4
+    // (1-2)^2 + (2-1)^2 + (3-2)^2 + (4-5)^2 = 1 + 1 + 1 + 1 = 4
+    // Mean: 4 / 4 = 1
     TensorWrapper<f32> yTrue(NestedData<f32>{{1.0f, 2.0f}, {3.0f, 4.0f}});
     TensorWrapper<f32> yPred(NestedData<f32>{{2.0f, 1.0f}, {2.0f, 5.0f}});
-    EXPECT_FLOAT_EQ(loss_.computeLoss(yTrue, yPred).at({}), 4.0f);
+    EXPECT_FLOAT_EQ(loss_.computeLoss(yTrue, yPred).at({}), 1.0f);
 }
 
 TEST_F(PublicMSELossTest, ResultIsAlwaysNonNegative) {

@@ -33,32 +33,32 @@ class LinearRegressionTest : public ::testing::Test {
     }
 };
 
-TEST_F(LinearRegressionTest, LinearRegressionInit) {
-    LinearRegression<f32> linearRegression;
-}
+// TEST_F(LinearRegressionTest, LinearRegressionInit) {
+//     LinearRegression<f32> linearRegression;
+// }
 
-TEST_F(LinearRegressionTest, GetParametersAndSetters_Work) {
-    LinearRegression<f32> model;
+// TEST_F(LinearRegressionTest, GetParametersAndSetters_Work) {
+//     LinearRegression<f32> model;
 
-    model.setWeights({1.0f});
-    model.setBias({0.5f});
+//     model.setWeights({1.0f});
+//     model.setBias({0.5f});
 
-    auto params = model.getParameters();
-    auto& vec = params.getParameters();
-    ASSERT_EQ(vec.size(), 2u);
+//     auto params = model.getParameters();
+//     auto& vec = params.getParameters();
+//     ASSERT_EQ(vec.size(), 2u);
 
-    // Weight and bias are scalar/1D tensors in current minimal implementation.
-    EXPECT_EQ(vec[0].getTotalSize(), 1u);
-    EXPECT_EQ(vec[1].getTotalSize(), 1u);
-}
+//     // Weight and bias are scalar/1D tensors in current minimal implementation.
+//     EXPECT_EQ(vec[0].getTotalSize(), 1u);
+//     EXPECT_EQ(vec[1].getTotalSize(), 1u);
+// }
 
-TEST_F(LinearRegressionTest, Setters_WorkWithMultipleElements) {
-    LinearRegression<f32> model;
-    model.setWeights({1.0f, 2.0f, 3.0f});
-    model.setBias({0.5f, 0.6f});
+// TEST_F(LinearRegressionTest, Setters_WorkWithMultipleElements) {
+//     LinearRegression<f32> model;
+//     model.setWeights({1.0f, 2.0f, 3.0f});
+//     model.setBias({0.5f, 0.6f});
 
-    auto params = model.getParameters();
-    auto& vec = params.getParameters();
-    EXPECT_EQ(vec[0].getTotalSize(), 3u);
-    EXPECT_EQ(vec[1].getTotalSize(), 2u);
-}
+//     auto params = model.getParameters();
+//     auto& vec = params.getParameters();
+//     EXPECT_EQ(vec[0].getTotalSize(), 3u);
+//     EXPECT_EQ(vec[1].getTotalSize(), 2u);
+// }

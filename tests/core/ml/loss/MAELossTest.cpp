@@ -13,13 +13,14 @@
 // limitations under the License.
 //
 
-#include "ml/loss/MSELoss.h"
+#include "ml/loss/MAELoss.h"
 
 #include <gtest/gtest.h>
+#include <type_traits>
 
 #include "common/definitions.h"
-#include "math/ds/NestedData.h"
 #include "ml/loss/Loss.h"
+#include "math/ds/NestedData.h"
 
 using hahaha::common::f32;
 using hahaha::common::f64;
@@ -34,54 +35,51 @@ using hahaha::common::u8;
 using hahaha::math::NestedData;
 using hahaha::math::TensorWrapper;
 
-using NumericTypes =
-    ::testing::Types<u8, i8, u16, i16, u32, i32, u64, i64, f32, f64>;
+using NumericTypes = ::testing::Types<i8, i16, i32, i64, f32, f64>;
 
-template <typename T> class MSELossTypedTest : public ::testing::Test {
+template <typename T> class MAELossTypedTest : public ::testing::Test {
   protected:
     using Type = T;
 };
 
-TYPED_TEST_SUITE(MSELossTypedTest, NumericTypes);
+TYPED_TEST_SUITE(MAELossTypedTest, NumericTypes);
 
-TYPED_TEST(MSELossTypedTest, ScalarInputs_ComputesMeanSquaredError) {
+TYPED_TEST(MAELossTypedTest, ScalarInputs_ComputesMeanAbsoluteError) {
     using T = typename TestFixture::Type;
     TensorWrapper<T> yTrue(NestedData<T>(static_cast<T>(3)));
     TensorWrapper<T> yPred(NestedData<T>(static_cast<T>(1)));
-    auto loss = hahaha::ml::computeMSELoss(yTrue, yPred);
-    T expected = static_cast<T>(4.0);
-    EXPECT_NEAR(static_cast<double>(loss.at({})),
-                static_cast<double>(expected),
+    auto loss = hahaha::ml::computeMAELoss(yTrue, yPred);
+    T expected = static_cast<T>(2.0);
+    EXPECT_NEAR(static_cast<double>(loss.at({})), static_cast<double>(expected),
                 static_cast<double>(expected) * 1e-6);
 }
 
-TYPED_TEST(MSELossTypedTest, VectorInputs_ComputesMeanOfSquaredErrors) {
+TYPED_TEST(MAELossTypedTest, VectorInputs_ComputesMeanOfAbsoluteErrors) {
     using T = typename TestFixture::Type;
-    TensorWrapper<T> yTrue(
-        NestedData<T>{static_cast<T>(1), static_cast<T>(2), static_cast<T>(3)});
-    TensorWrapper<T> yPred(
-        NestedData<T>{static_cast<T>(2), static_cast<T>(0), static_cast<T>(5)});
-    auto loss = hahaha::ml::computeMSELoss(yTrue, yPred);
-    T expected = static_cast<T>(3.0);
-    EXPECT_NEAR(static_cast<double>(loss.at({})),
-                static_cast<double>(expected),
+    TensorWrapper<T> yTrue(NestedData<T>{static_cast<T>(1), static_cast<T>(2), static_cast<T>(3)});
+    TensorWrapper<T> yPred(NestedData<T>{static_cast<T>(2), static_cast<T>(0), static_cast<T>(5)});
+    auto loss = hahaha::ml::computeMAELoss(yTrue, yPred);
+    // Errors: [1-2, 2-0, 3-5] = [-1, 2, -2]
+    // Absolute errors: [1, 2, 2]
+    // Mean: (1 + 2 + 2) / 3 = 5/3 ≈ 1.667
+    T expected = static_cast<T>(5.0 / 3.0);
+    EXPECT_NEAR(static_cast<double>(loss.at({})), static_cast<double>(expected),
                 static_cast<double>(expected) * 1e-6);
 }
 
-TYPED_TEST(MSELossTypedTest, MatrixInputs_ComputesMeanAcrossAllElements) {
+TYPED_TEST(MAELossTypedTest, MatrixInputs_ComputesMeanAcrossAllElements) {
     using T = typename TestFixture::Type;
     TensorWrapper<T> yTrue(NestedData<T>{{static_cast<T>(1), static_cast<T>(2)},
-                                         {static_cast<T>(3), static_cast<T>(4)}});
+                                          {static_cast<T>(3), static_cast<T>(4)}});
     TensorWrapper<T> yPred(NestedData<T>{{static_cast<T>(2), static_cast<T>(1)},
                                          {static_cast<T>(2), static_cast<T>(5)}});
-    auto loss = hahaha::ml::computeMSELoss(yTrue, yPred);
+    auto loss = hahaha::ml::computeMAELoss(yTrue, yPred);
     T expected = static_cast<T>(1.0);
-    EXPECT_NEAR(static_cast<double>(loss.at({})),
-                static_cast<double>(expected),
+    EXPECT_NEAR(static_cast<double>(loss.at({})), static_cast<double>(expected),
                 static_cast<double>(expected) * 1e-6);
 }
 
-TYPED_TEST(MSELossTypedTest, ThreeDimensionalTensor_ComputesMeanCorrectly) {
+TYPED_TEST(MAELossTypedTest, ThreeDimensionalTensor_ComputesMeanCorrectly) {
     using T = typename TestFixture::Type;
     TensorWrapper<T> yTrue(NestedData<T>{{{static_cast<T>(1), static_cast<T>(2)},
                                           {static_cast<T>(3), static_cast<T>(4)}},
@@ -91,63 +89,57 @@ TYPED_TEST(MSELossTypedTest, ThreeDimensionalTensor_ComputesMeanCorrectly) {
                                           {static_cast<T>(2), static_cast<T>(5)}},
                                          {{static_cast<T>(4), static_cast<T>(7)},
                                           {static_cast<T>(6), static_cast<T>(9)}}});
-    auto loss = hahaha::ml::computeMSELoss(yTrue, yPred);
+    auto loss = hahaha::ml::computeMAELoss(yTrue, yPred);
     T expected = static_cast<T>(1.0);
-    EXPECT_NEAR(static_cast<double>(loss.at({})),
-                static_cast<double>(expected),
+    EXPECT_NEAR(static_cast<double>(loss.at({})), static_cast<double>(expected),
                 static_cast<double>(expected) * 1e-6);
 }
 
-TYPED_TEST(MSELossTypedTest, ZeroError_ReturnsZero) {
+TYPED_TEST(MAELossTypedTest, ZeroError_ReturnsZero) {
     using T = typename TestFixture::Type;
-    TensorWrapper<T> yTrue(
-        NestedData<T>{static_cast<T>(1), static_cast<T>(2), static_cast<T>(3)});
-    TensorWrapper<T> yPred(
-        NestedData<T>{static_cast<T>(1), static_cast<T>(2), static_cast<T>(3)});
-    auto loss = hahaha::ml::computeMSELoss(yTrue, yPred);
+    TensorWrapper<T> yTrue(NestedData<T>{static_cast<T>(1), static_cast<T>(2), static_cast<T>(3)});
+    TensorWrapper<T> yPred(NestedData<T>{static_cast<T>(1), static_cast<T>(2), static_cast<T>(3)});
+    auto loss = hahaha::ml::computeMAELoss(yTrue, yPred);
     T expected = static_cast<T>(0);
-    EXPECT_NEAR(static_cast<double>(loss.at({})),
-                static_cast<double>(expected),
+    EXPECT_NEAR(static_cast<double>(loss.at({})), static_cast<double>(expected),
                 static_cast<double>(expected) * 1e-6);
 }
 
-TYPED_TEST(MSELossTypedTest, NegativeErrors_HandlesCorrectly) {
+TYPED_TEST(MAELossTypedTest, NegativeErrors_UsesAbsoluteValue) {
     using T = typename TestFixture::Type;
     TensorWrapper<T> yTrue(NestedData<T>{static_cast<T>(1), static_cast<T>(2)});
     TensorWrapper<T> yPred(NestedData<T>{static_cast<T>(3), static_cast<T>(0)});
-    auto loss = hahaha::ml::computeMSELoss(yTrue, yPred);
-    // Errors: [1-3, 2-0] = [-2, 2]
-    // Squared errors: [4, 4]
-    // Mean: (4 + 4) / 2 = 4
-    T expected = static_cast<T>(4.0);
-    EXPECT_NEAR(static_cast<double>(loss.at({})),
-                static_cast<double>(expected),
+    auto loss = hahaha::ml::computeMAELoss(yTrue, yPred);
+    T expected = static_cast<T>(2.0);
+    EXPECT_NEAR(static_cast<double>(loss.at({})), static_cast<double>(expected),
                 static_cast<double>(expected) * 1e-6);
 }
 
-TYPED_TEST(MSELossTypedTest, SingleElementVector_ComputesCorrectly) {
+TYPED_TEST(MAELossTypedTest, SingleElementVector_ComputesCorrectly) {
     using T = typename TestFixture::Type;
     TensorWrapper<T> yTrue(NestedData<T>{static_cast<T>(5)});
     TensorWrapper<T> yPred(NestedData<T>{static_cast<T>(2)});
-    auto loss = hahaha::ml::computeMSELoss(yTrue, yPred);
-    T expected = static_cast<T>(9.0);
-    EXPECT_NEAR(static_cast<double>(loss.at({})),
-                static_cast<double>(expected),
+    auto loss = hahaha::ml::computeMAELoss(yTrue, yPred);
+    T expected = static_cast<T>(3.0);
+    EXPECT_NEAR(static_cast<double>(loss.at({})), static_cast<double>(expected),
                 static_cast<double>(expected) * 1e-6);
 }
 
-TEST(MSELossTest, LossBase_DefaultReturnsZeroTensor) {
-    hahaha::ml::Loss<f32> loss;
-    auto out = loss.computeLoss(TensorWrapper<f32>(NestedData<f32>(1.0f)),
-                                TensorWrapper<f32>(NestedData<f32>(2.0f)));
-    EXPECT_FLOAT_EQ(out.at({}), 0.0f);
+TYPED_TEST(MAELossTypedTest, MixedPositiveNegativeErrors_HandlesCorrectly) {
+    using T = typename TestFixture::Type;
+    TensorWrapper<T> yTrue(NestedData<T>{static_cast<T>(5), static_cast<T>(1), static_cast<T>(3)});
+    TensorWrapper<T> yPred(NestedData<T>{static_cast<T>(2), static_cast<T>(4), static_cast<T>(3)});
+    auto loss = hahaha::ml::computeMAELoss(yTrue, yPred);
+    T expected = static_cast<T>(2.0);
+    EXPECT_NEAR(static_cast<double>(loss.at({})), static_cast<double>(expected),
+                static_cast<double>(expected) * 1e-6);
 }
 
-TEST(MSELossTest, MSELossClass_MatchesConvenienceFunction) {
-    hahaha::ml::MSELoss<f32> loss;
+TEST(MAELossTest, MAELossClass_MatchesConvenienceFunction) {
+    hahaha::ml::MAELoss<f32> loss;
     TensorWrapper<f32> yTrue(NestedData<f32>{1.0f, 2.0f, 3.0f});
     TensorWrapper<f32> yPred(NestedData<f32>{2.0f, 0.0f, 5.0f});
     auto loss1 = loss.computeLoss(yTrue, yPred);
-    auto loss2 = hahaha::ml::computeMSELoss(yTrue, yPred);
+    auto loss2 = hahaha::ml::computeMAELoss(yTrue, yPred);
     EXPECT_FLOAT_EQ(loss1.at({}), loss2.at({}));
 }

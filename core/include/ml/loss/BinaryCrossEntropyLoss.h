@@ -54,13 +54,16 @@ template <typename T> class BinaryCrossEntropyLoss : public Loss<T> {
         TensorWrapper<T> safeOneMinusPredict = (TensorWrapper<T>(T(1)) - yPredict) + epsilon;
         
         // Compute log terms
-        TensorWrapper<T> logPredict = safePredict.logInPlace();
-        TensorWrapper<T> logOneMinusPredict = safeOneMinusPredict.logInPlace();
-        
+        safePredict.logInPlace();
+        safeOneMinusPredict.logInPlace();
+
         // Compute binary cross entropy
-        TensorWrapper<T> term1 = yTrue * logPredict;
-        TensorWrapper<T> term2 = (TensorWrapper<T>(T(1)) - yTrue) * logOneMinusPredict;
-        return TensorWrapper<T>((-(term1 + term2).sum()));
+        TensorWrapper<T> term1 = yTrue * safePredict;
+        TensorWrapper<T> term2 =
+            (TensorWrapper<T>(T(1)) - yTrue) * safeOneMinusPredict;
+        TensorWrapper<T> bce = -(term1 + term2);
+        const auto totalSize = bce.getTotalSize();
+        return TensorWrapper<T>(bce.sum() / static_cast<T>(totalSize));
     }
 };
 

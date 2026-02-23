@@ -45,7 +45,8 @@ template <typename T> class MSELoss : public Loss<T> {
         // TensorWrapper. Wrap it back into a scalar TensorWrapper.
         auto diff = yTrue - yPredict;
         diff.squareInPlace();
-        return TensorWrapper<T>(diff.sum());
+        const auto totalSize = diff.getTotalSize();
+        return TensorWrapper<T>(diff.sum() / static_cast<T>(totalSize));
     }
 };
 
