@@ -21,7 +21,11 @@
 #define MAELOSS_E8F2A1B9_7C3D_4F6E_9A8B_2D5C1E3F7A9B
 
 // Project includes
+#include <memory>
+
 #include "Loss.h"
+#include "math/TensorWrapper.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
 
@@ -39,19 +43,24 @@ template <typename T> class MAELoss : public Loss<T> {
      * @brief Compute the MAE loss between true and predicted values.
      * @param yTrue The true (target) values.
      * @param yPredict The predicted values.
-     * @return TensorWrapper<T> The computed MAE loss value.
+     * @return std::shared_ptr<ComputeNode<T>> The computed MAE loss value.
      */
-    TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
-        // NOTE: TensorWrapper::sum() currently returns a scalar value (T), not a
-        // TensorWrapper. Wrap it back into a scalar TensorWrapper.
+    std::shared_ptr<ComputeNode<T>>
+    computeLoss(std::shared_ptr<ComputeNode<T>> yTrue,
+                std::shared_ptr<ComputeNode<T>> yPredict) override {
+        // Get data from ComputeNodes
+        auto yTrueData = yTrue->getData();
+        auto yPredictData = yPredict->getData();
 
-        // The absolute value is computed in-place to avoid unnecessary copying. The
-        // original error tensor is modified, but since it's a temporary object
-        // created by the subtraction, it won't affect
-        auto absError = yTrue - yPredict;
-        absError.absInPlace();
-        const auto totalSize = absError.getTotalSize();
-        return TensorWrapper<T>(absError.sum() / static_cast<T>(totalSize));
+        // Compute MAE loss: mean(|yTrue - yPredict|)
+        auto diff = yTrueData->subtract(*yPredictData);
+        diff.absInPlace();
+        const auto totalSize = diff.getTotalSize();
+        auto meanValue = diff.sum() / static_cast<T>(totalSize);
+
+        // Create a new ComputeNode with the mean value
+        auto meanData = std::make_shared<math::TensorWrapper<T>>(meanValue);
+        return std::make_shared<ComputeNode<T>>(meanData);
     }
 };
 
@@ -60,10 +69,12 @@ template <typename T> class MAELoss : public Loss<T> {
  * @tparam T The numeric type.
  * @param yTrue The true (target) values.
  * @param yPredict The predicted values.
- * @return TensorWrapper<T> The computed MAE loss value.
+ * @return std::shared_ptr<ComputeNode<T>> The computed MAE loss value.
  */
 template <typename T>
-TensorWrapper<T> computeMAELoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+std::shared_ptr<ComputeNode<T>>
+computeMAELoss(std::shared_ptr<ComputeNode<T>> yTrue,
+               std::shared_ptr<ComputeNode<T>> yPredict) {
     static MAELoss<T> loss;
     return loss.computeLoss(yTrue, yPredict);
 }

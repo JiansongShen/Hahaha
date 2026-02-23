@@ -24,7 +24,11 @@
 #include <cmath>
 
 // Project includes
+#include <memory>
+
 #include "Loss.h"
+#include "math/TensorWrapper.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
 
@@ -43,20 +47,35 @@ template <typename T> class LogCoshLoss : public Loss<T> {
      * @brief Compute the Log-Cosh loss between true and predicted values.
      * @param yTrue The true (target) values.
      * @param yPredict The predicted values.
-     * @return TensorWrapper<T> The computed Log-Cosh loss value.
+     * @return std::shared_ptr<ComputeNode<T>> The computed Log-Cosh loss value.
      */
-    TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
-        TensorWrapper<T> error = yTrue - yPredict;
+    std::shared_ptr<ComputeNode<T>>
+    computeLoss(std::shared_ptr<ComputeNode<T>> yTrue,
+                std::shared_ptr<ComputeNode<T>> yPredict) override {
+        // Get data from ComputeNodes
+        auto yTrueData = yTrue->getData();
+        auto yPredictData = yPredict->getData();
+
+        // Compute error
+        auto error = yTrueData->subtract(*yPredictData);
+
         // Compute cosh(error) = (exp(error) + exp(-error)) / 2
-        TensorWrapper<T> expError = error.clone();
+        auto expError = error.clone();
         expError.expInPlace();
-        TensorWrapper<T> expNegError = (-error).clone();
-        expNegError.expInPlace();
-        TensorWrapper<T> coshError = ((expError + expNegError) * T(0.5)).clone();
+        auto negError = error.clone();
+        negError.negateInPlace();
+        negError.expInPlace();
+        auto coshError = expError.add(negError);
+        coshError = coshError * T(0.5);
+
         // Compute log(cosh(error))
         coshError.logInPlace();
         const auto totalSize = coshError.getTotalSize();
-        return TensorWrapper<T>(coshError.sum() / static_cast<T>(totalSize));
+        auto meanValue = coshError.sum() / static_cast<T>(totalSize);
+
+        // Create a new ComputeNode with the mean value
+        auto meanData = std::make_shared<math::TensorWrapper<T>>(meanValue);
+        return std::make_shared<ComputeNode<T>>(meanData);
     }
 };
 
@@ -65,10 +84,12 @@ template <typename T> class LogCoshLoss : public Loss<T> {
  * @tparam T The numeric type.
  * @param yTrue The true (target) values.
  * @param yPredict The predicted values.
- * @return TensorWrapper<T> The computed Log-Cosh loss value.
+ * @return std::shared_ptr<ComputeNode<T>> The computed Log-Cosh loss value.
  */
 template <typename T>
-TensorWrapper<T> computeLogCoshLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+std::shared_ptr<ComputeNode<T>>
+computeLogCoshLoss(std::shared_ptr<ComputeNode<T>> yTrue,
+                   std::shared_ptr<ComputeNode<T>> yPredict) {
     static LogCoshLoss<T> loss;
     return loss.computeLoss(yTrue, yPredict);
 }

@@ -20,6 +20,8 @@
 #define HAHAHA_HARD_TANH_H_K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z
 
 #include "Activation.h"
+#include "ml/compute/graph/ComputeNode.h"
+#include <memory>
 
 namespace hahaha::ml {
 
@@ -53,28 +55,28 @@ template <typename T> class HardTanh : public Activation<T> {
   public:
     /**
      * @brief Apply hard tanh activation to the input tensor.
-     * @param input The input tensor.
-     * @return TensorWrapper<T> The output tensor with hard tanh applied.
+     * @param input The input compute node.
+     * @return std::shared_ptr<ComputeNode<T>> The output compute node with hard tanh applied.
      */
-    TensorWrapper<T> forward(TensorWrapper<T> input) override;
+    std::shared_ptr<ComputeNode<T>> forward(std::shared_ptr<ComputeNode<T>> input) override;
 
     /**
      * @brief Compute the gradient of hard tanh.
-     * @param input The input tensor.
+     * @param input The input compute node.
      * @param gradOutput The gradient from the next layer.
-     * @return TensorWrapper<T> The gradient with respect to the input.
+     * @return std::shared_ptr<ComputeNode<T>> The gradient with respect to the input.
      */
-    TensorWrapper<T> backward(TensorWrapper<T> input,
-                               TensorWrapper<T> gradOutput) override;
+    std::shared_ptr<ComputeNode<T>> backward(std::shared_ptr<ComputeNode<T>> input,
+                                              std::shared_ptr<ComputeNode<T>> gradOutput) override;
 };
 
 /**
  * @brief Convenience function to apply hard tanh activation.
  * @tparam T The numeric type.
- * @param input The input tensor.
- * @return TensorWrapper<T> The output tensor with hard tanh applied.
+ * @param input The input compute node.
+ * @return std::shared_ptr<ComputeNode<T>> The output compute node with hard tanh applied.
  */
-template <typename T> TensorWrapper<T> hardTanh(TensorWrapper<T> input);
+template <typename T> std::shared_ptr<ComputeNode<T>> hardTanh(std::shared_ptr<ComputeNode<T>> input);
 
 } // namespace hahaha::ml
 

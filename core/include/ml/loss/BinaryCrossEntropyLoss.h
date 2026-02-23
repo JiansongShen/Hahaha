@@ -24,7 +24,11 @@
 #include <cmath>
 
 // Project includes
+#include <memory>
+
 #include "Loss.h"
+#include "math/TensorWrapper.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
 
@@ -43,27 +47,47 @@ template <typename T> class BinaryCrossEntropyLoss : public Loss<T> {
 
   public:
     /**
-     * @brief Compute the Binary Cross Entropy loss between true and predicted values.
+     * @brief Compute the Binary Cross Entropy loss between true and predicted
+     * values.
      * @param yTrue The true (target) labels (0 or 1).
      * @param yPredict The predicted probabilities.
-     * @return TensorWrapper<T> The computed Binary Cross Entropy loss value.
+     * @return std::shared_ptr<ComputeNode<T>> The computed Binary Cross Entropy loss
+     * value.
      */
-    TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+    std::shared_ptr<ComputeNode<T>>
+    computeLoss(std::shared_ptr<ComputeNode<T>> yTrue,
+                std::shared_ptr<ComputeNode<T>> yPredict) override {
+        // Get data from ComputeNodes
+        auto yTrueData = yTrue->getData();
+        auto yPredictData = yPredict->getData();
+
         // Add epsilon to prevent log(0)
-        TensorWrapper<T> safePredict = yPredict + epsilon;
-        TensorWrapper<T> safeOneMinusPredict = (TensorWrapper<T>(T(1)) - yPredict) + epsilon;
-        
-        // Compute log terms
-        safePredict.logInPlace();
-        safeOneMinusPredict.logInPlace();
+        auto safePredict = yPredictData->clone();
+        auto epsilonTensor = TensorWrapper<T>(
+            yPredictData->getShapeVecRef(), epsilon, yPredictData->getDevice());
+        *safePredict = *safePredict + epsilonTensor;
+        safePredict->logInPlace();
+
+        auto safeOneMinusPredict = yPredictData->clone();
+        auto oneTensor = TensorWrapper<T>(
+            yPredictData->getShapeVecRef(), T(1), yPredictData->getDevice());
+        *safeOneMinusPredict = oneTensor - *yPredictData;
+        *safeOneMinusPredict = *safeOneMinusPredict + epsilonTensor;
+        safeOneMinusPredict->logInPlace();
 
         // Compute binary cross entropy
-        TensorWrapper<T> term1 = yTrue * safePredict;
-        TensorWrapper<T> term2 =
-            (TensorWrapper<T>(T(1)) - yTrue) * safeOneMinusPredict;
-        TensorWrapper<T> bce = -(term1 + term2);
+        auto term1 = yTrueData->multiply(*safePredict);
+        auto oneMinusYTrue = oneTensor - *yTrueData;
+        auto term2 = oneMinusYTrue.multiply(*safeOneMinusPredict);
+        auto bce = term1.add(term2);
+        bce.negateInPlace();
+
         const auto totalSize = bce.getTotalSize();
-        return TensorWrapper<T>(bce.sum() / static_cast<T>(totalSize));
+        auto meanValue = bce.sum() / static_cast<T>(totalSize);
+
+        // Create a new ComputeNode with the mean value
+        auto meanData = std::make_shared<math::TensorWrapper<T>>(meanValue);
+        return std::make_shared<ComputeNode<T>>(meanData);
     }
 };
 
@@ -72,10 +96,13 @@ template <typename T> class BinaryCrossEntropyLoss : public Loss<T> {
  * @tparam T The numeric type.
  * @param yTrue The true (target) labels (0 or 1).
  * @param yPredict The predicted probabilities.
- * @return TensorWrapper<T> The computed Binary Cross Entropy loss value.
+ * @return std::shared_ptr<ComputeNode<T>> The computed Binary Cross Entropy loss
+ * value.
  */
 template <typename T>
-TensorWrapper<T> computeBinaryCrossEntropyLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+std::shared_ptr<ComputeNode<T>>
+computeBinaryCrossEntropyLoss(std::shared_ptr<ComputeNode<T>> yTrue,
+                              std::shared_ptr<ComputeNode<T>> yPredict) {
     static BinaryCrossEntropyLoss<T> loss;
     return loss.computeLoss(yTrue, yPredict);
 }

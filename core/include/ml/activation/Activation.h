@@ -19,11 +19,10 @@
 #ifndef HAHAHA_ACTIVATION_H_8A9B0C1D2E3F4G5H6I7J8K9L0M1N2O
 #define HAHAHA_ACTIVATION_H_8A9B0C1D2E3F4G5H6I7J8K9L0M1N2O
 
-#include "math/TensorWrapper.h"
+#include "ml/compute/graph/ComputeNode.h"
+#include <memory>
 
 namespace hahaha::ml {
-
-using math::TensorWrapper;
 
 /**
  * @brief Base class for all activation functions.
@@ -43,26 +42,26 @@ template <typename T> class Activation {
 
     /**
      * @brief Apply the activation function to the input tensor.
-     * @param input The input tensor.
-     * @return TensorWrapper<T> The output tensor after applying activation.
+     * @param input The input compute node.
+     * @return std::shared_ptr<ComputeNode<T>> The output compute node after applying activation.
      */
-    virtual TensorWrapper<T> forward(TensorWrapper<T> input) = 0;
+    virtual std::shared_ptr<ComputeNode<T>> forward(std::shared_ptr<ComputeNode<T>> input) = 0;
 
     /**
      * @brief Compute the gradient of the activation function.
-     * @param input The input tensor.
+     * @param input The input compute node.
      * @param gradOutput The gradient from the next layer.
-     * @return TensorWrapper<T> The gradient with respect to the input.
+     * @return std::shared_ptr<ComputeNode<T>> The gradient with respect to the input.
      */
-    virtual TensorWrapper<T> backward(TensorWrapper<T> input,
-                                      TensorWrapper<T> gradOutput) = 0;
+    virtual std::shared_ptr<ComputeNode<T>> backward(std::shared_ptr<ComputeNode<T>> input,
+                                                      std::shared_ptr<ComputeNode<T>> gradOutput) = 0;
 
     /**
      * @brief Apply activation function (operator overload).
-     * @param input The input tensor.
-     * @return TensorWrapper<T> The output tensor after applying activation.
+     * @param input The input compute node.
+     * @return std::shared_ptr<ComputeNode<T>> The output compute node after applying activation.
      */
-    TensorWrapper<T> operator()(TensorWrapper<T> input) {
+    std::shared_ptr<ComputeNode<T>> operator()(std::shared_ptr<ComputeNode<T>> input) {
         return forward(input);
     }
 };

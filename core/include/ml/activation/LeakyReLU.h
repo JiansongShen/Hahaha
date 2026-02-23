@@ -20,6 +20,8 @@
 #define HAHAHA_LEAKY_RELU_H_B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q
 
 #include "Activation.h"
+#include "ml/compute/graph/ComputeNode.h"
+#include <memory>
 
 namespace hahaha::ml {
 
@@ -55,31 +57,31 @@ template <typename T> class LeakyReLU : public Activation<T> {
 
     /**
      * @brief Apply LeakyReLU activation to the input tensor.
-     * @param input The input tensor.
-     * @return TensorWrapper<T> The output tensor with LeakyReLU applied.
+     * @param input The input compute node.
+     * @return std::shared_ptr<ComputeNode<T>> The output compute node with LeakyReLU applied.
      */
-    TensorWrapper<T> forward(TensorWrapper<T> input) override;
+    std::shared_ptr<ComputeNode<T>> forward(std::shared_ptr<ComputeNode<T>> input) override;
 
     /**
      * @brief Compute the gradient of LeakyReLU.
-     * @param input The input tensor.
+     * @param input The input compute node.
      * @param gradOutput The gradient from the next layer.
-     * @return TensorWrapper<T> The gradient with respect to the input.
+     * @return std::shared_ptr<ComputeNode<T>> The gradient with respect to the input.
      */
-    TensorWrapper<T> backward(TensorWrapper<T> input,
-                               TensorWrapper<T> gradOutput) override;
+    std::shared_ptr<ComputeNode<T>> backward(std::shared_ptr<ComputeNode<T>> input,
+                                             std::shared_ptr<ComputeNode<T>> gradOutput) override;
 };
 
 /**
  * @brief Convenience function to apply LeakyReLU activation.
  * @tparam T The numeric type.
- * @param input The input tensor.
+ * @param input The input compute node.
  * @param alpha The negative slope coefficient (default: 0.01).
- * @return TensorWrapper<T> The output tensor with LeakyReLU applied.
+ * @return std::shared_ptr<ComputeNode<T>> The output compute node with LeakyReLU applied.
  */
 template <typename T>
-TensorWrapper<T> leakyRelu(TensorWrapper<T> input,
-                           T alpha = static_cast<T>(0.01));
+std::shared_ptr<ComputeNode<T>> leakyRelu(std::shared_ptr<ComputeNode<T>> input,
+                                          T alpha = static_cast<T>(0.01));
 
 } // namespace hahaha::ml
 

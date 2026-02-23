@@ -19,7 +19,10 @@
 #ifndef HAHAHA_SIGMOID_H_E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T
 #define HAHAHA_SIGMOID_H_E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T
 
+#include <memory>
+
 #include "Activation.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
 
@@ -50,28 +53,34 @@ template <typename T> class Sigmoid : public Activation<T> {
   public:
     /**
      * @brief Apply sigmoid activation to the input tensor.
-     * @param input The input tensor.
-     * @return TensorWrapper<T> The output tensor with sigmoid applied.
+     * @param input The input compute node.
+     * @return std::shared_ptr<ComputeNode<T>> The output compute node with sigmoid
+     * applied.
      */
-    TensorWrapper<T> forward(TensorWrapper<T> input) override;
+    std::shared_ptr<ComputeNode<T>>
+    forward(std::shared_ptr<ComputeNode<T>> input) override;
 
     /**
      * @brief Compute the gradient of sigmoid.
-     * @param input The input tensor.
+     * @param input The input compute node.
      * @param gradOutput The gradient from the next layer.
-     * @return TensorWrapper<T> The gradient with respect to the input.
+     * @return std::shared_ptr<ComputeNode<T>> The gradient with respect to the
+     * input.
      */
-    TensorWrapper<T> backward(TensorWrapper<T> input,
-                                TensorWrapper<T> gradOutput) override;
+    std::shared_ptr<ComputeNode<T>>
+    backward(std::shared_ptr<ComputeNode<T>> input,
+             std::shared_ptr<ComputeNode<T>> gradOutput) override;
 };
 
 /**
  * @brief Convenience function to apply sigmoid activation.
  * @tparam T The numeric type.
- * @param input The input tensor.
- * @return TensorWrapper<T> The output tensor with sigmoid applied.
+ * @param input The input compute node.
+ * @return std::shared_ptr<ComputeNode<T>> The output compute node with sigmoid
+ * applied.
  */
-template <typename T> TensorWrapper<T> sigmoid(TensorWrapper<T> input);
+template <typename T>
+std::shared_ptr<ComputeNode<T>> sigmoid(std::shared_ptr<ComputeNode<T>> input);
 
 } // namespace hahaha::ml
 

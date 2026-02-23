@@ -20,6 +20,8 @@
 #define HAHAHA_ELU_H_C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R
 
 #include "Activation.h"
+#include "ml/compute/graph/ComputeNode.h"
+#include <memory>
 
 namespace hahaha::ml {
 
@@ -55,30 +57,30 @@ template <typename T> class ELU : public Activation<T> {
 
     /**
      * @brief Apply ELU activation to the input tensor.
-     * @param input The input tensor.
-     * @return TensorWrapper<T> The output tensor with ELU applied.
+     * @param input The input compute node.
+     * @return std::shared_ptr<ComputeNode<T>> The output compute node with ELU applied.
      */
-    TensorWrapper<T> forward(TensorWrapper<T> input) override;
+    std::shared_ptr<ComputeNode<T>> forward(std::shared_ptr<ComputeNode<T>> input) override;
 
     /**
      * @brief Compute the gradient of ELU.
-     * @param input The input tensor.
+     * @param input The input compute node.
      * @param gradOutput The gradient from the next layer.
-     * @return TensorWrapper<T> The gradient with respect to the input.
+     * @return std::shared_ptr<ComputeNode<T>> The gradient with respect to the input.
      */
-    TensorWrapper<T> backward(TensorWrapper<T> input,
-                               TensorWrapper<T> gradOutput) override;
+    std::shared_ptr<ComputeNode<T>> backward(std::shared_ptr<ComputeNode<T>> input,
+                                              std::shared_ptr<ComputeNode<T>> gradOutput) override;
 };
 
 /**
  * @brief Convenience function to apply ELU activation.
  * @tparam T The numeric type.
- * @param input The input tensor.
+ * @param input The input compute node.
  * @param alpha The hyperparameter controlling the negative slope (default: 1.0).
- * @return TensorWrapper<T> The output tensor with ELU applied.
+ * @return std::shared_ptr<ComputeNode<T>> The output compute node with ELU applied.
  */
 template <typename T>
-TensorWrapper<T> elu(TensorWrapper<T> input, T alpha = static_cast<T>(1.0));
+std::shared_ptr<ComputeNode<T>> elu(std::shared_ptr<ComputeNode<T>> input, T alpha = static_cast<T>(1.0));
 
 } // namespace hahaha::ml
 

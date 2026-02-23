@@ -20,11 +20,11 @@
 #ifndef HAHAHA_LOSS_H_B47FE5F8D49547D19923C1D379D9C24C
 #define HAHAHA_LOSS_H_B47FE5F8D49547D19923C1D379D9C24C
 
-#include "math/TensorWrapper.h"
+#include <memory>
+
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
-
-using math::TensorWrapper;
 
 /**
  * @brief Base class for all loss functions.
@@ -46,21 +46,24 @@ template <typename T> class Loss {
      * @brief Compute the loss between true and predicted values.
      * @param yTrue The true (target) values.
      * @param yPredict The predicted values.
-     * @return TensorWrapper<T> The computed loss value.
+     * @return std::shared_ptr<ComputeNode<T>> The computed loss value.
      */
-    virtual TensorWrapper<T> computeLoss(TensorWrapper<T> /*yTrue*/,
-                                         TensorWrapper<T> /*yPredict*/) {
-        return TensorWrapper<T>(T(0));
+    virtual std::shared_ptr<ComputeNode<T>>
+    computeLoss(std::shared_ptr<ComputeNode<T>> /*yTrue*/,
+                std::shared_ptr<ComputeNode<T>> /*yPredict*/) {
+        auto zeroData = std::make_shared<math::TensorWrapper<T>>(T(0));
+        return std::make_shared<ComputeNode<T>>(zeroData);
     }
 
     /**
      * @brief Operator overload for computing loss.
      * @param yTrue The true (target) values.
      * @param yPredict The predicted values.
-     * @return TensorWrapper<T> The computed loss value.
+     * @return std::shared_ptr<ComputeNode<T>> The computed loss value.
      */
-    virtual TensorWrapper<T> operator()(TensorWrapper<T> yTrue,
-                                        TensorWrapper<T> yPredict) {
+    virtual std::shared_ptr<ComputeNode<T>>
+    operator()(std::shared_ptr<ComputeNode<T>> yTrue,
+               std::shared_ptr<ComputeNode<T>> yPredict) {
         return computeLoss(yTrue, yPredict);
     }
 };

@@ -24,7 +24,11 @@
 #include <cmath>
 
 // Project includes
+#include <memory>
+
 #include "Loss.h"
+#include "math/TensorWrapper.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
 
@@ -46,16 +50,27 @@ template <typename T> class CrossEntropyLoss : public Loss<T> {
      * @brief Compute the Cross Entropy loss between true and predicted values.
      * @param yTrue The true (target) labels (one-hot encoded).
      * @param yPredict The predicted probabilities.
-     * @return TensorWrapper<T> The computed Cross Entropy loss value.
+     * @return std::shared_ptr<ComputeNode<T>> The computed Cross Entropy loss value.
      */
-    TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+    std::shared_ptr<ComputeNode<T>>
+    computeLoss(std::shared_ptr<ComputeNode<T>> yTrue,
+                std::shared_ptr<ComputeNode<T>> yPredict) override {
+        // Get data from ComputeNodes
+        auto yTrueData = yTrue->getData();
+        auto yPredictData = yPredict->getData();
+
         // Add epsilon to prevent log(0)
-        TensorWrapper<T> temp = yPredict + epsilon;
-        TensorWrapper<T> safePredict = temp.clone();
-        // Compute log of predictions
-        safePredict.logInPlace();
+        auto safePredict = yPredictData->clone();
+        *safePredict = *safePredict + epsilon;
+        safePredict->logInPlace();
+
         // Compute cross entropy: -sum(yTrue * log(yPredict))
-        return TensorWrapper<T>((-(yTrue * safePredict).sum()));
+        auto product = yTrueData->multiply(*safePredict);
+        auto sumValue = -product.sum();
+
+        // Create a new ComputeNode with the sum value
+        auto sumData = std::make_shared<math::TensorWrapper<T>>(sumValue);
+        return std::make_shared<ComputeNode<T>>(sumData);
     }
 };
 
@@ -64,10 +79,12 @@ template <typename T> class CrossEntropyLoss : public Loss<T> {
  * @tparam T The numeric type.
  * @param yTrue The true (target) labels (one-hot encoded).
  * @param yPredict The predicted probabilities.
- * @return TensorWrapper<T> The computed Cross Entropy loss value.
+ * @return std::shared_ptr<ComputeNode<T>> The computed Cross Entropy loss value.
  */
 template <typename T>
-TensorWrapper<T> computeCrossEntropyLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+std::shared_ptr<ComputeNode<T>>
+computeCrossEntropyLoss(std::shared_ptr<ComputeNode<T>> yTrue,
+                        std::shared_ptr<ComputeNode<T>> yPredict) {
     static CrossEntropyLoss<T> loss;
     return loss.computeLoss(yTrue, yPredict);
 }

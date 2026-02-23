@@ -19,7 +19,10 @@
 #ifndef HAHAHA_SOFTMAX_H_H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W
 #define HAHAHA_SOFTMAX_H_H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W
 
+#include <memory>
+
 #include "Activation.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
 
@@ -62,32 +65,37 @@ template <typename T> class Softmax : public Activation<T> {
 
     /**
      * @brief Apply softmax activation to the input tensor.
-     * @param input The input tensor.
-     * @return TensorWrapper<T> The output tensor with softmax applied.
+     * @param input The input compute node.
+     * @return std::shared_ptr<ComputeNode<T>> The output compute node with softmax
+     * applied.
      */
-    TensorWrapper<T> forward(TensorWrapper<T> input) override {
-        
-    }
+    std::shared_ptr<ComputeNode<T>>
+    forward(std::shared_ptr<ComputeNode<T>> input) override;
 
     /**
      * @brief Compute the gradient of softmax.
-     * @param input The input tensor.
+     * @param input The input compute node.
      * @param gradOutput The gradient from the next layer.
-     * @return TensorWrapper<T> The gradient with respect to the input.
+     * @return std::shared_ptr<ComputeNode<T>> The gradient with respect to the
+     * input.
      */
-    TensorWrapper<T> backward(TensorWrapper<T> input,
-                               TensorWrapper<T> gradOutput) override;
+    std::shared_ptr<ComputeNode<T>>
+    backward(std::shared_ptr<ComputeNode<T>> input,
+             std::shared_ptr<ComputeNode<T>> gradOutput) override;
 };
 
 /**
  * @brief Convenience function to apply softmax activation.
  * @tparam T The numeric type.
- * @param input The input tensor.
- * @param dim The dimension along which to apply softmax (default: -1, last dimension).
- * @return TensorWrapper<T> The output tensor with softmax applied.
+ * @param input The input compute node.
+ * @param dim The dimension along which to apply softmax (default: -1, last
+ * dimension).
+ * @return std::shared_ptr<ComputeNode<T>> The output compute node with softmax
+ * applied.
  */
 template <typename T>
-TensorWrapper<T> softmax(TensorWrapper<T> input, int dim = -1);
+std::shared_ptr<ComputeNode<T>> softmax(std::shared_ptr<ComputeNode<T>> input,
+                                        int dim = -1);
 
 } // namespace hahaha::ml
 

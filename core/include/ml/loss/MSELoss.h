@@ -20,7 +20,11 @@
 #ifndef MSELOSS_CD27251A_6A1C_4A58_89BA_192C683604E8
 #define MSELOSS_CD27251A_6A1C_4A58_89BA_192C683604E8
 
+#include <memory>
+
 #include "Loss.h"
+#include "math/TensorWrapper.h"
+#include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
 
@@ -38,15 +42,24 @@ template <typename T> class MSELoss : public Loss<T> {
      * @brief Compute the MSE loss between true and predicted values.
      * @param yTrue The true (target) values.
      * @param yPredict The predicted values.
-     * @return TensorWrapper<T> The computed MSE loss value.
+     * @return std::shared_ptr<ComputeNode<T>> The computed MSE loss value.
      */
-    TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
-        // NOTE: TensorWrapper::sum() currently returns a scalar value (T), not a
-        // TensorWrapper. Wrap it back into a scalar TensorWrapper.
-        auto diff = yTrue - yPredict;
+    std::shared_ptr<ComputeNode<T>>
+    computeLoss(std::shared_ptr<ComputeNode<T>> yTrue,
+                std::shared_ptr<ComputeNode<T>> yPredict) override {
+        // Get data from ComputeNodes
+        auto yTrueData = yTrue->getData();
+        auto yPredictData = yPredict->getData();
+
+        // Compute MSE loss: mean((yTrue - yPredict)^2)
+        auto diff = yTrueData->subtract(*yPredictData);
         diff.squareInPlace();
         const auto totalSize = diff.getTotalSize();
-        return TensorWrapper<T>(diff.sum() / static_cast<T>(totalSize));
+        auto meanValue = diff.sum() / static_cast<T>(totalSize);
+
+        // Create a new ComputeNode with the mean value
+        auto meanData = std::make_shared<math::TensorWrapper<T>>(meanValue);
+        return std::make_shared<ComputeNode<T>>(meanData);
     }
 };
 
@@ -55,10 +68,12 @@ template <typename T> class MSELoss : public Loss<T> {
  * @tparam T The numeric type.
  * @param yTrue The true (target) values.
  * @param yPredict The predicted values.
- * @return TensorWrapper<T> The computed MSE loss value.
+ * @return std::shared_ptr<ComputeNode<T>> The computed MSE loss value.
  */
 template <typename T>
-TensorWrapper<T> computeMSELoss(TensorWrapper<T> yTrue, TensorWrapper<T> yPredict) {
+std::shared_ptr<ComputeNode<T>>
+computeMSELoss(std::shared_ptr<ComputeNode<T>> yTrue,
+               std::shared_ptr<ComputeNode<T>> yPredict) {
     static MSELoss<T> loss;
     return loss.computeLoss(yTrue, yPredict);
 }
