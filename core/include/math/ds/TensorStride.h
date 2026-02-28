@@ -16,8 +16,8 @@
 // Napbad (napbad.sen@gmail.com ) (https://github.com/Napbad )
 //
 
-#ifndef HAHAHA_MATH_DS_TENSOR_STRIDE_H
-#define HAHAHA_MATH_DS_TENSOR_STRIDE_H
+#ifndef TENSORSTRIDE_A596BD37_E9CD_4DD6_ACB4_DE4D5C7623E2
+#define TENSORSTRIDE_A596BD37_E9CD_4DD6_ACB4_DE4D5C7623E2
 
 #include <sstream>
 #include <vector>
@@ -79,6 +79,10 @@ class TensorStride {
 
     [[nodiscard]] std::vector<size_t>& getStrideVec() {
         return strides_;
+    }
+
+    void setStrideVec(const std::vector<size_t>& strideVec) {
+        this->strides_ = strideVec;
     }
 
     /**
@@ -164,4 +168,4 @@ class TensorStride {
 };
 } // namespace hahaha::math
 
-#endif // HAHAHA_MATH_DS_TENSOR_STRIDE_H
+#endif // TENSORSTRIDE_A596BD37_E9CD_4DD6_ACB4_DE4D5C7623E2

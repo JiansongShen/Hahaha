@@ -1,8 +1,10 @@
-#ifndef HAHAHA_MATH_TENSOR_WRAPPER_H
-#define HAHAHA_MATH_TENSOR_WRAPPER_H
+#ifndef TENSORWRAPPER_F636B439_CF92_4E73_8CCD_018F08CD4EA1
+#define TENSORWRAPPER_F636B439_CF92_4E73_8CCD_018F08CD4EA1
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstring>
 #include <functional>
 #include <iterator>
 #include <memory>
@@ -14,6 +16,7 @@
 #include "backend/Device.h"
 #include "backend/DeviceComputeDispatcher.h"
 #include "backend/DeviceRegistry.h"
+#include "math/ds/TensorStride.h"
 #ifdef HAHAHA_USE_CUDA
 #if __has_include(<driver_types.h>)
 #include <cuda_runtime.h>
@@ -22,6 +25,7 @@
 #include "backend/gpu/cuda/CudaMemory.h"
 #endif
 #endif
+#include "math/ds/IndexCollector.h"
 #include "math/ds/TensorData.h"
 #include "math/ds/TensorShape.h"
 #include "math/slice_setting.h"
@@ -163,6 +167,10 @@ template <typename T> class TensorWrapper {
      * @param stride The new strides.
      */
     void setStride(const TensorStride& stride);
+
+    void setShape(const TensorShape& shape) {
+        data_.setShape(shape);
+    }
 
     /**
      * @brief Get the device where the tensor resides.
@@ -374,6 +382,50 @@ template <typename T> class TensorWrapper {
      * @throws std::invalid_argument if any axis is out of bounds.
      */
     TensorWrapper sum(std::vector<size_t> axes, bool keepDims = false) const;
+
+    /**
+     * @brief Find the maximum value in the tensor along a given dimension.
+     * @param dim The dimension along which to find the maximum.
+     * @param keepDims If true, the reduced dimension is kept with size 1.
+     * @return TensorWrapper Result tensor with maximum values.
+     */
+    TensorWrapper max(long dim, bool keepDims = true) const {
+        auto result = this->clone();
+        auto resultShapeVec = this->getShapeVecRef();
+
+        if (keepDims) {
+            resultShapeVec[dim] = 1;
+        } else {
+            resultShapeVec.erase(resultShapeVec.begin() + dim);
+        }
+        result.reshape(resultShapeVec);
+        result.setStride(TensorStride(resultShapeVec));
+
+        std::vector<size_t> coords(resultShapeVec.size(), 0);
+
+        for (size_t i = 0; i < getTotalSize() / getShapeVecRef()[dim]; ++i) {
+            size_t idxOfRes = 0;
+            for (int j = 0; j < coords.size(); ++j) {
+                idxOfRes += coords[j] * resultShapeVec[j];
+            }
+
+            T* rawPtr = getRawData();
+            T* resultRawPtr = result.getRawData();
+            for (size_t j = 1; j < getShapeVecRef()[dim]; ++j) {
+                resultRawPtr[idxOfRes] = std::max(
+                    resultRawPtr[idxOfRes], rawPtr[idxOfRes + j * getStride()[dim]]);
+            }
+
+            for (long j = static_cast<long>(coords.size()); j >= 0; --j) {
+                if (++coords[j] < resultShapeVec[j]) {
+                    break;
+                }
+                coords[j] = 0;
+            }
+        }
+
+        return result;
+    }
 
     /**
      * @brief Clear all values in the tensor, setting them to default value
@@ -751,6 +803,55 @@ template <typename T> class TensorWrapper {
      */
     TensorWrapper& operator/=(T scalar);
 
+    TensorWrapper operator[](IndexCollector<size_t> indicesCollector) {
+        auto& indices = indicesCollector.getIndices();
+        TensorWrapper res;
+        if (indices.size() > getDimensions()) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        for (size_t i = 0; i < indices.size(); ++i) {
+            if (indices[i] >= getDimensions()[i]) {
+                throw std::out_of_range("Index out of range");
+            }
+        }
+
+        auto idxSize = indices.size();
+        auto resShapeSize = getShapeVecRef().size() - idxSize;
+        long srcDataIndex = 0;
+        long srcDataSize = 1;
+
+        std::vector<size_t> newShapeVec;
+        std::vector<size_t> newStrideVec;
+
+        newShapeVec.resize(getShapeVecRef().size() - indices.size());
+        newStrideVec.resize(getShapeVecRef().size() - indices.size());
+
+        for (size_t i = indices.size(); i < getShapeVecRef().size(); ++i) {
+            srcDataSize *= getStride().getStrideVec()[i];
+            newShapeVec[i - indices.size()] = getShapeVecRef()[i];
+            newStrideVec[i - indices.size()] = getStride().getStrideVec()[i];
+        }
+
+        for (size_t i = 0; i < indices.size(); ++i) {
+            srcDataIndex += getStride().getStrideVec()[i] * indices[i];
+        }
+
+        TensorStride newStride;
+        newStride.setStrideVec(newStrideVec);
+        res.setStride(newStride);
+
+        TensorShape newShape(newShapeVec);
+        res.setShape(newShape);
+
+        auto newDataPtr = res.getRawData();
+        auto srcDataPtr = getRawData();
+
+        std::memcpy(newDataPtr, srcDataPtr, sizeof(T) * srcDataSize);
+
+        return res;
+    }
+
     /**
      * @brief In-place update: y = y + alpha * x
      *
@@ -888,4 +989,4 @@ TensorWrapper<T> operator/(T scalar, const TensorWrapper<T>& tensor);
 #include "TensorWrapperShapeOps.inl"
 #include "TensorWrapperUtilities.inl"
 
-#endif // HAHAHA_MATH_TENSOR_WRAPPER_H
+#endif // TENSORWRAPPER_F636B439_CF92_4E73_8CCD_018F08CD4EA1

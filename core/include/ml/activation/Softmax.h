@@ -16,12 +16,13 @@
 //  jiansongshen (jason.shen111@outlook.com) (https://github.com/jiansongshen)
 //
 
-#ifndef HAHAHA_SOFTMAX_H_H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W
-#define HAHAHA_SOFTMAX_H_H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W
+#ifndef SOFTMAX_AC88256D_D448_410A_8562_EB1A9409C866
+#define SOFTMAX_AC88256D_D448_410A_8562_EB1A9409C866
 
 #include <memory>
 
 #include "Activation.h"
+#include "math/TensorWrapper.h"
 #include "ml/compute/graph/ComputeNode.h"
 
 namespace hahaha::ml {
@@ -61,7 +62,8 @@ template <typename T> class Softmax : public Activation<T> {
      * @brief Constructor with dimension parameter.
      * @param dim The dimension along which to apply softmax (default: -1, last dimension).
      */
-    explicit Softmax(int dim = -1);
+    explicit Softmax(int dim = -1) : dim_(dim) {
+    }
 
     /**
      * @brief Apply softmax activation to the input tensor.
@@ -70,7 +72,79 @@ template <typename T> class Softmax : public Activation<T> {
      * applied.
      */
     std::shared_ptr<ComputeNode<T>>
-    forward(std::shared_ptr<ComputeNode<T>> input) override;
+    forward(std::shared_ptr<ComputeNode<T>> input) override {
+        // basic definition of softmax
+        auto tensorPtr = input->getData();
+        auto shapeVec = tensorPtr->getShapeVecRef();
+        int dim = dim_;
+        if (dim < 0) {
+            dim += shapeVec.size();
+            if (dim < 0 || dim >= static_cast<int>(shapeVec.size())) {
+                throw std::invalid_argument("Dimension out of range");
+            }
+        }
+
+        // find max value along the specified dimension for numerical stability
+        auto maxVal = tensorPtr->max(dim, true);
+        auto maxValBroadcasted = maxVal.broadcastTo(math::TensorShape(shapeVec));
+
+        // sub the max value and exp
+        auto tmp = tensorPtr->subtract(maxValBroadcasted);
+        auto expVal = tmp.clone();
+        expVal.expInPlace();
+
+        auto sumExp = expVal.sum({static_cast<size_t>(dim)}, true);
+        auto sumExpBroadcasted =
+            sumExp.broadcastTo(math::TensorShape(expVal.getShapeVecRef()));
+
+        // compute softmax
+        auto outputTensor = expVal.divide(sumExpBroadcasted);
+
+        auto outputNode = std::make_shared<ComputeNode<T>>(
+            std::make_shared<math::TensorWrapper<T>>(outputTensor),
+            common::Operator::Softmax);
+        outputNode->addParent(input);
+
+        if (input->getRequiresGrad()) {
+            outputNode->setRequiresGrad(true);
+            std::weak_ptr<ComputeNode<T>> weakOutput = outputNode;
+            std::weak_ptr<ComputeNode<T>> weakInput = input;
+
+            outputNode->setGradFun([weakInput, weakOutput, dim]() {
+                auto outputNode = weakOutput.lock();
+                auto input = weakInput.lock();
+                if (!outputNode || !input)
+                    return;
+
+                auto gradOutput = outputNode->getGrad();
+                if (!gradOutput)
+                    return;
+
+                auto outputTensorPtr = outputNode->getData(); // y
+
+                // y * gradOutput
+                auto y_grad = outputTensorPtr->multiply(*gradOutput);
+
+                // sum(y * gradOutput)
+                auto sum_y_grad = y_grad.sum({static_cast<size_t>(dim)}, true);
+
+                // broadcast
+                auto sum_y_grad_b = sum_y_grad.broadcastTo(
+                    math::TensorShape(outputTensorPtr->getShapeVecRef()));
+
+                // gradOutput - sum
+                auto tmp_grad = gradOutput->subtract(sum_y_grad_b);
+
+                // y * (gradOutput - sum)
+                auto gradInput = outputTensorPtr->multiply(tmp_grad);
+
+                input->accumulateGrad(
+                    std::make_shared<math::TensorWrapper<T>>(gradInput));
+            });
+        }
+
+        return outputNode;
+    }
 
     /**
      * @brief Compute the gradient of softmax.
@@ -81,7 +155,39 @@ template <typename T> class Softmax : public Activation<T> {
      */
     std::shared_ptr<ComputeNode<T>>
     backward(std::shared_ptr<ComputeNode<T>> input,
-             std::shared_ptr<ComputeNode<T>> gradOutput) override;
+             std::shared_ptr<ComputeNode<T>> gradOutput) override {
+        // Recompute softmax output for gradient calculation
+        auto outputNode = forward(input);
+        auto outputTensorPtr = outputNode->getData();
+
+        auto tensorPtr = input->getData();
+        auto shapeVec = tensorPtr->getShapeVecRef();
+        int dim = dim_;
+        if (dim < 0) {
+            dim += shapeVec.size();
+        }
+
+        auto gradOutputTensor = gradOutput->getData();
+
+        // y * gradOutput
+        auto y_grad = outputTensorPtr->multiply(*gradOutputTensor);
+
+        // sum(y * gradOutput)
+        auto sum_y_grad = y_grad.sum({static_cast<size_t>(dim)}, true);
+
+        // broadcast
+        auto sum_y_grad_b = sum_y_grad.broadcastTo(
+            math::TensorShape(outputTensorPtr->getShapeVecRef()));
+
+        // gradOutput - sum
+        auto tmp_grad = gradOutputTensor->subtract(sum_y_grad_b);
+
+        // y * (gradOutput - sum)
+        auto gradInput = outputTensorPtr->multiply(tmp_grad);
+
+        return std::make_shared<ComputeNode<T>>(
+            std::make_shared<math::TensorWrapper<T>>(gradInput));
+    }
 };
 
 /**
@@ -95,8 +201,10 @@ template <typename T> class Softmax : public Activation<T> {
  */
 template <typename T>
 std::shared_ptr<ComputeNode<T>> softmax(std::shared_ptr<ComputeNode<T>> input,
-                                        int dim = -1);
+                                        int dim = -1) {
+    return Softmax<T>(dim).forward(input);
+}
 
 } // namespace hahaha::ml
 
-#endif // HAHAHA_SOFTMAX_H_H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W
+#endif // SOFTMAX_AC88256D_D448_410A_8562_EB1A9409C866

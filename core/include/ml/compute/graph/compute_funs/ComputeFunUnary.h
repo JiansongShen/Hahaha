@@ -129,6 +129,74 @@ std::shared_ptr<ComputeNode<T>> neg(const std::shared_ptr<ComputeNode<T>>& paren
     return resNode;
 }
 
+/**
+ * @brief Exponential operation (e^x) for computational graph nodes.
+ * @tparam T The numeric type.
+ * @param parent The parent compute node.
+ * @return std::shared_ptr<ComputeNode<T>> A new compute node representing the
+ * exponential operation.
+ */
+template <typename T>
+std::shared_ptr<ComputeNode<T>> exp(const std::shared_ptr<ComputeNode<T>>& parent) {
+    auto resData =
+        std::make_shared<math::TensorWrapper<T>>(parent->getData()->clone());
+    resData->expInPlace();
+
+    auto resNode =
+        ComputeNode<T>::createUnary(parent, resData, common::Operator::Exp);
+
+    std::weak_ptr<ComputeNode<T>> weakRes = resNode;
+    std::weak_ptr<ComputeNode<T>> weakParent = parent;
+
+    resNode->setGradFun([weakParent, weakRes]() {
+        auto res = weakRes.lock();
+        auto parent = weakParent.lock();
+        if (res && parent && parent->getRequiresGrad()) {
+            auto gradPtr = res->getGrad();
+            auto outputData = res->getData(); // y = e^x
+            // grad = gradOutput * y
+            auto gradInput = std::make_shared<math::TensorWrapper<T>>(
+                gradPtr->multiply(*outputData));
+            parent->accumulateGrad(gradInput);
+        }
+    });
+    return resNode;
+}
+
+/**
+ * @brief Natural logarithm operation (ln(x)) for computational graph nodes.
+ * @tparam T The numeric type.
+ * @param parent The parent compute node.
+ * @return std::shared_ptr<ComputeNode<T>> A new compute node representing the
+ * logarithm operation.
+ */
+template <typename T>
+std::shared_ptr<ComputeNode<T>> log(const std::shared_ptr<ComputeNode<T>>& parent) {
+    auto resData =
+        std::make_shared<math::TensorWrapper<T>>(parent->getData()->clone());
+    resData->logInPlace();
+
+    auto resNode =
+        ComputeNode<T>::createUnary(parent, resData, common::Operator::Log);
+
+    std::weak_ptr<ComputeNode<T>> weakRes = resNode;
+    std::weak_ptr<ComputeNode<T>> weakParent = parent;
+
+    resNode->setGradFun([weakParent, weakRes]() {
+        auto res = weakRes.lock();
+        auto parent = weakParent.lock();
+        if (res && parent && parent->getRequiresGrad()) {
+            auto gradPtr = res->getGrad();
+            auto inputData = parent->getData(); // x
+            // grad = gradOutput / x
+            auto gradInput = std::make_shared<math::TensorWrapper<T>>(
+                gradPtr->divide(*inputData));
+            parent->accumulateGrad(gradInput);
+        }
+    });
+    return resNode;
+}
+
 } // namespace hahaha::compute
 
 #endif // HAHAHA_COMPUTE_COMPUTE_FUN_UNARY_H

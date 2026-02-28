@@ -62,8 +62,7 @@ template <typename T> class LogCoshLoss : public Loss<T> {
         // Compute cosh(error) = (exp(error) + exp(-error)) / 2
         auto expError = error.clone();
         expError.expInPlace();
-        auto negError = error.clone();
-        negError.negateInPlace();
+        auto negError = -error;
         negError.expInPlace();
         auto coshError = expError.add(negError);
         coshError = coshError * T(0.5);

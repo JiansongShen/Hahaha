@@ -50,7 +50,8 @@ template <typename T> class Loss {
      */
     TensorWrapper<T> computeLoss(TensorWrapper<T> yTrue,
                                  TensorWrapper<T> yPred) const {
-        return impl_->computeLoss(std::move(yTrue), std::move(yPred));
+        return impl_->computeLoss(std::make_shared<TensorWrapper<T>>(yTrue),
+                                  std::make_shared<TensorWrapper<T>>(yPred));
     }
 
   protected:

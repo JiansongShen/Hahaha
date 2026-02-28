@@ -24,6 +24,7 @@
 #include "ml/compute/graph/compute_funs/ComputeFunDiv.h"
 #include "ml/compute/graph/compute_funs/ComputeFunMatMul.h"
 #include "ml/compute/graph/compute_funs/ComputeFunMul.h"
+#include "ml/compute/graph/compute_funs/ComputeFunReduction.h"
 #include "ml/compute/graph/compute_funs/ComputeFunSub.h"
 #include "ml/compute/graph/compute_funs/ComputeFunUnary.h"
 
